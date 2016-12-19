@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="http://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/codemirror.min.css" rel="stylesheet">
+    <link href="http://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/theme/material.min.css" rel="stylesheet">
+    <title>Hello</title>
+    <style type="text/css">
+      body {
+        margin: 10px;
+      }
+    </style>
+</head>
+  <body>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title"><i class="fa fa-fw fa-cogs"></i>Panel title</h3>
+            </div>
+            <div class="panel-body">
+              <div class="row">
+                <div class="col-md-12">
+                  <div id="viz"></div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-12">
+                  <toolbar></toolbar>
+                </div>
+              </div>
+              <hr />
+              <div class="row">
+                <div class="col-md-12">
+                  <codemirror></codemirror>
+                </div>
+              </div>
+            </div>
+            <div class="panel-footer">Panel footer</div>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="row">
+        <div class="col-sm-12" id="categories"></div>
+      </div>
+
+    <!-- Boostrap 3 -->
+    <script src="http://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/latest/js/bootstrap.min.js"></script>
+
+    <!-- Babel -->
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.10.3/babel.min.js"></script>
+    <!-- Freezer-Js -->
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/freezer-js/0.11.1/freezer.min.js"></script>
+    <!-- CodeMirror -->
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/codemirror.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/mode/javascript/javascript.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/addon/selection/active-line.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/addon/edit/matchbrackets.min.js"></script>
+
+    <!-- D3 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.4.0/d3.min.js"></script>
+
+    <!-- Chance library -->
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/chance/1.0.4/chance.min.js"></script>
+
+    <!-- React -->
+    <script src="http://fb.me/react-15.2.1.js"></script>
+    <script src="http://fb.me/react-with-addons-15.2.1.min.js"></script>
+    <script src="http://fb.me/react-dom-15.2.1.js"></script>
+
+    <!-- Entry Point -->
+    <script type="text/babel" src="./dist/main.js"></script>
+
+  <script>
+    /*
+    var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+      lineNumbers: true,
+      styleActiveLine: true,
+      matchBrackets: true
+    });
+    editor.setOption("theme", "material");
+    */
+  </script>
+  </body>
+</html>
