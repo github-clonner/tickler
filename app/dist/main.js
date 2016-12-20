@@ -5,8 +5,6 @@ const EventEmitter = require('events');
 const appEmitter = new EventEmitter();
 const fs = require('fs');
 
-alert('xx1x')
-
 const path = './';
 fs.watch(path, { recursive: true }, function() {
   if (location)
