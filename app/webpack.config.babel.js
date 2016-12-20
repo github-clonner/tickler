@@ -1,22 +1,42 @@
-import path from 'path' ;
+import path from 'path';
+import fs from 'fs';
 import webpack from 'webpack';
+
+const babelSettings = JSON.parse(fs.readFileSync(".babelrc"));
+
+const env = {
+  NODE_ENV: process.env.NODE_ENV || 'development',
+};
 
 console.log('PATH:', path.join(__dirname))
 export default {
   debug: true,
   entry: [
-    './client/scripts/router'
+    //'webpack-dev-server/client?http://0.0.0.0:8080',
+    //'webpack/hot/only-dev-server',
+    './client/scripts/router',
   ],
-  resolve: {
-    root: [ path.join(__dirname, 'app') ]
-  },
   output: {
     path: path.join( __dirname, 'dist' ),
     filename: 'bundle.js'
   },
-  target: 'node-webkit',
+  devServer: {
+    contentBase: './dist',
+    hot: true,
+    inline: true,
+    colors: true,
+    open: true,
+    host: "localhost",
+    port: 8080
+  },
+  //target: 'node-webkit',
   plugins: [
-    new webpack.NoErrorsPlugin()
+    new webpack.HotModuleReplacementPlugin(),
+    new webpack.NoErrorsPlugin(),
+    new webpack.optimize.DedupePlugin(),
+    new webpack.DefinePlugin({
+      'process.env': JSON.stringify(env)
+    })
   ],
   resolve: {
     extensions: [ '', '.js', '.jsx', '.coffee', '.less', '.ttf', '.eot', '.woff' ],
@@ -24,17 +44,20 @@ export default {
       'node_modules'
     ]
   },
+  resolveLoader: {
+    moduleDirectories: [ 'node_modules' ]
+  },
   module: {
     loaders: [
       {
+        test: /\.html$/,
+        loader: "file?name=[name].[ext]",
+      },
+      {
         test: /\.jsx?$/,
-        loader: 'babel-loader',
         exclude: /node_modules/,
-        include: __dirname,
-        query: {
-          presets: ['es2015', 'stage-0', 'react'],
-          compact: false
-        }
+        loaders: [ 'react-hot', 'babel-loader' ],
+        //query: babelSettings
         /*loaders: [
           'react-hot-loader',
           'babel?presets[]=latest&presets[]=react&presets[]=stage-0',

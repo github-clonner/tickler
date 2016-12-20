@@ -1,3 +1,5 @@
+import 'babel-polyfill';
+
 import React from 'react';
 import { render } from 'react-dom';
 import { Router, Route, IndexRoute } from 'react-router';
@@ -11,9 +13,9 @@ const fs = require('fs');
 */
 
 import EventEmitter from 'events';
-import gui from 'nw.gui';
-import os from 'os';
-import fs from 'fs';
+//import gui from 'nw.gui';
+//import os from 'os';
+//import fs from 'fs';
 
 class Product {
   constructor(connect) {
@@ -25,4 +27,4 @@ class Product {
   }
 }
 
-console.log('hello worldx', gui)
+console.log('sdfgsdfg453345 worldxXXXX')

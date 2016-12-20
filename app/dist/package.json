@@ -1,0 +1,18 @@
+{
+  "name": "nw-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.html",
+  "js-flags": "--harmony",
+  "webkit":{
+    "plugin": true
+  },
+  "window": {
+    "frame": true,
+    "toolbar": true,
+    "height": 400,
+    "width": 800,
+    "resizable": true,
+    "position": "mouse"
+  }
+}
