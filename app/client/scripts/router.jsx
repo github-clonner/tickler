@@ -2,7 +2,7 @@ import 'babel-polyfill';
 
 import React from 'react';
 import { render } from 'react-dom';
-import { Router, Route, hashHistory, browserHistory, IndexRoute } from 'react-router';
+import { Router, Route, Redirect, hashHistory, browserHistory, IndexRoute } from 'react-router';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 
 
@@ -36,6 +36,7 @@ render((
     	<IndexRoute component={HomePage} name='Home'/>
     </Route>
     <Route path="/about" component={About}/>
+    <Redirect from="/*" to="/" />
     <Route path="*" component={NotFound} />
   </Router>
 ), document.getElementById('app'))

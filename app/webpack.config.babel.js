@@ -31,7 +31,7 @@ export default {
     colors: true,
     open: true,
     host: "localhost",
-    port: 8080
+    port: 7070
   },
   //target: 'node-webkit',
   plugins: [
