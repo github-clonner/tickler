@@ -7,9 +7,9 @@ import injectTapEventPlugin from 'react-tap-event-plugin';
 
 
 import App from './index';
-import HomePage from './components/home';
-import About from './components/about';
-import NotFound from './components/NotFound';
+import HomePage from './views/Home';
+import About from './views/About';
+import NotFound from './views/NotFound';
 
 /*const findDOMNode = ReactDOM.findDOMNode;
 const gui = require('nw.gui');
@@ -33,7 +33,8 @@ injectTapEventPlugin();
 render((
   <Router history={browserHistory}>
     <Route path="/" component={App} name="Container">
-    	<IndexRoute component={HomePage} name='Home'/>
+      <IndexRoute component={HomePage} name='Home'/>
+      <Route path="/about" component={About}/>
     </Route>
     <Route path="/about" component={About}/>
     <Redirect from="/*" to="/" />

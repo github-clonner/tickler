@@ -65,6 +65,14 @@ export default {
         loader: "file?name=[name].[ext]",
       },
       {
+        test: /\.json$/,
+        loader: "json-loader"
+      },
+      {
+        test: /\.(jpe?g|png|gif|svg)$/i,
+        loaders: 'file?hash=sha512&digest=hex&name=[hash].[ext]'
+      },
+      {
         test: /\.css$/,
         loaders: [
           'style-loader',
@@ -73,6 +81,10 @@ export default {
           //'css-loader?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]',
           'postcss-loader'
         ]
+      },
+      {
+        test: /\.mp3$/,
+        loader: "file?name=[name].[ext]",
       },
       {
         test: /\.jsx?$/,

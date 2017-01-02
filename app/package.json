@@ -7,6 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "webpack-dev-server",
     "watch": "webpack --watch",
+    "nwj": "../nwjs_p.app/Contents/MacOS/nwjs ./dist/",
     "webpack": "webpack"
   },
   "author": "",
@@ -22,8 +23,9 @@
   "license": "ISC",
   "dependencies": {
     "codemirror": "^5.22.0",
-    "react-codemirror": "^0.3.0",
+    "node-fetch": "^1.6.3",
     "react": "^15.4.1",
+    "react-codemirror": "^0.3.0",
     "react-dom": "^15.4.1",
     "react-router": "^3.0.0",
     "react-tap-event-plugin": "^2.0.1"
@@ -41,12 +43,14 @@
     "extract-text-webpack-plugin": "^1.0.1",
     "file-loader": "^0.9.0",
     "html-webpack-plugin": "^2.24.1",
+    "json-loader": "^0.5.4",
     "postcss-cssnext": "^2.9.0",
     "postcss-import": "^9.0.0",
     "postcss-loader": "^1.2.1",
     "postcss-url": "^5.1.2",
     "react-hot-loader": "^1.3.1",
     "style-loader": "^0.13.1",
+    "url-loader": "^0.5.7",
     "webpack": "^1.14.0",
     "webpack-dev-server": "^1.16.2"
   }
