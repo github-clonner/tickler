@@ -1,0 +1,22 @@
+body {
+	background-color: hwb(90, 0%, 0%, 0.5);
+  margin: 0px;
+  padding: 0px;
+}
+
+.banshee {
+  text-decoration: underline;
+  & .siren {
+    color: #f00;
+    background-color: #0f0;
+  }
+}
+
+.boxyThing {
+  background-color: #f00;
+  color: #fff;
+  & .blackStuff {
+    color: #0ff;
+    border: 1px solid black;
+  }
+}
