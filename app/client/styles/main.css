@@ -1,5 +1,8 @@
 body {
-	background-color: hwb(90, 0%, 0%, 0.5);
+  font-family: 'Open Sans', helvetica, sans-serif, arial !important;
+  background-color: #212121;
+	/* color: hwb(100, 0%, 0%, 0.5); */
+  color: #afafaf;
   margin: 0px;
   padding: 0px;
 }

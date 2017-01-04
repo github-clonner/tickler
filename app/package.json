@@ -2,8 +2,9 @@
   "name": "nw-app",
   "version": "1.0.0",
   "description": "",
-  "main": "index.html",
+  "main": "main.js",
   "scripts": {
+    "start": "electron .",
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "webpack-dev-server",
     "watch": "webpack --watch",
@@ -23,6 +24,8 @@
   "license": "ISC",
   "dependencies": {
     "codemirror": "^5.22.0",
+    "electron": "^1.4.13",
+    "electron-window-state": "^4.0.1",
     "node-fetch": "^1.6.3",
     "react": "^15.4.1",
     "react-codemirror": "^0.3.0",
@@ -41,6 +44,9 @@
     "babel-preset-stage-0": "^6.16.0",
     "babel-register": "^6.18.0",
     "css-loader": "^0.26.1",
+    "devtron": "^1.4.0",
+    "electron-connect": "^0.6.1",
+    "electron-connect-webpack-plugin": "^0.1.1",
     "extract-text-webpack-plugin": "^1.0.1",
     "file-loader": "^0.9.0",
     "html-webpack-plugin": "^2.24.1",
@@ -53,6 +59,7 @@
     "style-loader": "^0.13.1",
     "url-loader": "^0.5.7",
     "webpack": "^1.14.0",
+    "webpack-cleanup-plugin": "^0.4.1",
     "webpack-dev-server": "^1.16.2"
   }
 }

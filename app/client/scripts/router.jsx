@@ -9,6 +9,7 @@ import injectTapEventPlugin from 'react-tap-event-plugin';
 import App from './index';
 import HomePage from './views/Home';
 import About from './views/About';
+import Player from './views/Player';
 import NotFound from './views/NotFound';
 
 /*const findDOMNode = ReactDOM.findDOMNode;
@@ -34,9 +35,10 @@ render((
   <Router history={browserHistory}>
     <Route path="/" component={App} name="Container">
       <IndexRoute component={HomePage} name='Home'/>
-      <Route path="/about" component={About}/>
+      <Route path="/about" component={About} />
     </Route>
-    <Route path="/about" component={About}/>
+    <Route path="/about" component={About} />
+    <Route path="/player" component={Player} />
     <Redirect from="/*" to="/" />
     <Route path="*" component={NotFound} />
   </Router>

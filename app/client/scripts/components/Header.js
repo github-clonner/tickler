@@ -5,7 +5,7 @@ export default React.createClass({
   render() {
     return (
       <nav>
-        <h1>Hello</h1>
+        <h1>Hello ben</h1>
       </nav>
     );
   }

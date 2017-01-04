@@ -3,6 +3,8 @@ import fs from 'fs';
 import webpack from 'webpack';
 import HtmlwebpackPlugin from 'html-webpack-plugin';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
+import ElectronConnectWebpackPlugin from 'electron-connect-webpack-plugin';
+import WebpackCleanupPlugin from 'webpack-cleanup-plugin'
 
 const babelSettings = JSON.parse(fs.readFileSync(".babelrc"));
 const config = JSON.parse(fs.readFileSync("package.json"));
@@ -21,7 +23,7 @@ export default {
     './client/scripts/router',
   ],
   output: {
-    path: path.join( __dirname, 'dist' ),
+    path: path.join(__dirname, 'dist' ),
     filename: 'bundle.js'
   },
   devServer: {
@@ -29,7 +31,7 @@ export default {
     hot: true,
     inline: true,
     colors: true,
-    open: true,
+    open: false,
     host: "localhost",
     port: 7070
   },
@@ -43,10 +45,21 @@ export default {
     }),
     new HtmlwebpackPlugin({
       template: 'node_modules/html-webpack-template/index.ejs',
+      links: [
+        'https://fonts.googleapis.com/css?family=Roboto',
+        'http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css'
+      ],
       title: 'App',
       appMountId: 'app',
       inject: false
     }),
+    new ElectronConnectWebpackPlugin({
+      path:path.join(__dirname, 'dist'),
+      logLevel: 0
+    }),
+    new WebpackCleanupPlugin({
+      exclude: ["package.json", "main.js", "index.html"],
+    })
     //new ExtractTextPlugin('style.css', { allChunks: true })
   ],
   resolve: {

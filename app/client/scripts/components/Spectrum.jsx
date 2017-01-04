@@ -127,6 +127,58 @@ var HEIGHT = 360;
 var SMOOTHING = 0.8;
 var FFT_SIZE = 2048;
 
+class Bars {
+
+  constructor(source, buffer, canvas) {
+    this.canvas = canvas;
+    this.source = context.createBufferSource();
+    this.analyser = context.createAnalyser();
+    this.options = {
+      meterWidth: 10, //width of the meters in the spectrum
+      gap: 2, //gap between meters
+      capHeight: 2,
+      capStyle: '#fff',
+      meterNum: 800 / (10 + 2), //count of the meters
+    };
+    this.capYPositionArray = []; //store the vertical position of hte caps for the preivous frame
+  }
+
+  draw() {
+    this.context = this.canvas.getContext('2d');
+    this.width = this.canvas.width;
+    this.height = this.canvas.height;
+
+    this.gradient = ctx.createLinearGradient(0, 0, 0, 300);
+    gradient.addColorStop(1, '#0f0');
+    gradient.addColorStop(0.5, '#ff0');
+    gradient.addColorStop(0, '#f00');
+  }
+  renderFrame() {
+    let array = new Uint8Array(this.analyser.frequencyBinCount);
+    analyser.getByteFrequencyData(array);
+    let step = Math.round(array.length / this.options.meterNum); //sample limited data from the total array
+    ctx.clearRect(0, 0, width, height);
+    for (let i = 0; i < this.options.meterNum; i++) {
+      let value = array[i * step];
+      if (this.capYPositionArray.length < Math.round(this.options.meterNum)) {
+        this.capYPositionArray.push(value);
+      };
+      ctx.fillStyle = capStyle;
+      //draw the cap, with transition effect
+      if (value < capYPositionArray[i]) {
+        ctx.fillRect(i * 12, height - (--capYPositionArray[i]), meterWidth, capHeight);
+      } else {
+        ctx.fillRect(i * 12, height - value, this.options.meterWidth, this.options.capHeight);
+        capYPositionArray[i] = value;
+      };
+      ctx.fillStyle = this.gradient; //set the filllStyle to gradient for a better look
+      ctx.fillRect(i * 12 /*meterWidth+gap*/ , height - value + this.options.capHeight, this.options.meterWidth, height); //the meter
+    }
+    requestAnimationFrame(this.renderFrame);
+  }
+
+}
+
 class Visualizer {
 
   constructor(canvas, context) {

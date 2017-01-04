@@ -65,7 +65,7 @@
 /******/ 	}
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "720d0c6e955ee65fcc3f"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "420d470f44730ca37796"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
 /******/ 	
@@ -34159,7 +34159,7 @@
 	          ),
 	          _react2.default.createElement(
 	            'ul',
-	            { role: 'nav', className: 'list-group' },
+	            { role: 'nav' },
 	            _react2.default.createElement(
 	              'li',
 	              null,

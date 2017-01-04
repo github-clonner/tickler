@@ -15,7 +15,8 @@ export default class App extends React.Component {
         <div>
           <Header></Header>
           <h1>React Router Tutorial</h1>
-          <ul role="nav">
+          <ul role="nav" className="list-group">
+            <li><Link to="/player" className={styles.boxyThing}>Player</Link></li>
             <li><Link to="/about" className={styles.boxyThing}>About <small className={styles.blackStuff}>123</small></Link></li>
             <li><Link to="/repos" className={styles.blackStuff}>Repos</Link></li>
           </ul>

@@ -41,7 +41,7 @@ function initMainWindow() {
     frame: false
   });
 
-  mainWindow.loadURL(`file://${__dirname}/index.html`);
+  mainWindow.loadURL(`file://${__dirname}/dist/index.html`);
 
   //if (process.env.NODE_ENV === 'development') {
     mainWindow.webContents.openDevTools();
