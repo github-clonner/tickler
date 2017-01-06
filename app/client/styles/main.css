@@ -1,6 +1,7 @@
 body {
   font-family: 'Open Sans', helvetica, sans-serif, arial !important;
   background-color: #212121;
+  background-image: url("http://subtlepatterns.com/patterns/debut_dark.png");
   /* color: hwb(100, 0%, 0%, 0.5); */
   color: #afafaf;
   margin: 0px;

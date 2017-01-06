@@ -1,5 +1,7 @@
 import React from 'react';
 import { Howl, Howler } from 'howler';
+
+import Progress from './Progress';
 import styles from '../../styles/player.css';
 
 export default class Player extends React.Component {
@@ -15,6 +17,10 @@ export default class Player extends React.Component {
 
   componentWillMount () {
     console.log('howler: ', Object.keys(styles));
+  }
+
+  componentDidMount() {
+
   }
 
   play() {
@@ -43,6 +49,7 @@ export default class Player extends React.Component {
           <button disabled={!this.state.isPlaying} type="button" className="btn btn-default" onClick={this.stop.bind(this)}>Stop</button>
           <button type="button" className="btn btn-default">Right</button>
         </div>
+        <Progress progress="50"></Progress>
       </div>
     )
   }
