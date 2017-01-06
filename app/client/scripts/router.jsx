@@ -36,9 +36,9 @@ render((
     <Route path="/" component={App} name="Container">
       <IndexRoute component={HomePage} name='Home'/>
       <Route path="/about" component={About} />
+      <Route path="/player" component={Player} />
     </Route>
     <Route path="/about" component={About} />
-    <Route path="/player" component={Player} />
     <Redirect from="/*" to="/" />
     <Route path="*" component={NotFound} />
   </Router>

@@ -26,6 +26,7 @@
     "codemirror": "^5.22.0",
     "electron": "^1.4.13",
     "electron-window-state": "^4.0.1",
+    "howler": "^2.0.2",
     "node-fetch": "^1.6.3",
     "react": "^15.4.1",
     "react-codemirror": "^0.3.0",

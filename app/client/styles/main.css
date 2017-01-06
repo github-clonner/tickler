@@ -1,12 +1,17 @@
 body {
   font-family: 'Open Sans', helvetica, sans-serif, arial !important;
   background-color: #212121;
-	/* color: hwb(100, 0%, 0%, 0.5); */
+  /* color: hwb(100, 0%, 0%, 0.5); */
   color: #afafaf;
   margin: 0px;
   padding: 0px;
 }
-
+.navbar {
+  -webkit-app-region: drag;
+  -webkit-user-select: none;
+  border-bottom-left-radius: 0px !important;
+  border-bottom-right-radius: 0px !important;
+}
 .banshee {
   text-decoration: underline;
   & .siren {

@@ -54,7 +54,7 @@ export default {
       inject: false
     }),
     new ElectronConnectWebpackPlugin({
-      path:path.join(__dirname, 'dist'),
+      path: path.join(__dirname, 'dist'),
       logLevel: 0
     }),
     new WebpackCleanupPlugin({
