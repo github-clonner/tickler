@@ -9,7 +9,7 @@ import WebpackCleanupPlugin from 'webpack-cleanup-plugin'
 const babelSettings = JSON.parse(fs.readFileSync(".babelrc"));
 const config = JSON.parse(fs.readFileSync("package.json"));
 
-console.log(config);
+console.log(JSON.stringify(config.devDependencies, null, 2));
 
 const env = {
   NODE_ENV: process.env.NODE_ENV || 'development',
@@ -23,7 +23,7 @@ export default {
     './client/scripts/router',
   ],
   output: {
-    path: path.join(__dirname, 'dist' ),
+    path: path.resolve('dist'),
     filename: 'bundle.js'
   },
   devServer: {
@@ -35,6 +35,8 @@ export default {
     host: "localhost",
     port: 7070
   },
+  devtool: 'inline-source-map',
+  target: 'electron-renderer',
   //target: 'node-webkit',
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
@@ -44,7 +46,8 @@ export default {
       'process.env': JSON.stringify(env)
     }),
     new HtmlwebpackPlugin({
-      template: 'node_modules/html-webpack-template/index.ejs',
+      //template: 'index.js',
+      template: require('html-webpack-template'),
       links: [
         'https://fonts.googleapis.com/css?family=Roboto',
         'http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css'
@@ -113,7 +116,9 @@ export default {
   },
   postcss: function (webpack) {
     return [
-      require("postcss-import")({ addDependencyTo: webpack }),
+      require("postcss-import")({
+        root: process.cwd()
+      }),
       require("postcss-url")(),
       require("postcss-cssnext")({
         browsers: [

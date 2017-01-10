@@ -11,6 +11,8 @@ const fs = require('fs');
 
 const windowStateKeeper = require('electron-window-state');
 
+const config = JSON.parse(fs.readFileSync("package.json"));
+
 // custom constants
 const clientId = '342b8a7af638944906dcdb46f9d56d98';
 const redirectUri = 'http://sc-redirect.herokuapp.com/callback.html';
@@ -57,6 +59,11 @@ function initMainWindow() {
     mainWindow.setTitle('Soundnode');
     mainWindow.show();
     mainWindow.focus();
+    //setInterval(function() {
+      //event.sender.send('asynchronous-reply', 'pong')
+      mainWindow.webContents.send('config' , config);
+    //}, 1500)
+
   });
 
   mainWindowState.manage(mainWindow);

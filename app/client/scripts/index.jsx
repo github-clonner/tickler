@@ -7,9 +7,31 @@ import Video from './components/Video';
 import Player from './components/Player';
 import Cpu from './components/Cpu';
 
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+// In renderer process (web page).
+import { ipcRenderer } from 'electron';
+
+ipcRenderer.on('asynchronous-reply', (event, arg) => {
+  console.log(arg) // prints "pong"
+})
+
+
+
 
 export default class App extends React.Component {
+  state = {
+    config: {
+      dependencies: {}
+    }
+  }
+
+  componentDidMount() {
+    ipcRenderer.once('config', (event, data) => {
+      this.setState(prevState => ({
+        config: data
+      }));
+    });
+  }
+
   render() {
     /*return (
       <div>
@@ -37,6 +59,24 @@ export default class App extends React.Component {
                 <li className="list-group-item"><Link to="/about" className={styles.boxyThing}>About <small className={styles.blackStuff}>122</small></Link></li>
                 <li className="list-group-item"><Link to="/repos" className={styles.blackStuff}>Repos</Link></li>
               </ul>
+              <table className="table table-condensed">
+                <thead>
+                  <tr>
+                    <th>Dependency</th>
+                    <th>Version</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {Object.keys(this.state.config.dependencies).map(dependency => {
+                    return (
+                      <tr key={dependency}>
+                        <td>{dependency}</td>
+                        <td>{this.state.config.dependencies[dependency]}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
               <main>
                 {this.props.children}
               </main>
