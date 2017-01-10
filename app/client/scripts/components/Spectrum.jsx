@@ -349,6 +349,13 @@ export default class Spectrum extends React.Component {
     })
   }
 
+  /*
+  https://developers.soundcloud.com/docs/api/reference#connections
+  curl -v 'http://api.soundcloud.com/resolve?url=http://soundcloud.com/matas/hobnotropic&client_id=17a992358db64d99e492326797fff3e8'
+  curl -v 'http://api.soundcloud.com/resolve?url=https://soundcloud.com/glennmorrison/beethoven-moonlight-sonata&client_id=17a992358db64d99e492326797fff3e8'
+
+  */
+
   componentDidMount () {
     //const canvas = findDOMNode(this.refs.canvas);
     /*this._wavesurfer = Object.create(WaveSurfer);
