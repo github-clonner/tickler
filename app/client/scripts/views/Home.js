@@ -7,7 +7,6 @@ export default React.createClass({
   render() {
     return (
       <div>
-        <img src="https://getfirebug.com/img/firebug-large.png" />
       </div>
     )
   }

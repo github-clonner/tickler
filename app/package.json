@@ -2,6 +2,8 @@
   "name": "nw-app",
   "version": "1.0.0",
   "description": "",
+  "author": "Benjamin Maggi",
+  "license": "BSD",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
@@ -11,17 +13,6 @@
     "nwj": "../nwjs_p.app/Contents/MacOS/nwjs ./dist/",
     "webpack": "webpack"
   },
-  "author": "",
-  "window": {
-    "toolbar": false,
-    "icon": "media/logo.png",
-    "resizable": false,
-    "frame": true,
-    "width": 800,
-    "height": 500,
-    "transparent": false
-  },
-  "license": "ISC",
   "dependencies": {
     "codemirror": "^5.22.0",
     "electron": "^1.4.13",

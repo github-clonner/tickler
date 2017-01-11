@@ -28,8 +28,8 @@ app.on('ready', () => {
 
 function initMainWindow() {
   let mainWindowState = windowStateKeeper({
-    defaultWidth: 1180,
-    defaultHeight: 755
+    defaultWidth: 800,
+    defaultHeight: 400
   });
 
   mainWindow = new BrowserWindow({
@@ -38,16 +38,16 @@ function initMainWindow() {
     width: mainWindowState.width,
     height: mainWindowState.height,
     minWidth: 800,
-    minHeight: 640,
+    minHeight: 400,
     center: true,
     frame: false
   });
 
   mainWindow.loadURL(`file://${__dirname}/index.html`);
 
-  //if (process.env.NODE_ENV === 'development') {
+  if (process.env.NODE_ENV === 'development') {
     mainWindow.webContents.openDevTools();
-  //}
+  }
 
   mainWindow.webContents.on('will-navigate', function (e, url) {
     if (url.indexOf('build/index.html#') < 0) {
