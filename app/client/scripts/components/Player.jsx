@@ -1,3 +1,5 @@
+import fileSystem from 'fs';
+import path from 'path';
 import React from 'react';
 import { Howl, Howler } from 'howler';
 import WaveSurfer from 'wavesurfer.js';
@@ -15,98 +17,85 @@ export default class Player extends React.Component {
     duration: 0,
     seek: 0
   }
+  static propTypes = {
+    songs: React.PropTypes.array
+  }
+
   static defaultProps = {
     songs: new Array()
   }
   constructor (...args) {
     super(...args);
-    this.howl = new Howl({
-      src: ['https://upload.wikimedia.org/wikipedia/commons/4/47/Beethoven_Moonlight_2nd_movement.ogg'],
-      volume: this.state.volume,
-      onload: this.initSoundObjectCompleted.bind(this),
-      //onend: this.playEnd
-    });
+    this.wavesurfer = Object.create(WaveSurfer);
   }
 
-  componentWillMount () {
-    console.log('howler: ', Object.keys(styles));
+  componentWillReceiveProps (nextProps) {
+    if(!nextProps.songs.length) {
+      return;
+    }
+    this.load(nextProps.songs[0])
+  }
+
+  load (file) {
+
+    console.log(file)
+    //let file = path.resolve('media/sample.mp3');
+    fileSystem.readFile(file, (error, buffer) => {
+      let blob = new window.Blob([new Uint8Array(buffer)]);
+      this.wavesurfer.loadBlob(blob);
+    })
   }
 
   componentDidMount() {
-    this.wavesurfer = Object.create(WaveSurfer);
-    console.log(this.wavesurfer)
     this.wavesurfer.init({
       container: this.refs.waves,
       barWidth: 2,
       height: 60
     })
-    this.wavesurfer.load('http://api.soundcloud.com/tracks/204082098/stream?client_id=17a992358db64d99e492326797fff3e8') //'https://cdn.rawgit.com/ArtskydJ/test-audio/master/audio/50775__smcameron__drips2.ogg'
+
+    //this.wavesurfer.load('http://api.soundcloud.com/tracks/204082098/stream?client_id=17a992358db64d99e492326797fff3e8') //'https://cdn.rawgit.com/ArtskydJ/test-audio/master/audio/50775__smcameron__drips2.ogg'
+
+    this.wavesurfer.on('loading', function (progress) {
+      console.log(progress);
+    });
+
     this.wavesurfer.on('ready', () => {
-      console.log('wavesurfer ready')
-      this.wavesurfer.params.container.style.opacity = 0.9;
-      this.wavesurfer.play();
-      console.log(this.wavesurfer.backend)
+      this.setState({
+        duration: this.wavesurfer.getDuration()
+      })
+    });
+
+    this.wavesurfer.on('audioprocess', () => {
+      this.setState({
+        seek: this.wavesurfer.getCurrentTime()
+      })
     });
   }
 
   play() {
-    this.setState(prevState => ({
-      isPlaying: !prevState.isPlaying
-    }));
     this.wavesurfer.playPause();
-    if(!this.state.isPlaying) {
-
-      //this.howl.play();
-      //this.interval = setInterval(this.updateCurrentDuration.bind(this), 500);
-    } else {
-      //this.howl.pause();
-      //this.stopUpdateCurrentDuration();
-    }
-  }
-
-  updateCurrentDuration () {
-    this.setState({
-      seek: this.howl.seek()
-    });
-    console.log(this.state)
-  }
-
-  stopUpdateCurrentDuration () {
-    clearInterval(this.interval);
-  }
-
-  initSoundObjectCompleted () {
-    this.setState({
-      duration: this.howl.duration(),
-      isLoading: false
-    });
+    this.setState(prevState => ({
+      isPlaying: this.wavesurfer.isPlaying()
+    }));
   }
 
   stop() {
+    this.wavesurfer.stop();
     this.setState(prevState => ({
-      isPlaying: false,
-      seek: 0
+      isPlaying: this.wavesurfer.isPlaying(),
+      seek: this.wavesurfer.getCurrentTime()
     }));
-    this.stopUpdateCurrentDuration();
-    this.howl.stop();
   }
 
-  seek(event) {
-    console.log(event.target.value)
-    //this.setState({value: event.target.value});
-  }
-  // <input type="range" min="0" max={this.state.duration} value={this.state.seek} step="1" onChange={(event) => this.seek.bind(this)}/>
   render () {
     return (
       <div className="player">
         <div className="btn-group">
-          <button type="button" className="btn btn-default" onClick={this.play.bind(this)}>Play</button>
-          <button disabled={!this.state.isPlaying} type="button" className="btn btn-default" onClick={this.stop.bind(this)}>Stop</button>
-          <button type="button" className="btn btn-default">Right</button>
+          <button type="button" className="btn btn-outline-primary" onClick={this.play.bind(this)}><i className="fa fa-play"></i></button>
+          <button disabled={!this.state.isPlaying} type="button" className="btn btn-outline-primary" onClick={this.stop.bind(this)}><i className="fa fa-stop"></i></button>
+          <button type="button" className="btn btn-outline-primary">Right</button>
         </div>
         <Progress progress={this.state.seek / this.state.duration * 100}></Progress>
-
-        <input type="range" min="0" max="100" value="50" step="1" onChange={(event) => this.seek.bind(this)}/>
         <div ref="waves"></div>
       </div>
     )

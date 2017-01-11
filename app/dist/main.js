@@ -45,9 +45,9 @@ function initMainWindow() {
 
   mainWindow.loadURL(`file://${__dirname}/index.html`);
 
-  if (process.env.NODE_ENV === 'development') {
+  //if (process.env.NODE_ENV === 'development') {
     mainWindow.webContents.openDevTools();
-  }
+  //}
 
   mainWindow.webContents.on('will-navigate', function (e, url) {
     if (url.indexOf('build/index.html#') < 0) {

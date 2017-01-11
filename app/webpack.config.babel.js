@@ -50,14 +50,15 @@ export default {
       template: require('html-webpack-template'),
       links: [
         'https://fonts.googleapis.com/css?family=Roboto',
-        'http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css'
+        'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css',
+        'https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css'
       ],
       title: 'App',
       appMountId: 'app',
       inject: false
     }),
     new ElectronConnectWebpackPlugin({
-      path: path.join(__dirname, 'dist'),
+      path: path.resolve('dist'),
       logLevel: 0
     }),
     new WebpackCleanupPlugin({

@@ -1,3 +1,4 @@
+import { remote } from 'electron';
 import React from 'react';
 import { render } from 'react-dom';
 import ReactDOMServer from 'react-dom/server';
@@ -27,10 +28,18 @@ export default class App extends React.Component {
   }
 
   componentDidMount() {
+    console.log('componentDidMount')
     ipcRenderer.once('config', (event, data) => {
       this.setState(prevState => ({
         config: data
       }));
+    });
+  }
+
+  open () {
+    let files = remote.dialog.showOpenDialog({properties: ['openFile', 'openDirectory', 'multiSelections']})
+    this.setState({
+      songs: files
     });
   }
 
@@ -83,6 +92,11 @@ export default class App extends React.Component {
     return (
       <div>
         <Header></Header>
+        <div className="btn-group">
+          <button type="button" className="btn btn-outline-primary"><i className="fa fa-folder-open-o" onClick={this.open.bind(this)}></i></button>
+          <button type="button" className="btn btn-outline-primary">Middle</button>
+          <button type="button" className="btn btn-outline-primary">Right</button>
+        </div>
         <div className="container-fluid">
           <div className="row">
             <div className="col-md-12">
@@ -92,14 +106,17 @@ export default class App extends React.Component {
                 <li className="list-group-item"><Link to="/about" className={styles.boxyThing}>About <small className={styles.blackStuff}>122</small></Link></li>
                 <li className="list-group-item"><Link to="/repos" className={styles.blackStuff}>Repos</Link></li>
               </ul>
-              <button type="button" className="btn btn-default" onClick={this.showDependencies.bind(this)}>show deps</button>
+              <div className="btn-group">
+                <button type="button" className="btn btn-outline-primary" onClick={this.showDependencies.bind(this)}><i className="fa fa-play"></i></button>
+                <button type="button" className="btn btn-outline-primary" onClick={this.open.bind(this)}>open</button>
+              </div>
               <main>
                 {this.props.children}
               </main>
             </div>
           </div>
         </div>
-        <Player></Player>
+        <Player songs={this.state.songs}></Player>
       </div>
     );
   }

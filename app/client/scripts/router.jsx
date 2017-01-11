@@ -43,5 +43,3 @@ render((
     <Route path="*" component={NotFound} />
   </Router>
 ), document.getElementById('app'))
-
-console.log('sdfgsdfg453345 worldxXXXX')
