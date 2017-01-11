@@ -1,4 +1,5 @@
 import { remote } from 'electron';
+import path from 'path';
 import React from 'react';
 import { render } from 'react-dom';
 import ReactDOMServer from 'react-dom/server';
@@ -17,14 +18,12 @@ ipcRenderer.on('asynchronous-reply', (event, arg) => {
   console.log(arg) // prints "pong"
 })
 
-
-
-
 export default class App extends React.Component {
   state = {
     config: {
       dependencies: {}
-    }
+    },
+    songs: [path.resolve('media/FurElise.ogg')]
   }
 
   componentDidMount() {
@@ -100,15 +99,15 @@ export default class App extends React.Component {
         <div className="container-fluid">
           <div className="row">
             <div className="col-md-12">
-              <h1>React Router Tutorial</h1>
+              <h1>dom inserts</h1>
               <ul role="nav" className="list-group">
                 <li className="list-group-item"><Link to="/player" className={styles.boxyThing}>Player</Link></li>
                 <li className="list-group-item"><Link to="/about" className={styles.boxyThing}>About <small className={styles.blackStuff}>122</small></Link></li>
                 <li className="list-group-item"><Link to="/repos" className={styles.blackStuff}>Repos</Link></li>
               </ul>
               <div className="btn-group">
-                <button type="button" className="btn btn-outline-primary" onClick={this.showDependencies.bind(this)}><i className="fa fa-play"></i></button>
-                <button type="button" className="btn btn-outline-primary" onClick={this.open.bind(this)}>open</button>
+                <button type="button" className="btn btn-outline-primary" onClick={this.showDependencies.bind(this)}>▷</button>
+                <button type="button" className="btn btn-outline-primary" onClick={this.open.bind(this)}>📂</button>
               </div>
               <main>
                 {this.props.children}

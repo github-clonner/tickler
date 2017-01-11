@@ -37,7 +37,6 @@ export default {
   },
   devtool: 'inline-source-map',
   target: 'electron-renderer',
-  //target: 'node-webkit',
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoErrorsPlugin(),

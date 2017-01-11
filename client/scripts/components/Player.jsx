@@ -1,13 +1,21 @@
 import fileSystem from 'fs';
 import path from 'path';
-import React from 'react';
+import React, { Component, PropTypes } from 'react';
 import { Howl, Howler } from 'howler';
 import WaveSurfer from 'wavesurfer.js';
 
 import Progress from './Progress';
 import styles from '../../styles/player.css';
 
-export default class Player extends React.Component {
+import {EventEmitter} from 'events';
+
+class PlayerEvents extends EventEmitter {
+  constructor(...args) {
+    super(...args);
+  }
+}
+
+export default class Player extends Component {
   state = {
     isPlaying: false,
     isPause: false,
@@ -18,7 +26,7 @@ export default class Player extends React.Component {
     seek: 0
   }
   static propTypes = {
-    songs: React.PropTypes.array
+    songs: PropTypes.array
   }
 
   static defaultProps = {
@@ -27,6 +35,7 @@ export default class Player extends React.Component {
   constructor (...args) {
     super(...args);
     this.wavesurfer = Object.create(WaveSurfer);
+    this.events = new PlayerEvents();
   }
 
   componentWillReceiveProps (nextProps) {
@@ -53,6 +62,10 @@ export default class Player extends React.Component {
       height: 60
     })
 
+    this.events.on('onPlay', data => {
+      console.log('playing backend:', data)
+    })
+
     //this.wavesurfer.load('http://api.soundcloud.com/tracks/204082098/stream?client_id=17a992358db64d99e492326797fff3e8') //'https://cdn.rawgit.com/ArtskydJ/test-audio/master/audio/50775__smcameron__drips2.ogg'
 
     this.wavesurfer.on('loading', function (progress) {
@@ -77,6 +90,7 @@ export default class Player extends React.Component {
     this.setState(prevState => ({
       isPlaying: this.wavesurfer.isPlaying()
     }));
+    this.events.emit('onPlay', {isPlaying: this.wavesurfer.isPlaying()})
   }
 
   stop() {
@@ -91,8 +105,8 @@ export default class Player extends React.Component {
     return (
       <div className="player">
         <div className="btn-group">
-          <button type="button" className="btn btn-outline-primary" onClick={this.play.bind(this)}><i className="fa fa-play"></i></button>
-          <button disabled={!this.state.isPlaying} type="button" className="btn btn-outline-primary" onClick={this.stop.bind(this)}><i className="fa fa-stop"></i></button>
+          <button type="button" className="btn btn-outline-primary" onClick={this.play.bind(this)}>►</button>
+          <button disabled={!this.state.isPlaying} type="button" className="btn btn-outline-primary" onClick={this.stop.bind(this)}>◼</button>
           <button type="button" className="btn btn-outline-primary">Right</button>
         </div>
         <Progress progress={this.state.seek / this.state.duration * 100}></Progress>
