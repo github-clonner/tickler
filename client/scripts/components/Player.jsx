@@ -1,5 +1,6 @@
 import fileSystem from 'fs';
 import path from 'path';
+import {remote} from 'electron';
 import React, { Component, PropTypes } from 'react';
 import { Howl, Howler } from 'howler';
 import WaveSurfer from 'wavesurfer.js';
@@ -8,6 +9,8 @@ import Progress from './Progress';
 import styles from '../../styles/player.css';
 
 import {EventEmitter} from 'events';
+
+import _ from 'lodash';
 
 class PlayerEvents extends EventEmitter {
   constructor(...args) {
@@ -25,6 +28,7 @@ export default class Player extends Component {
     duration: 0,
     seek: 0
   }
+
   static propTypes = {
     songs: PropTypes.array
   }
@@ -32,12 +36,46 @@ export default class Player extends Component {
   static defaultProps = {
     songs: new Array()
   }
+
   constructor (...args) {
     super(...args);
     this.wavesurfer = Object.create(WaveSurfer);
     this.events = new PlayerEvents();
+    this.resize = _.debounce(function (event) {
+      event.preventDefault();
+      let orgWidth = this.wavesurfer.drawer.containerWidth;
+      let newWidth = this.wavesurfer.drawer.container.clientWidth;
+      if (orgWidth != newWidth) {
+        this.wavesurfer.drawer.containerWidth = newWidth;
+        this.wavesurfer.drawBuffer();
+      }
+    }, 500).bind(this);
+  }
+  load (file) {
+    fileSystem.readFile(file, (error, buffer) => {
+      let blob = new window.Blob([new Uint8Array(buffer)]);
+      this.wavesurfer.loadBlob(blob);
+    })
   }
 
+  // wavesurfer event handlers
+  loading (progress) {
+    if(progress === 100) {
+      window.addEventListener('resize', this.resize);
+    }
+  }
+  ready () {
+    this.setState({
+      duration: this.wavesurfer.getDuration()
+    });
+  }
+  audioprocess () {
+    this.setState({
+      seek: this.wavesurfer.getCurrentTime()
+    });
+  }
+
+  // react component lifecycle events
   componentWillReceiveProps (nextProps) {
     if(!nextProps.songs.length) {
       return;
@@ -45,46 +83,28 @@ export default class Player extends Component {
     this.load(nextProps.songs[0])
   }
 
-  load (file) {
-
-    console.log(file)
-    //let file = path.resolve('media/sample.mp3');
-    fileSystem.readFile(file, (error, buffer) => {
-      let blob = new window.Blob([new Uint8Array(buffer)]);
-      this.wavesurfer.loadBlob(blob);
-    })
+  componentWillUnmount () {
+    window.removeEventListener('resize', this.resize);
+    this.stop();
+    this.wavesurfer.destroy();
   }
 
-  componentDidMount() {
+  componentDidMount () {
+
     this.wavesurfer.init({
       container: this.refs.waves,
       barWidth: 2,
       height: 60
     })
-
     this.events.on('onPlay', data => {
       console.log('playing backend:', data)
     })
-
-    //this.wavesurfer.load('http://api.soundcloud.com/tracks/204082098/stream?client_id=17a992358db64d99e492326797fff3e8') //'https://cdn.rawgit.com/ArtskydJ/test-audio/master/audio/50775__smcameron__drips2.ogg'
-
-    this.wavesurfer.on('loading', function (progress) {
-      console.log(progress);
-    });
-
-    this.wavesurfer.on('ready', () => {
-      this.setState({
-        duration: this.wavesurfer.getDuration()
-      })
-    });
-
-    this.wavesurfer.on('audioprocess', () => {
-      this.setState({
-        seek: this.wavesurfer.getCurrentTime()
-      })
-    });
+    this.wavesurfer.on('loading', this.loading.bind(this));
+    this.wavesurfer.on('ready', this.ready.bind(this));
+    this.wavesurfer.on('audioprocess', this.audioprocess.bind(this));
   }
 
+  // Player controls
   play() {
     this.wavesurfer.playPause();
     this.setState(prevState => ({

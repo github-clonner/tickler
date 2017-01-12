@@ -13,7 +13,6 @@ export default class Header extends React.Component {
     this.window.close();
   }
   maximise () {
-    console.log('maximise')
     if (!this.window.isMaximized()) {
       this.window.maximize();
     } else {
@@ -21,7 +20,6 @@ export default class Header extends React.Component {
     }
   }
   minimize () {
-    console.log('minimize')
     this.window.minimize();
   }
   render() {

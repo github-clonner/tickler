@@ -11,6 +11,8 @@ import Video from './components/Video';
 import Player from './components/Player';
 import Cpu from './components/Cpu';
 
+import _ from 'lodash';
+
 // In renderer process (web page).
 import { ipcRenderer } from 'electron';
 
@@ -24,6 +26,7 @@ export default class App extends React.Component {
       dependencies: {}
     },
     songs: [path.resolve('media/FurElise.ogg')]
+    //songs: new Array()
   }
 
   componentDidMount() {
