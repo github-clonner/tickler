@@ -112,6 +112,7 @@ export default class App extends React.Component {
                 <button type="button" className="btn btn-outline-primary" onClick={this.showDependencies.bind(this)}>▷</button>
                 <button type="button" className="btn btn-outline-primary" onClick={this.open.bind(this)}>📂</button>
               </div>
+              <input id="slider2" type ="range" min="0" max="100" step="1"/>
               <main>
                 {this.props.children}
               </main>
