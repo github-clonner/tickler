@@ -6,7 +6,11 @@ import { Howl, Howler } from 'howler';
 import WaveSurfer from 'wavesurfer.js';
 
 import Progress from './Progress';
-import styles from '../../styles/player.css';
+import InputRange from './InputRange';
+
+require('../../styles/player.css');
+require('../../styles/buttons.css');
+require('../../styles/input.css');
 
 import {EventEmitter} from 'events';
 
@@ -137,7 +141,8 @@ export default class Player extends Component {
           <button disabled={!this.state.isPlaying} type="button" className="btn btn-outline-primary" onClick={this.stop.bind(this)}>◼</button>
           <button type="button" className="btn btn-outline-primary">Right</button>
         </div>
-        <input type="range" min="0" max="100" value={this.state.seek / this.state.duration * 100} onChange={this.handleChange.bind(this)} step="1"/><span>{this.state.value}</span>
+        <button className="round-button">play_arrow</button>
+        <InputRange value={this.state.seek / this.state.duration * 100} min={0} max={100} step={1} onChange={this.handleChange.bind(this)} />
         <Progress progress={this.state.seek / this.state.duration * 100}></Progress>
         <div ref="waves"></div>
       </div>
