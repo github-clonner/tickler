@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="http://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/codemirror.min.css" rel="stylesheet">
+    <link href="http://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/theme/material.min.css" rel="stylesheet">
+    <title>Hello</title>
+    <style type="text/css">
+      body {
+        margin: 10px;
+        overflow-x: hidden;
+      }
+    </style>
+</head>
+  <body style="background-color:rgba(0,0,0,0);">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="panel panel-default">
+            <div class="panel-heading" style="-webkit-app-region: drag">
+              <h3 class="panel-title"><i class="fa fa-fw fa-cogs"></i>Panel title</h3>
+            </div>
+            <div class="panel-body">
+              <div class="row">
+                <div class="col-md-12">
+                  <div id="viz"></div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-12">
+                  <toolbar></toolbar>
+                </div>
+              </div>
+              <hr />
+              <div class="row">
+                <div class="col-md-12">
+                  <codemirror></codemirror>
+                </div>
+              </div>
+            </div>
+            <div class="panel-footer">Panel footer</div>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="row">
+        <div class="col-sm-12" id="categories"></div>
+      </div>
+
+    <!-- Boostrap 3 -->
+    <script src="http://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/latest/js/bootstrap.min.js"></script>
+    <!-- Entry Point -->
+    <script src="bundle.js"></script>
+
+  <script>
+    /*
+    var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+      lineNumbers: true,
+      styleActiveLine: true,
+      matchBrackets: true
+    });
+    editor.setOption("theme", "material");
+    */
+  </script>
+  </body>
+</html>

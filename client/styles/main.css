@@ -1,0 +1,31 @@
+body {
+  font-family: 'Open Sans', helvetica, sans-serif, arial !important;
+  background-color: #fafafa;
+  //background-image: url("http://subtlepatterns.com/patterns/debut_dark.png");
+  /* color: hwb(100, 0%, 0%, 0.5); */
+  color: #afafaf;
+  margin: 0px;
+  padding: 0px;
+}
+.navbar {
+  -webkit-app-region: drag;
+  -webkit-user-select: none;
+  border-bottom-left-radius: 0px !important;
+  border-bottom-right-radius: 0px !important;
+}
+.banshee {
+  text-decoration: underline;
+  & .siren {
+    color: #f00;
+    background-color: #0f0;
+  }
+}
+
+.boxyThing {
+  background-color: #f00;
+  color: #fff;
+  & .blackStuff {
+    color: #0ff;
+    border: 1px solid black;
+  }
+}
