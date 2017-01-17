@@ -9,7 +9,11 @@ const {
 } = require('electron');
 const fs = require('fs');
 
-const windowStateKeeper = require('electron-window-state');
+import windowStateKeeper from 'electron-window-state';
+
+const config = JSON.parse(fs.readFileSync("package.json"));
+
+console.log('config:', config)
 
 // custom constants
 const clientId = '342b8a7af638944906dcdb46f9d56d98';

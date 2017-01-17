@@ -15,7 +15,8 @@ export default class Player extends React.Component {
     currentSongIndex: -1,
     volume: 0.5,
     duration: 0,
-    seek: 0
+    seek: 0,
+    value: 3
   }
   static propTypes = {
     songs: React.PropTypes.array
@@ -29,6 +30,13 @@ export default class Player extends React.Component {
     this.wavesurfer = Object.create(WaveSurfer);
   }
 
+  handleChange (event) {
+    /*this.setState({
+      value: event.target.value
+    });*/
+    console.log('seekTo: ', event.target.value)
+    this.wavesurfer.seekTo(event.target.value / 100);
+  }
   componentWillReceiveProps (nextProps) {
     if(!nextProps.songs.length) {
       return;
@@ -95,6 +103,7 @@ export default class Player extends React.Component {
           <button disabled={!this.state.isPlaying} type="button" className="btn btn-outline-primary" onClick={this.stop.bind(this)}><i className="fa fa-stop"></i></button>
           <button type="button" className="btn btn-outline-primary">Right</button>
         </div>
+        <input type="range" min="0" max="100" value={this.state.seek / this.state.duration * 100} onChange={this.handleChange.bind(this)} step="1"/><span>{this.state.value}</span>
         <Progress progress={this.state.seek / this.state.duration * 100}></Progress>
         <div ref="waves"></div>
       </div>

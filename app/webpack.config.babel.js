@@ -4,6 +4,7 @@ import webpack from 'webpack';
 import HtmlwebpackPlugin from 'html-webpack-plugin';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import ElectronConnectWebpackPlugin from 'electron-connect-webpack-plugin';
+import ElectronPlugin from 'electron-webpack-plugin';
 import WebpackCleanupPlugin from 'webpack-cleanup-plugin'
 
 const babelSettings = JSON.parse(fs.readFileSync(".babelrc"));
@@ -17,14 +18,16 @@ const env = {
 
 export default {
   debug: true,
-  entry: [
+  entry: {
     //'webpack-dev-server/client?http://0.0.0.0:8080',
     //'webpack/hot/only-dev-server',
-    './client/scripts/router',
-  ],
+    'bundle': './client/scripts/router',
+    //'electron': './main'
+  },
   output: {
     path: path.resolve('dist'),
-    filename: 'bundle.js'
+    //filename: 'bundle.js'
+    filename: '[name].js'
   },
   devServer: {
     contentBase: './dist',
@@ -36,7 +39,7 @@ export default {
     port: 7070
   },
   devtool: 'inline-source-map',
-  target: 'electron-renderer',
+  target: 'electron',
   //target: 'node-webkit',
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
@@ -61,8 +64,25 @@ export default {
       path: path.resolve('dist'),
       logLevel: 0
     }),
+    new ElectronPlugin({
+      // if a file in this path is modified/emitted, electron will be restarted
+      // *required*
+      relaunchPathMatch: "./main",
+      // the path to launch electron with
+      // *required*
+      path: path.resolve('dist'),
+      // the command line arguments to launch electron with
+      // optional
+      args: ["--enable-logging"],
+      // the options to pass to child_process.spawn
+      // see: https://nodejs.org/api/child_process.html#child_process_child_process_spawnsync_command_args_options
+      // optional
+      options: {
+        env: {NODE_ENV: "development"}
+      }
+    }),
     new WebpackCleanupPlugin({
-      exclude: ["package.json", "main.js", "index.html"],
+      exclude: ["package.json", "main.js", "index.html", 'bootstrapper.js'],
     })
     //new ExtractTextPlugin('style.css', { allChunks: true })
   ],
