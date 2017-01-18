@@ -4,3 +4,4 @@ dist/bundle.js
 dist/index.html
 dist.old/
 .DS_Store
+npm-debug.log

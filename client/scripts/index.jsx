@@ -9,7 +9,11 @@ import styles from '../styles/main.css';
 import Header from './components/Header';
 import Video from './components/Video';
 import Player from './components/Player';
+import List from './components/List';
 import Cpu from './components/Cpu';
+
+import Youtube from './lib/Youtube';
+const youtube = new Youtube('AIzaSyAPBCwcnohnbPXScEiVMRM4jYWc43p_CZU');
 
 import _ from 'lodash';
 
@@ -20,13 +24,68 @@ ipcRenderer.on('asynchronous-reply', (event, arg) => {
   console.log(arg) // prints "pong"
 })
 
+const songs = [{
+  "title": "Spiderwebs",
+  "duration": "4:28",
+  "stars": 2
+}, {
+  "title": "Excuse Me Mr.fasdfasdfasdfasdfasdfadsf dfasdf adfasdfasdf",
+  "duration": "3:04",
+  "stars": 3
+}, {
+  "title": "Just a Girl",
+  "duration": "3:28",
+  "stars": 1
+}, {
+  "title": "Happy Now?",
+  "duration": "3:43",
+  "stars": 2
+}, {
+  "title": "Different People",
+  "duration": "4:34",
+  "stars": 3
+}, {
+  "title": "Hey You!",
+  "duration": "3:34",
+  "stars": 4
+}, {
+  "title": "The Climb",
+  "duration": "6:37",
+  "stars": 5
+}, {
+  "title": "Sixteen",
+  "duration": "3:21",
+  "stars": 0
+}, {
+  "title": "Sunday Morning",
+  "duration": "4:33",
+  "stars": 0
+}, {
+  "title": "Don't Speak",
+  "duration": "4:23"
+}, {
+  "title": "You Can Do It",
+  "duration": "4:13",
+  "stars": 4
+}, {
+  "title": "World Go 'Round",
+  "duration": "4:09"
+}, {
+  "title": "End It on This",
+  "duration": "3:45"
+}, {
+  "title": "Tragic Kingdom",
+  "duration": "5:31",
+  "stars": 5
+}]
+
 export default class App extends React.Component {
   state = {
     config: {
       dependencies: {}
     },
-    songs: [path.resolve('media/FurElise.ogg')]
-    //songs: new Array()
+    songs: [path.resolve('media/FurElise.ogg')],
+    playList: new Array()
   }
 
   componentDidMount() {
@@ -35,6 +94,32 @@ export default class App extends React.Component {
       this.setState(prevState => ({
         config: data
       }));
+    });
+
+    youtube.getPlayListItems('PLA70D07FB6C624D3A')
+    .then(items => {
+      console.log(items)
+      let playList = items.map(function(item) {
+        return {
+          title: item.snippet.title,
+          duration: "4:23",
+          stars: 2
+        };
+      });
+      let videoIds = items.map(item => item.snippet.resourceId.videoId);
+      youtube.getVideos(videoIds)
+      .then(response => response.items)
+      .then(videos => {
+        console.log(videos)
+        this.setState({
+          playList: videos.map(video => {
+            return {
+              title: video.snippet.title,
+              duration: video.contentDetails.duration
+            };
+          })
+        });
+      });
     });
   }
 
@@ -93,12 +178,7 @@ export default class App extends React.Component {
     );*/
     return (
       <div>
-        <Header></Header>
-        <div className="btn-group">
-          <button type="button" className="btn btn-outline-primary"><i className="fa fa-folder-open-o" onClick={this.open.bind(this)}></i></button>
-          <button type="button" className="btn btn-outline-primary">Middle</button>
-          <button type="button" className="btn btn-outline-primary">Right</button>
-        </div>
+        <Header />
         <div className="container-fluid">
           <div className="row">
             <div className="col-md-12">
@@ -112,7 +192,9 @@ export default class App extends React.Component {
                 <button type="button" className="btn btn-outline-primary" onClick={this.showDependencies.bind(this)}>▷</button>
                 <button type="button" className="btn btn-outline-primary" onClick={this.open.bind(this)}>📂</button>
               </div>
-              <input id="slider2" type ="range" min="0" max="100" step="1"/>
+              <div className="list">
+                <List list={this.state.playList} />
+              </div>
               <main>
                 {this.props.children}
               </main>

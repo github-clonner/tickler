@@ -34,11 +34,10 @@ export default class InputRange extends React.Component {
   }
 
   componentDidMount () {
-    //this.drawTrack();
     this.refs.range.addEventListener('change', this.drawTrack, false);
     this.refs.range.addEventListener('input', this.drawTrack, false);
   }
-  
+
   componentWillUnmount () {
     this.refs.range.removeEventListener('change', this.drawTrack);
     this.refs.range.removeEventListener('input', this.drawTrack);
@@ -58,21 +57,20 @@ export default class InputRange extends React.Component {
   }
 
   drawTrack () {
-    let value = this.state.value;
-    console.log('drawTrack: ', value)
+    let {value} = this.state;
     let background = `linear-gradient(to right, #ed1e24 0%, #ed1e24 ${value}%, #2f2f2f ${value}%, #2f2f2f 100%)`;
     this.refs.range.style.background = background;
   }
 
   render () {
-    return <input 
-      ref="range" 
+    return <input
+      ref="range"
       className="range"
-      type="range" 
-      min={this.props.min} 
-      max={this.props.max} 
-      value={this.state.value} 
-      onChange={this.handleChange.bind(this)} 
+      type="range"
+      min={this.props.min}
+      max={this.props.max}
+      value={this.state.value}
+      onChange={this.handleChange.bind(this)}
       step={this.props.step}
     />
   }

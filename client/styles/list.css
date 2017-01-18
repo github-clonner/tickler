@@ -1,0 +1,92 @@
+@import "https://fonts.googleapis.com/css?family=Roboto+Mono:100,400,700|Roboto:100,400,700";
+
+:root {
+    --fontFamily: "Roboto", sans-serif;
+    --color: #484848;
+};
+.list {
+    max-height: 230px;
+    overflow: hidden;
+    overflow-y: scroll;
+    font-family: "Roboto", sans-serif;
+    font-weight: lighter;
+    color: var(--color);
+    padding: 10px;
+    box-sizing: border-box;
+    & ul {
+        list-style: none;
+        padding: 0px;
+        margin: 0px;
+    }
+    & .container {
+        width: 100%;
+        list-style: none;
+        padding: 0px;
+        margin: 0px;
+    }
+    & .row {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        padding: 10px;
+        box-sizing: border-box;
+        /*border: 1px solid transparent;*/
+        &:hover {
+            /*border: 1px solid #eee;*/
+            outline: 1px solid;
+        }
+    }
+    & ul > li > span {
+        /* This will make it work in Firefox >= 35.0a1 */
+        min-width: 0;
+        &:nth-child(1) {
+            text-align: right;
+            font-weight: bold;
+            flex-basis: 5%;
+            font-family: "Roboto Mono", monospace;
+            font-weight: lighter;
+        }
+        &:nth-child(2) {
+            flex-basis: content;
+            margin: 0px 6px;
+            text-align: center;
+            font-weight: bold;
+            color: red;
+        }
+        &:nth-child(3) {
+            flex-grow: 1;
+            flex-basis: 50%;
+        }
+        &:nth-child(5) {
+            margin-left: 10px;
+            flex-grow: 0.1;
+            font-family: "Roboto Mono", monospace;
+        }
+        &.two {
+            min-width: 0;
+            flex-basis: 10%;
+            text-align: right;
+            align-self: flex-end;
+            flex-grow: 1;
+        }
+        & p {
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+            margin: 0px;
+        }
+    }
+}
+
+.stars {
+    color: #eee;
+    display: flex;
+    flex-flow: row;
+    font-weight: lighter;
+    cursor: pointer;
+    & .full {
+        /*color: #d21d30;*/
+        color: #ffd942;
+        -webkit-text-stroke: 1px rgba(255,0,0,.2);
+    }
+}

@@ -52,9 +52,7 @@ export default {
       //template: 'index.js',
       template: require('html-webpack-template'),
       links: [
-        'https://fonts.googleapis.com/css?family=Roboto',
-        'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css',
-        'https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css'
+        //'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css',
       ],
       title: 'App',
       appMountId: 'app',
