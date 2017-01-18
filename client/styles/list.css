@@ -1,18 +1,22 @@
-@import "https://fonts.googleapis.com/css?family=Roboto+Mono:100,400,700|Roboto:100,400,700";
+@import 'variables.css';
 
 :root {
     --fontFamily: "Roboto", sans-serif;
+    --activeRowBackground: #f1f1f1;
+    --activeRowColor: #000;
     --color: #484848;
-};
+}
+
 .list {
-    max-height: 230px;
     overflow: hidden;
     overflow-y: scroll;
     font-family: "Roboto", sans-serif;
     font-weight: lighter;
     color: var(--color);
     padding: 10px;
+    cursor: pointer;
     box-sizing: border-box;
+    user-select: none;
     & ul {
         list-style: none;
         padding: 0px;
@@ -30,10 +34,14 @@
         flex-wrap: wrap;
         padding: 10px;
         box-sizing: border-box;
-        /*border: 1px solid transparent;*/
+        cursor: pointer;
         &:hover {
             /*border: 1px solid #eee;*/
             outline: 1px solid;
+        }
+        &.active {
+            background-color: var(--activeRowBackground);
+            color: var(--activeRowColor);
         }
     }
     & ul > li > span {

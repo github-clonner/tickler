@@ -7,11 +7,12 @@ import { Link } from 'react-router';
 import styles from '../styles/main.css';
 
 import Header from './components/Header';
+import Toolbar from './components/Toolbar';
 import Video from './components/Video';
 import Player from './components/Player';
 import List from './components/List';
 import Cpu from './components/Cpu';
-
+import Time from './lib/Time';
 import Youtube from './lib/Youtube';
 const youtube = new Youtube('AIzaSyAPBCwcnohnbPXScEiVMRM4jYWc43p_CZU');
 
@@ -98,14 +99,6 @@ export default class App extends React.Component {
 
     youtube.getPlayListItems('PLA70D07FB6C624D3A')
     .then(items => {
-      console.log(items)
-      let playList = items.map(function(item) {
-        return {
-          title: item.snippet.title,
-          duration: "4:23",
-          stars: 2
-        };
-      });
       let videoIds = items.map(item => item.snippet.resourceId.videoId);
       youtube.getVideos(videoIds)
       .then(response => response.items)
@@ -113,9 +106,12 @@ export default class App extends React.Component {
         console.log(videos)
         this.setState({
           playList: videos.map(video => {
+            let time = new Time(video.contentDetails.duration);
             return {
               title: video.snippet.title,
-              duration: video.contentDetails.duration
+              duration: time.toTime(),
+              id: video.id,
+              thumbnails: video.thumbnails
             };
           })
         });
@@ -161,45 +157,25 @@ export default class App extends React.Component {
     console.log(html)
   }
 
-  render() {
-    /*return (
-      <div>
-        <Header></Header>
-        <h1>React Router Tutorial</h1>
-        <ul role="nav" className="list-group">
-          <li><Link to="/player" className={styles.boxyThing}>Player</Link></li>
-          <li><Link to="/about" className={styles.boxyThing}>About <small className={styles.blackStuff}>123</small></Link></li>
-          <li><Link to="/repos" className={styles.blackStuff}>Repos</Link></li>
-        </ul>
-        <main>
-          {this.props.children}
-        </main>
-      </div>
-    );*/
+  /*
+    <div className="btn-group">
+      <button type="button" className="btn btn-outline-primary" onClick={this.showDependencies.bind(this)}>▷</button>
+      <button type="button" className="btn btn-outline-primary" onClick={this.open.bind(this)}>📂</button>
+      <li className="list-group-item"><Link to="/player" className={styles.boxyThing}>Player</Link></li>
+    </div>
+  */
+  render () {
     return (
-      <div>
+      <div className="page">
         <Header />
-        <div className="container-fluid">
-          <div className="row">
-            <div className="col-md-12">
-              <h1>dom inserts</h1>
-              <ul role="nav" className="list-group">
-                <li className="list-group-item"><Link to="/player" className={styles.boxyThing}>Player</Link></li>
-                <li className="list-group-item"><Link to="/about" className={styles.boxyThing}>About <small className={styles.blackStuff}>122</small></Link></li>
-                <li className="list-group-item"><Link to="/repos" className={styles.blackStuff}>Repos</Link></li>
-              </ul>
-              <div className="btn-group">
-                <button type="button" className="btn btn-outline-primary" onClick={this.showDependencies.bind(this)}>▷</button>
-                <button type="button" className="btn btn-outline-primary" onClick={this.open.bind(this)}>📂</button>
-              </div>
-              <div className="list">
-                <List list={this.state.playList} />
-              </div>
-              <main>
-                {this.props.children}
-              </main>
-            </div>
+        <Toolbar></Toolbar>
+        <div className="page-content">
+          <div className="list">
+            <List list={this.state.playList} />
           </div>
+          <main>
+            {this.props.children}
+          </main>
         </div>
         <Player songs={this.state.songs}></Player>
       </div>
