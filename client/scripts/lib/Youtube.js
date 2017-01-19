@@ -1,5 +1,50 @@
 import async from 'async';
 import axios from 'axios';
+import ytdl from 'ytdl-core';
+import Stream from 'stream';
+import fs from 'fs';
+import path from 'path';
+import {ipcRenderer} from 'electron';
+import {EventEmitter} from 'events';
+
+
+class EchoStream extends Stream.Writable {
+  constructor(options) {
+    super(options);
+    this.body = new Array();
+  }
+  toBuffer () {
+    return Buffer.concat(this.body);
+  }
+
+  toBufferX () {
+    let buffers = [];
+    this._writableState.getBuffer().forEach(function(data) {
+      buffers.push(data.chunk);
+    });
+    return Buffer.concat(buffers);
+  }
+
+  toArray () {
+    let buffer = this.toBuffer();
+    return new Uint8Array(buffer);
+  }
+
+  toString () {
+    return String.fromCharCode.apply(null, this.toArray());
+  }
+
+  end (chunk, encoding, callback) {
+    let ret = Stream.Writable.prototype.end.apply(this, arguments);
+    if (!ret) this.emit('finish');
+  }
+}
+
+class YoutubeEvents extends EventEmitter {
+  constructor(...args) {
+    super(...args);
+  }
+}
 
 export default class Youtube {
 
@@ -11,6 +56,7 @@ export default class Youtube {
         key: this.apiKey
       }
     });
+    this.events = new YoutubeEvents();
   }
 
   getVideos(ids) {
@@ -25,13 +71,6 @@ export default class Youtube {
       params: options
     })
     .then(response => response.data);
-    /*
-    return bluebird.promisify(this.youtube.videos.list)(options)
-      .catch(function(err) {
-        console.log('An error occured while running upload command: '.red + err.message);
-        throw err;
-      });
-    */
   }
 
   getPlayListItems(playlistId) {
@@ -66,6 +105,53 @@ export default class Youtube {
           return resolve(items)
         }
       });
+    })
+  }
+
+  downloadVideo(video) {
+    let uri = `http://www.youtube.com/watch?v=${video.id}`
+    let mux = new EchoStream({
+      writable: true
+    });
+    var output = path.resolve(__dirname, './media/sound.mp4');
+    return new Promise((resolve, reject) => {
+      let yt = ytdl(uri/*, {
+          filter: function(format) {
+            return format.container === 'mp4' && !format.encoding;;
+          }
+        }*/)
+        // .pipe(fs.createWriteStream('./media/sound.mp4'))
+        // .on('progress', progress => {
+        //   console.log('progress: ', progress)
+        // })
+        .on('finish', () => {
+          console.log('donwload finish !')
+        })
+        // .on('info', function(info) {
+        //   console.log('info', info);
+        // })
+        // .on('error', function(error) {
+        //   console.log('error:', error)
+        //   return reject(error);
+        // });
+
+        yt.on('response', response => {
+          let size = response.headers['content-length'];
+          console.log('size: ', size)
+          yt.pipe(fs.createWriteStream('./media/sound.mp4'));
+
+          // Keep track of progress.
+          let dataRead = 0;
+          yt.on('data', data => {
+            dataRead += data.length;
+            var progress = dataRead / size;
+            this.events.emit('progress', progress)
+          });
+        });
+
+        /*yt.on('end', function() {
+          console.log('Finished');
+        })*/
     })
   }
 }

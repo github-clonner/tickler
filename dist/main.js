@@ -13,12 +13,6 @@ import path from 'path';
 import windowStateKeeper from 'electron-window-state';
 
 const config = JSON.parse(fs.readFileSync("package.json"));
-// custom constants
-const clientId = '342b8a7af638944906dcdb46f9d56d98';
-const redirectUri = 'http://sc-redirect.herokuapp.com/callback.html';
-const SCconnect = `https://soundcloud.com/connect?&client_id=${clientId}&redirect_uri=${redirectUri}&response_type=token`;
-const userConfigPath = `${__dirname}/app/public/js/system/userConfig.json`;
-
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
@@ -63,8 +57,6 @@ class ElectonApplication {
         event.preventDefault();
       }
     });
-
-
 
     this.mainWindowState.manage(this.mainWindow);
     initializeMediaShortcuts();
@@ -113,51 +105,6 @@ class ElectonApplication {
 
 // Create the browser window.
 function initMainWindow() {
-
-  /*let mainWindowState = windowStateKeeper({
-    defaultWidth: 800,
-    defaultHeight: 400
-  });
-
-  mainWindow = new BrowserWindow({
-    x: mainWindowState.x,
-    y: mainWindowState.y,
-    width: mainWindowState.width,
-    height: mainWindowState.height,
-    minWidth: 800,
-    minHeight: 400,
-    center: true,
-    frame: false,
-    icon: makeIcon('icon.png')
-  });
-
-  // and load the index.html of the app.
-  mainWindow.loadURL(`file://${__dirname}/index.html`);
-
-  //if (process.env.NODE_ENV === 'development') {
-    mainWindow.webContents.openDevTools();
-  //}
-
-  mainWindow.webContents.on('will-navigate', function (e, url) {
-    if (url.indexOf('build/index.html#') < 0) {
-      e.preventDefault();
-    }
-  });
-
-  mainWindow.webContents.on('did-finish-load', function () {
-    mainWindow.setTitle('Soundnode');
-    mainWindow.show();
-    mainWindow.focus();
-    //setInterval(function() {
-      //event.sender.send('asynchronous-reply', 'pong')
-      mainWindow.webContents.send('config' , config);
-    //}, 1500)
-
-  });
-
-  mainWindowState.manage(mainWindow);
-  initializeMediaShortcuts();
-  menuBar();*/
 
   let application = new ElectonApplication();
 }

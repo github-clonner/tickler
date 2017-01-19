@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
-import ytdl from 'ytdl-core';
+import Youtube from '../lib/Youtube';
 
 require('../../styles/list.css');
 
@@ -47,9 +47,33 @@ export default class List extends Component {
   select (event, song) {
     if(this.state.song === song.id)
       return;
-    this.setState({
-      song: song.id
+    let youtube = new Youtube();
+    youtube.downloadVideo(song);
+    youtube.events.on('progress', progress => {
+      //let style = `linear-gradient(to right, #F1F1F1 0%, #F1F1F1 ${progress * 100}%,#fafafa ${progress * 100}%,#fafafa 100%)`
+      this.setState({
+        progress: progress
+      });
     })
+    this.setState({
+      song: song.id,
+    })
+  }
+
+  getStyles (song) {
+    if(this.state.song !== song.id) {
+      return null;
+    }
+    else {
+      let progress = this.state.progress;
+      return {
+        'background': `linear-gradient(to right, #F1F1F1 0%, #F1F1F1 ${progress * 100}%,#fafafa ${progress * 100}%,#fafafa 100%)`
+      };
+    }
+  }
+
+  componentDidUpdate () {
+    //console.log(this.refs.list.querySelector('.active'))
   }
 
   isActive (song) {
@@ -65,7 +89,7 @@ export default class List extends Component {
         active: this.isActive(song)
       });
       return (
-        <li className={style} key={index} onClick={e => this.select.bind(this)(e, song)}>
+        <li className={style} key={index} onClick={e => this.select.bind(this)(e, song)} style={this.getStyles(song)}>
           <span>{index + 1}</span>
           <span>·</span>
           <span>
@@ -79,6 +103,6 @@ export default class List extends Component {
   }
 
   render() {
-    return (<ul className="container">{this.getItems()}</ul>);
+    return (<ul className="container" ref="list">{this.getItems()}</ul>);
   }
 }

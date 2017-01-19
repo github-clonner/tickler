@@ -1,4 +1,3 @@
-import { remote } from 'electron';
 import path from 'path';
 import React from 'react';
 import { render } from 'react-dom';
@@ -19,7 +18,7 @@ const youtube = new Youtube('AIzaSyAPBCwcnohnbPXScEiVMRM4jYWc43p_CZU');
 import _ from 'lodash';
 
 // In renderer process (web page).
-import { ipcRenderer } from 'electron';
+import { remote, ipcRenderer } from 'electron';
 
 ipcRenderer.on('asynchronous-reply', (event, arg) => {
   console.log(arg) // prints "pong"
