@@ -7,10 +7,9 @@ import ElectronConnectWebpackPlugin from 'electron-connect-webpack-plugin';
 import ElectronPlugin from 'electron-webpack-plugin';
 import WebpackCleanupPlugin from 'webpack-cleanup-plugin'
 
-const babelSettings = JSON.parse(fs.readFileSync(".babelrc"));
-const config = JSON.parse(fs.readFileSync("package.json"));
+import packme from './bootstrapper';
 
-console.log(JSON.stringify(config.devDependencies, null, 2));
+const babelSettings = JSON.parse(fs.readFileSync(".babelrc"));
 
 const env = {
   NODE_ENV: process.env.NODE_ENV || 'development',
