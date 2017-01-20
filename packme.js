@@ -6,6 +6,9 @@ import globby from 'globby';
 import Table from 'cli-table';
 import packageJson from 'package-json';
 import semver from 'semver';
+import colors from 'colors';
+import ProgressBar from 'progress';
+
 const config = JSON.parse(fs.readFileSync('package.json'));
 
 function timeout (delay) {
@@ -65,8 +68,14 @@ function getInstalledPackages (cwd) {
   .valueOf();
 }
 async function checkDependencies(dependencies) {
+  let modules = Object.keys(dependencies);
+  let bar = new ProgressBar('downloading :bar :percent :etas', {
+    total: modules.length,
+    complete: '█',
+    incomplete: ' ',
+  })
   let table = new Table({
-    head: ['module', 'local version', 'latest version']
+    head: ['module', 'local version', 'latest version', 'needs update']
   });
 
   let nodeModulesPath = path.join(process.cwd(), 'node_modules');
@@ -80,9 +89,16 @@ async function checkDependencies(dependencies) {
       let local = installedPackages[dependency];
       let remote = module.version;
 
+      bar.tick();
       //console.log(dependencies[dependency], module.version;
       //console.log('dependency: [%s]: %s', dependency, local, remote, semver.compare(remote, local))
-      table.push([dependency, local, remote]);
+      var canUpdate = null;
+      if(semver.compare(remote, local)) {
+        canUpdate = colors.red
+      } else {
+        canUpdate = colors.green
+      }
+      table.push([dependency, canUpdate(local), remote, semver.compare(remote, local) ? 'yes':'no']);
     }
   }
   console.log(table.toString());
