@@ -49,6 +49,7 @@ export default class List extends Component {
       return;
     let youtube = new Youtube();
     youtube.downloadVideo(song);
+    //youtube.events.emit('abort', null);
     youtube.events.on('progress', progress => {
       //let style = `linear-gradient(to right, #F1F1F1 0%, #F1F1F1 ${progress * 100}%,#fafafa ${progress * 100}%,#fafafa 100%)`
       this.setState({

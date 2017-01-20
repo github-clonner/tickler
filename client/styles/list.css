@@ -5,6 +5,7 @@
     --activeRowBackground: #f6f6f6;
     --activeRowColor: #000;
     --color: #484848;
+    --outlineColor: #CCC;
 }
 
 .list {
@@ -38,6 +39,7 @@
         &:hover {
             /*border: 1px solid #eee;*/
             outline: 1px solid;
+            outline-color: var(--outlineColor);
         }
         &.active {
             background-color: var(--activeRowBackground);

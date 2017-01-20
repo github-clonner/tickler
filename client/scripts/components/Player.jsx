@@ -7,6 +7,7 @@ import WaveSurfer from 'wavesurfer.js';
 //import musicmetadata from 'musicmetadata';
 const musicmetadata = require('musicmetadata');
 
+import Youtube from '../lib/Youtube';
 import Progress from './Progress';
 import InputRange from './InputRange';
 
@@ -124,17 +125,27 @@ export default class Player extends Component {
   }
 
   static propTypes = {
-    songs: PropTypes.array
+    songs: PropTypes.array,
+    autoplay: PropTypes.bool
   }
 
   static defaultProps = {
-    songs: new Array()
+    songs: new Array(),
+    autoplay: true
   }
 
   constructor (...args) {
     super(...args);
     this.wavesurfer = Object.create(WaveSurfer);
     this.events = new PlayerEvents();
+    this.youtube = new Youtube();
+
+    this.youtube.events.on('finish', file => {
+      console.log('a youtube video has been downloaded !', file)
+      this.load(file, true);
+    })
+
+
     this.resize = _.debounce(function (event) {
       event.preventDefault();
       let orgWidth = this.wavesurfer.drawer.containerWidth;
@@ -145,19 +156,23 @@ export default class Player extends Component {
       }
     }, 500).bind(this);
   }
-  load (file) {
+
+  async load (file, autoplay) {
     fileSystem.readFile(file, (error, buffer) => {
       let blob = new window.Blob([new Uint8Array(buffer)]);
       this.wavesurfer.loadBlob(blob);
     })
     console.log('file: ', file);
 
-    let stream = fileSystem.createReadStream(file);
+    //let stream = fileSystem.createReadStream(file);
+
+    /*
     musicmetadata(stream, function (error, metadata) {
       console.log('error', error)
       if (error) throw error;
       console.log(metadata);
     });
+    */
 
     /*
     let playListParser = new PlayListParser();
@@ -186,12 +201,19 @@ export default class Player extends Component {
     }
   }
   ready () {
+    if (this.props.autoplay) {
+      if (this.wavesurfer.isPlaying()) {
+        this.stop();
+      }
+      this.play();
+    }
     this.setState({
       duration: this.wavesurfer.getDuration()
     });
   }
   audioprocess () {
     this.setState({
+      isPlaying: this.wavesurfer.isPlaying(),
       seek: this.wavesurfer.getCurrentTime()
     });
   }
@@ -201,7 +223,6 @@ export default class Player extends Component {
     if(!nextProps.songs.length) {
       return;
     }
-    this.load(nextProps.songs[0])
   }
 
   componentWillUnmount () {
@@ -225,6 +246,8 @@ export default class Player extends Component {
     this.wavesurfer.on('audioprocess', this.audioprocess.bind(this));
     this.wavesurfer.on('seek', this.seek.bind(this));
     this.wavesurfer.on('finish', this.finish.bind(this));
+
+    this.load(this.props.songs[0], true);
   }
 
   seek (progress) {
@@ -238,7 +261,6 @@ export default class Player extends Component {
     this.setState(prevState => ({
       isPlaying: this.wavesurfer.isPlaying()
     }));
-    this.events.emit('onPlay', {isPlaying: this.wavesurfer.isPlaying()})
   }
 
   finish () {

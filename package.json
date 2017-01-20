@@ -32,6 +32,7 @@
     "react-dom": "^15.4.1",
     "react-router": "^3.0.0",
     "react-tap-event-plugin": "^2.0.1",
+    "sanitize-filename": "^1.6.1",
     "wavesurfer.js": "^1.2.8",
     "ytdl-core": "^0.7.21"
   },

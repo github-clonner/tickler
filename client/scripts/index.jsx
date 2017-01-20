@@ -88,6 +88,13 @@ export default class App extends React.Component {
     playList: new Array()
   }
 
+  async getVideos () {
+    let playList = await youtube.getPlayListItems('PLF84D7E86122C6407');
+    let ids = playList.map(item => item.snippet.resourceId.videoId);
+    let {items} = await youtube.getVideos(ids);
+    return items;
+  }
+
   componentDidMount() {
     console.log('componentDidMount')
     ipcRenderer.once('config', (event, data) => {
@@ -96,7 +103,27 @@ export default class App extends React.Component {
       }));
     });
 
-    youtube.getPlayListItems('PLA70D07FB6C624D3A')
+    this.getVideos()
+    .then(videos => {
+      console.log('videos: ', videos)
+
+
+        this.setState({
+          playList: videos.map(video => {
+            let time = new Time(video.contentDetails.duration);
+            return {
+              title: video.snippet.title,
+              duration: time.toTime(),
+              id: video.id,
+              thumbnails: video.thumbnails
+            };
+          })
+        });
+
+
+    });
+
+    /*youtube.getPlayListItems('PLA70D07FB6C624D3A')
     .then(items => {
       let videoIds = items.map(item => item.snippet.resourceId.videoId);
       youtube.getVideos(videoIds)
@@ -115,7 +142,8 @@ export default class App extends React.Component {
           })
         });
       });
-    });
+
+    });*/
   }
 
   open () {

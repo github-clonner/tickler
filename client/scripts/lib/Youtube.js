@@ -5,25 +5,22 @@ import Stream from 'stream';
 import fs from 'fs';
 import path from 'path';
 import {ipcRenderer} from 'electron';
+import sanitize from 'sanitize-filename';
 import {EventEmitter} from 'events';
-
-
-async function foo() {
-  console.log('async working!')
-}
-
-async function bar() {
-  await foo()
-  console.log('after foo')
-}
-
-bar()
 
 class EchoStream extends Stream.Writable {
   constructor(options) {
     super(options);
     this.body = new Array();
   }
+  _write(chunk, encoding, callback) {
+    if (!(chunk instanceof Buffer)) {
+        return this.emit('error', new Error('Invalid data'));
+    }
+    this.body.push(chunk);
+    return callback()
+  }
+
   toBuffer () {
     return Buffer.concat(this.body);
   }
@@ -57,6 +54,8 @@ class YoutubeEvents extends EventEmitter {
   }
 }
 
+const youtubeEvents = new YoutubeEvents();
+
 export default class Youtube {
 
   constructor(apiKey) {
@@ -67,10 +66,10 @@ export default class Youtube {
         key: this.apiKey
       }
     });
-    this.events = new YoutubeEvents();
+    this.events = youtubeEvents;//new YoutubeEvents();
   }
 
-  getVideos(ids) {
+  async getVideos(ids) {
     let part = 'id,snippet,contentDetails,player,recordingDetails,statistics,status,topicDetails';
     let options = {
       id: ids.join(','),
@@ -84,7 +83,7 @@ export default class Youtube {
     .then(response => response.data);
   }
 
-  getPlayListItems(playlistId) {
+  async getPlayListItems(playlistId) {
     let part = 'id,snippet,contentDetails';
     let options = {
       playlistId: playlistId,
@@ -124,9 +123,10 @@ export default class Youtube {
     let mux = new EchoStream({
       writable: true
     });
-    var output = path.resolve(__dirname, './media/sound.mp4');
+    var fileName = path.resolve(`./media/${sanitize(video.title)}`);
+    let fileStream = fs.createWriteStream(fileName);
     return new Promise((resolve, reject) => {
-      let yt = ytdl(uri/*, {
+      let yt = ytdl(uri, 'audioonly'/*, {
           filter: function(format) {
             return format.container === 'mp4' && !format.encoding;;
           }
@@ -136,22 +136,25 @@ export default class Youtube {
         //   console.log('progress: ', progress)
         // })
         .on('finish', () => {
+          //ipcRenderer.send('encode', fileName);
+          //ipcRenderer.on('encoded', (event, fileName) => {
+            this.events.emit('finish', fileName);
+          //});
           console.log('donwload finish !')
         })
-        // .on('info', function(info) {
-        //   console.log('info', info);
-        // })
-        // .on('error', function(error) {
-        //   console.log('error:', error)
-        //   return reject(error);
-        // });
+        .on('error', error => {
+          this.events.emit('error', error);
+          console.log('error:', error)
+        });
 
-        yt.on('info', function(info) {
+        yt.on('info', info => {
+          this.events.emit('info', info);
           console.log('info', info);
         })
         yt.on('response', response => {
           let size = response.headers['content-length'];
-          yt.pipe(fs.createWriteStream('./media/sound.mp4'));
+          yt.pipe(fileStream);
+          yt.pipe(mux);
 
           // Keep track of progress.
           let dataRead = 0;
@@ -161,6 +164,15 @@ export default class Youtube {
             this.events.emit('progress', progress);
           });
         });
+
+
+        //createSong(fileName, yt);
+
+        this.events.once('abort', () => {
+          console.log('abort download');
+          yt.end();
+          fileStream.end();
+        })
 
         /*yt.on('end', function() {
           console.log('Finished');

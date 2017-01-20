@@ -11,7 +11,7 @@ import {
 import fs from 'fs';
 import path from 'path';
 import windowStateKeeper from 'electron-window-state';
-
+const ffmpeg = require('fluent-ffmpeg');
 const config = JSON.parse(fs.readFileSync("package.json"));
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -30,6 +30,26 @@ function makeIcon(name) {
   console.log('file: ', file)
   return nativeImage.createFromPath(file);
 }
+
+function createSong(fileName, bitrate = 192) {
+  return new Promise((resolve, reject) => {
+    let x = new ffmpeg(fileName)
+    .audioBitrate(bitrate)
+    .saveToFile(fileName + '.mp3')
+    .on('end', function() {
+      console.log('encoding finish')
+      return resolve(fileName + '.mp3');
+    });
+  })
+}
+
+ipcMain.on('encode', (event, fileName) => {
+  console.log('econde: ', fileName);
+  createSong(fileName, 192)
+  .then(newFileName => {
+    event.sender.send('encoded', newFileName)
+  });
+})
 
 class ElectonApplication {
 
@@ -73,11 +93,27 @@ class ElectonApplication {
     ipcMain.on('maximizeApp', this.maximizeApp);
 
   }
+
+  async foo () {
+    setTimeout(function () {
+      return Promise.resolve('MyApp')
+    }, 5000);
+  }
+
+  async bar () {
+    console.log(new Date())
+    let name = await foo()
+    console.log(new Date(), name)
+    this.mainWindow.webContents.send('asynchronous-reply' , name);
+  }
+
   didFinishLoad () {
     this.mainWindow.setTitle('Soundnode');
     this.mainWindow.show();
     this.mainWindow.focus();
     this.mainWindow.webContents.send('config' , config);
+    this.bar();
+
   }
   showAndFocus () {
     this.mainWindow.show();
