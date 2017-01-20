@@ -7,10 +7,8 @@ import styles from '../styles/main.css';
 
 import Header from './components/Header';
 import Toolbar from './components/Toolbar';
-import Video from './components/Video';
 import Player from './components/Player';
 import List from './components/List';
-import Cpu from './components/Cpu';
 import Time from './lib/Time';
 import Youtube from './lib/Youtube';
 const youtube = new Youtube('AIzaSyAPBCwcnohnbPXScEiVMRM4jYWc43p_CZU');
