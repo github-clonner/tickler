@@ -44,18 +44,26 @@ export default class List extends Component {
     list: PropTypes.array
   };
 
-  select (event, song) {
+  select = (event, song) => {
     if(this.state.song === song.id)
       return;
+    
     let youtube = new Youtube();
-    youtube.downloadVideo(song);
-    //youtube.events.emit('abort', null);
-    youtube.events.on('progress', progress => {
-      //let style = `linear-gradient(to right, #F1F1F1 0%, #F1F1F1 ${progress * 100}%,#fafafa ${progress * 100}%,#fafafa 100%)`
-      this.setState({
-        progress: progress
-      });
-    })
+
+    if (song.file) {
+      youtube.events.emit('finish', song.file);
+    } else {
+      youtube.downloadVideo(song);
+      youtube.events.on('progress', progress => {
+        this.setState({
+          progress: progress
+        });
+      })
+      youtube.events.on('info', info => {
+        console.log('song info', info)
+      })
+    }
+    
     this.setState({
       song: song.id,
     })
@@ -73,10 +81,6 @@ export default class List extends Component {
     }
   }
 
-  componentDidUpdate () {
-    //console.log(this.refs.list.querySelector('.active'))
-  }
-
   isActive (song) {
     if(song.id === this.state.song)
       return true;
@@ -89,10 +93,13 @@ export default class List extends Component {
       let style = classNames('row', {
         active: this.isActive(song)
       });
+      let localFile = classNames('dot', {
+        local: song.file ? true : false
+      });
       return (
-        <li className={style} key={index} onClick={e => this.select.bind(this)(e, song)} style={this.getStyles(song)}>
+        <li className={style} key={index} onClick={e => this.select(e, song)} style={this.getStyles(song)}>
           <span>{index + 1}</span>
-          <span>·</span>
+          <span className={localFile}>●</span>
           <span>
             <p>{song.title}</p>
           </span>

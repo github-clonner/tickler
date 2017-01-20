@@ -131,7 +131,7 @@ export default class Player extends Component {
 
   static defaultProps = {
     songs: new Array(),
-    autoplay: true
+    autoplay: false
   }
 
   constructor (...args) {
@@ -247,7 +247,7 @@ export default class Player extends Component {
     this.wavesurfer.on('seek', this.seek.bind(this));
     this.wavesurfer.on('finish', this.finish.bind(this));
 
-    this.load(this.props.songs[0], true);
+    this.load(this.props.songs[0], false);
   }
 
   seek (progress) {

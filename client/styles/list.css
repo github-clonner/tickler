@@ -56,12 +56,15 @@
             font-family: "Roboto Mono", monospace;
             font-weight: lighter;
         }
-        &:nth-child(2) {
+        & .dot, &:nth-child(2) {
             flex-basis: content;
             margin: 0px 6px;
             text-align: center;
             font-weight: bold;
-            color: red;
+            color: #ed1e24;
+            &.local {
+                color: #31dd31;
+            }
         }
         &:nth-child(3) {
             flex-grow: 1;

@@ -126,30 +126,26 @@ export default class Youtube {
     var fileName = path.resolve(`./media/${sanitize(video.title)}`);
     let fileStream = fs.createWriteStream(fileName);
     return new Promise((resolve, reject) => {
-      let yt = ytdl(uri, 'audioonly'/*, {
+      let yt = ytdl(uri, 'audioonly'/*{
           filter: function(format) {
-            return format.container === 'mp4' && !format.encoding;;
+            let isAudio = !format.bitrate && format.audioBitrate;
+            console.log('isAudio: ', isAudio, format.bitrate, format.audioBitrate, format.container)
+            return isAudio;
           }
         }*/)
-        // .pipe(fs.createWriteStream('./media/sound.mp4'))
-        // .on('progress', progress => {
-        //   console.log('progress: ', progress)
-        // })
         .on('finish', () => {
           //ipcRenderer.send('encode', fileName);
           //ipcRenderer.on('encoded', (event, fileName) => {
             this.events.emit('finish', fileName);
           //});
           console.log('donwload finish !')
-        })
-        .on('error', error => {
-          this.events.emit('error', error);
-          console.log('error:', error)
         });
 
+        yt.on('error', error => {
+          this.events.emit('error', error);
+        });
         yt.on('info', info => {
           this.events.emit('info', info);
-          console.log('info', info);
         })
         yt.on('response', response => {
           let size = response.headers['content-length'];
@@ -164,9 +160,6 @@ export default class Youtube {
             this.events.emit('progress', progress);
           });
         });
-
-
-        //createSong(fileName, yt);
 
         this.events.once('abort', () => {
           console.log('abort download');

@@ -11,6 +11,7 @@ import {
 import fs from 'fs';
 import path from 'path';
 import windowStateKeeper from 'electron-window-state';
+import ytdl from 'ytdl-core';
 const ffmpeg = require('fluent-ffmpeg');
 const config = JSON.parse(fs.readFileSync("package.json"));
 // Keep a global reference of the window object, if you don't, the window will
@@ -36,6 +37,9 @@ function createSong(fileName, bitrate = 192) {
     let x = new ffmpeg(fileName)
     .audioBitrate(bitrate)
     .saveToFile(fileName + '.mp3')
+    .on('progress', function(info) {
+      console.log('progress ' + info.percent + '%');
+    })
     .on('end', function() {
       console.log('encoding finish')
       return resolve(fileName + '.mp3');
@@ -43,12 +47,40 @@ function createSong(fileName, bitrate = 192) {
   })
 }
 
+function downloadSong () {
+  var url = 'https://www.youtube.com/watch?v=TGbwL8kSpEk';
+  var audioOutput = path.resolve(__dirname, 'sound.mp4');
+  ytdl(url, { filter: function(f) {
+    return f.container === 'mp4' && !f.encoding; } })
+    // Write audio to file since ffmpeg supports only one input stream.
+    .pipe(fs.createWriteStream(audioOutput))
+    .on('finish', function() {
+      ffmpeg()
+      .input(ytdl(url, { filter: function(f) {
+        return f.container === 'mp4' && !f.audioEncoding; } }))
+        .videoCodec('copy')
+        .input(audioOutput)
+        .audioCodec('copy')
+        .save(path.resolve(__dirname, 'output.mp4'))
+        .on('error', console.error)
+        .on('progress', function(info) {
+          console.log('progress ' + info.percent + '%', info.timemark);
+        })
+        .on('end', function() {
+          console.log('encoding finish')
+          console.log();
+        });
+    });
+}
 ipcMain.on('encode', (event, fileName) => {
   console.log('econde: ', fileName);
+  downloadSong()
+  /*
   createSong(fileName, 192)
   .then(newFileName => {
     event.sender.send('encoded', newFileName)
   });
+  */
 })
 
 class ElectonApplication {

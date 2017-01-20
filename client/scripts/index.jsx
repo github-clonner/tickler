@@ -25,58 +25,22 @@ ipcRenderer.on('asynchronous-reply', (event, arg) => {
 })
 
 const songs = [{
-  "title": "Spiderwebs",
-  "duration": "4:28",
-  "stars": 2
-}, {
-  "title": "Excuse Me Mr.fasdfasdfasdfasdfasdfadsf dfasdf adfasdfasdf",
-  "duration": "3:04",
+  "title": "FurElise",
+  "id": "_mVW8tgGY_w",
+  "duration": 176,
+  "file": "media/FurElise.ogg",
   "stars": 3
 }, {
-  "title": "Just a Girl",
-  "duration": "3:28",
+  "title": "The Four Seasons",
+  "id": "9DNoEXn4DSg",
+  "duration": 158,
+  "file": "media/06_-_Vivaldi_Summer_mvt_3_Presto_-_John_Harrison_violin.ogg",
+  "stars": 4
+}, {
+  "title": "Mozart - Symphony No. 40 in G minor",
+  "id": "JTc1mDieQI8",
+  "duration": 1584,
   "stars": 1
-}, {
-  "title": "Happy Now?",
-  "duration": "3:43",
-  "stars": 2
-}, {
-  "title": "Different People",
-  "duration": "4:34",
-  "stars": 3
-}, {
-  "title": "Hey You!",
-  "duration": "3:34",
-  "stars": 4
-}, {
-  "title": "The Climb",
-  "duration": "6:37",
-  "stars": 5
-}, {
-  "title": "Sixteen",
-  "duration": "3:21",
-  "stars": 0
-}, {
-  "title": "Sunday Morning",
-  "duration": "4:33",
-  "stars": 0
-}, {
-  "title": "Don't Speak",
-  "duration": "4:23"
-}, {
-  "title": "You Can Do It",
-  "duration": "4:13",
-  "stars": 4
-}, {
-  "title": "World Go 'Round",
-  "duration": "4:09"
-}, {
-  "title": "End It on This",
-  "duration": "3:45"
-}, {
-  "title": "Tragic Kingdom",
-  "duration": "5:31",
-  "stars": 5
 }]
 
 export default class App extends React.Component {
@@ -85,11 +49,11 @@ export default class App extends React.Component {
       dependencies: {}
     },
     songs: [path.resolve('media/FurElise.ogg')],
-    playList: new Array()
+    playList: songs
   }
 
   async getVideos () {
-    let playList = await youtube.getPlayListItems('PLF84D7E86122C6407');
+    let playList = await youtube.getPlayListItems('PLQZMlSGCDHyn2siQnxnm1x9bpLlfCScTO');
     let ids = playList.map(item => item.snippet.resourceId.videoId);
     let {items} = await youtube.getVideos(ids);
     return items;
@@ -97,7 +61,7 @@ export default class App extends React.Component {
 
   componentDidMount() {
     console.log('componentDidMount')
-    ipcRenderer.once('config', (event, data) => {
+    return ipcRenderer.once('config', (event, data) => {
       this.setState(prevState => ({
         config: data
       }));
@@ -105,45 +69,18 @@ export default class App extends React.Component {
 
     this.getVideos()
     .then(videos => {
-      console.log('videos: ', videos)
-
-
-        this.setState({
-          playList: videos.map(video => {
-            let time = new Time(video.contentDetails.duration);
-            return {
-              title: video.snippet.title,
-              duration: time.toTime(),
-              id: video.id,
-              thumbnails: video.thumbnails
-            };
-          })
-        });
-
-
-    });
-
-    /*youtube.getPlayListItems('PLA70D07FB6C624D3A')
-    .then(items => {
-      let videoIds = items.map(item => item.snippet.resourceId.videoId);
-      youtube.getVideos(videoIds)
-      .then(response => response.items)
-      .then(videos => {
-        console.log(videos)
-        this.setState({
-          playList: videos.map(video => {
-            let time = new Time(video.contentDetails.duration);
-            return {
-              title: video.snippet.title,
-              duration: time.toTime(),
-              id: video.id,
-              thumbnails: video.thumbnails
-            };
-          })
-        });
+      this.setState({
+        playList: videos.map(video => {
+          let time = new Time(video.contentDetails.duration);
+          return {
+            title: video.snippet.title,
+            duration: time.toTime(),
+            id: video.id,
+            thumbnails: video.thumbnails
+          };
+        })
       });
-
-    });*/
+    });
   }
 
   open () {
