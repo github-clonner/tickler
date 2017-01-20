@@ -67,7 +67,7 @@ export default class List extends Component {
     else {
       let progress = this.state.progress;
       return {
-        'background': `linear-gradient(to right, #F1F1F1 0%, #F1F1F1 ${progress * 100}%,#fafafa ${progress * 100}%,#fafafa 100%)`
+        'background': `linear-gradient(to right, #eee 0%, #eee ${progress * 100}%,#f6f6f6 ${progress * 100}%,#f6f6f6 100%)`
       };
     }
   }

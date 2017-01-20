@@ -8,6 +8,17 @@ import {ipcRenderer} from 'electron';
 import {EventEmitter} from 'events';
 
 
+async function foo() {
+  console.log('async working!')
+}
+
+async function bar() {
+  await foo()
+  console.log('after foo')
+}
+
+bar()
+
 class EchoStream extends Stream.Writable {
   constructor(options) {
     super(options);
@@ -135,9 +146,11 @@ export default class Youtube {
         //   return reject(error);
         // });
 
+        yt.on('info', function(info) {
+          console.log('info', info);
+        })
         yt.on('response', response => {
           let size = response.headers['content-length'];
-          console.log('size: ', size)
           yt.pipe(fs.createWriteStream('./media/sound.mp4'));
 
           // Keep track of progress.
@@ -145,7 +158,7 @@ export default class Youtube {
           yt.on('data', data => {
             dataRead += data.length;
             var progress = dataRead / size;
-            this.events.emit('progress', progress)
+            this.events.emit('progress', progress);
           });
         });
 
