@@ -69,10 +69,10 @@ function getInstalledPackages (cwd) {
 }
 async function checkDependencies(dependencies) {
   let modules = Object.keys(dependencies);
-  let bar = new ProgressBar('downloading :bar :percent :etas', {
+  let bar = new ProgressBar('downloading ╣:bar╠ :percent :etas', {
     total: modules.length,
     complete: '█',
-    incomplete: ' ',
+    incomplete: '░',
   })
   let table = new Table({
     head: ['module', 'local version', 'latest version', 'needs update']
@@ -81,45 +81,22 @@ async function checkDependencies(dependencies) {
   let nodeModulesPath = path.join(process.cwd(), 'node_modules');
   let installedPackages = getInstalledPackages(nodeModulesPath);
 
-  //console.log(installedPackages)
-
   for(let dependency in dependencies) {
     if( dependencies.hasOwnProperty(dependency) ) {
       let module = await getPackage(dependency);
       let local = installedPackages[dependency];
       let remote = module.version;
-
       bar.tick();
-      //console.log(dependencies[dependency], module.version;
-      //console.log('dependency: [%s]: %s', dependency, local, remote, semver.compare(remote, local))
       var canUpdate = null;
       if(semver.compare(remote, local)) {
         canUpdate = colors.red
       } else {
         canUpdate = colors.green
       }
-      table.push([dependency, canUpdate(local), remote, semver.compare(remote, local) ? 'yes':'no']);
+      table.push([dependency, canUpdate(local), remote, semver.compare(remote, local) ? colors.red('yes'):'no']);
     }
   }
   console.log(table.toString());
 }
 
 checkDependencies(config.devDependencies)
-/*
-async function printDeps () {
-  let table = new Table({
-    head: ['module', 'version']
-  });
-  let modules = Object.keys(config.devDependencies);
-
-  modules.forEach(module => {
-    let version = config.devDependencies[module];
-    let registry = await getPackage(module);
-    table.push([module, version]);
-  })
-  console.log(table.toString());
-
-}
-
-printDeps();
-*/

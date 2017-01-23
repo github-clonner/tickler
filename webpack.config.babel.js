@@ -7,7 +7,7 @@ import ElectronConnectWebpackPlugin from 'electron-connect-webpack-plugin';
 import ElectronPlugin from 'electron-webpack-plugin';
 import WebpackCleanupPlugin from 'webpack-cleanup-plugin'
 
-import packme from './bootstrapper';
+//import packme from './bootstrapper';
 
 const babelSettings = JSON.parse(fs.readFileSync(".babelrc"));
 

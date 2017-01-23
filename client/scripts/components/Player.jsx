@@ -11,6 +11,11 @@ import Youtube from '../lib/Youtube';
 import Progress from './Progress';
 import InputRange from './InputRange';
 
+var AltContainer = require("alt/AltContainer");
+var LocationStore = require('../stores/LocationStore');
+var FavoritesStore = require('../stores/FavoritesStore');
+var LocationActions = require('../actions/LocationActions');
+
 require('../../styles/player.css');
 require('../../styles/buttons.css');
 require('../../styles/input.css');
@@ -25,93 +30,6 @@ class PlayerEvents extends EventEmitter {
   }
 }
 
-function parseM3u(data) {
-  if (Buffer.isBuffer(data))
-    data = data.toString();
-  else if (typeof data !== 'string')
-    return Promise.reject(new TypeError('Data passed to the parser should be a string'));
-
-  return new Promise(function(resolve, reject) {
-    data = data.split('\n')
-      .filter(function(str) {
-        return str.length > 0;
-      });
-
-    if (data.shift().trim() !== '#EXTM3U')
-      return reject(new Error('Passed data is not valid M3U playlist'));
-
-    var buffer = [],
-      isWaitingForLink = false,
-      line;
-
-    while ((line = data.shift())) {
-      line = line.trim();
-
-      if (isWaitingForLink) {
-        buffer[buffer.length - 1].file = line;
-        isWaitingForLink = false;
-      } else if (line.slice(0, 7) === '#EXTINF') {
-        var result = /^#EXTINF:(-?)(\d+),(.*)$/.exec(line);
-        if (!result)
-          throw new Error('Invalid M3U format');
-
-        buffer.push({
-          title: result[3].trim(),
-          duration: +(result[1] + result[2].trim())
-        });
-
-        isWaitingForLink = true;
-      } else {
-        throw new Error('Invalid data');
-      }
-    }
-
-    resolve(buffer);
-  });
-}
-class PlayListParser {
-  constructor() {
-    this.EXTENDED = '#EXTM3U';
-    this.COMMENT_RE = /:(?:(-?\d+),(.+)\s*-\s*(.+)|(.+))\n(.+)/;
-  }
-
-  extended (line) {
-    let match = line.match(this.COMMENT_RE);
-    if (match && match.length === 6) {
-      return {
-        length: match[1] || 0,
-        artist: match[2] || '',
-        title: match[4] || match[3],
-        file: match[5].trim()
-      };
-    }
-  }
-
-  simple (string) {
-    return {
-      file: string.trim()
-    };
-  }
-
-  empty (line) {
-    return !!line.trim().length;
-  }
-
-  comments (line) {
-    return line[0] !== '#';
-  }
-
-  parse (playlist) {
-    playlist = playlist.replace(/\r/g, '');
-    let firstNewline = playlist.search('\n');
-    if (playlist.substr(0, firstNewline) === this.EXTENDED) {
-      return playlist.substr(firstNewline).split('\n#').filter(this.empty.bind(this)).map(this.extended.bind(this));
-    } else {
-      return playlist.split('\n').filter(this.empty.bind(this)).filter(this.comments.bind(this)).map(this.simple.bind(this));
-    }
-  }
-}
-
 export default class Player extends Component {
   state = {
     isPlaying: false,
@@ -121,7 +39,8 @@ export default class Player extends Component {
     volume: 0.5,
     duration: 0,
     seek: 0,
-    value: 3
+    value: 3,
+    playlist: LocationStore.getState()
   }
 
   static propTypes = {
@@ -136,6 +55,8 @@ export default class Player extends Component {
 
   constructor (...args) {
     super(...args);
+
+    console.log('getInitialState: ', LocationStore.getState())
     this.wavesurfer = Object.create(WaveSurfer);
     this.events = new PlayerEvents();
     this.youtube = new Youtube();
@@ -188,9 +109,6 @@ export default class Player extends Component {
   }
 
   handleChange (event) {
-    /*this.setState({
-      value: event.target.value
-    });*/
     console.log('seekTo: ', event.target.value)
     this.wavesurfer.seekTo(event.target.value / 100);
   }
@@ -201,13 +119,15 @@ export default class Player extends Component {
     }
   }
   ready () {
+    if (this.wavesurfer.isPlaying()) {
+      this.stop();
+    }
     if (this.props.autoplay) {
-      if (this.wavesurfer.isPlaying()) {
-        this.stop();
-      }
       this.play();
     }
     this.setState({
+      seek: 0,
+      isPlaying: false,
       duration: this.wavesurfer.getDuration()
     });
   }
@@ -229,6 +149,7 @@ export default class Player extends Component {
     window.removeEventListener('resize', this.resize);
     this.stop();
     this.wavesurfer.destroy();
+    LocationStore.unlisten(this.onChange);
   }
 
   componentDidMount () {
@@ -247,7 +168,13 @@ export default class Player extends Component {
     this.wavesurfer.on('seek', this.seek.bind(this));
     this.wavesurfer.on('finish', this.finish.bind(this));
 
+
+    //LocationStore.listen(this.onChange);
+
+    LocationStore.fetchLocations();
+
     this.load(this.props.songs[0], false);
+
   }
 
   seek (progress) {
@@ -258,24 +185,24 @@ export default class Player extends Component {
   // Player controls
   play() {
     this.wavesurfer.playPause();
-    this.setState(prevState => ({
+    this.setState({
       isPlaying: this.wavesurfer.isPlaying()
-    }));
+    });
   }
 
   finish () {
-    this.setState(prevState => ({
+    this.setState({
       isPlaying: this.wavesurfer.isPlaying(),
       seek: this.wavesurfer.getCurrentTime()
-    }));
+    });
   }
 
   stop() {
     this.wavesurfer.stop();
-    this.setState(prevState => ({
+    this.setState({
       isPlaying: this.wavesurfer.isPlaying(),
       seek: this.wavesurfer.getCurrentTime()
-    }));
+    });
   }
 
   render () {
@@ -290,7 +217,11 @@ export default class Player extends Component {
           </div>
           <InputRange value={this.state.seek / this.state.duration * 100} min={0} max={100} step={0.1} onChange={this.handleChange.bind(this)} />
         </div>
+        <h1>isPlaying: {this.state.isPlaying?'true':'false'}:{this.state.seek}</h1>
         <div ref="waves"></div>
+        <AltContainer store={LocationStore}>
+          <AllLocations />
+        </AltContainer>
       </div>
     )
   }

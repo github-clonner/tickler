@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import Youtube from '../lib/Youtube';
+import Time from '../lib/Time';
 
 require('../../styles/list.css');
 
@@ -47,7 +48,7 @@ export default class List extends Component {
   select = (event, song) => {
     if(this.state.song === song.id)
       return;
-    
+
     let youtube = new Youtube();
 
     if (song.file) {
@@ -63,7 +64,7 @@ export default class List extends Component {
         console.log('song info', info)
       })
     }
-    
+
     this.setState({
       song: song.id,
     })
@@ -88,6 +89,15 @@ export default class List extends Component {
       return false;
   }
 
+  computeDuration (duration) {
+    if(duration.constructor === String) {
+        return duration;
+    } else {
+        let time = new Time(duration * 1000);
+        return time.humanize();
+    }
+  }
+
   getItems(song) {
     return this.props.list.map((song, index) => {
       let style = classNames('row', {
@@ -99,12 +109,12 @@ export default class List extends Component {
       return (
         <li className={style} key={index} onClick={e => this.select(e, song)} style={this.getStyles(song)}>
           <span>{index + 1}</span>
-          <span className={localFile}>●</span>
+          <span className={localFile}>● ▸</span>
           <span>
             <p>{song.title}</p>
           </span>
           <Stars stars={song.stars}/>
-          <span>{song.duration}</span>
+          <span>{this.computeDuration(song.duration)}</span>
         </li>
       );
     });
