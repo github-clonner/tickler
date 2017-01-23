@@ -20,7 +20,7 @@ export default {
   entry: {
     //'webpack-dev-server/client?http://0.0.0.0:8080',
     //'webpack/hot/only-dev-server',
-    'bundle': './client/scripts/router',
+    'bundle': ['babel-polyfill', './client/scripts/router'],
     //'electron': './main'
   },
   output: {

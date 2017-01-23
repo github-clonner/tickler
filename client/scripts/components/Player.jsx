@@ -11,11 +11,6 @@ import Youtube from '../lib/Youtube';
 import Progress from './Progress';
 import InputRange from './InputRange';
 
-var AltContainer = require("alt/AltContainer");
-var LocationStore = require('../stores/LocationStore');
-var FavoritesStore = require('../stores/FavoritesStore');
-var LocationActions = require('../actions/LocationActions');
-
 require('../../styles/player.css');
 require('../../styles/buttons.css');
 require('../../styles/input.css');
@@ -39,8 +34,7 @@ export default class Player extends Component {
     volume: 0.5,
     duration: 0,
     seek: 0,
-    value: 3,
-    playlist: LocationStore.getState()
+    value: 3
   }
 
   static propTypes = {
@@ -56,7 +50,6 @@ export default class Player extends Component {
   constructor (...args) {
     super(...args);
 
-    console.log('getInitialState: ', LocationStore.getState())
     this.wavesurfer = Object.create(WaveSurfer);
     this.events = new PlayerEvents();
     this.youtube = new Youtube();
@@ -65,7 +58,6 @@ export default class Player extends Component {
       console.log('a youtube video has been downloaded !', file)
       this.load(file, true);
     })
-
 
     this.resize = _.debounce(function (event) {
       event.preventDefault();
@@ -79,46 +71,31 @@ export default class Player extends Component {
   }
 
   async load (file, autoplay) {
+    console.log('file: ', file);
+    
     fileSystem.readFile(file, (error, buffer) => {
       let blob = new window.Blob([new Uint8Array(buffer)]);
       this.wavesurfer.loadBlob(blob);
     })
-    console.log('file: ', file);
-
-    //let stream = fileSystem.createReadStream(file);
-
-    /*
+    let stream = fileSystem.createReadStream(file)
     musicmetadata(stream, function (error, metadata) {
-      console.log('error', error)
       if (error) throw error;
       console.log(metadata);
     });
-    */
-
-    /*
-    let playListParser = new PlayListParser();
-
-    let file2 = fileSystem.readFileSync(path.resolve('media/playlist.m3u'), 'utf8'); //
-    console.log(file2)
-    console.log(playListParser.parse(file2))
-    parseM3u(file2).then(x => {
-      console.log(x)
-    })
-    console.log(file2.match(/^(?!#)(?!\s).*$/mg))
-    */
   }
 
-  handleChange (event) {
+  handleChange = event => {
     console.log('seekTo: ', event.target.value)
     this.wavesurfer.seekTo(event.target.value / 100);
   }
   // wavesurfer event handlers
-  loading (progress) {
+  loading = progress => {
     if(progress === 100) {
       window.addEventListener('resize', this.resize);
     }
   }
-  ready () {
+
+  ready = () => {
     if (this.wavesurfer.isPlaying()) {
       this.stop();
     }
@@ -131,7 +108,21 @@ export default class Player extends Component {
       duration: this.wavesurfer.getDuration()
     });
   }
-  audioprocess () {
+
+  audioprocess = () => {
+    this.setState({
+      isPlaying: this.wavesurfer.isPlaying(),
+      seek: this.wavesurfer.getCurrentTime()
+    });
+  }
+
+  seek = progress => {
+    this.setState({
+      seek: this.wavesurfer.getCurrentTime()
+    })
+  }
+
+  finish = () => {
     this.setState({
       isPlaying: this.wavesurfer.isPlaying(),
       seek: this.wavesurfer.getCurrentTime()
@@ -149,7 +140,6 @@ export default class Player extends Component {
     window.removeEventListener('resize', this.resize);
     this.stop();
     this.wavesurfer.destroy();
-    LocationStore.unlisten(this.onChange);
   }
 
   componentDidMount () {
@@ -162,38 +152,20 @@ export default class Player extends Component {
     this.events.on('onPlay', data => {
       console.log('playing backend:', data)
     })
-    this.wavesurfer.on('loading', this.loading.bind(this));
-    this.wavesurfer.on('ready', this.ready.bind(this));
-    this.wavesurfer.on('audioprocess', this.audioprocess.bind(this));
-    this.wavesurfer.on('seek', this.seek.bind(this));
-    this.wavesurfer.on('finish', this.finish.bind(this));
-
-
-    //LocationStore.listen(this.onChange);
-
-    LocationStore.fetchLocations();
+    this.wavesurfer.on('loading', this.loading);
+    this.wavesurfer.on('ready', this.ready);
+    this.wavesurfer.on('audioprocess', this.audioprocess);
+    this.wavesurfer.on('seek', this.seek);
+    this.wavesurfer.on('finish', this.finish);
 
     this.load(this.props.songs[0], false);
-
   }
 
-  seek (progress) {
-    this.setState({
-      seek: this.wavesurfer.getCurrentTime()
-    })
-  }
   // Player controls
   play() {
     this.wavesurfer.playPause();
     this.setState({
       isPlaying: this.wavesurfer.isPlaying()
-    });
-  }
-
-  finish () {
-    this.setState({
-      isPlaying: this.wavesurfer.isPlaying(),
-      seek: this.wavesurfer.getCurrentTime()
     });
   }
 
@@ -217,11 +189,7 @@ export default class Player extends Component {
           </div>
           <InputRange value={this.state.seek / this.state.duration * 100} min={0} max={100} step={0.1} onChange={this.handleChange.bind(this)} />
         </div>
-        <h1>isPlaying: {this.state.isPlaying?'true':'false'}:{this.state.seek}</h1>
         <div ref="waves"></div>
-        <AltContainer store={LocationStore}>
-          <AllLocations />
-        </AltContainer>
       </div>
     )
   }
