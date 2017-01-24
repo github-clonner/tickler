@@ -49,6 +49,12 @@ export default function Playlist(state = initialState, action) {
   let getIndex = id => {
     return state.findIndex(item => ( item.get('id') === id) );
   }
+  let pause = () => {
+    // Find item that's playing
+    let index = state.find(item => (item.get('isPlaying') === true));
+    return state.update(index, item => ( item.set('isPlaying', false) ));
+  }
+
   switch(action.type) {
     case 'ADD_ITEM':
       let item = new Item();
