@@ -8,7 +8,7 @@ import { Link } from 'react-router';
 
 
 import styles from '../styles/main.css';
-import { Header, Toolbar, Player, List, Counter} from './components';
+import { Header, Toolbar, Player, List, Counter, Items} from './components';
 import { Youtube, Time } from './lib';
 
 const youtube = new Youtube('AIzaSyAPBCwcnohnbPXScEiVMRM4jYWc43p_CZU');
@@ -80,7 +80,6 @@ export default class App extends React.Component {
           <div className="list">
             <List list={this.state.playList} />
           </div>
-          <Counter />
           <main>
             {this.props.children}
           </main>

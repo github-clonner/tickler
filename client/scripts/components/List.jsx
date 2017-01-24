@@ -1,9 +1,27 @@
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
-import Youtube from '../lib/Youtube';
-import Time from '../lib/Time';
+import { Youtube, Time } from '../lib';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux'
+import Immutable from 'immutable';
+import Chance from 'chance';
+
+import * as Actions from '../actions/Playlist';
 
 require('../../styles/list.css');
+
+
+function mapStateToProps(state) {
+  return {
+    listX: state.Playlist
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    actions: bindActionCreators(Actions, dispatch)
+  };
+}
 
 class Stars extends Component {
   constructor(...args) {
@@ -32,17 +50,20 @@ class Stars extends Component {
   }
 }
 
+@connect(mapStateToProps, mapDispatchToProps)
 export default class List extends Component {
   state = {
     song: 0
   };
 
   static defaultProps = {
-    list: []
+    list: [],
+    listX: Immutable.List([])
   };
 
   static propTypes = {
-    list: PropTypes.array
+    list: PropTypes.array,
+    listX: React.PropTypes.instanceOf(Immutable.List).isRequired
   };
 
   select = (event, song) => {
@@ -98,7 +119,34 @@ export default class List extends Component {
     }
   }
 
-  getItems(song) {
+
+  getItems() {
+    return this.props.listX.map((item, index) => {
+      let song = item.toJS();
+      let {actions} = this.props;
+
+      let style = classNames('row', {
+        active: song.isPlaying
+      });
+      let exists = classNames('dot', {
+        local: song.file
+      });
+      
+      return (
+        <li className={style} key={index} onClick={() => actions.playPauseItem(song.id, !song.isPlaying)}>
+          <span>{index + 1}</span>
+          <span className={exists}>●</span>
+          <span>
+            <p>{song.title}</p>
+          </span>
+          <Stars stars={song.stars}/>
+          <span>{this.computeDuration(song.duration)}</span>
+        </li>
+      );
+    });
+  }
+
+  getItemsXXX(song) {
     return this.props.list.map((song, index) => {
       let style = classNames('row', {
         active: this.isActive(song)

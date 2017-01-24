@@ -11,7 +11,8 @@ import Player from './views/Player';
 import NotFound from './views/NotFound';
 
 /* redux stuff */
-import { createStore, combineReducers } from 'redux';
+import { createStore, combineReducers, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk';
 import { Provider } from 'react-redux';
 import { syncHistoryWithStore, routerReducer } from 'react-router-redux';
 import * as reducers from './reducers';
@@ -21,7 +22,10 @@ const reducer = combineReducers({
   routing: routerReducer
 });
 
-const store = createStore(reducer);
+const store = createStore(
+  reducer,
+  applyMiddleware(thunk)
+);
 const history = syncHistoryWithStore(browserHistory, store);
 
 // Needed for onTouchTap

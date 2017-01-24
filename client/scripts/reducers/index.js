@@ -1,2 +1,2 @@
 export count from './count';
-export Playist from './Playlist';
+export Playlist from './Playlist';
