@@ -9,7 +9,7 @@ const Item = Record({
   comment: null,
   track: 0,
   genre: null,
-  image: null,
+  thumbnails: null,
   lyrics: null,
   duration: 0,
   file: null,
@@ -30,11 +30,12 @@ const initialState = List([
     comment: '',
     track: 0,
     genre: '',
-    image: '',
+    thumbnails: '',
     lyrics: '',
     duration: 158,
     file: 'media/06_-_Vivaldi_Summer_mvt_3_Presto_-_John_Harrison_violin.ogg',
-    stars: 4
+    stars: 4,
+    isPlaying: true
   }),
   Map({
     id: '_mVW8tgGY_w',
@@ -47,30 +48,84 @@ const initialState = List([
 
 export default function Playlist(state = initialState, action) {
   let getIndex = id => {
+    // Get item by id
     return state.findIndex(item => ( item.get('id') === id) );
+  }
+  let isPlaying = () => {
+    // Is any item currently playing ?
+    return state.some(item => (item.get('isPlaying') === true));
   }
   let pause = () => {
     // Find item that's playing
-    let index = state.find(item => (item.get('isPlaying') === true));
-    return state.update(index, item => ( item.set('isPlaying', false) ));
+    let index = state.findIndex(item => (item.get('isPlaying') === true));
+    if(index > -1) {
+      return state.update(index, item => ( item.set('isPlaying', false) ));
+    } else {
+      return state;
+    }
   }
 
   switch(action.type) {
-    case 'ADD_ITEM':
+
+    case 'CREATEFROM': {
+      let playlist = action.payload.map(element => {
+        let item = new Item();
+        return item.merge(element);
+      });
+      return List(playlist);
+    }
+
+    case 'ADD_ITEM': {
       let item = new Item();
       return state.push(item.merge(action.payload));
+    }
+
     case 'DELETE_ITEM': {
-      let index = state.findIndex(item => (item.get('id') === action.id));
-      return state.delete(index);
+      let index = getIndex(action.id);
+      if(index > -1) {
+        return state.delete(index);
+      } else {
+        return state;
+      }
     }
+
     case 'EDIT_ITEM': {
-      let index = state.findIndex(item => ( item.get('id') === action.id) );
-      return state.update(index, item => ( item.merge(Map(action.payload)) ));
+      let index = getIndex(action.id);
+      if(index > -1) {
+        return state.update(index, item => ( item.merge(Map(action.payload)) ));
+      } else {
+        return state;
+      }
     }
+
     case 'PLAYPAUSE_ITEM': {
       let index = getIndex(action.id);
-      return state.update(index, item => ( item.set('isPlaying', action.playPause) ));
+      if(index > -1) {
+        return pause().update(index, item => ( item.set('isPlaying', action.playPause) ));
+      } else {
+        return state;
+      }
     }
+
+    case 'PLAY_NEXT_ITEM': {
+      let index = getIndex(action.id);
+      if (index > -1 && index + 1 < state.size) {
+        return pause().update(index + 1, item => ( item.set('isPlaying', true) ));
+      } else {
+        return pause().update(0, item => ( item.set('isPlaying', true) ));
+      }
+    }
+
+    case 'PLAY_PREVIOUS_ITEM': {
+      let index = getIndex(action.id);
+      if (index > -1 && index - 1 >= 0) {
+        return pause().update(index - 1, item => ( item.set('isPlaying', true) ));
+      } else {
+        let paused = pause();
+        return paused.update(paused.size, item => ( item.set('isPlaying', true) ));
+      }
+    }
+
     default:
       return state;
   }

@@ -16,7 +16,7 @@ export default class Time {
     return hours + ":" + minutes + ":" + seconds;
   }
   toTime () {
-    let duration = this.convert(this.duration);
+    return this.convert(this.duration);
   }
 
   convert (duration) {

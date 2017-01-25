@@ -118,7 +118,8 @@ export default class Youtube {
     })
   }
 
-  downloadVideo(video) {
+  async downloadVideo(video) {
+    console.log('YOUTUBE: ', video.id)
     let uri = `http://www.youtube.com/watch?v=${video.id}`
     let mux = new EchoStream({
       writable: true
@@ -136,28 +137,32 @@ export default class Youtube {
         .on('finish', () => {
           //ipcRenderer.send('encode', fileName);
           //ipcRenderer.on('encoded', (event, fileName) => {
-            this.events.emit('finish', fileName);
+            this.events.emit('finish', {video, fileName});
+            return resolve(fileName);
           //});
           console.log('donwload finish !')
         });
 
         yt.on('error', error => {
           this.events.emit('error', error);
+          return reject(error);
         });
+
         yt.on('info', info => {
           this.events.emit('info', info);
         })
+
         yt.on('response', response => {
           let size = response.headers['content-length'];
           yt.pipe(fileStream);
-          yt.pipe(mux);
+          //yt.pipe(mux);
 
           // Keep track of progress.
           let dataRead = 0;
           yt.on('data', data => {
             dataRead += data.length;
             var progress = dataRead / size;
-            this.events.emit('progress', progress);
+            this.events.emit('progress', {video, progress});
           });
         });
 
@@ -165,6 +170,7 @@ export default class Youtube {
           console.log('abort download');
           yt.end();
           fileStream.end();
+          return reject();
         })
 
         /*yt.on('end', function() {

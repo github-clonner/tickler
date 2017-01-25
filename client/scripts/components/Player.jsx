@@ -8,25 +8,36 @@ import WaveSurfer from 'wavesurfer.js';
 const musicmetadata = require('musicmetadata');
 
 import Youtube from '../lib/Youtube';
-import Progress from './Progress';
-import InputRange from './InputRange';
+import { Progress, InputRange } from './index';
 
 require('../../styles/player.css');
 require('../../styles/buttons.css');
 require('../../styles/input.css');
 
-import {EventEmitter} from 'events';
-
 import _ from 'lodash';
 
-class PlayerEvents extends EventEmitter {
-  constructor(...args) {
-    super(...args);
-  }
+/* Redux stuff */
+import Immutable from 'immutable';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux'
+import * as Actions from '../actions/Playlist';
+
+function mapStateToProps(state) {
+  return {
+    list: state.Playlist
+  };
 }
 
+function mapDispatchToProps(dispatch) {
+  return {
+    actions: bindActionCreators(Actions, dispatch)
+  };
+}
+
+@connect(mapStateToProps, mapDispatchToProps)
 export default class Player extends Component {
   state = {
+    item: new Object(),
     isPlaying: false,
     isPause: false,
     isLoading: false,
@@ -38,41 +49,38 @@ export default class Player extends Component {
   }
 
   static propTypes = {
-    songs: PropTypes.array,
-    autoplay: PropTypes.bool
+    list: React.PropTypes.instanceOf(Immutable.List).isRequired,
+    autoplay: PropTypes.bool.isRequired
   }
 
   static defaultProps = {
-    songs: new Array(),
+    list: Immutable.List([]),
     autoplay: false
   }
 
   constructor (...args) {
     super(...args);
-
     this.wavesurfer = Object.create(WaveSurfer);
-    this.events = new PlayerEvents();
     this.youtube = new Youtube();
-
     this.youtube.events.on('finish', file => {
       console.log('a youtube video has been downloaded !', file)
-      this.load(file, true);
+      //this.load(file, true);
     })
-
-    this.resize = _.debounce(function (event) {
-      event.preventDefault();
-      let orgWidth = this.wavesurfer.drawer.containerWidth;
-      let newWidth = this.wavesurfer.drawer.container.clientWidth;
-      if (orgWidth != newWidth) {
-        this.wavesurfer.drawer.containerWidth = newWidth;
-        this.wavesurfer.drawBuffer();
-      }
-    }, 500).bind(this);
   }
+
+  resize = _.debounce(event => {
+    event.preventDefault();
+    let orgWidth = this.wavesurfer.drawer.containerWidth;
+    let newWidth = this.wavesurfer.drawer.container.clientWidth;
+    if (orgWidth != newWidth) {
+      this.wavesurfer.drawer.containerWidth = newWidth;
+      this.wavesurfer.drawBuffer();
+    }
+  }, 500);
 
   async load (file, autoplay) {
     console.log('file: ', file);
-    
+
     fileSystem.readFile(file, (error, buffer) => {
       let blob = new window.Blob([new Uint8Array(buffer)]);
       this.wavesurfer.loadBlob(blob);
@@ -96,17 +104,16 @@ export default class Player extends Component {
   }
 
   ready = () => {
+    this.setState({
+      seek: 0,
+      duration: this.wavesurfer.getDuration()
+    });
     if (this.wavesurfer.isPlaying()) {
       this.stop();
     }
-    if (this.props.autoplay) {
+    if (this.props.autoplay || this.state.isPlaying) {
       this.play();
     }
-    this.setState({
-      seek: 0,
-      isPlaying: false,
-      duration: this.wavesurfer.getDuration()
-    });
   }
 
   audioprocess = () => {
@@ -124,15 +131,24 @@ export default class Player extends Component {
 
   finish = () => {
     this.setState({
-      isPlaying: this.wavesurfer.isPlaying(),
-      seek: this.wavesurfer.getCurrentTime()
+      seek: 0,
+      duration: 0
     });
+    let { playNext } = this.props.actions;
+    return playNext(this.state.item.get('id'));
   }
 
   // react component lifecycle events
   componentWillReceiveProps (nextProps) {
-    if(!nextProps.songs.length) {
+    if(!nextProps.list.size) {
       return;
+    }
+    let item = nextProps.list.find(item => (item.get('isPlaying') === true));
+    if(item) {
+      this.setState({
+        item: item
+      });
+      this.load(item.get('file'), false);
     }
   }
 
@@ -143,26 +159,30 @@ export default class Player extends Component {
   }
 
   componentDidMount () {
-
     this.wavesurfer.init({
       container: this.refs.waves,
       barWidth: 2,
       height: 60
-    })
-    this.events.on('onPlay', data => {
-      console.log('playing backend:', data)
-    })
+    });
     this.wavesurfer.on('loading', this.loading);
     this.wavesurfer.on('ready', this.ready);
     this.wavesurfer.on('audioprocess', this.audioprocess);
     this.wavesurfer.on('seek', this.seek);
     this.wavesurfer.on('finish', this.finish);
 
-    this.load(this.props.songs[0], false);
+    let item = this.props.list.find(item => (item.get('isPlaying') === true));
+    if (item) {
+      this.setState({
+        item: item,
+        isPlaying: this.props.autoplay
+      });
+      this.load(item.get('file'));
+    }
   }
 
   // Player controls
   play() {
+    console.log(this.props)
     this.wavesurfer.playPause();
     this.setState({
       isPlaying: this.wavesurfer.isPlaying()
@@ -173,18 +193,24 @@ export default class Player extends Component {
     this.wavesurfer.stop();
     this.setState({
       isPlaying: this.wavesurfer.isPlaying(),
-      seek: this.wavesurfer.getCurrentTime()
+      seek: this.wavesurfer.getCurrentTime(),
+      duration: this.wavesurfer.getDuration()
     });
   }
 
   render () {
+    let {playNext, playPrevious} = this.props.actions;
+    let {item} = this.state;
     return (
       <div className="player">
         <div className="controls">
           <div className="btn-group">
-            <button className="round-button">skip_previous</button>
+            <button className="round-button" onClick={() => playNext(item.get('id'))}>skip_previous</button>
+
             <button className="round-button" disabled={!this.state.seek} onClick={this.stop.bind(this)}>stop</button>
-            <button className="round-button">skip_next</button>
+
+            <button className="round-button" onClick={() => playNext(item.get('id'))}>skip_next</button>
+
             <button className="round-button" onClick={this.play.bind(this)}>{ this.state.isPlaying ? 'pause' : 'play_arrow' }</button>
           </div>
           <InputRange value={this.state.seek / this.state.duration * 100} min={0} max={100} step={0.1} onChange={this.handleChange.bind(this)} />

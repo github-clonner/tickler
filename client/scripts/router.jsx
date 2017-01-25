@@ -5,11 +5,8 @@ import injectTapEventPlugin from 'react-tap-event-plugin';
 
 
 import App from './index';
-import HomePage from './views/Home';
-import About from './views/About';
-import Player from './views/Player';
-import NotFound from './views/NotFound';
 
+import { Home, About, Player, NotFound } from './views';
 /* redux stuff */
 import { createStore, combineReducers, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
@@ -38,7 +35,7 @@ render((
   <Provider store={store}>
     <Router history={browserHistory}>
       <Route path="/" component={App} name="Container">
-        <IndexRoute component={HomePage} name='Home'/>
+        <IndexRoute component={Home} name='Home'/>
         <Route path="/about" component={About} />
         <Route path="/player" component={Player} />
       </Route>

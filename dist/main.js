@@ -6,7 +6,8 @@ import {
   ipcMain,
   globalShortcut,
   Menu,
-  Tray
+  Tray,
+  systemPreferences
 } from 'electron';
 import fs from 'fs';
 import path from 'path';
@@ -126,25 +127,13 @@ class ElectonApplication {
 
   }
 
-  async foo () {
-    setTimeout(function () {
-      return Promise.resolve('MyApp')
-    }, 5000);
-  }
-
-  async bar () {
-    console.log(new Date())
-    let name = await foo()
-    console.log(new Date(), name)
-    this.mainWindow.webContents.send('asynchronous-reply' , name);
-  }
-
   didFinishLoad () {
     this.mainWindow.setTitle('Soundnode');
     this.mainWindow.show();
     this.mainWindow.focus();
     this.mainWindow.webContents.send('config' , config);
-    this.bar();
+    this.mainWindow.webContents.send('systemPreferences' , systemPreferences);
+    console.log(systemPreferences)
 
   }
   showAndFocus () {

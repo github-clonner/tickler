@@ -13,32 +13,11 @@ import { Youtube, Time } from './lib';
 
 const youtube = new Youtube('AIzaSyAPBCwcnohnbPXScEiVMRM4jYWc43p_CZU');
 
-const songs = [{
-  "title": "FurElise",
-  "id": "_mVW8tgGY_w",
-  "duration": 176,
-  "file": "media/FurElise.ogg",
-  "stars": 3
-}, {
-  "title": "The Four Seasons",
-  "id": "9DNoEXn4DSg",
-  "duration": 158,
-  "file": "media/06_-_Vivaldi_Summer_mvt_3_Presto_-_John_Harrison_violin.ogg",
-  "stars": 4
-}, {
-  "title": "Mozart - Symphony No. 40 in G minor",
-  "id": "JTc1mDieQI8",
-  "duration": 1584,
-  "stars": 1
-}]
-
 export default class App extends React.Component {
   state = {
     config: {
       dependencies: {}
-    },
-    songs: [path.resolve('media/FurElise.ogg')],
-    playList: songs
+    }
   }
 
   async getVideos () {
@@ -57,12 +36,16 @@ export default class App extends React.Component {
   }
 
   componentDidMount() {
-    return ipcRenderer.once('config', (event, data) => {
+    ipcRenderer.once('config', (event, config) => {
       this.setState(prevState => ({
-        config: data
+        config: config
       }));
     });
 
+    ipcRenderer.once('systemPreferences', (event, systemPreferences) => {
+    });
+
+    return;
     this.getVideos()
     .then(videos => {
       this.setState({
@@ -78,13 +61,13 @@ export default class App extends React.Component {
         <Toolbar />
         <div className="page-content">
           <div className="list">
-            <List list={this.state.playList} />
+            <List />
           </div>
           <main>
             {this.props.children}
           </main>
         </div>
-        <Player songs={this.state.songs}></Player>
+        <Player />
       </div>
     );
   }
