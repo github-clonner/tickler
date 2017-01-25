@@ -78,9 +78,14 @@ export default class Player extends Component {
     }
   }, 500);
 
-  async load (file, autoplay) {
-    console.log('file: ', file);
+  async load (item, autoplay) {
+    let file = item.get('file');
+    if(!file || !fileSystem.statSync(file)) {
+      console.log('file not found', file, song.get('id'))
+      return false;
+    }
 
+    console.log('file: ', file);
     fileSystem.readFile(file, (error, buffer) => {
       let blob = new window.Blob([new Uint8Array(buffer)]);
       this.wavesurfer.loadBlob(blob);
@@ -130,10 +135,7 @@ export default class Player extends Component {
   }
 
   finish = () => {
-    this.setState({
-      seek: 0,
-      duration: 0
-    });
+    this.stop();
     let { playNext } = this.props.actions;
     return playNext(this.state.item.get('id'));
   }
@@ -144,11 +146,12 @@ export default class Player extends Component {
       return;
     }
     let item = nextProps.list.find(item => (item.get('isPlaying') === true));
-    if(item) {
+    if(item && item.get('file') && !item.get('isLoading') && item.get('id') !== this.state.item.get('id')) {
       this.setState({
-        item: item
+        item: item,
+        isPlaying: true
       });
-      this.load(item.get('file'), false);
+      this.load(item, false);
     }
   }
 
@@ -182,7 +185,6 @@ export default class Player extends Component {
 
   // Player controls
   play() {
-    console.log(this.props)
     this.wavesurfer.playPause();
     this.setState({
       isPlaying: this.wavesurfer.isPlaying()
@@ -215,7 +217,7 @@ export default class Player extends Component {
           </div>
           <InputRange value={this.state.seek / this.state.duration * 100} min={0} max={100} step={0.1} onChange={this.handleChange.bind(this)} />
         </div>
-        <div ref="waves"></div>
+        <div ref="waves" style={{display: 'none'}}></div>
       </div>
     )
   }

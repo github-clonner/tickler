@@ -5,12 +5,12 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux'
 import Immutable from 'immutable';
 import Chance from 'chance';
-
 import _ from 'lodash';
-
 import * as Actions from '../actions/Playlist';
+import Stars from './Stars/Stars';
 
 require('../../styles/list.css');
+require('../../styles/spinner.css');
 
 let youtube = new Youtube('AIzaSyAPBCwcnohnbPXScEiVMRM4jYWc43p_CZU');
 
@@ -24,33 +24,6 @@ function mapDispatchToProps(dispatch) {
   return {
     actions: bindActionCreators(Actions, dispatch)
   };
-}
-
-class Stars extends Component {
-  constructor(...args) {
-    super(...args);
-  }
-
-  static defaultProps = {
-    stars: 0,
-    maxStars: 5
-  };
-
-  static propTypes = {
-    stars: PropTypes.number,
-    maxStars: PropTypes.number
-  }
-
-  makeStars (stars) {
-    return '☆'.repeat(this.props.maxStars).split('').fill('★', 0, stars).map((x, index) => {
-      let style = x === '★' ? 'full' : 'empty';
-      return (<span className={style} key={index}>{x}</span>);
-    })
-  }
-
-  render () {
-    return (<span className="stars">{this.makeStars(this.props.stars)}</span>);
-  }
 }
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -91,43 +64,21 @@ export default class List extends Component {
     });
   }
 
-  select = (event, song) => {
-    if(this.state.song === song.id)
-      return;
-
-    let youtube = new Youtube();
-
-    if (song.file) {
-      youtube.events.emit('finish', song.file);
-    } else {
-      youtube.downloadVideo(song);
-      youtube.events.on('progress', progress => {
-        this.setState({
-          progress: progress
-        });
-      })
-      youtube.events.on('info', info => {
-        console.log('song info', info)
-      })
-    }
-
-    this.setState({
-      song: song.id,
-    })
-  }
-
   async getVideos () {
     let youtube = new Youtube('AIzaSyAPBCwcnohnbPXScEiVMRM4jYWc43p_CZU');
     let playList = await youtube.getPlayListItems('PLA0CA9B8A2D82264B');
     let ids = playList.map(item => _.get(item, 'snippet.resourceId.videoId'));
     let {items} = await youtube.getVideos(ids);
+    let chance = new Chance();
     return items.map(item => {
       let time = new Time(_.get(item, 'contentDetails.duration'));
       return {
+        id: item.id,
+        kind: item.kind,
         title: _.get(item, 'snippet.title'),
         duration: time.toTime(),
-        id: item.id,
-        thumbnails: _.get(item, 'snippet.thumbnails')
+        thumbnails: _.get(item, 'snippet.thumbnails'),
+        stars: chance.integer({min: 0, max: 5})
       };
     });
   }
@@ -141,15 +92,16 @@ export default class List extends Component {
   }
 
   makeProgressBar (song) {
-    // if(this.state.song !== song.id) {
-    //   return null;
-    // }
-    // else {
+    if(!song.isLoading && !song.isPlaying) {
+      return {
+        'background': 'transparent'
+      };
+    } else {
       let progress = this.state.progress[song.id];
       return {
         'background': `linear-gradient(to right, #eee 0%, #eee ${progress * 100}%,#f6f6f6 ${progress * 100}%,#f6f6f6 100%)`
       };
-    // }
+    }
   }
 
   computeDuration (duration) {
@@ -161,8 +113,11 @@ export default class List extends Component {
     }
   }
 
-  handleDoubleClick = () => {
-    console.log('onDoubleClick !!!')
+  handleDoubleClick = song => {
+    let {actions} = this.props;
+    if (song.file && !song.isLoading) {
+      return actions.playPauseItem(song.id, true);
+    }
   }
 
   handleClick = async song => {
@@ -173,15 +128,38 @@ export default class List extends Component {
     this.setState({
       song: song.id,
     });
+    console.log('handleClick: ', song.title)
     if (song.file) {
-      return actions.playPauseItem(song.id, !song.isPlaying);
-    } else {
-      let fileName = await youtube.downloadVideo(song);
+      //return actions.playPauseItem(song.id, !song.isPlaying);
+    } else if (!song.file && !song.isLoading) {
       actions.editItem(song.id, {
-        file: fileName
+        isLoading: true
       });
-      actions.playPauseItem(song.id, !song.isPlaying);
+      try {
+        let fileName = await youtube.downloadVideo(song);
+        actions.editItem(song.id, {
+          file: fileName
+        });
+      } 
+      catch (error) {
+        console.log('error downloadVideo: ', error);
+      } 
+      finally {
+        actions.editItem(song.id, {
+          isLoading: false
+        });
+      }
+      //actions.playPauseItem(song.id, !song.isPlaying);
     }
+  }
+
+
+  makeSpinner () {
+    return (
+      <svg className="spinner" width="12px" height="12px" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+        <circle className="path" fill="none" strokeWidth="6" strokeLinecap="round" cx="33" cy="33" r="30"></circle>
+      </svg>
+    );
   }
 
   renderItem() {
@@ -193,13 +171,27 @@ export default class List extends Component {
         active: song.isPlaying
       });
       let exists = classNames('dot', {
-        local: song.file
+        local: song.file,
+        'is-iconic': !song.isLoading
       });
 
+      let isPlayingIcon = song => {
+        if (!song.file && !song.isLoading) {
+          return 'wifi';
+        } else if (song.isLoading) {
+          return this.makeSpinner();
+        } else {
+          return (song.isPlaying) ? 'play_arrow' : 'stop';
+        }
+        //return (song.isPlaying) ? '▶' : '●';
+        //<i class="material-icons">play_arrow</i>
+        //<i class="material-icons">fiber_manual_record</i>
+      }
+
       return (
-        <li className={style} key={index} onClick={() => this.handleClick(song)} onDoubleClick={() => this.handleDoubleClick()} style={this.makeProgressBar(song)}>
+        <li className={style} key={index} onClick={() => this.handleClick(song)} onDoubleClick={() => this.handleDoubleClick(song)} style={this.makeProgressBar(song)}>
           <span>{index + 1}</span>
-          <span className={exists}>●</span>
+          <span className={exists}>{isPlayingIcon(song)}</span>
           <span>
             <p>{song.title}</p>
           </span>

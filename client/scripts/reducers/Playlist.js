@@ -2,6 +2,7 @@ import { List, Map, Record } from 'immutable';
 
 const Item = Record({
   id: null,
+  kind: null,
   title: null,
   artist: null,
   album: null,

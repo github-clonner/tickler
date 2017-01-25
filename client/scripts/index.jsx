@@ -11,6 +11,8 @@ import styles from '../styles/main.css';
 import { Header, Toolbar, Player, List, Counter, Items} from './components';
 import { Youtube, Time } from './lib';
 
+import Chance from 'chance';
+
 const youtube = new Youtube('AIzaSyAPBCwcnohnbPXScEiVMRM4jYWc43p_CZU');
 
 export default class App extends React.Component {
@@ -24,13 +26,15 @@ export default class App extends React.Component {
     let playList = await youtube.getPlayListItems('PLQZMlSGCDHyn2siQnxnm1x9bpLlfCScTO');
     let ids = playList.map(item => item.snippet.resourceId.videoId);
     let {items} = await youtube.getVideos(ids);
+    let chance = new Chance();
     return items.map(item => {
       let time = new Time(item.contentDetails.duration);
       return {
         title: item.snippet.title,
         duration: time.toTime(),
         id: item.id,
-        thumbnails: item.thumbnails
+        thumbnails: item.thumbnails,
+        stars: chance.integer({min: 0, max: 5})
       };
     });
   }

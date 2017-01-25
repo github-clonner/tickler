@@ -62,6 +62,9 @@
             text-align: center;
             font-weight: bold;
             color: #ed1e24;
+            &.is-iconic {
+                font-family: 'Material Icons';
+            }
             &.local {
                 color: #31dd31;
             }
@@ -91,15 +94,3 @@
     }
 }
 
-.stars {
-    color: #eee;
-    display: flex;
-    flex-flow: row;
-    font-weight: lighter;
-    cursor: pointer;
-    & .full {
-        /*color: #d21d30;*/
-        color: #ffd942;
-        -webkit-text-stroke: 1px rgba(255,0,0,.2);
-    }
-}
