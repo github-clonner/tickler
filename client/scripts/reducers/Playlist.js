@@ -22,7 +22,7 @@ const Item = Record({
 });
 
 const initialState = List([
-  Map({
+  /*Map({
     id: '9DNoEXn4DSg',
     title: 'The Four Seasons',
     artist: '',
@@ -44,7 +44,7 @@ const initialState = List([
     duration: 176,
     file: 'media/FurElise.ogg',
     stars: 3
-  })
+  })*/
 ]);
 
 export default function Playlist(state = initialState, action) {
@@ -67,6 +67,14 @@ export default function Playlist(state = initialState, action) {
   }
 
   switch(action.type) {
+
+    case 'RECEIVE_LIST': {
+      let playlist = action.payload.map(element => {
+        let item = new Item();
+        return item.merge(element);
+      });
+      return List(playlist);
+    }
 
     case 'CREATEFROM': {
       let playlist = action.payload.map(element => {

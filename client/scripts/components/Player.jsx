@@ -14,7 +14,7 @@ require('../../styles/player.css');
 require('../../styles/buttons.css');
 require('../../styles/input.css');
 
-import _ from 'lodash';
+import debounce from 'lodash/debounce';
 
 /* Redux stuff */
 import Immutable from 'immutable';
@@ -68,7 +68,7 @@ export default class Player extends Component {
     })
   }
 
-  resize = _.debounce(event => {
+  resize = debounce(event => {
     event.preventDefault();
     let orgWidth = this.wavesurfer.drawer.containerWidth;
     let newWidth = this.wavesurfer.drawer.container.clientWidth;
@@ -109,6 +109,7 @@ export default class Player extends Component {
   }
 
   ready = () => {
+    console.log(this.wavesurfer.backend.getPeaks(128));
     this.setState({
       seek: 0,
       duration: this.wavesurfer.getDuration()
@@ -145,8 +146,14 @@ export default class Player extends Component {
     if(!nextProps.list.size) {
       return;
     }
+    console.log(nextProps.list.toJS())
     let item = nextProps.list.find(item => (item.get('isPlaying') === true));
-    if(item && item.get('file') && !item.get('isLoading') && item.get('id') !== this.state.item.get('id')) {
+    if(this.state.item.get) {
+      if(this.state.item.get('id') === item.get('id')) {
+        return;
+      }
+    }
+    if(item && item.get('file') && !item.get('isLoading')) { //&& item.get('id') !== this.state.item.get('id')) {
       this.setState({
         item: item,
         isPlaying: true

@@ -1,11 +1,11 @@
 import React, { Component, PropTypes } from 'react';
+import path from 'path';
 import classNames from 'classnames';
 import { Youtube, Time } from '../lib';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux'
 import Immutable from 'immutable';
 import Chance from 'chance';
-import _ from 'lodash';
 import * as Actions from '../actions/Playlist';
 import Stars from './Stars/Stars';
 
@@ -64,7 +64,7 @@ export default class List extends Component {
     });
   }
 
-  async getVideos () {
+  /*async getVideos () {
     let youtube = new Youtube('AIzaSyAPBCwcnohnbPXScEiVMRM4jYWc43p_CZU');
     let playList = await youtube.getPlayListItems('PLA0CA9B8A2D82264B');
     let ids = playList.map(item => _.get(item, 'snippet.resourceId.videoId'));
@@ -81,14 +81,18 @@ export default class List extends Component {
         stars: chance.integer({min: 0, max: 5})
       };
     });
-  }
+  }*/
 
   componentDidMount () {
     let { actions } = this.props;
+
+    actions.fetchList('PLA-jW3Nr3H5IgsqF6ACBTh9wEMxL12bJy'); //PLA0CA9B8A2D82264B
+    /*
     this.getVideos()
     .then(videos => {
       actions.createFrom(videos);
     });
+    */
   }
 
   makeProgressBar (song) {
@@ -114,8 +118,19 @@ export default class List extends Component {
   }
 
   handleDoubleClick = song => {
+    let options = {
+      title: "Content-Image Notification",
+      body: "Short message plus a custom content image: ",
+      //icon: path.join(__dirname, 'media/icon.png')
+      sound: false,
+      icon:  path.resolve('media/icon.png'),
+      image:  path.resolve('media/icon.png'),
+      silent: true
+    }
+    new Notification(song.title, options);
     let {actions} = this.props;
     if (song.file && !song.isLoading) {
+      console.log('handleDoubleClick: ', song.title)
       return actions.playPauseItem(song.id, true);
     }
   }
@@ -140,10 +155,10 @@ export default class List extends Component {
         actions.editItem(song.id, {
           file: fileName
         });
-      } 
+      }
       catch (error) {
         console.log('error downloadVideo: ', error);
-      } 
+      }
       finally {
         actions.editItem(song.id, {
           isLoading: false
@@ -156,7 +171,7 @@ export default class List extends Component {
 
   makeSpinner () {
     return (
-      <svg className="spinner" width="12px" height="12px" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+      <svg className="spinner" width="13px" height="13px" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
         <circle className="path" fill="none" strokeWidth="6" strokeLinecap="round" cx="33" cy="33" r="30"></circle>
       </svg>
     );

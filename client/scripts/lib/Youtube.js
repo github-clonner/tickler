@@ -70,7 +70,8 @@ export default class Youtube {
   }
 
   async getVideos(ids) {
-    let part = 'id,snippet,contentDetails,player,recordingDetails,statistics,status,topicDetails';
+    //let part = 'id,snippet,contentDetails,player,recordingDetails,statistics,status,topicDetails';
+    let part = 'id,snippet,contentDetails';
     let options = {
       id: ids.join(','),
       part: part
@@ -88,7 +89,7 @@ export default class Youtube {
     let options = {
       playlistId: playlistId,
       part: part,
-      maxResults: 5,
+      maxResults: 50,
       pageToken: null
     };
     let items = [];

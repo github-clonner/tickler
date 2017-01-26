@@ -4,3 +4,4 @@ export Player from './Player';
 export List from './List';
 export Items from './Items';
 export InputRange from './InputRange';
+export CoverFlow from './CoverFlow/CoverFlow';

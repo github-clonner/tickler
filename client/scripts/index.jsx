@@ -8,7 +8,7 @@ import { Link } from 'react-router';
 
 
 import styles from '../styles/main.css';
-import { Header, Toolbar, Player, List, Counter, Items} from './components';
+import { Header, Toolbar, Player, List, Counter, Items, CoverFlow} from './components';
 import { Youtube, Time } from './lib';
 
 import Chance from 'chance';
@@ -63,6 +63,7 @@ export default class App extends React.Component {
       <div className="page">
         <Header />
         <Toolbar />
+        <CoverFlow />
         <div className="page-content">
           <div className="list">
             <List />
