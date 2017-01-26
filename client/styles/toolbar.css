@@ -42,3 +42,18 @@
     & li {
     }
 }
+
+.radio-button {
+    user-select: none;
+    cursor: pointer;
+    & input[type="radio"] {
+        position: absolute;
+        visibility: hidden;
+    }
+    & input[type=radio]:checked ~ label {
+        color: #0DFF92;
+        & img {
+            background-color: #f00;
+        }
+    }
+}
