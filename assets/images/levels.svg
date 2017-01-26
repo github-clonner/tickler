@@ -1,0 +1,41 @@
+<svg width="64" height="64" xmlns="http://www.w3.org/2000/svg">
+
+ <g>
+  <title>background</title>
+  <rect fill="none" id="canvas_background" height="66" width="66" y="-1" x="-1"/>
+ </g>
+ <g>
+  <title>Layer 1</title>
+  <g stroke="null" id="svg_1">
+   <rect stroke="null" stroke-width="0" id="svg_2" height="2.914444" width="10.844444" y="49.283334" x="14.106667"/>
+   <rect stroke="null" stroke-width="0" id="svg_3" height="2.914444" width="10.844444" y="45.081112" x="14.106667"/>
+   <rect stroke="null" stroke-width="0" id="svg_4" height="2.914444" width="10.844444" y="40.946668" x="14.106667"/>
+   <rect stroke="null" stroke-width="0" id="svg_5" height="2.914444" width="10.844444" y="36.812223" x="14.106667"/>
+   <rect stroke="null" stroke-width="0" id="svg_6" height="2.914444" width="10.844444" y="32.610001" x="14.106667"/>
+   <rect stroke="null" stroke-width="0" id="svg_7" height="2.914444" width="10.844444" y="28.475557" x="14.106667"/>
+   <rect stroke="null" stroke-width="0" id="svg_8" height="2.914444" width="10.844444" y="24.273334" x="14.106667"/>
+   <rect stroke="null" stroke-width="0" id="svg_9" height="2.914444" width="10.844444" y="20.13889" x="14.106667"/>
+   <rect stroke="null" stroke-width="0" id="svg_10" height="2.914444" width="10.844444" y="49.283334" x="26.713333"/>
+   <rect stroke="null" stroke-width="0" id="svg_11" height="2.914444" width="10.844444" y="45.081112" x="26.713333"/>
+   <rect stroke="null" stroke-width="0" id="svg_12" height="2.914444" width="10.844444" y="40.946668" x="26.713333"/>
+   <rect stroke="null" stroke-width="0" id="svg_13" height="2.914444" width="10.844444" y="36.812223" x="26.713333"/>
+   <rect stroke="null" stroke-width="0" id="svg_14" height="2.914444" width="10.844444" y="32.610001" x="26.713333"/>
+   <rect stroke="null" stroke-width="0" id="svg_15" height="2.914444" width="10.844444" y="28.475557" x="26.713333"/>
+   <rect stroke="null" stroke-width="0" id="svg_16" height="2.914444" width="10.844444" y="24.273334" x="26.713333"/>
+   <rect stroke="null" stroke-width="0" id="svg_17" height="2.914444" width="10.844444" y="20.13889" x="26.713333"/>
+   <rect stroke="null" stroke-width="0" id="svg_18" height="2.914444" width="10.844444" y="16.004446" x="26.713333"/>
+   <rect stroke="null" stroke-width="0" id="svg_19" height="2.914444" width="10.844444" y="11.802223" x="26.713333"/>
+   <rect stroke="null" stroke-width="0" id="svg_20" height="2.914444" width="10.844444" y="49.283334" x="39.32"/>
+   <rect stroke="null" stroke-width="0" id="svg_21" height="2.914444" width="10.844444" y="45.081112" x="39.32"/>
+   <rect stroke="null" stroke-width="0" id="svg_22" height="2.914444" width="10.844444" y="40.946668" x="39.32"/>
+   <rect stroke="null" stroke-width="0" id="svg_23" height="2.914444" width="10.844444" y="36.812223" x="39.32"/>
+   <rect stroke="null" stroke-width="0" id="svg_24" height="2.914444" width="10.844444" y="32.610001" x="39.32"/>
+   <rect stroke="null" stroke-width="0" id="svg_25" height="2.914444" width="10.844444" y="28.475557" x="39.32"/>
+   <rect stroke="null" stroke-width="0" id="svg_26" height="2.914444" width="10.844444" y="49.283334" x="51.655555"/>
+   <rect stroke="null" stroke-width="0" id="svg_27" height="2.914444" width="10.844444" y="45.081112" x="51.655555"/>
+   <rect stroke="null" stroke-width="0" id="svg_28" height="2.914444" width="10.844444" y="49.283334" x="1.5"/>
+   <rect stroke="null" stroke-width="0" id="svg_29" height="2.914444" width="10.844444" y="45.081112" x="1.5"/>
+   <rect stroke="null" stroke-width="0" id="svg_30" height="2.914444" width="10.844444" y="40.946668" x="1.5"/>
+  </g>
+ </g>
+</svg>

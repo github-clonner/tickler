@@ -86,7 +86,7 @@ export default class List extends Component {
   componentDidMount () {
     let { actions } = this.props;
 
-    actions.fetchList('PLA-jW3Nr3H5IgsqF6ACBTh9wEMxL12bJy'); //PLA0CA9B8A2D82264B
+    actions.fetchList('PLA0CA9B8A2D82264B'); //
     /*
     this.getVideos()
     .then(videos => {
@@ -112,7 +112,7 @@ export default class List extends Component {
     if(duration.constructor === String) {
         return duration;
     } else {
-        let time = new Time(duration * 1000);
+        let time = new Time(duration);
         return time.humanize();
     }
   }
@@ -123,8 +123,8 @@ export default class List extends Component {
       body: "Short message plus a custom content image: ",
       //icon: path.join(__dirname, 'media/icon.png')
       sound: false,
-      icon:  path.resolve('media/icon.png'),
-      image:  path.resolve('media/icon.png'),
+      icon: song.thumbnails.default.url,
+      image:  song.thumbnails.default.url,//path.resolve('media/icon.png'),
       silent: true
     }
     new Notification(song.title, options);

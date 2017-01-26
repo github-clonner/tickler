@@ -5,3 +5,4 @@ export List from './List';
 export Items from './Items';
 export InputRange from './InputRange';
 export CoverFlow from './CoverFlow/CoverFlow';
+export Equalizer from './Equalizer/Equalizer';

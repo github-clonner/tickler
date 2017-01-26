@@ -1,13 +1,19 @@
-cover-flow {
+.coverflow {
     position: relative;
     display: block;
     transition-property: height;
     transition-timing-function: ease-in-out;
     transition-duration: 0.35s;
-    background: radial-gradient(#e0d9c6, #4b3a40);
+    /* background: radial-gradient(#e0d9c6, #4b3a40); */
+    background: linear-gradient(to bottom, rgba(174,129,197,1) 0%,rgba(230,168,221,1) 100%);
     height: 0px;
+    flex: 0 0 auto;
+    overflow: hidden;
     &.active {
         height: 140px;
+        & .container, & .caption {
+            opacity: 1;
+        }
     }
     & .container {
         height: 100%;
@@ -16,6 +22,8 @@ cover-flow {
         display: flex;
         flex-direction: row;
         position: relative;
+        transition: opacity 0.35s ease-in;
+        opacity: 0;
         & ul.covers {
             list-style: none;
             display: flex;
@@ -36,7 +44,10 @@ cover-flow {
                 margin: 0 5px;
             }
             & li.cover.active {
-                box-shadow: 0 0 11px rgba(255,255,255,1);
+                & img {
+                    box-shadow: 0 0 10px rgba(255, 255, 255, 1);
+                    border: 1px solid rgba(255, 255, 255, 0.65);
+                }
             }
         }
         & img {
@@ -60,5 +71,7 @@ cover-flow {
         max-width: 50%;
         overflow: hidden;
         white-space: nowrap;
+        transition: opacity 0.5s ease-in;
+        opacity: 0;
     }
 }

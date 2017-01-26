@@ -7,11 +7,12 @@ require('./coverflow.css');
 import Immutable from 'immutable';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux'
-import * as Actions from '../../actions/Playlist';
+import * as Actions from '../../actions';
 
 function mapStateToProps(state) {
   return {
-    list: state.Playlist
+    list: state.Playlist,
+    toolbar: state.Player
   };
 }
 
@@ -24,15 +25,8 @@ function mapDispatchToProps(dispatch) {
 @connect(mapStateToProps, mapDispatchToProps)
 export default class CoverFlow extends Component {
   state = {
-    isActive: true,
-    counter: 0,
     caption: 'Song Name'
   };
-
-  componentDidMount () {
-    //this.timer = setInterval(this.toggle, 5000);
-    console.log('props: ', this.props.list)
-  }
 
   toggle = () => {
     this.setState({
@@ -62,17 +56,18 @@ export default class CoverFlow extends Component {
   }
 
   render () {
-    let style = classNames('container', {
-      active: this.state.isActive
+    let {toolbar} = this.props;
+    let style = classNames('coverflow', {
+      active: toolbar.coverflow
     });
 
     return (
-      <cover-flow class="active">
-        <div className={style}>
+      <div className={style}>
+        <div className="container" ref="container">
           <ul className="covers">{this.makeCovers()}</ul>
         </div>
         <span className="caption">{this.state.caption}</span>
-      </cover-flow>
+      </div>
     );
   }
 }
