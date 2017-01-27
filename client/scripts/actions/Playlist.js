@@ -45,6 +45,18 @@ export function fetchList(id) {
         stars: chance.integer({min: 0, max: 5})
       };
     });
+    payload[0] = {
+      id: '_mVW8tgGY_w',
+      title: 'FurElise xx',
+      duration: 176,
+      file: 'media/FurElise.ogg',
+      stars: 3,
+      thumbnails: {
+        default: {
+          url: "https://i.ytimg.com/vi/GDpmVUEjagg/default.jpg"
+        }
+      }
+    };
     dispatch(receivePlayList(payload));
   }
 }

@@ -23,7 +23,11 @@ function mapDispatchToProps(dispatch) {
 @connect(mapStateToProps, mapDispatchToProps)
 export default class Toolbar extends Component {
   state = {
-    toolbar: {},
+    toolbar: {
+        equalizer: false,
+        levels: false,
+        coverflow: false
+    },
     checked: true
   };
 
@@ -61,20 +65,44 @@ export default class Toolbar extends Component {
     let option = event.target.value;
     let {actions} = this.props;
     let {toolbar} = this.state;
-    let value = Object.assign({}, toolbar);
-    value[option] = !toolbar[option];
-    actions.toolbarOptions(value);
+
+    let values = Object.keys(toolbar).reduce((previous, key) => {
+        previous[key] = (key === option) ? !this.state.toolbar[key] : false;
+        return previous;
+    }, {});
+
+    console.log('value: ', values)
+    actions.toolbarOptions(values);
     this.setState({
-      checked: !this.state.checked
+      toolbar: values
     });
   }
 
-  /*
-  <input type="radio" name="gender" value="male"> Male<br>
-  <input type="radio" name="gender" value="female"> Female<br>
-  <input type="radio" name="gender" value="other"> Other
-  */
+  makeButtons () {
+    let toolbar = this.props.toolbar.toJS();
+    let buttons = Object.keys(toolbar).map(button => {
+      return (
+        <li className="radio-button" key={button}>
+          <input type="radio" name="toolbar" id={button}
+            value={button}
+            checked={toolbar[button]}
+            onChange={this.handleOnChange}
+          />
+          <label className="radio-button" htmlFor={button}>
+          <img src={path.resolve(`assets/images/${button}.svg`)}></img>
+          </label>
+        </li>
+      );
+    });
+    return buttons;
+  }
+
   render () {
+    return (
+      <ul className="toolbar">{this.makeButtons()}</ul>
+    );
+  }
+  renderXX () {
     let toolbar = this.state.toolbar;
     console.log('xxx toolbar: ', toolbar.equalizer, this.state.checked)
     return (
@@ -98,14 +126,14 @@ export default class Toolbar extends Component {
         <li className="radio-button">
           {/*<input type="radio" name="toolbar" value={this.state.toolbar.equalizer} id="f-equalizer" checked={toolbar.equalizer} onChange={this.handleOnChange}/>*/}
           <input type="radio" name="toolbar" id="f-equalizer"
-             value={'equalizer'} 
-             checked={this.state.checked} 
-             onChange={this.handleOnChange} 
+             value={'equalizer'}
+             checked={toolbar.equalizer}
+             onChange={this.handleOnChange}
           />
           <label className="radio-button" htmlFor="f-equalizer">
             <img src={path.resolve('assets/images/equalizer.svg')}></img>
           </label>
-            
+
           {/*
           <button className="play" onClick={() => this.handleClick('equalizer')}>
             <img src={path.resolve('assets/images/equalizer.svg')}></img>

@@ -47,7 +47,7 @@ const initialState = List([
   })*/
 ]);
 
-export default function Playlist(state = initialState, action) {
+export default function Playlist (state = initialState, action) {
   let getIndex = id => {
     // Get item by id
     return state.findIndex(item => ( item.get('id') === id) );
@@ -59,14 +59,14 @@ export default function Playlist(state = initialState, action) {
   let pause = () => {
     // Find item that's playing
     let index = state.findIndex(item => (item.get('isPlaying') === true));
-    if(index > -1) {
+    if (index > -1) {
       return state.update(index, item => ( item.set('isPlaying', false) ));
     } else {
       return state;
     }
   }
 
-  switch(action.type) {
+  switch (action.type) {
 
     case 'RECEIVE_LIST': {
       let playlist = action.payload.map(element => {
@@ -91,7 +91,7 @@ export default function Playlist(state = initialState, action) {
 
     case 'DELETE_ITEM': {
       let index = getIndex(action.id);
-      if(index > -1) {
+      if (index > -1) {
         return state.delete(index);
       } else {
         return state;
@@ -100,7 +100,7 @@ export default function Playlist(state = initialState, action) {
 
     case 'EDIT_ITEM': {
       let index = getIndex(action.id);
-      if(index > -1) {
+      if (index > -1) {
         return state.update(index, item => ( item.merge(Map(action.payload)) ));
       } else {
         return state;
@@ -109,7 +109,7 @@ export default function Playlist(state = initialState, action) {
 
     case 'PLAYPAUSE_ITEM': {
       let index = getIndex(action.id);
-      if(index > -1) {
+      if (index > -1) {
         return pause().update(index, item => ( item.set('isPlaying', action.playPause) ));
       } else {
         return state;

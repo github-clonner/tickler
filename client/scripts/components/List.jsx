@@ -51,7 +51,7 @@ export default class List extends Component {
       });
     });
     youtube.events.on('finish', ({video, fileName}) => {
-      console.log('finish', video.title)
+      // console.log('finish', video.title)
       let videoProgress = Object.assign({}, this.state.progress);
       delete videoProgress[video.id];
       this.setState({
@@ -60,7 +60,7 @@ export default class List extends Component {
     });
 
     youtube.events.on('info', info => {
-      console.log('song info', info)
+      // console.log('song info', info)
     });
   }
 
@@ -143,7 +143,7 @@ export default class List extends Component {
     this.setState({
       song: song.id,
     });
-    console.log('handleClick: ', song.title)
+    // console.log('handleClick: ', song.title)
     if (song.file) {
       //return actions.playPauseItem(song.id, !song.isPlaying);
     } else if (!song.file && !song.isLoading) {

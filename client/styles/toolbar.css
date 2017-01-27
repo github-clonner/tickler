@@ -46,14 +46,27 @@
 .radio-button {
     user-select: none;
     cursor: pointer;
+    height: 48px;
+    width: 48px;
     & input[type="radio"] {
         position: absolute;
         visibility: hidden;
     }
-    & input[type=radio]:checked ~ label {
+    & input[type="radio"]:checked ~ label {
         color: #0DFF92;
         & img {
-            background-color: #f00;
+            filter: none;
+            /*background-color: #f00;*/
         }
+    }
+    &:hover {
+        & img {
+            filter: none;
+        }
+    }
+    & img {
+        transition: filter 0.2s ease;
+        filter: hue-rotate(180deg) invert(0.5);
+        max-height: 100%;
     }
 }

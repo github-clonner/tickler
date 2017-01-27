@@ -20,17 +20,20 @@ import debounce from 'lodash/debounce';
 import Immutable from 'immutable';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux'
-import * as Actions from '../actions/Playlist';
+import * as Playist from '../actions/Playlist';
+import * as Audio from '../actions/Player';
 
 function mapStateToProps(state) {
   return {
-    list: state.Playlist
+    list: state.Playlist,
+    audio: state.Audio
   };
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    actions: bindActionCreators(Actions, dispatch)
+    actions: bindActionCreators(Playist, dispatch),
+    audio: bindActionCreators(Audio, dispatch)
   };
 }
 
@@ -60,8 +63,10 @@ export default class Player extends Component {
 
   constructor (...args) {
     super(...args);
+    this.context = new AudioContext();
     this.wavesurfer = Object.create(WaveSurfer);
     this.youtube = new Youtube();
+    this.visualizer = new Visualizer(this.context);
     this.youtube.events.on('finish', file => {
       console.log('a youtube video has been downloaded !', file)
       //this.load(file, true);
@@ -84,8 +89,6 @@ export default class Player extends Component {
       console.log('file not found', file, song.get('id'))
       return false;
     }
-
-    console.log('file: ', file);
     fileSystem.readFile(file, (error, buffer) => {
       let blob = new window.Blob([new Uint8Array(buffer)]);
       this.wavesurfer.loadBlob(blob);
@@ -93,7 +96,7 @@ export default class Player extends Component {
     let stream = fileSystem.createReadStream(file)
     musicmetadata(stream, function (error, metadata) {
       if (error) throw error;
-      console.log(metadata);
+      // console.log(metadata);
     });
   }
 
@@ -109,7 +112,10 @@ export default class Player extends Component {
   }
 
   ready = () => {
-    console.log(this.wavesurfer.backend.getPeaks(128));
+    //console.log(this.wavesurfer.backend.getPeaks(128));
+    //this.visualizer.togglePlayback(this.wavesurfer.backend.buffer);
+    //this.props.audio.context(this.context);
+    this.props.audio.analyser(this.wavesurfer.backend.analyser);
     this.setState({
       seek: 0,
       duration: this.wavesurfer.getDuration()
@@ -123,6 +129,7 @@ export default class Player extends Component {
   }
 
   audioprocess = () => {
+    this.visualizer.draw();
     this.setState({
       isPlaying: this.wavesurfer.isPlaying(),
       seek: this.wavesurfer.getCurrentTime()
@@ -146,7 +153,6 @@ export default class Player extends Component {
     if(!nextProps.list.size) {
       return;
     }
-    console.log(nextProps.list.toJS())
     let item = nextProps.list.find(item => (item.get('isPlaying') === true));
     if(this.state.item.get) {
       if(this.state.item.get('id') === item.get('id')) {
@@ -172,7 +178,8 @@ export default class Player extends Component {
     this.wavesurfer.init({
       container: this.refs.waves,
       barWidth: 2,
-      height: 60
+      height: 60,
+      audioContext: this.audioContext
     });
     this.wavesurfer.on('loading', this.loading);
     this.wavesurfer.on('ready', this.ready);
@@ -192,6 +199,7 @@ export default class Player extends Component {
 
   // Player controls
   play() {
+    this.props.audio.analyser(this.wavesurfer.backend.analyser);
     this.wavesurfer.playPause();
     this.setState({
       isPlaying: this.wavesurfer.isPlaying()
@@ -215,17 +223,53 @@ export default class Player extends Component {
         <div className="controls">
           <div className="btn-group">
             <button className="round-button" onClick={() => playNext(item.get('id'))}>skip_previous</button>
-
             <button className="round-button" disabled={!this.state.seek} onClick={this.stop.bind(this)}>stop</button>
-
             <button className="round-button" onClick={() => playNext(item.get('id'))}>skip_next</button>
-
             <button className="round-button" onClick={this.play.bind(this)}>{ this.state.isPlaying ? 'pause' : 'play_arrow' }</button>
+          </div>
+          <div className="button-group checkbox-buttons">
+            <input id="loop" type="checkbox" />
+            <label htmlFor="loop">loop</label>
+            <input id="shuffle" type="checkbox" />
+            <label htmlFor="shuffle">shuffle</label>
           </div>
           <InputRange value={this.state.seek / this.state.duration * 100} min={0} max={100} step={0.1} onChange={this.handleChange.bind(this)} />
         </div>
         <div ref="waves" style={{display: 'none'}}></div>
       </div>
     )
+  }
+}
+
+
+// Interesting parameters to tweak!
+const SMOOTHING = 0.8;
+const FFT_SIZE = 128;
+
+class Visualizer {
+
+  constructor (context) {
+    this.context = context;
+    this.analyser = context.createAnalyser();
+    this.analyser.connect(context.destination);
+    this.analyser.minDecibels = -140;
+    this.analyser.maxDecibels = 0;
+    this.freqs = new Uint8Array(this.analyser.frequencyBinCount);
+  }
+
+  togglePlayback (buffer) {
+    this.source = this.context.createBufferSource();
+    // Connect graph
+    this.source.connect(this.analyser);
+    this.source.buffer = buffer;
+  }
+
+  draw () {
+    this.analyser.smoothingTimeConstant = SMOOTHING;
+    this.analyser.fftSize = FFT_SIZE;
+    // Get the frequency data from the currently playing music
+    this.analyser.getByteFrequencyData(this.freqs);
+
+    //console.log(this.freqs);
   }
 }
