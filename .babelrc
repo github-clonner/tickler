@@ -8,6 +8,8 @@
   "comments": false,
   "compact": false,
   "plugins": [
-    "transform-async-to-generator"
+    "transform-decorators-legacy",
+    "transform-async-to-generator",
+    "transform-class-properties"
   ]
 }

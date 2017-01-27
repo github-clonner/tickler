@@ -1,0 +1,220 @@
+import React, { Component, PropTypes } from 'react';
+import { findDOMNode } from "react-dom";
+import classNames from 'classnames';
+
+import Axios from 'axios';
+
+require('./equalizer.css');
+/* Redux stuff */
+import Immutable from 'immutable';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux'
+import * as Actions from '../../actions';
+
+// Interesting parameters to tweak!
+const SMOOTHING = 0.8;
+const FFT_SIZE = 2048;
+
+class Visualizer {
+
+  constructor(canvas, context) {
+    this.canvas = canvas;
+    this.context = context;
+    this.analyser = context.createAnalyser();
+    this.analyser.connect(context.destination);
+    this.analyser.minDecibels = -140;
+    this.analyser.maxDecibels = 0;
+    this.freqs = new Uint8Array(this.analyser.frequencyBinCount);
+    this.times = new Uint8Array(this.analyser.frequencyBinCount);
+
+    this.isPlaying = false;
+    this.startTime = 0;
+    this.startOffset = 0;
+  }
+
+  togglePlayback (context, buffer) {
+    if (this.isPlaying) {
+      // Stop playback
+      this.source[this.source.stop ? 'stop': 'noteOff'](0);
+      this.startOffset += this.context.currentTime - this.startTime;
+      // Save the position of the play head.
+    } else {
+      this.startTime = this.context.currentTime;
+      this.source = this.context.createBufferSource();
+      // Connect graph
+      this.source.connect(this.analyser);
+      this.source.buffer = buffer;
+      this.source.loop = true;
+      // Start playback, but make sure we stay in bound of the buffer.
+      this.source[this.source.start ? 'start' : 'noteOn'](0, this.startOffset % buffer.duration);
+      // Start visualizer.
+      window.requestAnimationFrame(this.draw.bind(this, this.canvas));
+    }
+    this.isPlaying = !this.isPlaying;
+  }
+
+  draw (canvas) {
+    this.analyser.smoothingTimeConstant = SMOOTHING;
+    this.analyser.fftSize = FFT_SIZE;
+
+    // Get the frequency data from the currently playing music
+    this.analyser.getByteFrequencyData(this.freqs);
+    this.analyser.getByteTimeDomainData(this.times);
+
+    let width = Math.floor(1/this.freqs.length, 10);
+
+    var drawContext = canvas.getContext('2d');
+    canvas.width = 320;
+    canvas.height = 140;
+    // Draw the frequency domain chart.
+    for (let i = 0; i < this.analyser.frequencyBinCount; i++) {
+      let value = this.freqs[i];
+      let percent = value / 256;
+      let height = canvas.height * percent;
+      let offset = canvas.height - height - 1;
+      let barWidth = canvas.width/this.analyser.frequencyBinCount;
+      let hue = i/this.analyser.frequencyBinCount * 360;
+      drawContext.fillStyle = 'hsl(' + hue + ', 100%, 50%)';
+      drawContext.fillRect(i * barWidth, offset, barWidth, height);
+    }
+
+    // Draw the time domain chart.
+    for (let i = 0; i < this.analyser.frequencyBinCount; i++) {
+      let value = this.times[i];
+      let percent = value / 256;
+      let height = canvas.height * percent;
+      let offset = canvas.height - height - 1;
+      let barWidth = canvas.width/this.analyser.frequencyBinCount;
+      drawContext.fillStyle = 'white';
+      drawContext.fillRect(i * barWidth, offset, 1, 2);
+    }
+
+    if (this.isPlaying) {
+      window.requestAnimationFrame(this.draw.bind(this, this.canvas));
+    }
+  }
+  getFrequencyValue (frequency) {
+    var nyquist = context.sampleRate/2;
+    var index = Math.round(frequency / nyquist * this.freqs.length);
+    return this.freqs[index];
+  }
+}
+
+function mapStateToProps(state) {
+  return {
+    toolbar: state.Player
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    actions: bindActionCreators(Actions, dispatch)
+  };
+}
+
+@connect(mapStateToProps, mapDispatchToProps)
+export default class Equalizer extends Component {
+
+  setupAudioNodes(context) {
+
+    // setup a javascript node
+    this.javascriptNode = context.createScriptProcessor(2048, 1, 1);
+    // connect to destination, else it isn't called
+    this.javascriptNode.connect(context.destination);
+    // setup a analyzer
+    this.analyser = context.createAnalyser();
+    this.analyser.smoothingTimeConstant = 0;
+    this.analyser.fftSize = 1024;
+    // create a buffer source node
+    this.sourceNode = context.createBufferSource();
+    this.sourceNode.connect(this.analyser);
+    this.analyser.connect(this.javascriptNode);
+    this.sourceNode.connect(context.destination);
+
+
+    // Create a gain node.
+    this.gainNode = context.createGain();
+    // Connect the source to the gain node.
+    this.sourceNode.connect(this.gainNode);
+    // Connect the gain node to the destination.
+    this.gainNode.connect(context.destination);
+
+    // when the javascript node is called
+    // we use information from the analyzer node
+    // to draw the volume
+    this.javascriptNode.onaudioprocess = () => {
+        // get the average for the first channel
+        let array = new Uint8Array(this.analyser.frequencyBinCount);
+        this.analyser.getByteFrequencyData(array);
+        // draw the spectrogram
+        if (this.sourceNode.playbackState == this.sourceNode.PLAYING_STATE) {
+            //drawSpectrogram(array);
+            this.gainNode.gain.value = 0;
+        }
+    }
+    this.context = context;
+  }
+
+  playSound = buffer => {
+    this.sourceNode.buffer = buffer;
+    this.sourceNode.start(0);
+    this.sourceNode.loop = true;
+    // Reduce the volume.
+    this.gainNode.gain.value = 0;
+    this.visualizer.togglePlayback(null, buffer);
+  }
+
+  onError(error) {
+    console.log(error);
+  }
+
+  loadSound (url) {
+    function copy(src)  {
+      var dst = new ArrayBuffer(src.byteLength);
+      new Uint8Array(dst).set(new Uint8Array(src));
+      return dst;
+    }
+
+    let axios = Axios.create()
+    axios({
+      method: 'GET',
+      url: url,
+      responseType: 'arraybuffer'
+    })
+    .then(response => {
+      this.buffer = new Buffer(response.data)
+      console.log(this.buffer.length)
+      this.context.decodeAudioData(response.data, this.playSound, this.onError); // works with node-fetch
+    })
+  }
+
+  setGain (gain) {
+    // Create a gain node.
+    var gainNode = this.context.createGain();
+    // Connect the source to the gain node.
+    this.sourceNode.connect(gainNode);
+    // Connect the gain node to the destination.
+    gainNode.connect(this.context.destination);
+    // Reduce the volume.
+    gainNode.gain.value = 0;
+  }
+  componentDidMount () {
+    return;
+    let context = new AudioContext();
+    this.setupAudioNodes(context);
+    this.loadSound('http://api.soundcloud.com/tracks/204082098/stream?client_id=17a992358db64d99e492326797fff3e8');
+    this.visualizer = new Visualizer(this.refs.canvas, context);
+  }
+
+  render () {
+    let {toolbar} = this.props;
+    let style = classNames('equalizer', {
+      active: toolbar.equalizer
+    });
+    return (
+      <div className={style}>
+        <canvas ref='canvas' width="100%" height="100%" className="draw-surface"></canvas>
+      </div>
+    );
+  }
+};

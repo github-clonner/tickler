@@ -1,5 +1,3 @@
-import 'babel-polyfill';
-
 import React from 'react';
 import { render } from 'react-dom';
 import { Router, Route, Redirect, hashHistory, browserHistory, IndexRoute } from 'react-router';
@@ -7,23 +5,25 @@ import injectTapEventPlugin from 'react-tap-event-plugin';
 
 
 import App from './index';
-import HomePage from './views/Home';
-import About from './views/About';
-import Player from './views/Player';
-import NotFound from './views/NotFound';
 
-/*const findDOMNode = ReactDOM.findDOMNode;
-const gui = require('nw.gui');
-const os = require('os');
-const EventEmitter = require('events');
-const appEmitter = new EventEmitter();
-const fs = require('fs');
-*/
+import { Home, About, Player, NotFound } from './views';
+/* redux stuff */
+import { createStore, combineReducers, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk';
+import { Provider } from 'react-redux';
+import { syncHistoryWithStore, routerReducer } from 'react-router-redux';
+import * as reducers from './reducers';
 
-import EventEmitter from 'events';
-//import gui from 'nw.gui';
-//import os from 'os';
-//import fs from 'fs';
+const reducer = combineReducers({
+  ...reducers,
+  routing: routerReducer
+});
+
+const store = createStore(
+  reducer,
+  applyMiddleware(thunk)
+);
+const history = syncHistoryWithStore(browserHistory, store);
 
 // Needed for onTouchTap
 // Can go away when react 1.0 release
@@ -32,14 +32,16 @@ import EventEmitter from 'events';
 injectTapEventPlugin();
 
 render((
-  <Router history={browserHistory}>
-    <Route path="/" component={App} name="Container">
-      <IndexRoute component={HomePage} name='Home'/>
+  <Provider store={store}>
+    <Router history={browserHistory}>
+      <Route path="/" component={App} name="Container">
+        <IndexRoute component={Home} name='Home'/>
+        <Route path="/about" component={About} />
+        <Route path="/player" component={Player} />
+      </Route>
       <Route path="/about" component={About} />
-      <Route path="/player" component={Player} />
-    </Route>
-    <Route path="/about" component={About} />
-    <Redirect from="/*" to="/" />
-    <Route path="*" component={NotFound} />
-  </Router>
+      <Redirect from="/*" to="/" />
+      <Route path="*" component={NotFound} />
+    </Router>
+  </Provider>
 ), document.getElementById('app'))

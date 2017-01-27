@@ -1,74 +1,169 @@
 "use strict";
-
-const {
+import {
   app,
+  nativeImage,
   BrowserWindow,
   ipcMain,
   globalShortcut,
-  Menu
-} = require('electron');
-const fs = require('fs');
-
-const windowStateKeeper = require('electron-window-state');
-
+  Menu,
+  Tray,
+  systemPreferences
+} from 'electron';
+import fs from 'fs';
+import path from 'path';
+import windowStateKeeper from 'electron-window-state';
+import ytdl from 'ytdl-core';
+const ffmpeg = require('fluent-ffmpeg');
 const config = JSON.parse(fs.readFileSync("package.json"));
-
-// custom constants
-const clientId = '342b8a7af638944906dcdb46f9d56d98';
-const redirectUri = 'http://sc-redirect.herokuapp.com/callback.html';
-const SCconnect = `https://soundcloud.com/connect?&client_id=${clientId}&redirect_uri=${redirectUri}&response_type=token`;
-const userConfigPath = `${__dirname}/app/public/js/system/userConfig.json`;
-
+// Keep a global reference of the window object, if you don't, the window will
+// be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
-let authenticationWindow;
 
+// This method will be called when Electron has finished
+// initialization and is ready to create browser windows.
+// Some APIs can only be used after this event occurs.
 app.on('ready', () => {
   initMainWindow();
 });
 
-function initMainWindow() {
-  let mainWindowState = windowStateKeeper({
-    defaultWidth: 800,
-    defaultHeight: 400
+// Create app icon
+function makeIcon(name) {
+  let file = path.join(__dirname, '../' , 'media', name);
+  console.log('file: ', file)
+  return nativeImage.createFromPath(file);
+}
+
+function createSong(fileName, bitrate = 192) {
+  return new Promise((resolve, reject) => {
+    let x = new ffmpeg(fileName)
+    .audioBitrate(bitrate)
+    .saveToFile(fileName + '.mp3')
+    .on('progress', function(info) {
+      console.log('progress ' + info.percent + '%');
+    })
+    .on('end', function() {
+      console.log('encoding finish')
+      return resolve(fileName + '.mp3');
+    });
+  })
+}
+
+function downloadSong () {
+  var url = 'https://www.youtube.com/watch?v=TGbwL8kSpEk';
+  var audioOutput = path.resolve(__dirname, 'sound.mp4');
+  ytdl(url, { filter: function(f) {
+    return f.container === 'mp4' && !f.encoding; } })
+    // Write audio to file since ffmpeg supports only one input stream.
+    .pipe(fs.createWriteStream(audioOutput))
+    .on('finish', function() {
+      ffmpeg()
+      .input(ytdl(url, { filter: function(f) {
+        return f.container === 'mp4' && !f.audioEncoding; } }))
+        .videoCodec('copy')
+        .input(audioOutput)
+        .audioCodec('copy')
+        .save(path.resolve(__dirname, 'output.mp4'))
+        .on('error', console.error)
+        .on('progress', function(info) {
+          console.log('progress ' + info.percent + '%', info.timemark);
+        })
+        .on('end', function() {
+          console.log('encoding finish')
+          console.log();
+        });
+    });
+}
+ipcMain.on('encode', (event, fileName) => {
+  console.log('econde: ', fileName);
+  downloadSong()
+  /*
+  createSong(fileName, 192)
+  .then(newFileName => {
+    event.sender.send('encoded', newFileName)
   });
+  */
+})
 
-  mainWindow = new BrowserWindow({
-    x: mainWindowState.x,
-    y: mainWindowState.y,
-    width: mainWindowState.width,
-    height: mainWindowState.height,
-    minWidth: 800,
-    minHeight: 400,
-    center: true,
-    frame: false
-  });
+class ElectonApplication {
 
-  mainWindow.loadURL(`file://${__dirname}/index.html`);
+  constructor (...args) {
+    this.mainWindowState = windowStateKeeper({
+      defaultWidth: 800,
+      defaultHeight: 400
+    });
+    this.mainWindow = new BrowserWindow({
+      x: this.mainWindowState.x,
+      y: this.mainWindowState.y,
+      width: this.mainWindowState.width,
+      height: this.mainWindowState.height,
+      minWidth: 800,
+      minHeight: 400,
+      center: true,
+      frame: false,
+      icon: makeIcon('icon.png')
+    });
 
-  //if (process.env.NODE_ENV === 'development') {
-    mainWindow.webContents.openDevTools();
-  //}
+    this.mainWindow.loadURL(`file://${__dirname}/index.html`);
+    this.mainWindow.webContents.openDevTools();
+    this.mainWindow.webContents.on('will-navigate', (event, url) => {
+      if (url.indexOf('build/index.html#') < 0) {
+        event.preventDefault();
+      }
+    });
 
-  mainWindow.webContents.on('will-navigate', function (e, url) {
-    if (url.indexOf('build/index.html#') < 0) {
-      e.preventDefault();
+    this.mainWindowState.manage(this.mainWindow);
+    initializeMediaShortcuts();
+    menuBar();
+
+    this.showAndFocus = this.showAndFocus.bind(this);
+    this.maximizeApp = this.maximizeApp.bind(this);
+    this.didFinishLoad = this.didFinishLoad.bind(this);
+
+    this.mainWindow.webContents.on('did-finish-load', this.didFinishLoad);
+
+    app.on('activate', this.showAndFocus);
+    ipcMain.on('showApp', this.showAndFocus);
+    ipcMain.on('maximizeApp', this.maximizeApp);
+
+  }
+
+  didFinishLoad () {
+    this.mainWindow.setTitle('Soundnode');
+    this.mainWindow.show();
+    this.mainWindow.focus();
+    this.mainWindow.webContents.send('config' , config);
+    this.mainWindow.webContents.send('systemPreferences' , systemPreferences);
+    console.log(systemPreferences)
+
+  }
+  showAndFocus () {
+    this.mainWindow.show();
+    this.mainWindow.focus();
+  }
+
+  maximizeApp () {
+    if (this.mainWindow.isMaximized()) {
+      this.mainWindow.unmaximize();
+    } else {
+      this.mainWindow.maximize();
     }
-  });
+  }
 
-  mainWindow.webContents.on('did-finish-load', function () {
-    mainWindow.setTitle('Soundnode');
-    mainWindow.show();
-    mainWindow.focus();
-    //setInterval(function() {
-      //event.sender.send('asynchronous-reply', 'pong')
-      mainWindow.webContents.send('config' , config);
-    //}, 1500)
+  makeTray (name) {
+    let file = path.join(__dirname, '../' , 'media', name);
+    let icon = nativeImage.createFromPath(file);
+    icon = icon.resize({
+      width: 16,
+      height: 16
+    })
+    let appIcon = new Tray(icon);
+  }
+}
 
-  });
+// Create the browser window.
+function initMainWindow() {
 
-  mainWindowState.manage(mainWindow);
-  initializeMediaShortcuts();
-  menuBar();
+  let application = new ElectonApplication();
 }
 
 app.on('will-quit', () => {
@@ -77,18 +172,18 @@ app.on('will-quit', () => {
 })
 
 app.on('activate', () => {
-  showAndFocus();
+  //showAndFocus();
 });
 
 /**
  * Receive maximize event and trigger command
  */
 ipcMain.on('maximizeApp', () => {
-  if (mainWindow.isMaximized()) {
+  /*if (mainWindow.isMaximized()) {
     mainWindow.unmaximize();
   } else {
     mainWindow.maximize();
-  }
+  }*/
 });
 
 /**
@@ -102,11 +197,11 @@ ipcMain.on('minimizeApp', () => {
  * Receive hide event and trigger command
  */
 ipcMain.on('hideApp', () => {
-  mainWindow.hide();
+  //mainWindow.hide();
 });
 
 ipcMain.on('showApp', () => {
-  showAndFocus();
+  //showAndFocus();
 });
 
 /**

@@ -1,0 +1,3937 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Major Version</key><integer>1</integer>
+	<key>Minor Version</key><integer>1</integer>
+	<key>Date</key><date>2017-01-18T04:13:35Z</date>
+	<key>Application Version</key><string>12.5.4.42</string>
+	<key>Features</key><integer>5</integer>
+	<key>Show Content Ratings</key><true/>
+	<key>Music Folder</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/</string>
+	<key>Library Persistent ID</key><string>700CA019999329D4</string>
+	<key>Tracks</key>
+	<dict>
+		<key>125</key>
+		<dict>
+			<key>Track ID</key><integer>125</integer>
+			<key>Name</key><string>Adele(21)completo</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>66992901</integer>
+			<key>Total Time</key><integer>4187036</integer>
+			<key>Date Modified</key><date>2013-06-19T18:18:30Z</date>
+			<key>Date Added</key><date>2013-09-02T02:41:56Z</date>
+			<key>Bit Rate</key><integer>128</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Play Count</key><integer>1</integer>
+			<key>Play Date</key><integer>3477170742</integer>
+			<key>Play Date UTC</key><date>2014-03-09T03:45:42Z</date>
+			<key>Skip Count</key><integer>1</integer>
+			<key>Skip Date</key><date>2013-09-10T22:10:36Z</date>
+			<key>Persistent ID</key><string>27F8F27AA3FAC436</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Music/Unknown%20Artist/Unknown%20Album/Adele(21)completo.mp3</string>
+			<key>File Folder Count</key><integer>5</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>127</key>
+		<dict>
+			<key>Track ID</key><integer>127</integer>
+			<key>Name</key><string>Consejos para conservar el matrimonio</string>
+			<key>Artist</key><string>Radio El Espectador - La venganza será terrible</string>
+			<key>Album</key><string>Radio El Espectador - 2008/02/01</string>
+			<key>Genre</key><string>Humor</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>12526318</integer>
+			<key>Total Time</key><integer>1565466</integer>
+			<key>Year</key><integer>2008</integer>
+			<key>Date Modified</key><date>2008-02-09T18:28:37Z</date>
+			<key>Date Added</key><date>2013-09-28T19:43:30Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>22050</integer>
+			<key>Comments</key><string>El Espectador</string>
+			<key>Persistent ID</key><string>5A6273D8D88E6F68</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Music/Radio%20El%20Espectador%20-%20La%20venganza%20sera%CC%81%20terrible/Radio%20El%20Espectador%20-%202008_02_01/Consejos%20para%20conservar%20el%20matrimonio.mp3</string>
+			<key>File Folder Count</key><integer>5</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>129</key>
+		<dict>
+			<key>Track ID</key><integer>129</integer>
+			<key>Name</key><string>Armin van Buuren - A State Of Trance 594-[www_flvto_com]</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>146041473</integer>
+			<key>Total Time</key><integer>7300284</integer>
+			<key>Date Modified</key><date>2013-08-15T17:53:30Z</date>
+			<key>Date Added</key><date>2013-10-10T22:14:16Z</date>
+			<key>Bit Rate</key><integer>160</integer>
+			<key>Sample Rate</key><integer>22050</integer>
+			<key>Play Count</key><integer>2</integer>
+			<key>Play Date</key><integer>3477593800</integer>
+			<key>Play Date UTC</key><date>2014-03-14T01:16:40Z</date>
+			<key>Skip Count</key><integer>1</integer>
+			<key>Skip Date</key><date>2014-03-15T01:35:37Z</date>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>E144B3BF3E9E8370</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Music/Unknown%20Artist/Unknown%20Album/Armin%20van%20Buuren%20-%20A%20State%20Of%20Trance%20594-%5Bwww_flvto_com%5D.mp3</string>
+			<key>File Folder Count</key><integer>5</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>131</key>
+		<dict>
+			<key>Track ID</key><integer>131</integer>
+			<key>Name</key><string>Life begins when you're in love</string>
+			<key>Artist</key><string>Billie Holiday</string>
+			<key>Album</key><string>The Complete Billie Holiday On Columbia 1933-1944 (Disc 1)</string>
+			<key>Genre</key><string>Jazz</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>2924722</integer>
+			<key>Total Time</key><integer>184790</integer>
+			<key>Track Number</key><integer>17</integer>
+			<key>Year</key><integer>2002</integer>
+			<key>Date Modified</key><date>2002-02-18T19:57:52Z</date>
+			<key>Date Added</key><date>2013-10-11T00:48:02Z</date>
+			<key>Bit Rate</key><integer>126</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Comments</key><string>www.UberNet.org</string>
+			<key>Play Count</key><integer>1</integer>
+			<key>Play Date</key><integer>3464286667</integer>
+			<key>Play Date UTC</key><date>2013-10-11T00:51:07Z</date>
+			<key>Skip Count</key><integer>2</integer>
+			<key>Skip Date</key><date>2016-10-13T06:45:30Z</date>
+			<key>Sort Album</key><string>Complete Billie Holiday On Columbia 1933-1944 (Disc 1)</string>
+			<key>Persistent ID</key><string>C355F080ABAB88CB</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Music/Billie%20Holiday/The%20Complete%20Billie%20Holiday%20On%20Columbia%201933-1944%20(Disc%201)/17%20Life%20begins%20when%20you're%20in%20love.mp3</string>
+			<key>File Folder Count</key><integer>5</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>133</key>
+		<dict>
+			<key>Track ID</key><integer>133</integer>
+			<key>Name</key><string>A State of Trance 540 - Top 20 Trance Songs of 2011-[www_flvto_com]</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>173981835</integer>
+			<key>Total Time</key><integer>7247751</integer>
+			<key>Date Modified</key><date>2013-10-09T20:52:18Z</date>
+			<key>Date Added</key><date>2014-02-09T21:41:17Z</date>
+			<key>Bit Rate</key><integer>192</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Play Count</key><integer>10</integer>
+			<key>Play Date</key><integer>3483769669</integer>
+			<key>Play Date UTC</key><date>2014-05-24T12:47:49Z</date>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Name</key><string>State of Trance 540 - Top 20 Trance Songs of 2011-[www_flvto_com]</string>
+			<key>Persistent ID</key><string>B3A7606A3C4C45AB</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Music/Unknown%20Artist/Unknown%20Album/A%20State%20of%20Trance%20540%20-%20Top%2020%20Trance%20Songs%20of%202011-%5Bwww_flvto_com%5D.mp3</string>
+			<key>File Folder Count</key><integer>5</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>135</key>
+		<dict>
+			<key>Track ID</key><integer>135</integer>
+			<key>Name</key><string>New Born</string>
+			<key>Artist</key><string>Muse</string>
+			<key>Album Artist</key><string>Muse</string>
+			<key>Album</key><string>Origin Of Symmetry</string>
+			<key>Genre</key><string>Alternative</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>14568625</integer>
+			<key>Total Time</key><integer>363493</integer>
+			<key>Track Number</key><integer>1</integer>
+			<key>Year</key><integer>2001</integer>
+			<key>Date Modified</key><date>2014-05-14T01:06:09Z</date>
+			<key>Date Added</key><date>2014-05-25T19:36:54Z</date>
+			<key>Bit Rate</key><integer>320</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Play Count</key><integer>7</integer>
+			<key>Play Date</key><integer>3565914094</integer>
+			<key>Play Date UTC</key><date>2016-12-30T06:41:34Z</date>
+			<key>Skip Count</key><integer>2</integer>
+			<key>Skip Date</key><date>2015-03-06T16:37:43Z</date>
+			<key>Rating</key><integer>80</integer>
+			<key>Album Rating</key><integer>80</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>85764F04D14968A2</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Music/Muse/Origin%20Of%20Symmetry/01%20New%20Born.mp3</string>
+			<key>File Folder Count</key><integer>5</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>137</key>
+		<dict>
+			<key>Track ID</key><integer>137</integer>
+			<key>Name</key><string>Bliss</string>
+			<key>Artist</key><string>Muse</string>
+			<key>Album Artist</key><string>Muse</string>
+			<key>Album</key><string>Origin Of Symmetry</string>
+			<key>Genre</key><string>Alternative</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>10135120</integer>
+			<key>Total Time</key><integer>252656</integer>
+			<key>Track Number</key><integer>2</integer>
+			<key>Year</key><integer>2001</integer>
+			<key>Date Modified</key><date>2014-05-14T01:08:12Z</date>
+			<key>Date Added</key><date>2014-05-25T19:37:10Z</date>
+			<key>Bit Rate</key><integer>320</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Play Count</key><integer>5</integer>
+			<key>Play Date</key><integer>3565895496</integer>
+			<key>Play Date UTC</key><date>2016-12-30T01:31:36Z</date>
+			<key>Album Rating</key><integer>80</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>ABEA0B1197CD5EB9</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Music/Muse/Origin%20Of%20Symmetry/02%20Bliss.mp3</string>
+			<key>File Folder Count</key><integer>5</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>139</key>
+		<dict>
+			<key>Track ID</key><integer>139</integer>
+			<key>Name</key><string>Space Dementia</string>
+			<key>Artist</key><string>Muse</string>
+			<key>Album Artist</key><string>Muse</string>
+			<key>Album</key><string>Origin Of Symmetry</string>
+			<key>Genre</key><string>Alternative</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>15263488</integer>
+			<key>Total Time</key><integer>380865</integer>
+			<key>Track Number</key><integer>3</integer>
+			<key>Year</key><integer>2001</integer>
+			<key>Date Modified</key><date>2014-05-14T01:08:01Z</date>
+			<key>Date Added</key><date>2014-05-25T19:37:40Z</date>
+			<key>Bit Rate</key><integer>320</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Play Count</key><integer>3</integer>
+			<key>Play Date</key><integer>3565895877</integer>
+			<key>Play Date UTC</key><date>2016-12-30T01:37:57Z</date>
+			<key>Album Rating</key><integer>80</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>AE076F5D7CB75545</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Music/Muse/Origin%20Of%20Symmetry/03%20Space%20Dementia.mp3</string>
+			<key>File Folder Count</key><integer>5</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>141</key>
+		<dict>
+			<key>Track ID</key><integer>141</integer>
+			<key>Name</key><string>Hyper Music</string>
+			<key>Artist</key><string>Muse</string>
+			<key>Album Artist</key><string>Muse</string>
+			<key>Album</key><string>Origin Of Symmetry</string>
+			<key>Genre</key><string>Alternative</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>8069362</integer>
+			<key>Total Time</key><integer>201012</integer>
+			<key>Track Number</key><integer>4</integer>
+			<key>Year</key><integer>2001</integer>
+			<key>Date Modified</key><date>2014-05-14T01:07:52Z</date>
+			<key>Date Added</key><date>2014-05-25T19:38:08Z</date>
+			<key>Bit Rate</key><integer>320</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Play Count</key><integer>3</integer>
+			<key>Play Date</key><integer>3565896078</integer>
+			<key>Play Date UTC</key><date>2016-12-30T01:41:18Z</date>
+			<key>Skip Count</key><integer>1</integer>
+			<key>Skip Date</key><date>2014-12-23T03:04:21Z</date>
+			<key>Album Rating</key><integer>80</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>3931283A2BA9C88E</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Music/Muse/Origin%20Of%20Symmetry/04%20Hyper%20Music.mp3</string>
+			<key>File Folder Count</key><integer>5</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>143</key>
+		<dict>
+			<key>Track ID</key><integer>143</integer>
+			<key>Name</key><string>Plug In Baby</string>
+			<key>Artist</key><string>Muse</string>
+			<key>Album Artist</key><string>Muse</string>
+			<key>Album</key><string>Origin Of Symmetry</string>
+			<key>Genre</key><string>Alternative</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>8778849</integer>
+			<key>Total Time</key><integer>218749</integer>
+			<key>Track Number</key><integer>5</integer>
+			<key>Year</key><integer>2001</integer>
+			<key>Date Modified</key><date>2014-05-14T01:07:57Z</date>
+			<key>Date Added</key><date>2014-05-25T19:38:30Z</date>
+			<key>Bit Rate</key><integer>320</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Play Count</key><integer>3</integer>
+			<key>Play Date</key><integer>3565896296</integer>
+			<key>Play Date UTC</key><date>2016-12-30T01:44:56Z</date>
+			<key>Album Rating</key><integer>80</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>BC42345CE05F93AA</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Music/Muse/Origin%20Of%20Symmetry/05%20Plug%20In%20Baby.mp3</string>
+			<key>File Folder Count</key><integer>5</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>145</key>
+		<dict>
+			<key>Track ID</key><integer>145</integer>
+			<key>Name</key><string>Citizen Erased</string>
+			<key>Artist</key><string>Muse</string>
+			<key>Album Artist</key><string>Muse</string>
+			<key>Album</key><string>Origin Of Symmetry</string>
+			<key>Genre</key><string>Alternative</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>17667798</integer>
+			<key>Total Time</key><integer>440973</integer>
+			<key>Track Number</key><integer>6</integer>
+			<key>Year</key><integer>2001</integer>
+			<key>Date Modified</key><date>2014-05-14T01:08:09Z</date>
+			<key>Date Added</key><date>2014-05-25T19:38:40Z</date>
+			<key>Bit Rate</key><integer>320</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Play Count</key><integer>3</integer>
+			<key>Play Date</key><integer>3565896737</integer>
+			<key>Play Date UTC</key><date>2016-12-30T01:52:17Z</date>
+			<key>Album Rating</key><integer>80</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>3578EB4DE11351C3</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Music/Muse/Origin%20Of%20Symmetry/06%20Citizen%20Erased.mp3</string>
+			<key>File Folder Count</key><integer>5</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>147</key>
+		<dict>
+			<key>Track ID</key><integer>147</integer>
+			<key>Name</key><string>Micro Cuts</string>
+			<key>Artist</key><string>Muse</string>
+			<key>Album Artist</key><string>Muse</string>
+			<key>Album</key><string>Origin Of Symmetry</string>
+			<key>Genre</key><string>Alternative</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>8755859</integer>
+			<key>Total Time</key><integer>218174</integer>
+			<key>Track Number</key><integer>7</integer>
+			<key>Year</key><integer>2001</integer>
+			<key>Date Modified</key><date>2014-05-14T01:07:55Z</date>
+			<key>Date Added</key><date>2014-05-25T19:38:45Z</date>
+			<key>Bit Rate</key><integer>320</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Play Count</key><integer>3</integer>
+			<key>Play Date</key><integer>3565896955</integer>
+			<key>Play Date UTC</key><date>2016-12-30T01:55:55Z</date>
+			<key>Album Rating</key><integer>80</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>451D465DDAEACC56</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Music/Muse/Origin%20Of%20Symmetry/07%20Micro%20Cuts.mp3</string>
+			<key>File Folder Count</key><integer>5</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>149</key>
+		<dict>
+			<key>Track ID</key><integer>149</integer>
+			<key>Name</key><string>Screenager</string>
+			<key>Artist</key><string>Muse</string>
+			<key>Album Artist</key><string>Muse</string>
+			<key>Album</key><string>Origin Of Symmetry</string>
+			<key>Genre</key><string>Alternative</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>10453819</integer>
+			<key>Total Time</key><integer>260623</integer>
+			<key>Track Number</key><integer>8</integer>
+			<key>Year</key><integer>2001</integer>
+			<key>Date Modified</key><date>2014-05-14T01:08:11Z</date>
+			<key>Date Added</key><date>2014-05-25T19:38:59Z</date>
+			<key>Bit Rate</key><integer>320</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Play Count</key><integer>2</integer>
+			<key>Play Date</key><integer>3508496200</integer>
+			<key>Play Date UTC</key><date>2015-03-06T17:16:40Z</date>
+			<key>Album Rating</key><integer>80</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>4DB3CFA6E9EA6A34</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Music/Muse/Origin%20Of%20Symmetry/08%20Screenager.mp3</string>
+			<key>File Folder Count</key><integer>5</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>151</key>
+		<dict>
+			<key>Track ID</key><integer>151</integer>
+			<key>Name</key><string>Feeling Good</string>
+			<key>Artist</key><string>Muse</string>
+			<key>Album Artist</key><string>Muse</string>
+			<key>Album</key><string>Origin Of Symmetry</string>
+			<key>Genre</key><string>Alternative</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>7988906</integer>
+			<key>Total Time</key><integer>199000</integer>
+			<key>Track Number</key><integer>10</integer>
+			<key>Year</key><integer>2001</integer>
+			<key>Date Modified</key><date>2014-05-14T01:07:17Z</date>
+			<key>Date Added</key><date>2014-05-25T19:39:03Z</date>
+			<key>Bit Rate</key><integer>320</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Play Count</key><integer>2</integer>
+			<key>Play Date</key><integer>3508496686</integer>
+			<key>Play Date UTC</key><date>2015-03-06T17:24:46Z</date>
+			<key>Skip Count</key><integer>1</integer>
+			<key>Skip Date</key><date>2014-12-23T03:04:39Z</date>
+			<key>Album Rating</key><integer>80</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>5E28E77D1A259EFA</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Music/Muse/Origin%20Of%20Symmetry/10%20Feeling%20Good.mp3</string>
+			<key>File Folder Count</key><integer>5</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>153</key>
+		<dict>
+			<key>Track ID</key><integer>153</integer>
+			<key>Name</key><string>Dark Shines</string>
+			<key>Artist</key><string>Muse</string>
+			<key>Album Artist</key><string>Muse</string>
+			<key>Album</key><string>Origin Of Symmetry</string>
+			<key>Genre</key><string>Alternative</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>11512301</integer>
+			<key>Total Time</key><integer>287085</integer>
+			<key>Track Number</key><integer>9</integer>
+			<key>Year</key><integer>2001</integer>
+			<key>Date Modified</key><date>2014-05-14T01:03:06Z</date>
+			<key>Date Added</key><date>2014-05-25T19:39:10Z</date>
+			<key>Bit Rate</key><integer>320</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Play Count</key><integer>2</integer>
+			<key>Play Date</key><integer>3508496487</integer>
+			<key>Play Date UTC</key><date>2015-03-06T17:21:27Z</date>
+			<key>Skip Count</key><integer>1</integer>
+			<key>Skip Date</key><date>2016-12-30T06:35:30Z</date>
+			<key>Album Rating</key><integer>80</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>4A5888E1A44A7586</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Music/Muse/Origin%20Of%20Symmetry/09%20Dark%20Shines.mp3</string>
+			<key>File Folder Count</key><integer>5</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>155</key>
+		<dict>
+			<key>Track ID</key><integer>155</integer>
+			<key>Name</key><string>Megalomania</string>
+			<key>Artist</key><string>Muse</string>
+			<key>Album Artist</key><string>Muse</string>
+			<key>Album</key><string>Origin Of Symmetry</string>
+			<key>Genre</key><string>Alternative</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>11162260</integer>
+			<key>Total Time</key><integer>278334</integer>
+			<key>Track Number</key><integer>12</integer>
+			<key>Year</key><integer>2001</integer>
+			<key>Date Modified</key><date>2014-05-14T01:07:44Z</date>
+			<key>Date Added</key><date>2014-05-25T19:39:17Z</date>
+			<key>Bit Rate</key><integer>320</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Play Count</key><integer>2</integer>
+			<key>Play Date</key><integer>3508497172</integer>
+			<key>Play Date UTC</key><date>2015-03-06T17:32:52Z</date>
+			<key>Album Rating</key><integer>80</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>EC7C924B94B2CA5D</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Music/Muse/Origin%20Of%20Symmetry/12%20Megalomania.mp3</string>
+			<key>File Folder Count</key><integer>5</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>157</key>
+		<dict>
+			<key>Track ID</key><integer>157</integer>
+			<key>Name</key><string>Futurism</string>
+			<key>Artist</key><string>Muse</string>
+			<key>Album Artist</key><string>Muse</string>
+			<key>Album</key><string>Origin Of Symmetry</string>
+			<key>Genre</key><string>Alternative</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>8345213</integer>
+			<key>Total Time</key><integer>207908</integer>
+			<key>Track Number</key><integer>11</integer>
+			<key>Year</key><integer>2001</integer>
+			<key>Date Modified</key><date>2014-05-14T01:08:08Z</date>
+			<key>Date Added</key><date>2014-05-25T19:39:23Z</date>
+			<key>Bit Rate</key><integer>320</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Play Count</key><integer>2</integer>
+			<key>Play Date</key><integer>3508496894</integer>
+			<key>Play Date UTC</key><date>2015-03-06T17:28:14Z</date>
+			<key>Album Rating</key><integer>80</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>87EC5E8EFB5074DE</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Music/Muse/Origin%20Of%20Symmetry/11%20Futurism.mp3</string>
+			<key>File Folder Count</key><integer>5</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>159</key>
+		<dict>
+			<key>Track ID</key><integer>159</integer>
+			<key>Name</key><string>Rihanna - Unapologetic (Full Album)-[www_flvto_com]</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>66254923</integer>
+			<key>Total Time</key><integer>3312744</integer>
+			<key>Date Modified</key><date>2013-07-02T20:45:54Z</date>
+			<key>Date Added</key><date>2014-10-19T02:49:59Z</date>
+			<key>Bit Rate</key><integer>160</integer>
+			<key>Sample Rate</key><integer>22050</integer>
+			<key>Persistent ID</key><string>68A74078E53B7E67</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Music/Unknown%20Artist/Unknown%20Album/Rihanna%20-%20Unapologetic%20(Full%20Album)-%5Bwww_flvto_com%5D.mp3</string>
+			<key>File Folder Count</key><integer>5</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>163</key>
+		<dict>
+			<key>Track ID</key><integer>163</integer>
+			<key>Name</key><string>tut1</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>198000</integer>
+			<key>Total Time</key><integer>19696</integer>
+			<key>Date Modified</key><date>2014-12-22T23:09:24Z</date>
+			<key>Date Added</key><date>2014-12-22T23:10:54Z</date>
+			<key>Bit Rate</key><integer>48</integer>
+			<key>Sample Rate</key><integer>22050</integer>
+			<key>Play Count</key><integer>5</integer>
+			<key>Play Date</key><integer>3507063475</integer>
+			<key>Play Date UTC</key><date>2015-02-18T03:17:55Z</date>
+			<key>Persistent ID</key><string>FCD00EB959007801</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Music/Unknown%20Artist/Unknown%20Album/tut1.mp3</string>
+			<key>File Folder Count</key><integer>5</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>165</key>
+		<dict>
+			<key>Track ID</key><integer>165</integer>
+			<key>Name</key><string>tut1</string>
+			<key>Kind</key><string>AAC audio file</string>
+			<key>Size</key><integer>321636</integer>
+			<key>Total Time</key><integer>19648</integer>
+			<key>Date Modified</key><date>2014-12-23T03:04:53Z</date>
+			<key>Date Added</key><date>2014-12-23T03:04:53Z</date>
+			<key>Bit Rate</key><integer>128</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Play Count</key><integer>3</integer>
+			<key>Play Date</key><integer>3502137859</integer>
+			<key>Play Date UTC</key><date>2014-12-23T03:04:19Z</date>
+			<key>Normalization</key><integer>494</integer>
+			<key>Persistent ID</key><string>DC8226889245EDFD</string>
+			<key>Track Type</key><string>File</string>
+			<key>File Type</key><integer>1295270176</integer>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Music/Unknown%20Artist/Unknown%20Album/tut1.m4a</string>
+			<key>File Folder Count</key><integer>5</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>169</key>
+		<dict>
+			<key>Track ID</key><integer>169</integer>
+			<key>Name</key><string>5 Dysfunctions of Teams</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>60399436</integer>
+			<key>Total Time</key><integer>2171506</integer>
+			<key>Date Modified</key><date>2015-01-15T23:12:45Z</date>
+			<key>Date Added</key><date>2015-02-13T19:04:57Z</date>
+			<key>Bit Rate</key><integer>222</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Persistent ID</key><string>5B2AD2412A3D43A3</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Music/Unknown%20Artist/Unknown%20Album/5%20Dysfunctions%20of%20Teams.mp3</string>
+			<key>File Folder Count</key><integer>5</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>173</key>
+		<dict>
+			<key>Track ID</key><integer>173</integer>
+			<key>Name</key><string>Monday Morning Podcast 2-23-15</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>39408034</integer>
+			<key>Total Time</key><integer>4921939</integer>
+			<key>Year</key><integer>2015</integer>
+			<key>Date Modified</key><date>2015-03-02T06:28:34Z</date>
+			<key>Date Added</key><date>2015-03-02T06:28:34Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2015-02-23T06:58:40Z</date>
+			<key>Normalization</key><integer>1252</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>E0213D05EA76D977</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Monday%20Morning%20Podcast%202-23-15.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>175</key>
+		<dict>
+			<key>Track ID</key><integer>175</integer>
+			<key>Name</key><string>Monday Morning Podcast 3-2-15</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>30812644</integer>
+			<key>Total Time</key><integer>3848000</integer>
+			<key>Year</key><integer>2015</integer>
+			<key>Date Modified</key><date>2015-03-03T08:03:23Z</date>
+			<key>Date Added</key><date>2015-03-03T08:03:23Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Play Count</key><integer>1</integer>
+			<key>Play Date</key><integer>3508311820</integer>
+			<key>Play Date UTC</key><date>2015-03-04T14:03:40Z</date>
+			<key>Release Date</key><date>2015-03-02T20:10:29Z</date>
+			<key>Normalization</key><integer>1227</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>B7873806F59D5CA4</string>
+			<key>Track Type</key><string>URL</string>
+			<key>Podcast</key><true/>
+			<key>Location</key><string>http://traffic.libsyn.com/billburr/MMPC_3-2-15.mp3</string>
+		</dict>
+		<key>177</key>
+		<dict>
+			<key>Track ID</key><integer>177</integer>
+			<key>Name</key><string>Empire Of The Sun - Standing On The Shore</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>4491004</integer>
+			<key>Total Time</key><integer>280685</integer>
+			<key>Date Modified</key><date>2014-06-02T04:39:15Z</date>
+			<key>Date Added</key><date>2015-04-08T12:37:53Z</date>
+			<key>Bit Rate</key><integer>128</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Persistent ID</key><string>6C6DEEF18E0E62DA</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Music/Unknown%20Artist/Unknown%20Album/Empire%20Of%20The%20Sun%20-%20Standing%20On%20The%20Shore.mp3</string>
+			<key>File Folder Count</key><integer>5</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>179</key>
+		<dict>
+			<key>Track ID</key><integer>179</integer>
+			<key>Name</key><string>Thursday Afternoon Monday Morning Podcast 4-9-15</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>23562932</integer>
+			<key>Total Time</key><integer>2941309</integer>
+			<key>Year</key><integer>2015</integer>
+			<key>Date Modified</key><date>2015-06-01T17:31:31Z</date>
+			<key>Date Added</key><date>2015-06-01T17:31:31Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2015-04-09T21:54:02Z</date>
+			<key>Normalization</key><integer>1251</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>BEDCC15DBF2A1886</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Thursday%20Afternoon%20Monday%20Morning%20Podcast%204-9-15.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>181</key>
+		<dict>
+			<key>Track ID</key><integer>181</integer>
+			<key>Name</key><string>Monday Morning Podcast 4-13-15</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>28328085</integer>
+			<key>Total Time</key><integer>3536953</integer>
+			<key>Year</key><integer>2015</integer>
+			<key>Date Modified</key><date>2015-06-01T17:31:53Z</date>
+			<key>Date Added</key><date>2015-06-01T17:31:53Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2015-04-13T04:30:59Z</date>
+			<key>Normalization</key><integer>1227</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>3F2719F723385A6C</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Monday%20Morning%20Podcast%204-13-15.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>183</key>
+		<dict>
+			<key>Track ID</key><integer>183</integer>
+			<key>Name</key><string>Thursday Afternoon Monday Morning Podcast 4-16-15</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>24927856</integer>
+			<key>Total Time</key><integer>3111915</integer>
+			<key>Year</key><integer>2015</integer>
+			<key>Date Modified</key><date>2015-06-01T17:29:35Z</date>
+			<key>Date Added</key><date>2015-06-01T17:29:34Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2015-04-16T21:33:38Z</date>
+			<key>Normalization</key><integer>1168</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>6A7268E84EBE02C7</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Thursday%20Afternoon%20Monday%20Morning%20Podcast%204-16-15.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>185</key>
+		<dict>
+			<key>Track ID</key><integer>185</integer>
+			<key>Name</key><string>Monday Morning Podcast 4-20-15</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>35104458</integer>
+			<key>Total Time</key><integer>4384000</integer>
+			<key>Year</key><integer>2015</integer>
+			<key>Date Modified</key><date>2015-06-01T17:32:27Z</date>
+			<key>Date Added</key><date>2015-06-01T17:32:27Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2015-04-20T21:03:34Z</date>
+			<key>Normalization</key><integer>1247</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>1E1AD4985690B104</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Monday%20Morning%20Podcast%204-20-15.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>187</key>
+		<dict>
+			<key>Track ID</key><integer>187</integer>
+			<key>Name</key><string>Thursday Afternoon Monday Morning Podcast 4-23-15</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>27531334</integer>
+			<key>Total Time</key><integer>3437348</integer>
+			<key>Year</key><integer>2015</integer>
+			<key>Date Modified</key><date>2015-06-01T17:32:50Z</date>
+			<key>Date Added</key><date>2015-06-01T17:32:50Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2015-04-23T23:32:24Z</date>
+			<key>Normalization</key><integer>1415</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>6E8EFDB2822D8227</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Thursday%20Afternoon%20Monday%20Morning%20Podcast%204-23-15.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>189</key>
+		<dict>
+			<key>Track ID</key><integer>189</integer>
+			<key>Name</key><string>Monday Morning Podcast 4-27-15</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>32393783</integer>
+			<key>Total Time</key><integer>4045165</integer>
+			<key>Year</key><integer>2015</integer>
+			<key>Date Modified</key><date>2015-06-01T17:34:34Z</date>
+			<key>Date Added</key><date>2015-06-01T17:34:34Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2015-04-27T16:21:02Z</date>
+			<key>Normalization</key><integer>1234</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>69D57D9F7EA51AF3</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Monday%20Morning%20Podcast%204-27-15.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>191</key>
+		<dict>
+			<key>Track ID</key><integer>191</integer>
+			<key>Name</key><string>Thursday Afternoon Monday Morning Podcast 4-30-15</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>22914887</integer>
+			<key>Total Time</key><integer>2860303</integer>
+			<key>Year</key><integer>2015</integer>
+			<key>Date Modified</key><date>2015-06-01T17:35:52Z</date>
+			<key>Date Added</key><date>2015-06-01T17:35:52Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2015-04-30T19:05:10Z</date>
+			<key>Normalization</key><integer>1206</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>3829B7EFA6E842BE</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Thursday%20Afternoon%20Monday%20Morning%20Podcast%204-30-15.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>193</key>
+		<dict>
+			<key>Track ID</key><integer>193</integer>
+			<key>Name</key><string>Monday Morning Podcast 5-4-15</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>38991896</integer>
+			<key>Total Time</key><integer>4869929</integer>
+			<key>Year</key><integer>2015</integer>
+			<key>Date Modified</key><date>2015-06-01T17:38:08Z</date>
+			<key>Date Added</key><date>2015-06-01T17:38:08Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2015-05-04T18:24:44Z</date>
+			<key>Normalization</key><integer>1224</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>A8CDDF42D787664D</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Monday%20Morning%20Podcast%205-4-15.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>195</key>
+		<dict>
+			<key>Track ID</key><integer>195</integer>
+			<key>Name</key><string>Thursday Afternoon Monday Morning Podcast 5-7-15</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>24873652</integer>
+			<key>Total Time</key><integer>3105149</integer>
+			<key>Year</key><integer>2015</integer>
+			<key>Date Modified</key><date>2015-06-01T17:38:44Z</date>
+			<key>Date Added</key><date>2015-06-01T17:38:44Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2015-05-07T11:43:21Z</date>
+			<key>Normalization</key><integer>1226</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>706090ED7D2BEA75</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Thursday%20Afternoon%20Monday%20Morning%20Podcast%205-7-15.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>197</key>
+		<dict>
+			<key>Track ID</key><integer>197</integer>
+			<key>Name</key><string>Monday Morning Podcast 5-11-15</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>30812853</integer>
+			<key>Total Time</key><integer>3847549</integer>
+			<key>Year</key><integer>2015</integer>
+			<key>Date Modified</key><date>2015-06-01T17:38:58Z</date>
+			<key>Date Added</key><date>2015-06-01T17:38:58Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2015-05-11T17:41:52Z</date>
+			<key>Normalization</key><integer>1203</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>A7180EE566B6204B</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Monday%20Morning%20Podcast%205-11-15.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>199</key>
+		<dict>
+			<key>Track ID</key><integer>199</integer>
+			<key>Name</key><string>Thursday Afternoon Monday Morning Podcast 5-14-15</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>25664849</integer>
+			<key>Total Time</key><integer>3204048</integer>
+			<key>Year</key><integer>2015</integer>
+			<key>Date Modified</key><date>2015-06-01T17:39:17Z</date>
+			<key>Date Added</key><date>2015-06-01T17:39:17Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2015-05-14T18:17:13Z</date>
+			<key>Normalization</key><integer>1225</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>5826B827AC9D3484</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Thursday%20Afternoon%20Monday%20Morning%20Podcast%205-14-15.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>201</key>
+		<dict>
+			<key>Track ID</key><integer>201</integer>
+			<key>Name</key><string>Monday Morning Podcast 5-18-15</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>31526100</integer>
+			<key>Total Time</key><integer>3936705</integer>
+			<key>Year</key><integer>2015</integer>
+			<key>Date Modified</key><date>2015-06-01T17:39:40Z</date>
+			<key>Date Added</key><date>2015-06-01T17:39:40Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2015-05-18T19:33:41Z</date>
+			<key>Normalization</key><integer>1265</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>DB5A1A2BA7E3FD10</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Monday%20Morning%20Podcast%205-18-15.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>203</key>
+		<dict>
+			<key>Track ID</key><integer>203</integer>
+			<key>Name</key><string>Thursday Afternoon Monday Morning Podcast 5-21-15</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>30271595</integer>
+			<key>Total Time</key><integer>3779892</integer>
+			<key>Year</key><integer>2015</integer>
+			<key>Date Modified</key><date>2015-06-01T17:41:41Z</date>
+			<key>Date Added</key><date>2015-06-01T17:41:41Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2015-05-22T00:21:32Z</date>
+			<key>Normalization</key><integer>1212</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>9907D06C94F40788</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Thursday%20Afternoon%20Monday%20Morning%20Podcast%205-21-15.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>205</key>
+		<dict>
+			<key>Track ID</key><integer>205</integer>
+			<key>Name</key><string>Monday Morning Podcast 5-25-15</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>34723965</integer>
+			<key>Total Time</key><integer>4336431</integer>
+			<key>Year</key><integer>2015</integer>
+			<key>Date Modified</key><date>2015-06-01T17:42:15Z</date>
+			<key>Date Added</key><date>2015-06-01T17:42:15Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2015-05-25T19:38:25Z</date>
+			<key>Normalization</key><integer>1252</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>E10BE5B24928FA44</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Monday%20Morning%20Podcast%205-25-15.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>207</key>
+		<dict>
+			<key>Track ID</key><integer>207</integer>
+			<key>Name</key><string>Thursday Afternoon Monday Morning Podcast 5-28-15</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>23394077</integer>
+			<key>Total Time</key><integer>2920202</integer>
+			<key>Year</key><integer>2015</integer>
+			<key>Date Modified</key><date>2015-06-01T17:42:33Z</date>
+			<key>Date Added</key><date>2015-06-01T17:42:33Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2015-05-28T20:43:51Z</date>
+			<key>Normalization</key><integer>1354</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>996F7ACB5EFF0787</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Thursday%20Afternoon%20Monday%20Morning%20Podcast%205-28-15.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>209</key>
+		<dict>
+			<key>Track ID</key><integer>209</integer>
+			<key>Name</key><string>Monday Morning Podcast 6-1-15</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>32072791</integer>
+			<key>Total Time</key><integer>4005041</integer>
+			<key>Year</key><integer>2015</integer>
+			<key>Date Modified</key><date>2015-06-02T17:29:30Z</date>
+			<key>Date Added</key><date>2015-06-02T17:29:29Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2015-06-01T18:32:35Z</date>
+			<key>Normalization</key><integer>1403</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>0E82DCE73F34EBC3</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Monday%20Morning%20Podcast%206-1-15.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>211</key>
+		<dict>
+			<key>Track ID</key><integer>211</integer>
+			<key>Name</key><string>Monday Morning Podcast 8-24-15</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>34367178</integer>
+			<key>Total Time</key><integer>4291840</integer>
+			<key>Year</key><integer>2015</integer>
+			<key>Date Modified</key><date>2015-11-30T13:16:01Z</date>
+			<key>Date Added</key><date>2015-11-30T13:16:01Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2015-08-24T08:48:47Z</date>
+			<key>Normalization</key><integer>1223</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>17E3B675E8D653D0</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Monday%20Morning%20Podcast%208-24-15.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>213</key>
+		<dict>
+			<key>Track ID</key><integer>213</integer>
+			<key>Name</key><string>Thursday Afternoon Monday Morning Podcast 8-27-15</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>30408268</integer>
+			<key>Total Time</key><integer>3796976</integer>
+			<key>Year</key><integer>2015</integer>
+			<key>Date Modified</key><date>2015-11-30T13:16:34Z</date>
+			<key>Date Added</key><date>2015-11-30T13:16:34Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2015-08-28T04:16:32Z</date>
+			<key>Normalization</key><integer>1242</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>69636BD9DA83486C</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Thursday%20Afternoon%20Monday%20Morning%20Podcast%208-27-15.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>215</key>
+		<dict>
+			<key>Track ID</key><integer>215</integer>
+			<key>Name</key><string>Monday Morning Podcast 8-31-15</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>33582877</integer>
+			<key>Total Time</key><integer>4193802</integer>
+			<key>Year</key><integer>2015</integer>
+			<key>Date Modified</key><date>2015-11-30T13:17:04Z</date>
+			<key>Date Added</key><date>2015-11-30T13:17:04Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2015-08-31T19:14:52Z</date>
+			<key>Normalization</key><integer>1193</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>F25C83C91E195309</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Monday%20Morning%20Podcast%208-31-15.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>217</key>
+		<dict>
+			<key>Track ID</key><integer>217</integer>
+			<key>Name</key><string>Thursday Afternoon Monday Morning Podcast 9-3-15</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>34079622</integer>
+			<key>Total Time</key><integer>4255895</integer>
+			<key>Year</key><integer>2015</integer>
+			<key>Date Modified</key><date>2015-11-30T13:18:33Z</date>
+			<key>Date Added</key><date>2015-11-30T13:18:33Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2015-09-03T23:38:14Z</date>
+			<key>Normalization</key><integer>1240</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>66D0EF5CBD62F3AC</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Thursday%20Afternoon%20Monday%20Morning%20Podcast%209-3-15.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>219</key>
+		<dict>
+			<key>Track ID</key><integer>219</integer>
+			<key>Name</key><string>Monday Morning Podcast 9-7-15</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>40596860</integer>
+			<key>Total Time</key><integer>5070550</integer>
+			<key>Year</key><integer>2015</integer>
+			<key>Date Modified</key><date>2015-11-30T13:19:24Z</date>
+			<key>Date Added</key><date>2015-11-30T13:19:24Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2015-09-07T21:36:56Z</date>
+			<key>Normalization</key><integer>1292</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>C9EC6C4E843DB36E</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Monday%20Morning%20Podcast%209-7-15.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>221</key>
+		<dict>
+			<key>Track ID</key><integer>221</integer>
+			<key>Name</key><string>Thursday Afternoon Monday Morning Podcast 9-10-15</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>32921875</integer>
+			<key>Total Time</key><integer>4111177</integer>
+			<key>Year</key><integer>2015</integer>
+			<key>Date Modified</key><date>2015-11-30T13:20:07Z</date>
+			<key>Date Added</key><date>2015-11-30T13:20:07Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2015-09-10T23:05:50Z</date>
+			<key>Normalization</key><integer>1233</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>09A3A09AB27370B0</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Thursday%20Afternoon%20Monday%20Morning%20Podcast%209-10-15.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>223</key>
+		<dict>
+			<key>Track ID</key><integer>223</integer>
+			<key>Name</key><string>Monday Morning Podcast 9-14-15</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>32536516</integer>
+			<key>Total Time</key><integer>4063007</integer>
+			<key>Year</key><integer>2015</integer>
+			<key>Date Modified</key><date>2015-11-30T13:20:39Z</date>
+			<key>Date Added</key><date>2015-11-30T13:20:39Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2015-09-14T17:55:44Z</date>
+			<key>Normalization</key><integer>1271</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>C7CB12E62FE18AB4</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Monday%20Morning%20Podcast%209-14-15.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>225</key>
+		<dict>
+			<key>Track ID</key><integer>225</integer>
+			<key>Name</key><string>Thursday Afternoon Monday Morning Podcast 9-17-15</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>32072791</integer>
+			<key>Total Time</key><integer>4005041</integer>
+			<key>Year</key><integer>2015</integer>
+			<key>Date Modified</key><date>2015-11-30T13:21:07Z</date>
+			<key>Date Added</key><date>2015-11-30T13:21:07Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2015-09-17T22:40:26Z</date>
+			<key>Normalization</key><integer>1230</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>EE37AB9E4F55AD9F</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Thursday%20Afternoon%20Monday%20Morning%20Podcast%209-17-15.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>227</key>
+		<dict>
+			<key>Track ID</key><integer>227</integer>
+			<key>Name</key><string>Monday Morning Podcast 9-21-15</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>36378624</integer>
+			<key>Total Time</key><integer>4543007</integer>
+			<key>Year</key><integer>2015</integer>
+			<key>Date Modified</key><date>2015-11-30T13:21:41Z</date>
+			<key>Date Added</key><date>2015-11-30T13:21:41Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2015-09-21T18:10:55Z</date>
+			<key>Normalization</key><integer>1238</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>536A66D16B0BE7FE</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Monday%20Morning%20Podcast%209-21-15.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>229</key>
+		<dict>
+			<key>Track ID</key><integer>229</integer>
+			<key>Name</key><string>Thursday Afternoon Monday Morning Podcast 9-24-15</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>29825379</integer>
+			<key>Total Time</key><integer>3723049</integer>
+			<key>Year</key><integer>2015</integer>
+			<key>Date Modified</key><date>2015-11-30T13:22:10Z</date>
+			<key>Date Added</key><date>2015-11-30T13:22:09Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2015-09-25T08:36:55Z</date>
+			<key>Normalization</key><integer>1220</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>FFC52F01CA40A1D8</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Thursday%20Afternoon%20Monday%20Morning%20Podcast%209-24-15.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>231</key>
+		<dict>
+			<key>Track ID</key><integer>231</integer>
+			<key>Name</key><string>Monday Morning Podcast 9-28-15</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>34095939</integer>
+			<key>Total Time</key><integer>4257671</integer>
+			<key>Year</key><integer>2015</integer>
+			<key>Date Modified</key><date>2015-11-30T13:22:49Z</date>
+			<key>Date Added</key><date>2015-11-30T13:22:49Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2015-09-28T21:18:41Z</date>
+			<key>Normalization</key><integer>1371</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>F117489BB182AC69</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Monday%20Morning%20Podcast%209-28-15.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>233</key>
+		<dict>
+			<key>Track ID</key><integer>233</integer>
+			<key>Name</key><string>Thursday Afternoon Monday Morning Podcast 10-1-15</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>29620370</integer>
+			<key>Total Time</key><integer>3697423</integer>
+			<key>Year</key><integer>2015</integer>
+			<key>Date Modified</key><date>2015-11-30T13:26:25Z</date>
+			<key>Date Added</key><date>2015-11-30T13:26:25Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2015-10-02T09:52:32Z</date>
+			<key>Normalization</key><integer>1217</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>22BD95413632B487</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Thursday%20Afternoon%20Monday%20Morning%20Podcast%2010-1-15.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>235</key>
+		<dict>
+			<key>Track ID</key><integer>235</integer>
+			<key>Name</key><string>Monday Morning Podcast 10-5-15</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>36414150</integer>
+			<key>Total Time</key><integer>4547448</integer>
+			<key>Year</key><integer>2015</integer>
+			<key>Date Modified</key><date>2015-11-30T13:27:01Z</date>
+			<key>Date Added</key><date>2015-11-30T13:27:01Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2015-10-05T17:44:04Z</date>
+			<key>Normalization</key><integer>1238</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>79A14293027AF54E</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Monday%20Morning%20Podcast%2010-5-15.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>237</key>
+		<dict>
+			<key>Track ID</key><integer>237</integer>
+			<key>Name</key><string>Thursday Afternoon Monday Podcast 10-9-15</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>33146274</integer>
+			<key>Total Time</key><integer>4138161</integer>
+			<key>Year</key><integer>2015</integer>
+			<key>Date Modified</key><date>2015-11-30T13:27:37Z</date>
+			<key>Date Added</key><date>2015-11-30T13:27:37Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2015-10-09T21:40:23Z</date>
+			<key>Normalization</key><integer>1245</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>34643E8181214949</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Thursday%20Afternoon%20Monday%20Podcast%2010-9-15.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>239</key>
+		<dict>
+			<key>Track ID</key><integer>239</integer>
+			<key>Name</key><string>Monday Morning Podcast 10-12-15</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>31955988</integer>
+			<key>Total Time</key><integer>3990177</integer>
+			<key>Year</key><integer>2015</integer>
+			<key>Date Modified</key><date>2015-11-30T13:28:31Z</date>
+			<key>Date Added</key><date>2015-11-30T13:28:31Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2015-10-12T03:08:59Z</date>
+			<key>Normalization</key><integer>1274</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>4EF2C1BEA0B369D1</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Monday%20Morning%20Podcast%2010-12-15.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>241</key>
+		<dict>
+			<key>Track ID</key><integer>241</integer>
+			<key>Name</key><string>Thursday Afternoon Monday Morning Podcast 10-15-15</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>27981970</integer>
+			<key>Total Time</key><integer>3492623</integer>
+			<key>Year</key><integer>2015</integer>
+			<key>Date Modified</key><date>2015-11-30T13:29:01Z</date>
+			<key>Date Added</key><date>2015-11-30T13:29:01Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2015-10-15T23:00:16Z</date>
+			<key>Normalization</key><integer>1241</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>AEDB10F1A22BC1B7</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Thursday%20Afternoon%20Monday%20Morning%20Podcast%2010-15-15.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>243</key>
+		<dict>
+			<key>Track ID</key><integer>243</integer>
+			<key>Name</key><string>Monday Morning Podcast 10-19-15</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>39826160</integer>
+			<key>Total Time</key><integer>4973949</integer>
+			<key>Year</key><integer>2015</integer>
+			<key>Date Modified</key><date>2015-11-30T13:29:37Z</date>
+			<key>Date Added</key><date>2015-11-30T13:29:37Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2015-10-19T15:09:05Z</date>
+			<key>Normalization</key><integer>1231</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>B90917D39B142F03</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Monday%20Morning%20Podcast%2010-19-15.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>245</key>
+		<dict>
+			<key>Track ID</key><integer>245</integer>
+			<key>Name</key><string>Thursday Afternoon Monday Morning Podcast 10-22-15</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>37791472</integer>
+			<key>Total Time</key><integer>4718811</integer>
+			<key>Year</key><integer>2015</integer>
+			<key>Date Modified</key><date>2015-11-30T13:33:17Z</date>
+			<key>Date Added</key><date>2015-11-30T13:33:17Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2015-10-22T19:05:06Z</date>
+			<key>Normalization</key><integer>1256</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>0E2516FAEE69FA1B</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Thursday%20Afternoon%20Monday%20Morning%20Podcast%2010-22-15.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>247</key>
+		<dict>
+			<key>Track ID</key><integer>247</integer>
+			<key>Name</key><string>Monday Morning Podcast 10-26-15</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>30933660</integer>
+			<key>Total Time</key><integer>3862386</integer>
+			<key>Year</key><integer>2015</integer>
+			<key>Date Modified</key><date>2015-11-30T13:33:47Z</date>
+			<key>Date Added</key><date>2015-11-30T13:33:47Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2015-10-26T17:46:37Z</date>
+			<key>Normalization</key><integer>1252</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>8FB1E55BC095FEFC</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Monday%20Morning%20Podcast%2010-26-15.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>249</key>
+		<dict>
+			<key>Track ID</key><integer>249</integer>
+			<key>Name</key><string>Thursday Afternoon Monday Morning Podcast 10-29-15</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>32842208</integer>
+			<key>Total Time</key><integer>4100153</integer>
+			<key>Year</key><integer>2015</integer>
+			<key>Date Modified</key><date>2015-11-30T13:34:50Z</date>
+			<key>Date Added</key><date>2015-11-30T13:34:49Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2015-10-29T22:25:27Z</date>
+			<key>Normalization</key><integer>1288</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>FD3ED61671667D49</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Thursday%20Afternoon%20Monday%20Morning%20Podcast%2010-29-15.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>251</key>
+		<dict>
+			<key>Track ID</key><integer>251</integer>
+			<key>Name</key><string>Monday Morning Podcast 11-2-15</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>40985934</integer>
+			<key>Total Time</key><integer>5118119</integer>
+			<key>Year</key><integer>2015</integer>
+			<key>Date Modified</key><date>2015-11-30T13:35:34Z</date>
+			<key>Date Added</key><date>2015-11-30T13:35:34Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2015-11-02T19:14:27Z</date>
+			<key>Normalization</key><integer>1364</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>A842EA025F7767EC</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Monday%20Morning%20Podcast%2011-2-15.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>253</key>
+		<dict>
+			<key>Track ID</key><integer>253</integer>
+			<key>Name</key><string>Thursday Afternoon Monday Morning Podcast 11-5-15</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>28443397</integer>
+			<key>Total Time</key><integer>3550302</integer>
+			<key>Year</key><integer>2015</integer>
+			<key>Date Modified</key><date>2015-11-30T13:36:04Z</date>
+			<key>Date Added</key><date>2015-11-30T13:36:04Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2015-11-05T20:41:02Z</date>
+			<key>Normalization</key><integer>1678</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>559FE560AAA26E3E</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Thursday%20Afternoon%20Monday%20Morning%20Podcast%2011-5-15.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>255</key>
+		<dict>
+			<key>Track ID</key><integer>255</integer>
+			<key>Name</key><string>Monday Morning Podcast 11-9-15</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>26998365</integer>
+			<key>Total Time</key><integer>3370475</integer>
+			<key>Year</key><integer>2015</integer>
+			<key>Date Modified</key><date>2015-11-30T13:36:46Z</date>
+			<key>Date Added</key><date>2015-11-30T13:36:46Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2015-11-09T20:57:22Z</date>
+			<key>Normalization</key><integer>1212</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>73341DB9ABE5BC91</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Monday%20Morning%20Podcast%2011-9-15.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>257</key>
+		<dict>
+			<key>Track ID</key><integer>257</integer>
+			<key>Name</key><string>Thursday Afternoon Monday Morning Podcast 11-12-15</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>28362104</integer>
+			<key>Total Time</key><integer>3540140</integer>
+			<key>Year</key><integer>2015</integer>
+			<key>Date Modified</key><date>2015-11-30T13:37:19Z</date>
+			<key>Date Added</key><date>2015-11-30T13:37:19Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2015-11-12T20:03:30Z</date>
+			<key>Normalization</key><integer>1248</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>81F73378FA5A7024</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Thursday%20Afternoon%20Monday%20Morning%20Podcast%2011-12-15.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>259</key>
+		<dict>
+			<key>Track ID</key><integer>259</integer>
+			<key>Name</key><string>Monday Morning Podcast 11-16-15</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>29804125</integer>
+			<key>Total Time</key><integer>3721195</integer>
+			<key>Year</key><integer>2015</integer>
+			<key>Date Modified</key><date>2015-11-30T13:38:10Z</date>
+			<key>Date Added</key><date>2015-11-30T13:38:10Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2015-11-17T00:48:43Z</date>
+			<key>Normalization</key><integer>1221</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>B33D1838FAE6E656</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Monday%20Morning%20Podcast%2011-16-15.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>261</key>
+		<dict>
+			<key>Track ID</key><integer>261</integer>
+			<key>Name</key><string>Thursday Afternoon Monday Morning Podcast 11-19-15</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>34015629</integer>
+			<key>Total Time</key><integer>4246831</integer>
+			<key>Year</key><integer>2015</integer>
+			<key>Date Modified</key><date>2015-11-30T13:38:45Z</date>
+			<key>Date Added</key><date>2015-11-30T13:38:45Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2015-11-20T00:18:27Z</date>
+			<key>Normalization</key><integer>1282</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>2DC44C58B66E2AB5</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Thursday%20Afternoon%20Monday%20Morning%20Podcast%2011-19-15.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>263</key>
+		<dict>
+			<key>Track ID</key><integer>263</integer>
+			<key>Name</key><string>Monday Morning Podcast 11-23-15</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>AAC audio file</string>
+			<key>Size</key><integer>30546856</integer>
+			<key>Total Time</key><integer>3732030</integer>
+			<key>Year</key><integer>2015</integer>
+			<key>BPM</key><integer>120</integer>
+			<key>Date Modified</key><date>2015-11-30T13:39:24Z</date>
+			<key>Date Added</key><date>2015-11-30T13:39:24Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>32000</integer>
+			<key>Release Date</key><date>2015-11-23T19:45:38Z</date>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>4C188D91143D1FB7</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Monday%20Morning%20Podcast%2011-23-15.m4a</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>265</key>
+		<dict>
+			<key>Track ID</key><integer>265</integer>
+			<key>Name</key><string>Thursday Afternoon Monday Morning Podcast 11-26-15</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>38231350</integer>
+			<key>Total Time</key><integer>4774844</integer>
+			<key>Year</key><integer>2015</integer>
+			<key>BPM</key><integer>120</integer>
+			<key>Date Modified</key><date>2015-11-30T13:40:06Z</date>
+			<key>Date Added</key><date>2015-11-30T13:40:06Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2015-11-27T20:34:01Z</date>
+			<key>Normalization</key><integer>1235</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>408875A926DCE6AF</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Thursday%20Afternoon%20Monday%20Morning%20Podcast%2011-26-15.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>267</key>
+		<dict>
+			<key>Track ID</key><integer>267</integer>
+			<key>Name</key><string>Monday Morning Podcast 11-30-15</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>31123831</integer>
+			<key>Total Time</key><integer>3886158</integer>
+			<key>Year</key><integer>2015</integer>
+			<key>Date Modified</key><date>2015-11-30T13:40:44Z</date>
+			<key>Date Added</key><date>2015-11-30T13:40:44Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2015-11-30T05:28:30Z</date>
+			<key>Normalization</key><integer>1278</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>D35195F88A002BFC</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Monday%20Morning%20Podcast%2011-30-15.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>269</key>
+		<dict>
+			<key>Track ID</key><integer>269</integer>
+			<key>Name</key><string>Thursday Afternoon Monday Morning Podcast 12-3-15</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>30048360</integer>
+			<key>Total Time</key><integer>3750922</integer>
+			<key>Year</key><integer>2015</integer>
+			<key>Date Modified</key><date>2015-12-04T07:45:32Z</date>
+			<key>Date Added</key><date>2015-12-04T07:45:32Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2015-12-03T18:25:42Z</date>
+			<key>Normalization</key><integer>1239</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>F08C22B256A7B43D</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Thursday%20Afternoon%20Monday%20Morning%20Podcast%2012-3-15.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>271</key>
+		<dict>
+			<key>Track ID</key><integer>271</integer>
+			<key>Name</key><string>10858833631117958121</string>
+			<key>Genre</key><string>Other</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>7132536</integer>
+			<key>Total Time</key><integer>247296</integer>
+			<key>Date Modified</key><date>2016-05-07T17:22:57Z</date>
+			<key>Date Added</key><date>2016-05-07T17:23:26Z</date>
+			<key>Bit Rate</key><integer>230</integer>
+			<key>Sample Rate</key><integer>48000</integer>
+			<key>Persistent ID</key><string>3256E2A329D9F365</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Music/Unknown%20Artist/Unknown%20Album/10858833631117958121.mp3</string>
+			<key>File Folder Count</key><integer>5</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>273</key>
+		<dict>
+			<key>Track ID</key><integer>273</integer>
+			<key>Name</key><string>Monday Morning Podcast 2-8-16</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Size</key><integer>64947616</integer>
+			<key>Total Time</key><integer>4055000</integer>
+			<key>Date Added</key><date>2016-05-07T17:24:26Z</date>
+			<key>Release Date</key><date>2016-02-09T01:36:22Z</date>
+			<key>Persistent ID</key><string>AD4B30ED589E715E</string>
+			<key>Track Type</key><string>URL</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>http://traffic.libsyn.com/billburr/MMPC_2-8-16.mp3</string>
+		</dict>
+		<key>275</key>
+		<dict>
+			<key>Track ID</key><integer>275</integer>
+			<key>Name</key><string>Monday Morning Podcast 2-22-16</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Size</key><integer>34773660</integer>
+			<key>Total Time</key><integer>4343000</integer>
+			<key>Date Added</key><date>2016-05-07T17:24:26Z</date>
+			<key>Release Date</key><date>2016-02-22T18:12:01Z</date>
+			<key>Persistent ID</key><string>F2AD8DC493D60E38</string>
+			<key>Track Type</key><string>URL</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>http://traffic.libsyn.com/billburr/MMPC_2-22-16.mp3</string>
+		</dict>
+		<key>277</key>
+		<dict>
+			<key>Track ID</key><integer>277</integer>
+			<key>Name</key><string>Monday Morning Podcast 2-29-16</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Size</key><integer>30434199</integer>
+			<key>Total Time</key><integer>3800000</integer>
+			<key>Date Added</key><date>2016-05-07T17:24:26Z</date>
+			<key>Release Date</key><date>2016-03-01T03:32:13Z</date>
+			<key>Persistent ID</key><string>9800CEADA636B6BB</string>
+			<key>Track Type</key><string>URL</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>http://traffic.libsyn.com/billburr/MMPC_2-29-16.mp3</string>
+		</dict>
+		<key>279</key>
+		<dict>
+			<key>Track ID</key><integer>279</integer>
+			<key>Name</key><string>Thursday Afternoon Monday Morning Podcast 3-24-16</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Size</key><integer>32380176</integer>
+			<key>Total Time</key><integer>3979000</integer>
+			<key>Date Added</key><date>2016-05-07T17:24:26Z</date>
+			<key>Release Date</key><date>2016-03-24T18:30:14Z</date>
+			<key>Persistent ID</key><string>395BFF54831BAC33</string>
+			<key>Track Type</key><string>URL</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>http://traffic.libsyn.com/billburr/TAMMP_3-24-16.mp3</string>
+		</dict>
+		<key>281</key>
+		<dict>
+			<key>Track ID</key><integer>281</integer>
+			<key>Name</key><string>Monday Morning Podcast 4-11-16</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Size</key><integer>37924028</integer>
+			<key>Total Time</key><integer>4737000</integer>
+			<key>Date Added</key><date>2016-05-07T17:24:26Z</date>
+			<key>Release Date</key><date>2016-04-11T16:51:19Z</date>
+			<key>Persistent ID</key><string>4DD0F7454A13582F</string>
+			<key>Track Type</key><string>URL</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>http://traffic.libsyn.com/billburr/MMPC_4-11-16.mp3</string>
+		</dict>
+		<key>283</key>
+		<dict>
+			<key>Track ID</key><integer>283</integer>
+			<key>Name</key><string>Thursday Afternoon Monday Morning Podcast 4-21-16</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Size</key><integer>32935643</integer>
+			<key>Total Time</key><integer>4048000</integer>
+			<key>Date Added</key><date>2016-05-07T17:24:26Z</date>
+			<key>Release Date</key><date>2016-04-21T17:25:28Z</date>
+			<key>Persistent ID</key><string>63754041C88BBB97</string>
+			<key>Track Type</key><string>URL</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>http://traffic.libsyn.com/billburr/TAMMP_4-21-16.mp3</string>
+		</dict>
+		<key>285</key>
+		<dict>
+			<key>Track ID</key><integer>285</integer>
+			<key>Name</key><string>Thursday Afternoon Monday Morning Podcast 4-29-16</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Size</key><integer>32867516</integer>
+			<key>Total Time</key><integer>4040000</integer>
+			<key>Date Added</key><date>2016-05-07T17:24:26Z</date>
+			<key>Release Date</key><date>2016-04-28T19:17:32Z</date>
+			<key>Persistent ID</key><string>0A48CA1C2617B463</string>
+			<key>Track Type</key><string>URL</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>http://traffic.libsyn.com/billburr/TAMMP_4-28-16.mp3</string>
+		</dict>
+		<key>287</key>
+		<dict>
+			<key>Track ID</key><integer>287</integer>
+			<key>Name</key><string>Monday Morning Podcast 5-2-16</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Size</key><integer>36414150</integer>
+			<key>Total Time</key><integer>4548000</integer>
+			<key>Date Added</key><date>2016-05-07T17:24:26Z</date>
+			<key>Release Date</key><date>2016-05-02T08:28:47Z</date>
+			<key>Persistent ID</key><string>0959B390412B8844</string>
+			<key>Track Type</key><string>URL</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>http://traffic.libsyn.com/billburr/MMPC_5-2-16.mp3</string>
+		</dict>
+		<key>289</key>
+		<dict>
+			<key>Track ID</key><integer>289</integer>
+			<key>Name</key><string>Monday Morning Podcast 1-25-15</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>33501601</integer>
+			<key>Total Time</key><integer>4183379</integer>
+			<key>Year</key><integer>2016</integer>
+			<key>Date Modified</key><date>2016-05-07T17:25:19Z</date>
+			<key>Date Added</key><date>2016-05-07T17:25:19Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2016-01-25T06:52:23Z</date>
+			<key>Normalization</key><integer>1228</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album</key><string>Monday Morning Podcast</string>
+			<key>Sort Artist</key><string>Bill Burr</string>
+			<key>Persistent ID</key><string>01645683ACC4029F</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Monday%20Morning%20Podcast%201-25-15.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>291</key>
+		<dict>
+			<key>Track ID</key><integer>291</integer>
+			<key>Name</key><string>Thursday Afternoon Monday Morning Podcast 1-28-16</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>34282308</integer>
+			<key>Total Time</key><integer>4216058</integer>
+			<key>Year</key><integer>2016</integer>
+			<key>Date Modified</key><date>2016-05-07T17:26:19Z</date>
+			<key>Date Added</key><date>2016-05-07T17:26:19Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2016-01-28T21:31:54Z</date>
+			<key>Normalization</key><integer>1258</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album</key><string>Thursday Afternoon Monday Morning Podcast</string>
+			<key>Sort Artist</key><string>Bill Burr</string>
+			<key>Persistent ID</key><string>5F741232DA0AB578</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Thursday%20Afternoon%20Monday%20Morning%20Podcast%201-28-16.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>293</key>
+		<dict>
+			<key>Track ID</key><integer>293</integer>
+			<key>Name</key><string>Monday Morning Podcast 2-1-16</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>29899211</integer>
+			<key>Total Time</key><integer>3733080</integer>
+			<key>Year</key><integer>2016</integer>
+			<key>Date Modified</key><date>2016-05-07T17:27:47Z</date>
+			<key>Date Added</key><date>2016-05-07T17:27:47Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2016-02-01T18:27:05Z</date>
+			<key>Normalization</key><integer>1227</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album</key><string>Monday Morning Podcast</string>
+			<key>Sort Artist</key><string>Bill Burr</string>
+			<key>Persistent ID</key><string>8319C7063D5A9CE4</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Monday%20Morning%20Podcast%202-1-16.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>295</key>
+		<dict>
+			<key>Track ID</key><integer>295</integer>
+			<key>Name</key><string>Thursday Afternoon Monday Morning Podcast 2-4-16</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>65381043</integer>
+			<key>Total Time</key><integer>4082311</integer>
+			<key>Year</key><integer>2016</integer>
+			<key>Date Modified</key><date>2016-05-07T17:31:04Z</date>
+			<key>Date Added</key><date>2016-05-07T17:31:04Z</date>
+			<key>Bit Rate</key><integer>128</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2016-02-04T20:43:16Z</date>
+			<key>Normalization</key><integer>1264</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Artist</key><string>Bill Burr</string>
+			<key>Persistent ID</key><string>E1AD3FEA8FE59C30</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Thursday%20Afternoon%20Monday%20Morning%20Podcast%202-4-16.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>297</key>
+		<dict>
+			<key>Track ID</key><integer>297</integer>
+			<key>Name</key><string>Thursday Afternoon Monday Morning Podcast  2-11-16</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>72924371</integer>
+			<key>Total Time</key><integer>4553769</integer>
+			<key>Year</key><integer>2016</integer>
+			<key>Date Modified</key><date>2016-05-07T17:35:30Z</date>
+			<key>Date Added</key><date>2016-05-07T17:35:30Z</date>
+			<key>Bit Rate</key><integer>128</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2016-02-11T03:57:25Z</date>
+			<key>Normalization</key><integer>1279</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album</key><string>Thursday Afternoon Monday Morning Podcast</string>
+			<key>Sort Artist</key><string>Bill Burr</string>
+			<key>Persistent ID</key><string>B7C4AA770F38C376</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Thursday%20Afternoon%20Monday%20Morning%20Podcast%20%202-11-16.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>299</key>
+		<dict>
+			<key>Track ID</key><integer>299</integer>
+			<key>Name</key><string>Monday Morning Podcast 2-15-16</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>68132047</integer>
+			<key>Total Time</key><integer>4253100</integer>
+			<key>Year</key><integer>2016</integer>
+			<key>Date Modified</key><date>2016-05-07T17:36:39Z</date>
+			<key>Date Added</key><date>2016-05-07T17:36:39Z</date>
+			<key>Bit Rate</key><integer>128</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2016-02-15T20:55:12Z</date>
+			<key>Normalization</key><integer>1243</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album</key><string>Monday Morning Podcast </string>
+			<key>Sort Artist</key><string>Bill Burr</string>
+			<key>Persistent ID</key><string>694E0285BBDA7605</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Monday%20Morning%20Podcast%202-15-16.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>301</key>
+		<dict>
+			<key>Track ID</key><integer>301</integer>
+			<key>Name</key><string>Thursday Afternoon Monday Morning Podcast 2-18-16</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>73177236</integer>
+			<key>Total Time</key><integer>4569573</integer>
+			<key>Year</key><integer>2016</integer>
+			<key>Date Modified</key><date>2016-05-07T17:38:54Z</date>
+			<key>Date Added</key><date>2016-05-07T17:38:53Z</date>
+			<key>Bit Rate</key><integer>128</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2016-02-18T20:14:49Z</date>
+			<key>Normalization</key><integer>1245</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album</key><string>Thursday Afternoon Monday Morning Podcast 2-18-16</string>
+			<key>Sort Artist</key><string>Bill Burr</string>
+			<key>Sort Name</key><string>TAMMP 2-18-16</string>
+			<key>Persistent ID</key><string>D91F72B90368E487</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Thursday%20Afternoon%20Monday%20Morning%20Podcast%202-18-16.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>303</key>
+		<dict>
+			<key>Track ID</key><integer>303</integer>
+			<key>Name</key><string>Thursday Afternoon Monday Morning Podcast 2-25-16</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>34071029</integer>
+			<key>Total Time</key><integer>4189648</integer>
+			<key>Year</key><integer>2016</integer>
+			<key>Date Modified</key><date>2016-05-07T17:40:16Z</date>
+			<key>Date Added</key><date>2016-05-07T17:40:16Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2016-02-26T04:48:31Z</date>
+			<key>Normalization</key><integer>1299</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album</key><string>Thursday Afternoon Monday Morning Podcast</string>
+			<key>Sort Artist</key><string>Bill Burr</string>
+			<key>Persistent ID</key><string>17BD139E637030A0</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Thursday%20Afternoon%20Monday%20Morning%20Podcast%202-25-16.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>305</key>
+		<dict>
+			<key>Track ID</key><integer>305</integer>
+			<key>Name</key><string>Thursday Afternoon Monday Morning Podcast 3-3-16</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>38027222</integer>
+			<key>Total Time</key><integer>4684173</integer>
+			<key>Year</key><integer>2016</integer>
+			<key>Date Modified</key><date>2016-05-07T17:42:44Z</date>
+			<key>Date Added</key><date>2016-05-07T17:42:43Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2016-03-03T18:55:35Z</date>
+			<key>Normalization</key><integer>1220</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album</key><string>Thursday Afternoon Monday Morning Podcast</string>
+			<key>Sort Artist</key><string>Bill Burr</string>
+			<key>Persistent ID</key><string>FEFD3466DC6784E1</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Thursday%20Afternoon%20Monday%20Morning%20Podcast%203-3-16.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>307</key>
+		<dict>
+			<key>Track ID</key><integer>307</integer>
+			<key>Name</key><string>Monday Morning Podcast 3-7-16</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>34321940</integer>
+			<key>Total Time</key><integer>4285910</integer>
+			<key>Year</key><integer>2016</integer>
+			<key>Date Modified</key><date>2016-05-07T17:44:05Z</date>
+			<key>Date Added</key><date>2016-05-07T17:44:05Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2016-03-07T21:08:19Z</date>
+			<key>Normalization</key><integer>1251</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album</key><string>Monday Morning Podcast</string>
+			<key>Sort Artist</key><string>Bill Burr</string>
+			<key>Persistent ID</key><string>321404FFBC710BFE</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Monday%20Morning%20Podcast%203-7-16.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>309</key>
+		<dict>
+			<key>Track ID</key><integer>309</integer>
+			<key>Name</key><string>Thursday Afternoon Monday Morning Podcast 3-10-16</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>34460567</integer>
+			<key>Total Time</key><integer>4238341</integer>
+			<key>Year</key><integer>2016</integer>
+			<key>Date Modified</key><date>2016-05-07T17:47:53Z</date>
+			<key>Date Added</key><date>2016-05-07T17:47:53Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2016-03-10T22:31:59Z</date>
+			<key>Normalization</key><integer>1235</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album</key><string>Thursday Afternoon Monday Morning Podcast</string>
+			<key>Sort Artist</key><string>Bill Burr</string>
+			<key>Persistent ID</key><string>D767D4878172A242</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Thursday%20Afternoon%20Monday%20Morning%20Podcast%203-10-16.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>311</key>
+		<dict>
+			<key>Track ID</key><integer>311</integer>
+			<key>Name</key><string>Monday Morning Podcast 3-14-16</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>37984005</integer>
+			<key>Total Time</key><integer>4743680</integer>
+			<key>Year</key><integer>2016</integer>
+			<key>Date Modified</key><date>2016-05-07T17:49:11Z</date>
+			<key>Date Added</key><date>2016-05-07T17:49:11Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2016-03-14T05:59:39Z</date>
+			<key>Normalization</key><integer>1239</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album</key><string>Monday Morning Podcast</string>
+			<key>Sort Artist</key><string>Bill Burr</string>
+			<key>Persistent ID</key><string>2B01E42B32181E1E</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Monday%20Morning%20Podcast%203-14-16.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>313</key>
+		<dict>
+			<key>Track ID</key><integer>313</integer>
+			<key>Name</key><string>Thursday Afternoon Monday Morning Podcast 3-17-16</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>28163426</integer>
+			<key>Total Time</key><integer>3516107</integer>
+			<key>Year</key><integer>2016</integer>
+			<key>Date Modified</key><date>2016-05-07T17:50:52Z</date>
+			<key>Date Added</key><date>2016-05-07T17:50:52Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2016-03-18T07:32:21Z</date>
+			<key>Normalization</key><integer>1235</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album</key><string>Thursday Afternoon Monday Morning Podcast</string>
+			<key>Sort Artist</key><string>Bill Burr</string>
+			<key>Persistent ID</key><string>121888CE59B62959</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Thursday%20Afternoon%20Monday%20Morning%20Podcast%203-17-16.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>315</key>
+		<dict>
+			<key>Track ID</key><integer>315</integer>
+			<key>Name</key><string>Monday Morning Podcast 3-21-16</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>34500106</integer>
+			<key>Total Time</key><integer>4308192</integer>
+			<key>Year</key><integer>2016</integer>
+			<key>Date Modified</key><date>2016-05-07T17:51:42Z</date>
+			<key>Date Added</key><date>2016-05-07T17:51:42Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2016-03-21T17:42:21Z</date>
+			<key>Normalization</key><integer>1246</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album</key><string>Monday Morning Podcast</string>
+			<key>Sort Artist</key><string>Bill Burr</string>
+			<key>Persistent ID</key><string>3D4C98A26C3BFE85</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Monday%20Morning%20Podcast%203-21-16.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>317</key>
+		<dict>
+			<key>Track ID</key><integer>317</integer>
+			<key>Name</key><string>Monday Morning Podcast 3-28-16</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>34274199</integer>
+			<key>Total Time</key><integer>4279954</integer>
+			<key>Year</key><integer>2016</integer>
+			<key>Date Modified</key><date>2016-05-07T17:52:28Z</date>
+			<key>Date Added</key><date>2016-05-07T17:52:28Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2016-03-28T07:36:52Z</date>
+			<key>Normalization</key><integer>1232</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album</key><string>Monday Morning Podcast</string>
+			<key>Sort Artist</key><string>Bill Burr</string>
+			<key>Persistent ID</key><string>58FBFF6818290F7D</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Monday%20Morning%20Podcast%203-28-16.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>319</key>
+		<dict>
+			<key>Track ID</key><integer>319</integer>
+			<key>Name</key><string>Thursday Afternoon Monday Morning Podcast 3-31-16</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>34960029</integer>
+			<key>Total Time</key><integer>4300773</integer>
+			<key>Year</key><integer>2016</integer>
+			<key>Date Modified</key><date>2016-05-07T17:54:05Z</date>
+			<key>Date Added</key><date>2016-05-07T17:54:04Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2016-03-31T21:35:12Z</date>
+			<key>Normalization</key><integer>1349</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album</key><string>Thursday Afternoon Monday Morning Podcast</string>
+			<key>Sort Artist</key><string>Bill Burr</string>
+			<key>Persistent ID</key><string>5A32B62CA9B089E5</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Thursday%20Afternoon%20Monday%20Morning%20Podcast%203-31-16.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>321</key>
+		<dict>
+			<key>Track ID</key><integer>321</integer>
+			<key>Name</key><string>Monday Morning Podcast 4-4-16</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>37496037</integer>
+			<key>Total Time</key><integer>4682684</integer>
+			<key>Year</key><integer>2016</integer>
+			<key>Date Modified</key><date>2016-05-07T17:55:22Z</date>
+			<key>Date Added</key><date>2016-05-07T17:55:22Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2016-04-04T15:11:37Z</date>
+			<key>Normalization</key><integer>1209</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album</key><string>Monday Morning Podcast</string>
+			<key>Sort Artist</key><string>Bill Burr</string>
+			<key>Persistent ID</key><string>4D016E2DD6DD0243</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Monday%20Morning%20Podcast%204-4-16.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>323</key>
+		<dict>
+			<key>Track ID</key><integer>323</integer>
+			<key>Name</key><string>Thursday Afternoon Monday Morning Podcast 4-7-16</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>29739927</integer>
+			<key>Total Time</key><integer>3648261</integer>
+			<key>Year</key><integer>2016</integer>
+			<key>Date Modified</key><date>2016-05-07T17:57:07Z</date>
+			<key>Date Added</key><date>2016-05-07T17:57:07Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2016-04-07T18:56:58Z</date>
+			<key>Normalization</key><integer>1199</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album</key><string>Thursday Afternoon Monday Morning Podcast</string>
+			<key>Sort Artist</key><string>Bill Burr</string>
+			<key>Persistent ID</key><string>1709C0DD17ABFD88</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Thursday%20Afternoon%20Monday%20Morning%20Podcast%204-7-16.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>325</key>
+		<dict>
+			<key>Track ID</key><integer>325</integer>
+			<key>Name</key><string>Thursday Afternoon Monday Morning Podcast 4-14-16</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>33842406</integer>
+			<key>Total Time</key><integer>4161071</integer>
+			<key>Year</key><integer>2016</integer>
+			<key>Date Modified</key><date>2016-05-07T17:58:20Z</date>
+			<key>Date Added</key><date>2016-05-07T17:58:20Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2016-04-15T08:04:32Z</date>
+			<key>Normalization</key><integer>1181</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album</key><string>Thursday Afternoon Monday Morning Podcast</string>
+			<key>Sort Artist</key><string>Bill Burr</string>
+			<key>Persistent ID</key><string>A9DF8148881967DB</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Thursday%20Afternoon%20Monday%20Morning%20Podcast%204-14-16.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>327</key>
+		<dict>
+			<key>Track ID</key><integer>327</integer>
+			<key>Name</key><string>Monday Morning Podcast 4-18-16</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>30493758</integer>
+			<key>Total Time</key><integer>3807399</integer>
+			<key>Year</key><integer>2016</integer>
+			<key>Date Modified</key><date>2016-05-07T18:01:37Z</date>
+			<key>Date Added</key><date>2016-05-07T18:01:37Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2016-04-18T19:26:10Z</date>
+			<key>Normalization</key><integer>1262</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album</key><string>Monday Morning Podcast</string>
+			<key>Sort Artist</key><string>Bill Burr</string>
+			<key>Sort Name</key><string>MMPC 4-18-16</string>
+			<key>Persistent ID</key><string>F26B50C985BA84C1</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Monday%20Morning%20Podcast%204-18-16.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>329</key>
+		<dict>
+			<key>Track ID</key><integer>329</integer>
+			<key>Name</key><string>Monday Morning Podcast 4-25-16</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>28817324</integer>
+			<key>Total Time</key><integer>3597844</integer>
+			<key>Year</key><integer>2016</integer>
+			<key>Date Modified</key><date>2016-05-07T18:02:20Z</date>
+			<key>Date Added</key><date>2016-05-07T18:02:20Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2016-04-25T22:16:54Z</date>
+			<key>Normalization</key><integer>1228</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album</key><string>Monday Morning Podcast</string>
+			<key>Sort Artist</key><string>Bill Burr</string>
+			<key>Persistent ID</key><string>FE470785A7147E1C</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Monday%20Morning%20Podcast%204-25-16.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>331</key>
+		<dict>
+			<key>Track ID</key><integer>331</integer>
+			<key>Name</key><string>Thursday Afternoon Monday Morning Podcast 5-5-16</string>
+			<key>Artist</key><string>Bill Burr</string>
+			<key>Album</key><string>Monday Morning Podcast</string>
+			<key>Genre</key><string>Podcast</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>29859673</integer>
+			<key>Total Time</key><integer>3663229</integer>
+			<key>Year</key><integer>2016</integer>
+			<key>Date Modified</key><date>2016-05-07T18:03:32Z</date>
+			<key>Date Added</key><date>2016-05-07T18:03:32Z</date>
+			<key>Bit Rate</key><integer>64</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Release Date</key><date>2016-05-05T12:58:18Z</date>
+			<key>Normalization</key><integer>1283</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album</key><string>Thursday Afternoon Monday Morning Podcast</string>
+			<key>Sort Artist</key><string>Bill Burr</string>
+			<key>Persistent ID</key><string>A4DEC2821611EB72</string>
+			<key>Track Type</key><string>File</string>
+			<key>Podcast</key><true/>
+			<key>Unplayed</key><true/>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Podcasts/Monday%20Morning%20Podcast/Thursday%20Afternoon%20Monday%20Morning%20Podcast%205-5-16.mp3</string>
+			<key>File Folder Count</key><integer>4</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>333</key>
+		<dict>
+			<key>Track ID</key><integer>333</integer>
+			<key>Name</key><string>Factotum (Unabridged)</string>
+			<key>Artist</key><string>Charles Bukowski</string>
+			<key>Album</key><string>Factotum (Unabridged)</string>
+			<key>Genre</key><string>Audiobook</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>372037860</integer>
+			<key>Total Time</key><integer>18600306</integer>
+			<key>Date Modified</key><date>2016-05-11T04:07:44Z</date>
+			<key>Date Added</key><date>2016-05-11T04:08:16Z</date>
+			<key>Bit Rate</key><integer>160</integer>
+			<key>Sample Rate</key><integer>22050</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>F6D52313E29F5332</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Music/Charles%20Bukowski/Factotum%20(Unabridged)/Factotum%20(Unabridged).mp3</string>
+			<key>File Folder Count</key><integer>5</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>335</key>
+		<dict>
+			<key>Track ID</key><integer>335</integer>
+			<key>Name</key><string>Eleanor Put Your Boots On</string>
+			<key>Artist</key><string>Franz Ferdinand</string>
+			<key>Album</key><string>You Could Have It So Much Better</string>
+			<key>Genre</key><string>Rock</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>4081792</integer>
+			<key>Total Time</key><integer>170004</integer>
+			<key>Track Number</key><integer>7</integer>
+			<key>Year</key><integer>2005</integer>
+			<key>Date Modified</key><date>2006-02-28T12:24:56Z</date>
+			<key>Date Added</key><date>2016-08-14T02:51:14Z</date>
+			<key>Bit Rate</key><integer>192</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Comments</key><string>Created by Grip</string>
+			<key>Persistent ID</key><string>A96F223DF801B7AB</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Music/Franz%20Ferdinand/You%20Could%20Have%20It%20So%20Much%20Better/07%20Eleanor%20Put%20Your%20Boots%20On.mp3</string>
+			<key>File Folder Count</key><integer>5</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>337</key>
+		<dict>
+			<key>Track ID</key><integer>337</integer>
+			<key>Name</key><string>Miss Brown to you</string>
+			<key>Artist</key><string>Billie Holiday</string>
+			<key>Album</key><string>The Complete Billie Holiday On Columbia 1933-1944 (Disc 1)</string>
+			<key>Genre</key><string>Jazz</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>2860073</integer>
+			<key>Total Time</key><integer>180715</integer>
+			<key>Track Number</key><integer>5</integer>
+			<key>Year</key><integer>2002</integer>
+			<key>Date Modified</key><date>2006-10-26T16:01:10Z</date>
+			<key>Date Added</key><date>2016-08-14T02:51:46Z</date>
+			<key>Bit Rate</key><integer>126</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Comments</key><string>www.UberNet.org</string>
+			<key>Skip Count</key><integer>1</integer>
+			<key>Skip Date</key><date>2016-10-13T02:07:15Z</date>
+			<key>Sort Album</key><string>Complete Billie Holiday On Columbia 1933-1944 (Disc 1)</string>
+			<key>Persistent ID</key><string>311D0D7C5D187CAF</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Music/Billie%20Holiday/The%20Complete%20Billie%20Holiday%20On%20Columbia%201933-1944%20(Disc%201)/05%20Miss%20Brown%20to%20you.mp3</string>
+			<key>File Folder Count</key><integer>5</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>339</key>
+		<dict>
+			<key>Track ID</key><integer>339</integer>
+			<key>Name</key><string>15 - Moby - Hotel - You Lift me Up (Extended Club Remix)</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>12435330</integer>
+			<key>Total Time</key><integer>621766</integer>
+			<key>Date Modified</key><date>2006-05-22T00:46:50Z</date>
+			<key>Date Added</key><date>2016-08-14T03:08:54Z</date>
+			<key>Bit Rate</key><integer>160</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Persistent ID</key><string>6827657051C31E2D</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Music/Unknown%20Artist/Unknown%20Album/15%20-%20Moby%20-%20Hotel%20-%20You%20Lift%20me%20Up%20(Extended%20Club%20Remix).mp3</string>
+			<key>File Folder Count</key><integer>5</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>341</key>
+		<dict>
+			<key>Track ID</key><integer>341</integer>
+			<key>Name</key><string>Bionic</string>
+			<key>Artist</key><string>Placebo</string>
+			<key>Album</key><string>Placebo</string>
+			<key>Genre</key><string>BritPop</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>8100377</integer>
+			<key>Total Time</key><integer>300251</integer>
+			<key>Track Number</key><integer>3</integer>
+			<key>Year</key><integer>1996</integer>
+			<key>Date Modified</key><date>2006-06-11T20:38:34Z</date>
+			<key>Date Added</key><date>2016-08-14T03:55:18Z</date>
+			<key>Bit Rate</key><integer>215</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Comments</key><string>Leshiy</string>
+			<key>Persistent ID</key><string>D82BD2223AEC02B9</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Music/Placebo/Placebo/03%20Bionic.mp3</string>
+			<key>File Folder Count</key><integer>5</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>343</key>
+		<dict>
+			<key>Track ID</key><integer>343</integer>
+			<key>Name</key><string>Teenage Angst</string>
+			<key>Artist</key><string>Placebo</string>
+			<key>Album</key><string>Placebo</string>
+			<key>Genre</key><string>BritPop</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>4200300</integer>
+			<key>Total Time</key><integer>162507</integer>
+			<key>Track Number</key><integer>2</integer>
+			<key>Year</key><integer>1996</integer>
+			<key>Date Modified</key><date>2006-06-11T20:30:04Z</date>
+			<key>Date Added</key><date>2016-08-14T03:55:33Z</date>
+			<key>Bit Rate</key><integer>206</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Comments</key><string>Leshiy</string>
+			<key>Skip Count</key><integer>1</integer>
+			<key>Skip Date</key><date>2016-08-14T03:55:38Z</date>
+			<key>Persistent ID</key><string>583B8ED22E8689F2</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Music/Placebo/Placebo/02%20Teenage%20Angst.mp3</string>
+			<key>File Folder Count</key><integer>5</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>345</key>
+		<dict>
+			<key>Track ID</key><integer>345</integer>
+			<key>Name</key><string>Scared Of Girls</string>
+			<key>Artist</key><string>Placebo</string>
+			<key>Album</key><string>Without You I'm Nothing</string>
+			<key>Genre</key><string>BritPop</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>3838861</integer>
+			<key>Total Time</key><integer>181080</integer>
+			<key>Track Number</key><integer>11</integer>
+			<key>Year</key><integer>1998</integer>
+			<key>Date Modified</key><date>2006-06-11T22:40:40Z</date>
+			<key>Date Added</key><date>2016-08-14T03:55:38Z</date>
+			<key>Bit Rate</key><integer>169</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Comments</key><string>Leshiy</string>
+			<key>Skip Count</key><integer>1</integer>
+			<key>Skip Date</key><date>2016-08-14T03:55:43Z</date>
+			<key>Persistent ID</key><string>93AE680174352DF1</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Music/Placebo/Without%20You%20I'm%20Nothing/11%20Scared%20Of%20Girls.mp3</string>
+			<key>File Folder Count</key><integer>5</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>347</key>
+		<dict>
+			<key>Track ID</key><integer>347</integer>
+			<key>Name</key><string>Summer's Gone</string>
+			<key>Artist</key><string>Placebo</string>
+			<key>Album</key><string>Without You I'm Nothing</string>
+			<key>Genre</key><string>BritPop</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>4074485</integer>
+			<key>Total Time</key><integer>185573</integer>
+			<key>Track Number</key><integer>10</integer>
+			<key>Year</key><integer>1998</integer>
+			<key>Date Modified</key><date>2006-06-11T22:40:56Z</date>
+			<key>Date Added</key><date>2016-08-14T03:55:42Z</date>
+			<key>Bit Rate</key><integer>175</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Comments</key><string>Leshiy</string>
+			<key>Persistent ID</key><string>7F30D6207F7694F8</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Music/Placebo/Without%20You%20I'm%20Nothing/10%20Summer's%20Gone.mp3</string>
+			<key>File Folder Count</key><integer>5</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>349</key>
+		<dict>
+			<key>Track ID</key><integer>349</integer>
+			<key>Name</key><string>You Don't Care About Us</string>
+			<key>Artist</key><string>Placebo</string>
+			<key>Album</key><string>Without You I'm Nothing</string>
+			<key>Genre</key><string>BritPop</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>5421725</integer>
+			<key>Total Time</key><integer>238445</integer>
+			<key>Track Number</key><integer>3</integer>
+			<key>Year</key><integer>1998</integer>
+			<key>Date Modified</key><date>2006-06-11T21:54:14Z</date>
+			<key>Date Added</key><date>2016-08-14T03:56:08Z</date>
+			<key>Bit Rate</key><integer>181</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Comments</key><string>Leshiy</string>
+			<key>Persistent ID</key><string>5A8A7AB2C52A862F</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Music/Placebo/Without%20You%20I'm%20Nothing/03%20You%20Don't%20Care%20About%20Us.mp3</string>
+			<key>File Folder Count</key><integer>5</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>353</key>
+		<dict>
+			<key>Track ID</key><integer>353</integer>
+			<key>Name</key><string>Take On Me</string>
+			<key>Artist</key><string>a-ha</string>
+			<key>Album</key><string>25 (Deluxe Version)</string>
+			<key>Genre</key><string>Pop</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>5477568</integer>
+			<key>Total Time</key><integer>227208</integer>
+			<key>Year</key><integer>2010</integer>
+			<key>Date Modified</key><date>2016-12-24T10:32:22Z</date>
+			<key>Date Added</key><date>2016-12-24T10:32:35Z</date>
+			<key>Bit Rate</key><integer>192</integer>
+			<key>Sample Rate</key><integer>48000</integer>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>6D855C002E143B44</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Music/a-ha/25%20(Deluxe%20Version)/Take%20On%20Me.mp3</string>
+			<key>File Folder Count</key><integer>5</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>355</key>
+		<dict>
+			<key>Track ID</key><integer>355</integer>
+			<key>Name</key><string>out</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>7844304</integer>
+			<key>Total Time</key><integer>299102</integer>
+			<key>Date Modified</key><date>2016-12-30T00:08:27Z</date>
+			<key>Date Added</key><date>2016-12-30T00:08:37Z</date>
+			<key>Bit Rate</key><integer>209</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Skip Count</key><integer>1</integer>
+			<key>Skip Date</key><date>2016-12-30T01:21:20Z</date>
+			<key>Persistent ID</key><string>F5D7A1C69F59A40B</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Music/Unknown%20Artist/Unknown%20Album/out.mp3</string>
+			<key>File Folder Count</key><integer>5</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>357</key>
+		<dict>
+			<key>Track ID</key><integer>357</integer>
+			<key>Name</key><string>out2</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>7844304</integer>
+			<key>Total Time</key><integer>299102</integer>
+			<key>Date Modified</key><date>2016-12-30T03:22:15Z</date>
+			<key>Date Added</key><date>2016-12-30T03:22:24Z</date>
+			<key>Bit Rate</key><integer>209</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Skip Count</key><integer>1</integer>
+			<key>Skip Date</key><date>2016-12-30T06:35:23Z</date>
+			<key>Persistent ID</key><string>FB08A7C658804CCB</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Music/Unknown%20Artist/Unknown%20Album/out2.mp3</string>
+			<key>File Folder Count</key><integer>5</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>359</key>
+		<dict>
+			<key>Track ID</key><integer>359</integer>
+			<key>Name</key><string>out 1</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>27059</integer>
+			<key>Total Time</key><integer>1306</integer>
+			<key>Date Modified</key><date>2016-12-30T06:35:11Z</date>
+			<key>Date Added</key><date>2016-12-30T06:35:23Z</date>
+			<key>Bit Rate</key><integer>164</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Persistent ID</key><string>F7C52EEDD59E96EF</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Music/Unknown%20Artist/Unknown%20Album/out%201.mp3</string>
+			<key>File Folder Count</key><integer>5</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>361</key>
+		<dict>
+			<key>Track ID</key><integer>361</integer>
+			<key>Name</key><string>out 2</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>23688486</integer>
+			<key>Total Time</key><integer>822334</integer>
+			<key>Date Modified</key><date>2016-12-30T07:26:12Z</date>
+			<key>Date Added</key><date>2016-12-30T07:26:45Z</date>
+			<key>Bit Rate</key><integer>230</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Persistent ID</key><string>CC05A5583C6F6EBC</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file:///Users/benjius/Music/iTunes/iTunes%20Media/Music/Unknown%20Artist/Unknown%20Album/out%202.mp3</string>
+			<key>File Folder Count</key><integer>5</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+	</dict>
+	<key>Playlists</key>
+	<array>
+		<dict>
+			<key>Name</key><string>Library</string>
+			<key>Description</key><string></string>
+			<key>Master</key><true/>
+			<key>Playlist ID</key><integer>363</integer>
+			<key>Playlist Persistent ID</key><string>2ED7C83ADF95A520</string>
+			<key>Visible</key><false/>
+			<key>All Items</key><true/>
+			<key>Playlist Items</key>
+			<array>
+				<dict>
+					<key>Track ID</key><integer>125</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>127</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>129</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>131</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>133</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>135</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>137</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>139</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>141</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>143</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>145</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>147</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>149</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>151</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>153</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>155</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>157</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>159</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>163</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>165</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>169</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>173</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>175</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>177</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>179</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>181</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>183</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>185</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>187</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>189</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>191</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>193</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>195</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>197</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>199</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>201</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>203</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>205</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>207</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>209</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>211</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>213</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>215</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>217</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>219</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>221</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>223</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>225</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>227</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>229</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>231</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>233</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>235</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>237</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>239</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>241</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>243</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>245</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>247</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>249</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>251</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>253</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>255</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>257</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>259</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>261</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>263</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>265</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>267</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>269</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>271</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>289</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>291</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>293</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>295</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>297</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>299</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>301</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>303</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>305</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>307</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>309</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>311</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>313</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>315</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>317</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>319</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>321</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>323</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>325</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>327</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>329</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>331</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>333</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>335</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>337</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>339</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>341</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>343</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>345</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>347</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>349</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>353</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>355</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>357</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>359</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>361</integer>
+				</dict>
+			</array>
+		</dict>
+		<dict>
+			<key>Name</key><string>Music</string>
+			<key>Description</key><string></string>
+			<key>Playlist ID</key><integer>475</integer>
+			<key>Playlist Persistent ID</key><string>4A29CA148FD1930B</string>
+			<key>Distinguished Kind</key><integer>4</integer>
+			<key>Music</key><true/>
+			<key>All Items</key><true/>
+			<key>Playlist Items</key>
+			<array>
+				<dict>
+					<key>Track ID</key><integer>125</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>127</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>129</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>131</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>133</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>135</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>137</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>139</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>141</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>143</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>145</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>147</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>149</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>151</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>153</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>155</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>157</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>159</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>163</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>165</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>169</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>177</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>271</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>333</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>335</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>337</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>339</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>341</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>343</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>345</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>347</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>349</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>353</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>355</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>357</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>359</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>361</integer>
+				</dict>
+			</array>
+		</dict>
+		<dict>
+			<key>Name</key><string>Movies</string>
+			<key>Description</key><string></string>
+			<key>Playlist ID</key><integer>523</integer>
+			<key>Playlist Persistent ID</key><string>F51CB70431BB2F88</string>
+			<key>Distinguished Kind</key><integer>2</integer>
+			<key>Movies</key><true/>
+			<key>All Items</key><true/>
+		</dict>
+		<dict>
+			<key>Name</key><string>TV Shows</string>
+			<key>Description</key><string></string>
+			<key>Playlist ID</key><integer>529</integer>
+			<key>Playlist Persistent ID</key><string>F358714374A48F80</string>
+			<key>Distinguished Kind</key><integer>3</integer>
+			<key>TV Shows</key><true/>
+			<key>All Items</key><true/>
+		</dict>
+		<dict>
+			<key>Name</key><string>Podcasts</string>
+			<key>Description</key><string></string>
+			<key>Playlist ID</key><integer>532</integer>
+			<key>Playlist Persistent ID</key><string>0BF82F1E37117645</string>
+			<key>Distinguished Kind</key><integer>10</integer>
+			<key>Podcasts</key><true/>
+			<key>All Items</key><true/>
+			<key>Playlist Items</key>
+			<array>
+				<dict>
+					<key>Track ID</key><integer>289</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>291</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>293</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>295</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>273</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>297</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>299</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>301</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>275</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>303</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>277</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>305</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>307</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>309</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>311</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>313</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>315</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>279</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>317</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>319</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>321</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>323</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>281</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>325</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>327</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>283</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>329</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>285</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>287</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>331</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>213</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>215</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>217</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>219</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>221</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>223</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>225</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>227</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>229</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>231</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>233</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>235</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>237</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>239</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>241</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>243</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>245</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>247</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>249</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>251</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>253</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>255</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>257</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>259</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>261</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>263</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>265</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>267</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>269</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>211</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>173</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>179</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>181</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>183</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>185</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>187</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>189</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>191</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>193</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>195</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>197</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>199</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>201</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>203</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>205</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>207</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>209</integer>
+				</dict>
+			</array>
+		</dict>
+		<dict>
+			<key>Name</key><string>iTunes U</string>
+			<key>Description</key><string></string>
+			<key>Playlist ID</key><integer>617</integer>
+			<key>Playlist Persistent ID</key><string>CAC68471F8D8D84A</string>
+			<key>Distinguished Kind</key><integer>31</integer>
+			<key>iTunesU</key><true/>
+			<key>All Items</key><true/>
+		</dict>
+		<dict>
+			<key>Name</key><string>Audiobooks</string>
+			<key>Description</key><string></string>
+			<key>Playlist ID</key><integer>620</integer>
+			<key>Playlist Persistent ID</key><string>97343430EDE3E9A2</string>
+			<key>Distinguished Kind</key><integer>5</integer>
+			<key>Audiobooks</key><true/>
+			<key>All Items</key><true/>
+		</dict>
+		<dict>
+			<key>Name</key><string>Tones</string>
+			<key>Description</key><string></string>
+			<key>Playlist ID</key><integer>632</integer>
+			<key>Playlist Persistent ID</key><string>739563BAF0D0C320</string>
+			<key>Distinguished Kind</key><integer>6</integer>
+			<key>All Items</key><true/>
+		</dict>
+		<dict>
+			<key>Name</key><string>Genius</string>
+			<key>Description</key><string></string>
+			<key>Playlist ID</key><integer>635</integer>
+			<key>Playlist Persistent ID</key><string>01CC9FB256FBF838</string>
+			<key>Distinguished Kind</key><integer>26</integer>
+			<key>All Items</key><true/>
+		</dict>
+		<dict>
+			<key>Name</key><string>90’s Music</string>
+			<key>Description</key><string></string>
+			<key>Playlist ID</key><integer>638</integer>
+			<key>Playlist Persistent ID</key><string>343E3F1174BC7A3A</string>
+			<key>Distinguished Kind</key><integer>200</integer>
+			<key>All Items</key><true/>
+			<key>Smart Info</key>
+			<data>
+			AQEAAwAAAAIAAAAZAAAAAAAAAAcAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+			AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+			AAAAAA==
+			</data>
+			<key>Smart Criteria</key>
+			<data>
+			U0xzdAABAAEAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+			AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+			AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAcAAAEAAAAAAAAAAAAAAAAAAAAAAAAA
+			AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABEAAAAAAAAB8YAAAAAAAAAAAAAAAAAAAAB
+			AAAAAAAAB88AAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQEA
+			AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABgFNMc3QAAQAB
+			AAAAAgAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+			AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+			AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8AAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+			AAAAAAAAAAAAAAAAAAAAAAAAAAAARAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAB
+			AAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPAAABAAAAAAAAAAAAAAA
+			AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEQAAAAAAAAAIAAAAAAAAAAA
+			AAAAAAAAAAEAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAA==
+			</data>
+			<key>Playlist Items</key>
+			<array>
+				<dict>
+					<key>Track ID</key><integer>341</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>343</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>345</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>347</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>349</integer>
+				</dict>
+			</array>
+		</dict>
+		<dict>
+			<key>Name</key><string>Classical Music</string>
+			<key>Description</key><string></string>
+			<key>Playlist ID</key><integer>646</integer>
+			<key>Playlist Persistent ID</key><string>8BAFC86305B8DBAC</string>
+			<key>Distinguished Kind</key><integer>206</integer>
+			<key>All Items</key><true/>
+			<key>Smart Info</key>
+			<data>
+			AQEAAwAAAAIAAAAZAAAAAAAAAAcAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+			AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+			AAAAAA==
+			</data>
+			<key>Smart Criteria</key>
+			<data>
+			U0xzdAABAAEAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+			AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+			AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAQAAAAAAAAAAAAAAAAAAAAAA
+			AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGAU0xzdAABAAEAAAACAAAAAQAAAAAAAAAA
+			AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+			AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+			AAAAAAAAADwAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+			AAAAAABEAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAB
+			AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8AAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+			AAAAAAAAAAAAAAAAAAAAAAAAAAAARAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAg
+			AAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEBAAAAAAAAAAAA
+			AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABVxTTHN0AAEAAQAAABEAAAAB
+			AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+			AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+			AAAAAAAAAAAAAAAAAAAACAEAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+			AAAAAAAAAAAAAAAAABIAQwBsAGEAcwBzAGkAYwBhAGwAAAAIAQAAAQAAAAAAAAAAAAAAAAAA
+			AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEABLAGwAYQBzAHMAaQBlAGsAAAAI
+			AQAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEgBD
+			AGwAYQBzAHMAaQBxAHUAZQAAAAgBAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+			AAAAAAAAAAAAAAAAAAAAAAAOAEsAbABhAHMAcwBpAGsAAAAIAQAAAQAAAAAAAAAAAAAAAAAA
+			AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEABDAGwAYQBzAHMAaQBjAGEAAAAI
+			AQAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACjCv
+			MOkwtzDDMK8AAAAIAQAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+			AAAAAAAAAAAADgBDAGwA4QBzAGkAYwBhAAAACAEAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+			AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAASwBsAGEAcwBzAGkAcwBrAAAACAEAAAEAAAAA
+			AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAQwBsAOEAcwBz
+			AGkAYwBhAAAACAEAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+			AAAAAAAAABIASwBsAGEAcwBzAGkAcwBrAHQAAAAIAQAAAQAAAAAAAAAAAAAAAAAAAAAAAAAA
+			AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGAQaBDsEMARBBEEEOARHBDUEQQQ6BDAETwAA
+			AAgBAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAS
+			AEsAbABhAHMAeQBjAHoAbgBhAAAACAEAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+			AAAAAAAAAAAAAAAAAAAAAAAAABIASwBsAGEAcwBzAGkAbgBlAG4AAAAIAQAAAQAAAAAAAAAA
+			AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADABLAGwAYQBzAGkAawAA
+			AAgBAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAU
+			AEsAbABhAHMAcwB6AGkAawB1AHMAAAAIAQAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+			AAAAAAAAAAAAAAAAAAAAAAAAAAAAFgBWAOEBfgBuAOEAIABoAHUAZABiAGEAAAAIAQAAAQAA
+			AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADgZDBkQGJwYz
+			BkoGQwZK
+			</data>
+		</dict>
+		<dict>
+			<key>Name</key><string>My Top Rated</string>
+			<key>Description</key><string></string>
+			<key>Playlist ID</key><integer>649</integer>
+			<key>Playlist Persistent ID</key><string>23352D41BD8C62DF</string>
+			<key>Distinguished Kind</key><integer>201</integer>
+			<key>All Items</key><true/>
+			<key>Smart Info</key>
+			<data>
+			AQEAAwAAAAIAAAAZAAAAAAAAAAcAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+			AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+			AAAAAA==
+			</data>
+			<key>Smart Criteria</key>
+			<data>
+			U0xzdAABAAEAAAABAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+			AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+			AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABkAAAAQAAAAAAAAAAAAAAAAAAAAAAAA
+			AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABEAAAAAAAAADwAAAAAAAAAAAAAAAAAAAAB
+			AAAAAAAAADwAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAA=
+			</data>
+			<key>Playlist Items</key>
+			<array>
+				<dict>
+					<key>Track ID</key><integer>135</integer>
+				</dict>
+			</array>
+		</dict>
+		<dict>
+			<key>Name</key><string>Recently Added</string>
+			<key>Description</key><string></string>
+			<key>Playlist ID</key><integer>653</integer>
+			<key>Playlist Persistent ID</key><string>F92127742224303E</string>
+			<key>Distinguished Kind</key><integer>204</integer>
+			<key>All Items</key><true/>
+			<key>Smart Info</key>
+			<data>
+			AQEAAwAAAAIAAAAZAAAAAAAAAAcAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+			AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+			AAAAAA==
+			</data>
+			<key>Smart Criteria</key>
+			<data>
+			U0xzdAABAAEAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+			AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+			AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAIAAAAAAAAAAAAAAAAAAAAAAAAA
+			AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABELa4tri2uLa7//////////gAAAAAACTqA
+			La4tri2uLa4AAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA5AgAAAQAA
+			AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAARAAAAAAAAAAB
+			AAAAAAAAAAAAAAAAAAAAAQAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAA
+			AAAAAAAA
+			</data>
+		</dict>
+		<dict>
+			<key>Name</key><string>Recently Played</string>
+			<key>Description</key><string></string>
+			<key>Playlist ID</key><integer>656</integer>
+			<key>Playlist Persistent ID</key><string>9B260CD147C09280</string>
+			<key>Distinguished Kind</key><integer>203</integer>
+			<key>All Items</key><true/>
+			<key>Smart Info</key>
+			<data>
+			AQEAAwAAAAIAAAAZAAAAAAAAAAcAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+			AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+			AAAAAA==
+			</data>
+			<key>Smart Criteria</key>
+			<data>
+			U0xzdAABAAEAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+			AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+			AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABcAAAIAAAAAAAAAAAAAAAAAAAAAAAAA
+			AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABELa4tri2uLa7//////////gAAAAAACTqA
+			La4tri2uLa4AAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA5AgAAAQAA
+			AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAARAAAAAAAAAAB
+			AAAAAAAAAAAAAAAAAAAAAQAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAA
+			AAAAAAAA
+			</data>
+		</dict>
+		<dict>
+			<key>Name</key><string>Top 25 Most Played</string>
+			<key>Description</key><string></string>
+			<key>Playlist ID</key><integer>659</integer>
+			<key>Playlist Persistent ID</key><string>6FF789264B328B16</string>
+			<key>Distinguished Kind</key><integer>202</integer>
+			<key>All Items</key><true/>
+			<key>Smart Info</key>
+			<data>
+			AQEBAwAAABkAAAAZAAAAAAAAAAcAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+			AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+			AAAAAA==
+			</data>
+			<key>Smart Criteria</key>
+			<data>
+			U0xzdAABAAEAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+			AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+			AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADkCAAABAAAAAAAAAAAAAAAAAAAAAAAA
+			AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABEAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAB
+			AAAAAAAAAAEAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWAAAAEAAA
+			AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAARAAAAAAAAAAA
+			AAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAA
+			AAAAAAAA
+			</data>
+			<key>Playlist Items</key>
+			<array>
+				<dict>
+					<key>Track ID</key><integer>131</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>133</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>125</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>129</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>135</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>137</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>139</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>141</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>143</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>145</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>147</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>149</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>153</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>151</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>157</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>155</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>163</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>165</integer>
+				</dict>
+			</array>
+		</dict>
+		<dict>
+			<key>Name</key><string>playlist</string>
+			<key>Description</key><string></string>
+			<key>Playlist ID</key><integer>904</integer>
+			<key>Playlist Persistent ID</key><string>D53F13A965CEED44</string>
+			<key>All Items</key><true/>
+			<key>Playlist Items</key>
+			<array>
+				<dict>
+					<key>Track ID</key><integer>353</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>135</integer>
+				</dict>
+			</array>
+		</dict>
+		<dict>
+			<key>Name</key><string>Spoken Text</string>
+			<key>Description</key><string></string>
+			<key>Playlist ID</key><integer>680</integer>
+			<key>Playlist Persistent ID</key><string>4AE97C94B5FD42F9</string>
+			<key>All Items</key><true/>
+		</dict>
+	</array>
+</dict>
+</plist>
