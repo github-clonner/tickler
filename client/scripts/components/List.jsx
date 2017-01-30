@@ -64,35 +64,9 @@ export default class List extends Component {
     });
   }
 
-  /*async getVideos () {
-    let youtube = new Youtube('AIzaSyAPBCwcnohnbPXScEiVMRM4jYWc43p_CZU');
-    let playList = await youtube.getPlayListItems('PLA0CA9B8A2D82264B');
-    let ids = playList.map(item => _.get(item, 'snippet.resourceId.videoId'));
-    let {items} = await youtube.getVideos(ids);
-    let chance = new Chance();
-    return items.map(item => {
-      let time = new Time(_.get(item, 'contentDetails.duration'));
-      return {
-        id: item.id,
-        kind: item.kind,
-        title: _.get(item, 'snippet.title'),
-        duration: time.toTime(),
-        thumbnails: _.get(item, 'snippet.thumbnails'),
-        stars: chance.integer({min: 0, max: 5})
-      };
-    });
-  }*/
-
   componentDidMount () {
     let { actions } = this.props;
-
-    actions.fetchList('PLA0CA9B8A2D82264B'); //
-    /*
-    this.getVideos()
-    .then(videos => {
-      actions.createFrom(videos);
-    });
-    */
+    actions.fetchList('PLA0CA9B8A2D82264B');
   }
 
   makeProgressBar (song) {
@@ -119,8 +93,8 @@ export default class List extends Component {
 
   handleDoubleClick = song => {
     let options = {
-      title: "Content-Image Notification",
-      body: "Short message plus a custom content image: ",
+      title: 'Now Playing',
+      body: song.title,
       //icon: path.join(__dirname, 'media/icon.png')
       sound: false,
       icon: song.thumbnails.default.url,
@@ -198,9 +172,6 @@ export default class List extends Component {
         } else {
           return (song.isPlaying) ? 'play_arrow' : 'stop';
         }
-        //return (song.isPlaying) ? '▶' : '●';
-        //<i class="material-icons">play_arrow</i>
-        //<i class="material-icons">fiber_manual_record</i>
       }
 
       return (

@@ -21,12 +21,7 @@ export default class InputRange extends React.Component {
     onChange: PropTypes.func
   }
 
-  constructor(...args) {
-    super(...args);
-    this.drawTrack = this.drawTrack.bind(this)
-  }
-
-  handleChange (event) {
+  handleChange = event => {
     this.setState({
       value: event.target.value
     });
@@ -56,7 +51,7 @@ export default class InputRange extends React.Component {
     });
   }
 
-  drawTrack () {
+  drawTrack = () => {
     let {value} = this.state;
     let background = `linear-gradient(to right, #ed1e24 0%, #ed1e24 ${value}%, #2f2f2f ${value}%, #2f2f2f 100%)`;
     this.refs.range.style.background = background;
@@ -70,7 +65,7 @@ export default class InputRange extends React.Component {
       min={this.props.min}
       max={this.props.max}
       value={this.state.value}
-      onChange={this.handleChange.bind(this)}
+      onChange={this.handleChange}
       step={this.props.step}
     />
   }

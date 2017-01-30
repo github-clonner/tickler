@@ -4,7 +4,6 @@ import ytdl from 'ytdl-core';
 import Stream from 'stream';
 import fs from 'fs';
 import path from 'path';
-import {ipcRenderer} from 'electron';
 import sanitize from 'sanitize-filename';
 import {EventEmitter} from 'events';
 

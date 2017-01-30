@@ -66,11 +66,10 @@ export default class Player extends Component {
     this.context = new AudioContext();
     this.wavesurfer = Object.create(WaveSurfer);
     this.youtube = new Youtube();
-    this.visualizer = new Visualizer(this.context);
     this.youtube.events.on('finish', file => {
       console.log('a youtube video has been downloaded !', file)
       //this.load(file, true);
-    })
+    });
   }
 
   resize = debounce(event => {
@@ -106,15 +105,13 @@ export default class Player extends Component {
   }
   // wavesurfer event handlers
   loading = progress => {
+    this.props.audio.analyser(null);
     if(progress === 100) {
       window.addEventListener('resize', this.resize);
     }
   }
 
   ready = () => {
-    //console.log(this.wavesurfer.backend.getPeaks(128));
-    //this.visualizer.togglePlayback(this.wavesurfer.backend.buffer);
-    //this.props.audio.context(this.context);
     this.props.audio.analyser(this.wavesurfer.backend.analyser);
     this.setState({
       seek: 0,
@@ -129,7 +126,6 @@ export default class Player extends Component {
   }
 
   audioprocess = () => {
-    this.visualizer.draw();
     this.setState({
       isPlaying: this.wavesurfer.isPlaying(),
       seek: this.wavesurfer.getCurrentTime()
@@ -153,6 +149,7 @@ export default class Player extends Component {
     if(!nextProps.list.size) {
       return;
     }
+
     let item = nextProps.list.find(item => (item.get('isPlaying') === true));
     if(this.state.item.get) {
       if(this.state.item.get('id') === item.get('id')) {
@@ -186,6 +183,8 @@ export default class Player extends Component {
     this.wavesurfer.on('audioprocess', this.audioprocess);
     this.wavesurfer.on('seek', this.seek);
     this.wavesurfer.on('finish', this.finish);
+
+    this.props.audio.wavesurfer(this.wavesurfer);
 
     let item = this.props.list.find(item => (item.get('isPlaying') === true));
     if (item) {
@@ -238,38 +237,5 @@ export default class Player extends Component {
         <div ref="waves" style={{display: 'none'}}></div>
       </div>
     )
-  }
-}
-
-
-// Interesting parameters to tweak!
-const SMOOTHING = 0.8;
-const FFT_SIZE = 128;
-
-class Visualizer {
-
-  constructor (context) {
-    this.context = context;
-    this.analyser = context.createAnalyser();
-    this.analyser.connect(context.destination);
-    this.analyser.minDecibels = -140;
-    this.analyser.maxDecibels = 0;
-    this.freqs = new Uint8Array(this.analyser.frequencyBinCount);
-  }
-
-  togglePlayback (buffer) {
-    this.source = this.context.createBufferSource();
-    // Connect graph
-    this.source.connect(this.analyser);
-    this.source.buffer = buffer;
-  }
-
-  draw () {
-    this.analyser.smoothingTimeConstant = SMOOTHING;
-    this.analyser.fftSize = FFT_SIZE;
-    // Get the frequency data from the currently playing music
-    this.analyser.getByteFrequencyData(this.freqs);
-
-    //console.log(this.freqs);
   }
 }

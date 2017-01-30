@@ -41,16 +41,21 @@ export default class Equalizer extends Component {
     this.height = this.refs.canvas.height - 2;
     this.ctx = this.refs.canvas.getContext('2d');
     this.gradient = this.ctx.createLinearGradient(0, 0, 0, 300);
-    this.gradient.addColorStop(1, '#0f0');
-    this.gradient.addColorStop(0.5, '#ff0');
-    this.gradient.addColorStop(0, '#f00');
+    this.gradient.addColorStop(1, '#feafc7');
+    this.gradient.addColorStop(0.5, '#e76588');
+    this.gradient.addColorStop(0, '#81254a');
   }
 
   componentWillReceiveProps (nextProps) {
+    if (nextProps.audio.wavesurfer) {
+      nextProps.audio.wavesurfer.once('ready', function () {
+        console.log('ready !')
+      });
+    }
     if(!nextProps.audio.analyser) {
       return;
     }
-    console.log('analyser: componentWillReceiveProps: ', nextProps.audio.analyser);
+    console.log('equalizer: ', nextProps.audio);
     this.setState({
       analyser: nextProps.audio.analyser
     });
@@ -82,7 +87,9 @@ export default class Equalizer extends Component {
       this.ctx.fillStyle = this.gradient; //set the filllStyle to gradient for a better look
       this.ctx.fillRect(i * 12 /*meterWidth+gap*/ , this.height - value + this.capHeight, this.meterWidth, this.height); //the meter
     }
-    requestAnimationFrame(this.renderFrame);
+    if (this.analyser || this.state.analyser) {
+      requestAnimationFrame(this.renderFrame);
+    }
   }
 
   render () {

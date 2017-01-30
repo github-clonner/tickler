@@ -26,9 +26,24 @@ export function Player (state = initialState, action) {
   }
 }
 
+
+const initialToolbar = new Toolbar();
+
+export function ToolBar (state = initialToolbar, action) {
+  switch (action.type) {
+    case 'TOOLBAR_OPTIONS': {
+      let toolbar = new Toolbar();
+      return toolbar.merge(action.payload);
+    }
+    default:
+      return state;
+  }
+}
+
 const audio = {
   context: new AudioContext(),
-  analyser: null
+  analyser: null,
+  wavesurfer: null
 };
 
 export function Audio (state = audio, action) {
@@ -41,8 +56,13 @@ export function Audio (state = audio, action) {
       state.analyser = action.analyser;
       return {
         context: state.context,
-        analyser: action.analyser
+        analyser: action.analyser,
+        wavesurfer: state.wavesurfer
       };
+    }
+    case 'WAVESURFER': {
+      state.wavesurfer = action.wavesurfer;
+      return state;
     }
     default:
       return state;
