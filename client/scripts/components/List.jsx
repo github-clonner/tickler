@@ -25,12 +25,13 @@ function mapDispatchToProps(dispatch) {
     actions: bindActionCreators(Actions, dispatch)
   };
 }
-
+/*
 @connect(mapStateToProps, mapDispatchToProps)
 export default class List extends Component {
   state = {
     song: 0,
-    progress: {}
+    progress: {},
+    isDragDrop: false
   };
 
   static defaultProps = {
@@ -189,6 +190,112 @@ export default class List extends Component {
   }
 
   render() {
-    return (<ul className="container" ref="list">{this.renderItem()}</ul>);
+    return (
+      <div className="list">
+        <ul className="container" ref="list">
+          {this.renderItem()}
+        </ul>
+      </div>
+    );
+  }
+}
+*/
+
+var placeholder = document.createElement("li");
+placeholder.className = "placeholder";
+
+@connect(mapStateToProps, mapDispatchToProps)
+export default class List extends Component {
+
+  state = {
+    data: []
+  };
+
+  static propTypes = {
+    data: PropTypes.array,
+  };
+
+  static defaultProps = {
+    data: ["Red","Green","Blue","Yellow","Black","White","Orange"],
+    placeholder: document.createElement('li')
+  };
+
+  componentWillMount () {
+    this.props.placeholder.className = 'placeholder';
+    return this.setState({
+      data: this.props.data
+    });
+  }
+
+  dragStart = event => {
+    this.dragged = event.currentTarget;
+    event.dataTransfer.effectAllowed = 'move';
+    // Firefox requires dataTransfer data to be set
+    event.dataTransfer.setData('text/html', event.currentTarget);
+  }
+
+  dragEnd = event => {
+
+    this.dragged.style.display = 'block';
+    this.dragged.parentNode.removeChild(this.props.placeholder);
+    // Update data
+    let data = this.state.data;
+    let from = Number(this.dragged.dataset.id);
+    let to = Number(this.over.dataset.id);
+
+    if (from < to) to--;
+    if (this.nodePlacement == 'after') to++;
+
+    data.splice(to, 0, data.splice(from, 1)[0]);
+    this.setState({
+      data: data
+    });
+  };
+
+  dragOver = event => {
+    event.preventDefault();
+    this.dragged.style.display = 'none';
+    if (event.target.className == 'placeholder') {
+      return;
+    }
+    this.over = event.target;
+    // Inside the dragOver method
+    let relY = event.clientY - this.over.offsetTop;
+    let height = this.over.offsetHeight / 2;
+    let parent = event.target.parentNode;
+
+    if (relY > height) {
+      this.nodePlacement = 'after';
+      parent.insertBefore(this.props.placeholder, event.target.nextElementSibling);
+    } else if (relY < height) {
+      this.nodePlacement = 'before';
+      parent.insertBefore(this.props.placeholder, event.target);
+    }
+  };
+
+  dragLeave = event => {
+    event.preventDefault();
+  };
+
+
+  render () {
+    return (
+      <ul className="dnd" onDragOver={this.dragOver}>
+        {this.state.data.map(function(item, i) {
+          return (
+            <li
+              data-id={i}
+              key={i}
+              draggable="true"
+              onDragEnd={this.dragEnd}
+              onDragStart={this.dragStart}
+              onDragLeave={this.dragLeave}
+            >
+              {item}
+            </li>
+          )
+        }, this)}
+      </ul>
+    );
   }
 }

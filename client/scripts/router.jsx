@@ -6,7 +6,7 @@ import injectTapEventPlugin from 'react-tap-event-plugin';
 
 import App from './index';
 
-import { Home, About, Player, NotFound } from './views';
+import { Home, About, NotFound } from './views';
 /* redux stuff */
 import { createStore, combineReducers, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
@@ -37,7 +37,6 @@ render((
       <Route path="/" component={App} name="Container">
         <IndexRoute component={Home} name='Home'/>
         <Route path="/about" component={About} />
-        <Route path="/player" component={Player} />
       </Route>
       <Route path="/about" component={About} />
       <Redirect from="/*" to="/" />

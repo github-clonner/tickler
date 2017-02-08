@@ -12,35 +12,4 @@
             margin: 0px 10px;
         }
     }
-
-    & .checkbox-buttons {
-
-        & input[type="checkbox"] {
-            display: none;
-        }
-        & input[type="checkbox"] + label {
-            outline: none;
-            border: none;
-            font-family: 'Material Icons';
-            font-size: 25px;
-            line-height: 1;
-            display: inline-block;
-            white-space: nowrap;
-            font-smoothing: antialiased;
-            background-color: transparent;
-            color: #666;
-            text-align: center;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            transition: color .15s ease-in-out;
-            &:hover {
-                color: #c1c1c1;
-            }
-        }
-        & input[type="checkbox"]:checked + label {
-            color: #d21d30;
-        }
-
-    }
 }

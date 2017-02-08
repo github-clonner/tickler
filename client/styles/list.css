@@ -18,12 +18,10 @@
     cursor: pointer;
     box-sizing: border-box;
     user-select: none;
-    & ul {
-        list-style: none;
-        padding: 0px;
-        margin: 0px;
-    }
-    & .container {
+    height: 100%;
+    position: relative;
+    & ul.container {
+        height: 100%;
         width: 100%;
         list-style: none;
         padding: 0px;
@@ -37,7 +35,6 @@
         box-sizing: border-box;
         cursor: pointer;
         &:hover {
-            /*border: 1px solid #eee;*/
             outline: 1px solid;
             outline-color: var(--outlineColor);
         }
@@ -47,7 +44,6 @@
         }
     }
     & ul > li > span {
-        /* This will make it work in Firefox >= 35.0a1 */
         min-width: 0;
         &:nth-child(1) {
             text-align: right;
@@ -91,6 +87,27 @@
             white-space: nowrap;
             margin: 0px;
         }
+    }
+}
+
+li.placeholder {
+    background: rgb(255,240,120);
+    &:before {
+        content: 'Drop here';
+        color: #444;
+    }
+    border: 1px solid #ed1e24;
+/*    outline: 1px dashed;
+    outline-color: #000;*/
+}
+
+ul.dnd {
+    list-style: none;
+    margin: 0;
+    margin-top: 0;
+    & li {
+        padding: 5px;
+        background: #eee;
     }
 }
 

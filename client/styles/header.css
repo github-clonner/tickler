@@ -25,9 +25,14 @@
     }
 }
 nav, .navbar {
-    background-color: #ededed;
+    flex: 0 0 auto;
     width: 100%;
     padding: 16px;
+    background-color: #dcdcdc;
+    -webkit-app-region: drag;
+    -webkit-user-select: none;
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
     &.dark {
         background-color: var(--background);/*#273138;*/
         & ul.buttons li:not(:hover) {

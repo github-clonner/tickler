@@ -1,7 +1,6 @@
 // modules/About.js
 import React from 'react'
 import Editor from '../components/Editor';
-import Spectrum from '../components/Spectrum';
 
 export default class About extends React.Component {
   render() {
@@ -13,7 +12,6 @@ export default class About extends React.Component {
           styleActiveLine: true,
           theme: 'material'
         }}/>
-        <Spectrum />
       </div>
     )
   }

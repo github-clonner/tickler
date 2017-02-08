@@ -50,3 +50,31 @@
         outline: none;
     }
 }
+
+.checkbox-buttons {
+    & input[type="checkbox"] {
+        display: none;
+    }
+    & input[type="checkbox"] + label {
+        outline: none;
+        border: none;
+        font-family: var(--buttonFont);
+        font-size: 25px;
+        line-height: 1;
+        white-space: nowrap;
+        font-smoothing: antialiased;
+        background-color: transparent;
+        color: var(--buttonColor);
+        text-align: center;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: color .15s ease-in-out;
+        &:hover {
+            color: var(--buttonHoverColor);
+        }
+    }
+    & input[type="checkbox"]:checked + label {
+        color: #d21d30;
+    }
+}

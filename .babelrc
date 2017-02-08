@@ -1,6 +1,8 @@
 {
   "presets": [
-    "es2015",
+    ["env", {
+      "targets": "electron", "useBuiltIns": true
+    }],
     "react",
     "stage-0"
   ],

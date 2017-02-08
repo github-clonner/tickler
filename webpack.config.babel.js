@@ -25,7 +25,6 @@ export default {
   },
   output: {
     path: path.resolve('dist'),
-    //filename: 'bundle.js'
     filename: '[name].js'
   },
   devServer: {
@@ -39,7 +38,6 @@ export default {
   },
   devtool: 'inline-source-map',
   target: 'electron',
-  //target: 'node-webkit',
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoErrorsPlugin(),
@@ -50,9 +48,6 @@ export default {
     new HtmlwebpackPlugin({
       //template: 'index.js',
       template: require('html-webpack-template'),
-      links: [
-        //'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css',
-      ],
       title: 'App',
       appMountId: 'app',
       inject: false

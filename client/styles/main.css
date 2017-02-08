@@ -1,58 +1,22 @@
 body {
-  font-family: 'Open Sans', helvetica, sans-serif, arial !important;
-  background-color: #fafafa;
-  //background-image: url("http://subtlepatterns.com/patterns/debut_dark.png");
-  /* color: hwb(100, 0%, 0%, 0.5); */
-  color: #afafaf;
-  margin: 0px;
-  padding: 0px;
-}
-.navbar {
-  -webkit-app-region: drag;
-  -webkit-user-select: none;
-  border-bottom-left-radius: 0px !important;
-  border-bottom-right-radius: 0px !important;
-}
-.banshee {
-  text-decoration: underline;
-  & .siren {
-    color: #f00;
-    background-color: #0f0;
-  }
+    font-family: 'Open Sans', helvetica, sans-serif, arial !important;
+    background-color: #fafafa;
+    color: #afafaf;
+    margin: 0px;
+    padding: 0px;
 }
 
-.boxyThing {
-  background-color: #f00;
-  color: #fff;
-  & .blackStuff {
-    color: #0ff;
-    border: 1px solid black;
-  }
-}
-
-
-html,
-body,
-#app, .page {
-  height: 100%; /* needed for proper layout */
+html, body, #app, .page {
+    height: 100%; /* needed for proper layout */
 }
 
 body {
-  overflow: hidden;
-}
-
-p {
-  margin-bottom: 1em;
+    overflow: hidden;
 }
 
 .page {
-  display: flex;
-  flex-direction: column;
-}
-
-nav, .navbar {
-  flex: 0 0 auto;
-  background-color: #dcdcdc;
+    display: flex;
+    flex-direction: column;
 }
 
 .toolbar {
@@ -60,11 +24,13 @@ nav, .navbar {
 }
 
 .page-content {
-  flex: 1 1 auto;
-  position: relative;/* need this to position inner content */
-  overflow-y: auto;
+    flex: 1 1 auto;
+    /* need this to position inner content */
+    /*position: relative;*/
+    overflow-y: auto;
+    height: 100%;
 }
 
 .player {
-  flex: 0 0 auto;
+    flex: 0 0 auto;
 }
