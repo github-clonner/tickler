@@ -1,6 +1,6 @@
-import { Youtube, Time } from '../lib';
 import Chance from 'chance';
 import getObjectProperty from 'lodash/get';
+import { Youtube, Time } from '../lib';
 
 export const addItem = ({id, title, duration, file, stars}) => {
   return {
@@ -58,5 +58,5 @@ export function fetchList(id) {
       }
     };
     dispatch(receivePlayList(payload));
-  }
+  };
 }

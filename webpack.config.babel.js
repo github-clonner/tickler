@@ -118,12 +118,7 @@ export default {
       {
         test: /\.jsx?$/,
         exclude: /node_modules/,
-        loaders: [ 'react-hot', 'babel-loader' ],
-        //query: babelSettings
-        /*loaders: [
-          'react-hot-loader',
-          'babel?presets[]=latest&presets[]=react&presets[]=stage-0',
-        ]*/
+        loaders: [ 'react-hot-loader', 'babel-loader' ],
       }
     ]
   },

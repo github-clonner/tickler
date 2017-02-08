@@ -51,11 +51,13 @@ export default function Playlist (state = initialState, action) {
   let getIndex = id => {
     // Get item by id
     return state.findIndex(item => ( item.get('id') === id) );
-  }
+  };
+
   let isPlaying = () => {
     // Is any item currently playing ?
     return state.some(item => (item.get('isPlaying') === true));
-  }
+  };
+
   let pause = () => {
     // Find item that's playing
     let index = state.findIndex(item => (item.get('isPlaying') === true));
@@ -64,7 +66,7 @@ export default function Playlist (state = initialState, action) {
     } else {
       return state;
     }
-  }
+  };
 
   switch (action.type) {
 

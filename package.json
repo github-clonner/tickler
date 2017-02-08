@@ -1,8 +1,13 @@
 {
-  "name": "nw-app",
+  "name": "Tickler",
+  "productName": "Tickler",
   "version": "1.0.0",
   "description": "Audio player",
-  "author": "Benjamin Maggi",
+  "author": {
+    "name": "Benjamin Maggi",
+    "email": "benjaminmaggi@gmail.com",
+    "url": "https://github.com/maggiben"
+  },
   "license": "MIT",
   "main": "main.js",
   "repository": "git@github.com:maggiben/tickler.git",
@@ -13,7 +18,7 @@
     "watch": "webpack --watch",
     "flow": "flow",
     "webpack": "webpack",
-    "lint": "eslint --cache .",
+    "lint": "eslint --cache ./client",
     "lint-fix": "npm run lint -- --fix"
   },
   "dependencies": {
@@ -61,8 +66,13 @@
     "devtron": "^1.4.0",
     "electron-connect": "^0.6.1",
     "electron-connect-webpack-plugin": "^0.1.1",
+    "electron-packager": "^8.5.1",
     "electron-webpack-plugin": "^1.2.2",
     "eslint": "^3.15.0",
+    "eslint-config-airbnb": "^14.1.0",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-jsx-a11y": "^4.0.0",
+    "eslint-plugin-react": "^6.9.0",
     "extract-text-webpack-plugin": "^1.0.1",
     "file-loader": "^0.9.0",
     "flow-bin": "^0.38.0",

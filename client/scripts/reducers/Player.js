@@ -52,6 +52,7 @@ export function Audio (state = audio, action) {
       state.context = context;
       return state;
     }
+
     case 'ANALYSER': {
       state.analyser = action.analyser;
       return {
@@ -60,10 +61,12 @@ export function Audio (state = audio, action) {
         wavesurfer: state.wavesurfer
       };
     }
+
     case 'WAVESURFER': {
       state.wavesurfer = action.wavesurfer;
       return state;
     }
+
     default:
       return state;
   }

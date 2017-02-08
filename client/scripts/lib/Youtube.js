@@ -17,7 +17,7 @@ class EchoStream extends Stream.Writable {
         return this.emit('error', new Error('Invalid data'));
     }
     this.body.push(chunk);
-    return callback()
+    return callback();
   }
 
   toBuffer () {
@@ -101,7 +101,7 @@ export default class Youtube {
           params: options
         })
         .then(response => {
-          return callback(null, response.data)
+          return callback(null, response.data);
         })
         .catch(callback);
       }, function(list, callback) {
@@ -112,15 +112,15 @@ export default class Youtube {
         if (error) {
           return reject(error);
         } else {
-          return resolve(items)
+          return resolve(items);
         }
       });
-    })
+    });
   }
 
   async downloadVideo(video) {
-    console.log('YOUTUBE: ', video.id)
-    let uri = `http://www.youtube.com/watch?v=${video.id}`
+    console.log('YOUTUBE: ', video.id);
+    let uri = `http://www.youtube.com/watch?v=${video.id}`;
     let mux = new EchoStream({
       writable: true
     });
@@ -140,7 +140,7 @@ export default class Youtube {
             this.events.emit('finish', {video, fileName});
             return resolve(fileName);
           //});
-          console.log('donwload finish !')
+          console.log('donwload finish !');
         });
 
         yt.on('error', error => {
@@ -150,7 +150,7 @@ export default class Youtube {
 
         yt.on('info', info => {
           this.events.emit('info', info);
-        })
+        });
 
         yt.on('response', response => {
           let size = response.headers['content-length'];
@@ -171,11 +171,11 @@ export default class Youtube {
           yt.end();
           fileStream.end();
           return reject();
-        })
+        });
 
         /*yt.on('end', function() {
           console.log('Finished');
         })*/
-    })
+    });
   }
 }
