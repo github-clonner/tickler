@@ -20,6 +20,12 @@
     user-select: none;
     height: 100%;
     position: relative;
+    &.is-drag-drop {
+        & .row {
+            pointer-events: 'none';
+            outline: 0px solid;
+        }
+    }
     & ul.container {
         height: 100%;
         width: 100%;
@@ -34,15 +40,21 @@
         padding: 10px;
         box-sizing: border-box;
         cursor: pointer;
-        &:hover {
-            outline: 1px solid;
-            outline-color: var(--outlineColor);
-        }
         &.active {
             background-color: var(--activeRowBackground);
             color: var(--activeRowColor);
         }
     }
+    &:not(.is-drag-drop) {
+        & .row {
+            &:hover {
+                background-color: #f00;
+                outline: 3px solid;
+                outline-color: var(--outlineColor);
+            }
+        }
+    }
+
     & ul > li > span {
         min-width: 0;
         &:nth-child(1) {
@@ -91,7 +103,9 @@
 }
 
 li.placeholder {
-    background: rgb(255,240,120);
+    background: yellow;
+    animation: placeholderPut 1.4s linear infinite;
+    transition: all 1s ease-in-out;
     &:before {
         content: 'Drop here';
         color: #444;
@@ -111,3 +125,14 @@ ul.dnd {
     }
 }
 
+
+@keyframes placeholderPut {
+    0% {
+        /* transform: scale(0); */
+        height: 0px;
+    }
+    100% {
+        /* transform: scale(1); */
+        height: 1em;
+    }
+}

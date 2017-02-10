@@ -25,6 +25,16 @@ export const playPrevious = (id) => ({ type: 'PLAY_PREVIOUS_ITEM', id });
 
 export const receivePlayList = payload => ({type: 'RECEIVE_LIST', payload});
 
+export const orderPlayList = (from, to) => {
+  console.log(from, to)
+  return {
+    type: 'ORDER_LIST',
+    from,
+    to
+  }
+
+};
+
 export function fetchList(id) {
   //console.log('lodash:', _.VERSION, getObjectProperty)
   return async function(dispatch, getState) {

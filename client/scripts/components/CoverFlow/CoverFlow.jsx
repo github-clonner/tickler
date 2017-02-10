@@ -64,7 +64,11 @@ export default class CoverFlow extends Component {
     return (
       <div className={style}>
         <div className="container" ref="container">
+
+          {/*
+          // commented because dnd
           <ul className="covers">{this.makeCovers()}</ul>
+          */}
         </div>
         <span className="caption">{this.state.caption}</span>
       </div>

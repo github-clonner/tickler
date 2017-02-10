@@ -220,24 +220,82 @@ export default class List extends Component {
     placeholder: document.createElement('li')
   };
 
+  constructor (...args) {
+    super(...args);
+    youtube.events.on('progress', ({video, progress}) => {
+      let downloadProgress = Object.assign({}, this.state.progress);
+      downloadProgress[video.id] = progress;
+      this.setState({
+        progress: downloadProgress
+      });
+    });
+    youtube.events.on('finish', ({video, fileName}) => {
+      // console.log('finish', video.title)
+      let downloadProgress = Object.assign({}, this.state.progress);
+      delete downloadProgress[video.id];
+      this.setState({
+        progress: downloadProgress
+      });
+    });
+  }
+
   componentWillMount () {
-    this.props.placeholder.className = 'placeholder';
+    this.props.placeholder.className = 'row placeholder';
     return this.setState({
       data: this.props.data
     });
   }
 
+  componentDidMount () {
+    let { actions } = this.props;
+    actions.fetchList('PLA0CA9B8A2D82264B');
+  }
+
+  makeProgressBar (song) {
+    if(!song.isLoading && !song.isPlaying) {
+      return {
+        'background': 'transparent'
+      };
+    } else {
+      let progress = this.state.progress[song.id];
+      return {
+        'background': `linear-gradient(to right, #eee 0%, #eee ${progress * 100}%,#f6f6f6 ${progress * 100}%,#f6f6f6 100%)`
+      };
+    }
+  }
+
+  computeDuration (duration) {
+    if(duration.constructor === String) {
+        return duration;
+    } else {
+        let time = new Time(duration);
+        return time.humanize();
+    }
+  }
+
   dragStart = event => {
+
+    console.log('dragStart: target', event.target.className, ' currentTarget: ', event.currentTarget.className, '!', event.target, event.target.dataset)
+
+
     this.dragged = event.currentTarget;
     event.dataTransfer.effectAllowed = 'move';
     // Firefox requires dataTransfer data to be set
+    console.log('dragStart: ', event.currentTarget)
     event.dataTransfer.setData('text/html', event.currentTarget);
+
+    this.setState({
+      isDragDrop: true
+    });
+
   }
 
   dragEnd = event => {
 
-    this.dragged.style.display = 'block';
-    this.dragged.parentNode.removeChild(this.props.placeholder);
+    //console.log('dragEnd: target', event.target.className, ' currentTarget: ', event.currentTarget.className, '!', event.target, event.target.dataset)
+    console.log('dragEnd:', event.dataTransfer.getData('text/html'))
+    this.dragged.style.display = 'flex';
+    //this.dragged.parentNode.removeChild(this.props.placeholder);
     // Update data
     let data = this.state.data;
     let from = Number(this.dragged.dataset.id);
@@ -250,19 +308,47 @@ export default class List extends Component {
     this.setState({
       data: data
     });
+
+    let { actions } = this.props;
+    console.log(actions)
+    actions.orderPlayList(from, to);
+
+    this.setState({
+      isDragDrop: false
+    });
+
   };
 
+  drop = event => {
+    console.log('drop:', event.dataTransfer.getData('text/html'))
+  }
+
   dragOver = event => {
+
     event.preventDefault();
-    this.dragged.style.display = 'none';
+
+    try {
+      this.dragged.style.display = 'none';
+    } catch (error) {
+      //console.log(this.dragged, error, event.dataTransfer.getData('text/html'))
+    }
+
     if (event.target.className == 'placeholder') {
       return;
     }
+    if(!event.target.dataset.id) {
+      return;
+    }
+
+    //console.log('dragOver: target', event.target.className, ' currentTarget: ', event.currentTarget.className, '!', event.target, event.target.dataset)
+
     this.over = event.target;
     // Inside the dragOver method
     let relY = event.clientY - this.over.offsetTop;
     let height = this.over.offsetHeight / 2;
     let parent = event.target.parentNode;
+
+    parent.insertBefore(this.props.placeholder, event.target.parent);
 
     if (relY > height) {
       this.nodePlacement = 'after';
@@ -274,11 +360,87 @@ export default class List extends Component {
   };
 
   dragLeave = event => {
+    //console.log('dragLeave: target', event.target.className, ' currentTarget: ', event.currentTarget.className, '!', event.target)
+    event.stopPropagation();
     event.preventDefault();
+    if (event.target.className == 'placeholder') {
+      return;
+    }
   };
 
+  makeSpinner () {
+    return (
+      <svg className="spinner" width="13px" height="13px" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+        <circle className="path" fill="none" strokeWidth="6" strokeLinecap="round" cx="33" cy="33" r="30"></circle>
+      </svg>
+    );
+  }
+
+  renderItem() {
+    let {actions} = this.props;
+
+    return this.props.list.map((item, index) => {
+      let song = item.toJS();
+      let style = classNames('row', {
+        active: song.isPlaying
+      });
+      let exists = classNames('dot', {
+        local: song.file,
+        'is-iconic': !song.isLoading
+      });
+
+      let isPlayingIcon = song => {
+        if (!song.file && !song.isLoading) {
+          return 'wifi';
+        } else if (song.isLoading) {
+          return this.makeSpinner();
+        } else {
+          return (song.isPlaying) ? 'play_arrow' : 'stop';
+        }
+      }
+
+      return (
+        <li
+          data-id={index}
+          draggable="true"
+          onDragEnd={this.dragEnd}
+          onDragStart={this.dragStart}
+          onDragLeave={this.dragLeave}
+          onDrop={this.drop}
+          className={style}
+          key={index}
+          onClick={() => this.handleClick(song)}
+          onDoubleClick={() => this.handleDoubleClick(song)}
+          style={this.makeProgressBar(song)}
+          >
+          <span>{index + 1}</span>
+          <span className={exists}>{isPlayingIcon(song)}</span>
+          <span>
+            <p>{song.title}</p>
+          </span>
+          <Stars stars={song.stars}/>
+          <span>{this.computeDuration(song.duration)}</span>
+        </li>
+      );
+    });
+  }
 
   render () {
+
+    let dragList = classNames('list', {
+      'is-drag-drop': this.state.isDragDrop
+    });
+
+    return (
+      <div className={dragList}>
+        <ul className="container" ref="list" onDragOver={this.dragOver}>
+          {this.renderItem()}
+        </ul>
+      </div>
+    );
+  }
+
+  renderXX () {
     return (
       <ul className="dnd" onDragOver={this.dragOver}>
         {this.state.data.map(function(item, i) {
@@ -299,3 +461,4 @@ export default class List extends Component {
     );
   }
 }
+

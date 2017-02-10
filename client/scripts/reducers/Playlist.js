@@ -48,6 +48,8 @@ const initialState = List([
 ]);
 
 export default function Playlist (state = initialState, action) {
+
+  console.log('REDUCER: ', action)
   let getIndex = id => {
     // Get item by id
     return state.findIndex(item => ( item.get('id') === id) );
@@ -135,6 +137,14 @@ export default function Playlist (state = initialState, action) {
         let paused = pause();
         return paused.update(paused.size, item => ( item.set('isPlaying', true) ));
       }
+    }
+
+    case 'ORDER_LIST': {
+      let from = state.get(action.from);
+      let to = state.get(action.to);
+      state = state.delete(action.from).insert(action.to, from);
+      console.log(from.toJS(), to.toJS())
+      return state;
     }
 
     default:
