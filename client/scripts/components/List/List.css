@@ -1,0 +1,136 @@
+@import "../../../styles/variables.css";
+
+:root {
+    --fontFamily: "Roboto", sans-serif;
+    --activeRowBackground: #f6f6f6;
+    --activeRowColor: #000;
+    --color: #484848;
+    --outlineColor: #CCC;
+}
+
+.list {
+    overflow: hidden;
+    overflow-y: scroll;
+    font-family: "Roboto", sans-serif;
+    font-weight: lighter;
+    color: var(--color);
+    padding: 10px;
+    cursor: pointer;
+    box-sizing: border-box;
+    user-select: none;
+    height: 100%;
+    position: relative;
+    &.is-drag-drop {
+        & .row {
+            pointer-events: 'none';
+            outline: 0px solid;
+        }
+    }
+    & ul.container {
+        height: 100%;
+        width: 100%;
+        list-style: none;
+        padding: 0px;
+        margin: 0px;
+    }
+    & .row {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        padding: 10px;
+        box-sizing: border-box;
+        cursor: pointer;
+        &.active {
+            background-color: var(--activeRowBackground);
+            color: var(--activeRowColor);
+        }
+    }
+    &:not(.is-drag-drop) {
+        & .row:not(.placeholder) {
+            &:hover {
+                background-color: #f00;
+            }
+        }
+    }
+
+    & ul > li > span {
+        min-width: 0;
+        &:nth-child(1) {
+            text-align: right;
+            font-weight: bold;
+            flex-basis: 5%;
+            font-family: "Roboto Mono", monospace;
+            font-weight: lighter;
+        }
+        & .dot, &:nth-child(2) {
+            flex-basis: content;
+            margin: 0px 6px;
+            text-align: center;
+            font-weight: bold;
+            color: #ed1e24;
+            &.is-iconic {
+                font-family: 'Material Icons';
+            }
+            &.local {
+                color: #31dd31;
+            }
+        }
+        &:nth-child(3) {
+            flex-grow: 1;
+            flex-basis: 50%;
+        }
+        &:nth-child(5) {
+            margin-left: 10px;
+            flex-grow: 0.1;
+            font-family: "Roboto Mono", monospace;
+        }
+        &.two {
+            min-width: 0;
+            flex-basis: 10%;
+            text-align: right;
+            align-self: flex-end;
+            flex-grow: 1;
+        }
+        & p {
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+            margin: 0px;
+        }
+    }
+}
+
+li.placeholder {
+    background: #f8f8f8;
+    /*animation: placeholderPut 1.4s linear infinite;*/
+    /*transition: all 1s ease-in-out;*/
+    &:before {
+        content: 'Drop here';
+        color: #444;
+    }
+    border: 1px dashed #c3c3c3;
+/*    outline: 1px dashed;
+    outline-color: #000;*/
+}
+
+ul.dnd {
+    list-style: none;
+    margin: 0;
+    margin-top: 0;
+    & li {
+        padding: 5px;
+        background: #eee;
+    }
+}
+
+
+@keyframes placeholderPut {
+    0% {
+        /* transform: scale(0); */
+        height: 0px;
+    }
+    100% {
+        /* transform: scale(1); */
+        height: 1em;
+    }
+}

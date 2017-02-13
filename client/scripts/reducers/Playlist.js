@@ -49,7 +49,6 @@ const initialState = List([
 
 export default function Playlist (state = initialState, action) {
 
-  console.log('REDUCER: ', action)
   let getIndex = id => {
     // Get item by id
     return state.findIndex(item => ( item.get('id') === id) );

@@ -82,7 +82,12 @@ export default {
     extensions: [ '', '.js', '.jsx', '.coffee', '.less', '.ttf', '.eot', '.woff' ],
     moduleDirectories: [
       'node_modules'
-    ]
+    ],
+    alias: {
+      styles: path.resolve('./client/styles'),
+      lib: path.resolve('./client/scripts/lib'),
+      actions: path.resolve('./client/scripts/actions')
+    }
   },
   resolveLoader: {
     moduleDirectories: [ 'node_modules' ]
