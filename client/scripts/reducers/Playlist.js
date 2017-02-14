@@ -21,31 +21,7 @@ const Item = Record({
   progress: 0
 });
 
-const initialState = List([
-  /*Map({
-    id: '9DNoEXn4DSg',
-    title: 'The Four Seasons',
-    artist: '',
-    album: '',
-    year: 0,
-    comment: '',
-    track: 0,
-    genre: '',
-    thumbnails: '',
-    lyrics: '',
-    duration: 158,
-    file: 'media/06_-_Vivaldi_Summer_mvt_3_Presto_-_John_Harrison_violin.ogg',
-    stars: 4,
-    isPlaying: true
-  }),
-  Map({
-    id: '_mVW8tgGY_w',
-    title: 'FurElise xx',
-    duration: 176,
-    file: 'media/FurElise.ogg',
-    stars: 3
-  })*/
-]);
+const initialState = List([]);
 
 export default function Playlist (state = initialState, action) {
 
@@ -120,6 +96,7 @@ export default function Playlist (state = initialState, action) {
     }
 
     case 'PLAY_NEXT_ITEM': {
+      console.log('PLAY_NEXT_ITEM', action.id)
       let index = getIndex(action.id);
       if (index > -1 && index + 1 < state.size) {
         return pause().update(index + 1, item => ( item.set('isPlaying', true) ));

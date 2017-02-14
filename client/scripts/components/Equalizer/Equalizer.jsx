@@ -37,6 +37,7 @@ export default class Equalizer extends Component {
   }
 
   componentDidMount () {
+    console.log('eq componentDidMount', this.props.audio.wavesurfer)
     this.width = this.refs.canvas.width;
     this.height = this.refs.canvas.height - 2;
     this.ctx = this.refs.canvas.getContext('2d');
@@ -47,11 +48,6 @@ export default class Equalizer extends Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    if (nextProps.audio.wavesurfer) {
-      nextProps.audio.wavesurfer.once('ready', function () {
-        console.log('ready !')
-      });
-    }
     if(!nextProps.audio.analyser) {
       return;
     }
@@ -59,7 +55,7 @@ export default class Equalizer extends Component {
     this.setState({
       analyser: nextProps.audio.analyser
     });
-    if(nextProps.audio.analyser && !this.analyser) {
+    if(nextProps.audio.analyser) {
       this.analyser = nextProps.audio.analyser;
       this.renderFrame(this.analyser);
     }

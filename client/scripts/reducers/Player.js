@@ -41,29 +41,26 @@ export function ToolBar (state = initialToolbar, action) {
 }
 
 const audio = {
-  context: new AudioContext(),
+  context: null,
   analyser: null,
   wavesurfer: null
 };
 
 export function Audio (state = audio, action) {
   switch (action.type) {
+
     case 'CONTEXT': {
-      state.context = context;
+      state.context = action.payload;
       return state;
     }
 
     case 'ANALYSER': {
-      state.analyser = action.analyser;
-      return {
-        context: state.context,
-        analyser: action.analyser,
-        wavesurfer: state.wavesurfer
-      };
+      state.analyser = action.payload;
+      return state;
     }
 
     case 'WAVESURFER': {
-      state.wavesurfer = action.wavesurfer;
+      state.wavesurfer = action.payload;
       return state;
     }
 

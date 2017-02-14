@@ -4,6 +4,7 @@
 :root {
   --mainColor: red;
   --background: #212121;
+  --iconFont: "Material Icons";
 }
 
 /* http://meyerweb.com/eric/tools/css/reset/

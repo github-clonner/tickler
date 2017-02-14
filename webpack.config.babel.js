@@ -130,7 +130,10 @@ export default {
   postcss: function (webpack) {
     return [
       require("postcss-import")({
-        root: process.cwd()
+        root: process.cwd(),
+        path: [
+          path.resolve('./client')
+        ]
       }),
       require("postcss-url")(),
       require("postcss-cssnext")({
