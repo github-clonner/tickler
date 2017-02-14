@@ -77,11 +77,11 @@ export function playNextItem (id) {
   return async function (dispatch, getState) {
     let { Playlist } = getState();
     let index = Playlist.findIndex(item => (item.get('id') === id));
-    let nextIndex = ((index + 1) === Playlist.size) ? index = 0 : index + 1;
+    let nextIndex = ((index + 1) === Playlist.size) ? 0 : index + 1;
     console.log(id, Playlist.get(index).toJS(), index, nextIndex, Playlist.size)
     let nextItem = Playlist.get(nextIndex);
 
-    if(!nextItem.get('file')) {
+    if(!nextItem.get('file') && !nextItem.get('isLoading')) {
       dispatch(fetchItem(nextItem, true));
     } else {
       dispatch(playPauseItem(nextItem.get('id'), true));
@@ -94,7 +94,8 @@ export function playItem (id) {
     let { Playlist } = getState();
     let item = Playlist.find(item => (item.get('id') === id));
 
-    if(!item.get('file')) {
+    if(!item.get('file') && !item.get('isLoading')) {
+      console.log('fetch: ', item.get('id'), item.get('title'))
       dispatch(fetchItem(item, true));
     } else {
       dispatch(playPauseItem(item.get('id'), true));

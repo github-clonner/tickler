@@ -5,3 +5,6 @@ export const toolbarOptions = payload => ({ type: 'TOOLBAR_OPTIONS', payload });
 export const analyser = payload => ({ type: 'ANALYSER', payload });
 export const context = payload => ({ type: 'CONTEXT', payload });
 export const wavesurfer = payload => ({ type: 'WAVESURFER', payload });
+
+/* options */
+export const options = payload => ({ type: 'OPTIONS', payload});

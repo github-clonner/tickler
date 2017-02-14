@@ -171,8 +171,9 @@ export default class List extends Component {
       silent: true
     }
     new Notification(song.title, options);
+    console.log(song.id)
     if (song.file && !song.isLoading) {
-      return actions.playItem(song.id);
+      return actions.playPauseItem(song.id, true);
     } else {
       return actions.playItem(song.id);
     }

@@ -16,7 +16,7 @@ require('styles/input.css');
 import debounce from 'lodash/debounce';
 
 /* Redux stuff */
-import Immutable from 'immutable';
+import Immutable, { List, Map } from 'immutable';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux'
 import * as Playist from '../actions/Playlist';
@@ -39,7 +39,7 @@ function mapDispatchToProps(dispatch) {
 @connect(mapStateToProps, mapDispatchToProps)
 export default class Player extends Component {
   state = {
-    item: new Object(),
+    item: List([]),
     isPlaying: false,
     isPause: false,
     isLoading: false,
@@ -106,7 +106,6 @@ export default class Player extends Component {
   }
 
   ready = () => {
-    //this.props.audio.analyser(this.wavesurfer.backend.analyser);
     this.setState({
       seek: 0,
       duration: this.wavesurfer.getDuration()
@@ -144,14 +143,16 @@ export default class Player extends Component {
     if(!nextProps.list.size) {
       return;
     }
+
     let item = nextProps.list.find(item => (item.get('isPlaying') === true));
-    /*
-    let item = nextProps.list.find(item => (item.get('isPlaying') === true));
-    if(this.state.item.get) {
-      if(this.state.item.get('id') === item.get('id')) {
-        return;
-      }
-    }*/
+    
+    // already playing
+    if (item && item.get('id') === this.state.item.get('id')) {
+      this.stop();
+      this.ready();
+      return;
+    }
+
     if(item && item.get('file') && !item.get('isLoading')) {
       this.setState({
         item: item,
@@ -217,9 +218,27 @@ export default class Player extends Component {
       duration: this.wavesurfer.getDuration()
     });
 
-    actions.editItem(item.id, {
-      isPlaying: this.wavesurfer.isPlaying()
-    });
+    if (item) {
+      actions.editItem(item.get('id'), {
+        isPlaying: false
+      });
+    }
+  }
+
+  playTo = (id, direction) => {
+    let { playItem } = this.props.actions;
+
+    let index = this.props.list.findIndex(item => (item.get('id') === id));
+    let item = null;
+    if (Math.sign(direction)) {
+      let nextIndex = ((index + 1) === this.props.list.size) ? 0 : index + 1;
+      item = this.props.list.get(nextIndex);
+    } else {
+      let prevIndex = ((index - 1) < 0) ? this.props.list.size : index - 1;
+      item = this.props.list.get(prevIndex);
+    }
+
+    return playItem(item.get('id'));
   }
 
   render () {
@@ -229,10 +248,10 @@ export default class Player extends Component {
       <div className="player">
         <div className="controls">
           <div className="btn-group">
-            <button className="round-button" onClick={() => playNext(item.get('id'))}>skip_previous</button>
-            <button className="round-button" disabled={!this.state.seek} onClick={this.stop.bind(this)}>stop</button>
-            <button className="round-button" onClick={() => playNext(item.get('id'))}>skip_next</button>
-            <button className="round-button" onClick={this.play.bind(this)}>{ this.state.isPlaying ? 'pause' : 'play_arrow' }</button>
+            <button className="round-button" onClick={() => this.playTo(item.get('id'), -1)} title="backward">skip_previous</button>
+            <button className="round-button" disabled={!this.state.seek} onClick={this.stop.bind(this)} title="stop">stop</button>
+            <button className="round-button" onClick={() => this.playTo(item.get('id'), 1)} title="forward">skip_next</button>
+            <button className="round-button" onClick={this.play.bind(this)} title="play">{ this.state.isPlaying ? 'pause' : 'play_arrow' }</button>
           </div>
           <div className="button-group checkbox-buttons">
             <input id="loop" type="checkbox" />
