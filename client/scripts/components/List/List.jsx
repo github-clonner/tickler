@@ -161,23 +161,25 @@ export default class List extends Component {
 
 
   handleDoubleClick = song => {
+    let {actions} = this.props;
     let options = {
       title: 'Now Playing',
       body: song.title,
       sound: false,
       icon: song.thumbnails.default.url,
-      image:  song.thumbnails.default.url,//path.resolve('media/icon.png'),
+      image:  song.thumbnails.default.url,
       silent: true
     }
     new Notification(song.title, options);
-    let {actions} = this.props;
     if (song.file && !song.isLoading) {
-      console.log('handleDoubleClick: ', song.title)
-      return actions.playPauseItem(song.id, true);
+      return actions.playItem(song.id);
+    } else {
+      return actions.playItem(song.id);
     }
   }
 
   handleClick = async song => {
+    return false;
     if (this.state.song === song.id) {
       return;
     }
@@ -194,12 +196,6 @@ export default class List extends Component {
       });
       try {
         actions.fetchItem(song);
-        /*
-        let fileName = await youtube.downloadVideo(song);
-        actions.editItem(song.id, {
-          file: fileName
-        });
-        */
       }
       catch (error) {
         console.log('error downloadVideo: ', error);
@@ -254,7 +250,6 @@ export default class List extends Component {
           onDrop={this.drop}
           className={style}
           key={index}
-          onClick={() => this.handleClick(song)}
           onDoubleClick={() => this.handleDoubleClick(song)}
           style={this.makeProgressBar(song)}
           >
@@ -284,4 +279,3 @@ export default class List extends Component {
     );
   }
 }
-

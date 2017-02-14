@@ -89,7 +89,7 @@ export default function Playlist (state = initialState, action) {
     case 'PLAYPAUSE_ITEM': {
       let index = getIndex(action.id);
       if (index > -1) {
-        return pause().update(index, item => ( item.set('isPlaying', action.playPause) ));
+        return pause().update(index, item => ( item.set('isPlaying', action.payload) ));
       } else {
         return state;
       }
