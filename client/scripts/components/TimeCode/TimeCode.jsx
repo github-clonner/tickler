@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : Header.jsx                                                //
-// @summary      : Header component                                          //
+// @file         : TimeCode.jsx                                              //
+// @summary      : TimeCode component                                        //
 // @version      : 0.0.1                                                     //
 // @project      : tickelr                                                   //
 // @description  :                                                           //
@@ -35,41 +35,42 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-import { remote } from 'electron';
-import React, { Component } from 'react';
-import 'styles/header.css';
+import React, { Component, PropTypes } from 'react';
+import classNames from 'classnames';
+import Time from 'lib/Time';
+// Import styles
+import './TimeCode.css';
 
-export default class Header extends Component {
-  constructor(...args) {
-    super(...args);
-    this.window = remote.getCurrentWindow();
+export default class TimeCode extends Component {
+  state = {
+    format: false
   }
 
-  exit = () => {
-    this.window.close();
+  static defaultProps = {
+    currentTime: 0,
+    duration: 0
+  };
+
+  static propTypes = {
+    currentTime: PropTypes.number,
+    duration: PropTypes.number
   }
 
-  maximize = () => {
-    if (!this.window.isMaximized()) {
-      this.window.maximize();
-    } else {
-      this.window.unmaximize();
+  decodeTime (time) {
+    if(this.state.format) {
+      time = this.props.duration - time;
     }
+    let currentTime = new Time(time * 1000);
+    return this.state.format ? `-${currentTime.humanize()}` : currentTime.humanize();
   }
 
-  minimize = () => {
-    this.window.minimize();
+  toggleFormat = () => {
+    return this.setState({
+      format: !this.state.format
+    });
   }
 
-  render() {
-    return (
-      <nav className="navbar dark">
-        <ul className="buttons">
-          <li className="exit" onClick={this.exit}></li>
-          <li className="minimize" onClick={this.minimize}></li>
-          <li className="maximize" onClick={this.maximize}></li>
-        </ul>
-      </nav>
-    );
+  render () {
+    return (<span className="time-code" onClick={this.toggleFormat}>{this.decodeTime(this.props.time)}</span>);
   }
-};
+}

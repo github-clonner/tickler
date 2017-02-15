@@ -4,7 +4,6 @@ import classNames from 'classnames';
 
 require('./equalizer.css');
 /* Redux stuff */
-import Immutable from 'immutable';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux'
 import * as Actions from '../../actions';
@@ -27,13 +26,20 @@ export default class Equalizer extends Component {
 
   constructor(...args) {
     super(...args);
+    // Audio analyser
     this.analyser = null;
-    this.meterWidth = 10; //width of the meters in the spectrum
-    this.gap = 2; //gap between meters
+    //width of the meters in the spectrum
+    this.meterWidth = 10;
+    // Gap between meters
+    this.gap = 2;
+    // Bar cap height
     this.capHeight = 2;
+    // Bar cap color
     this.capStyle = '#E9D2E8';
-    this.meterNum = 800 / (10 + 2); //count of the meters
-    this.capYPositionArray = []; ////store the vertical position of hte caps for the preivous frame
+    // Count of the meters
+    this.meterNum = 800 / (10 + 2);
+    // Store the vertical position of hte caps for the preivous frame
+    this.capYPositionArray = [];
   }
 
   componentDidMount () {
@@ -48,14 +54,13 @@ export default class Equalizer extends Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    if(!nextProps.audio.analyser) {
+    if (!nextProps.audio.analyser) {
       return;
     }
-    console.log('equalizer: ', nextProps.audio);
     this.setState({
       analyser: nextProps.audio.analyser
     });
-    if(nextProps.audio.analyser) {
+    if (nextProps.audio.analyser) {
       this.analyser = nextProps.audio.analyser;
       this.renderFrame(this.analyser);
     }
@@ -65,7 +70,8 @@ export default class Equalizer extends Component {
     let analyser = this.analyser;
     let array = new Uint8Array(analyser.frequencyBinCount);
     analyser.getByteFrequencyData(array);
-    let step = Math.round(array.length / this.meterNum); //sample limited data from the total array
+    // Sample limited data from the total array
+    let step = Math.round(array.length / this.meterNum);
     this.ctx.clearRect(0, 0, this.width, this.height);
     for (var i = 0; i < this.meterNum; i++) {
       var value = array[i * step];
@@ -73,15 +79,17 @@ export default class Equalizer extends Component {
           this.capYPositionArray.push(value);
       };
       this.ctx.fillStyle = this.capStyle;
-      //draw the cap, with transition effect
+      // Draw the bar cap, with transition effect
       if (value < this.capYPositionArray[i]) {
           this.ctx.fillRect(i * 12, this.height - (--this.capYPositionArray[i]), this.meterWidth, this.capHeight);
       } else {
           this.ctx.fillRect(i * 12, this.height - value, this.meterWidth, this.capHeight);
           this.capYPositionArray[i] = value;
       };
-      this.ctx.fillStyle = this.gradient; //set the filllStyle to gradient for a better look
-      this.ctx.fillRect(i * 12 /*meterWidth+gap*/ , this.height - value + this.capHeight, this.meterWidth, this.height); //the meter
+      // Set the filllStyle to gradient for a better look
+      this.ctx.fillStyle = this.gradient;
+      // Draw the meter
+      this.ctx.fillRect(i * 12 /*meterWidth+gap*/ , this.height - value + this.capHeight, this.meterWidth, this.height);
     }
     if (this.analyser || this.state.analyser) {
       requestAnimationFrame(this.renderFrame);

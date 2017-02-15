@@ -1,18 +1,45 @@
+///////////////////////////////////////////////////////////////////////////////
+// @file         : Player.jsx                                                //
+// @summary      : Player component                                          //
+// @version      : 0.0.1                                                     //
+// @project      : tickelr                                                   //
+// @description  :                                                           //
+// @author       : Benjamin Maggi                                            //
+// @email        : benjaminmaggi@gmail.com                                   //
+// @date         : 13 Feb 2017                                               //
+// @license:     : MIT                                                       //
+// ------------------------------------------------------------------------- //
+//                                                                           //
+// Copyright 2017 Benjamin Maggi <benjaminmaggi@gmail.com>                   //
+//                                                                           //
+//                                                                           //
+// License:                                                                  //
+// Permission is hereby granted, free of charge, to any person obtaining a   //
+// copy of this software and associated documentation files                  //
+// (the "Software"), to deal in the Software without restriction, including  //
+// without limitation the rights to use, copy, modify, merge, publish,       //
+// distribute, sublicense, and/or sell copies of the Software, and to permit //
+// persons to whom the Software is furnished to do so, subject to the        //
+// following conditions:                                                     //
+//                                                                           //
+// The above copyright notice and this permission notice shall be included   //
+// in all copies or substantial portions of the Software.                    //
+//                                                                           //
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS   //
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF                //
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.    //
+// IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY      //
+// CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,      //
+// TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE         //
+// SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                    //
+//                                                                           //
+///////////////////////////////////////////////////////////////////////////////
+
 import fileSystem from 'fs';
 import path from 'path';
-import {remote} from 'electron';
+import { remote } from 'electron';
 import React, { Component, PropTypes } from 'react';
-import { Howl, Howler } from 'howler';
 import WaveSurfer from 'wavesurfer.js';
-//import musicmetadata from 'musicmetadata';
-const musicmetadata = require('musicmetadata');
-
-import { Progress, InputRange } from './index';
-
-require('styles/player.css');
-require('styles/buttons.css');
-require('styles/input.css');
-
 import debounce from 'lodash/debounce';
 
 /* Redux stuff */
@@ -21,6 +48,15 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux'
 import * as Playist from '../actions/Playlist';
 import * as Audio from '../actions/Player';
+
+import { Progress, InputRange, TimeCode } from './index';
+
+//import musicmetadata from 'musicmetadata';
+const musicmetadata = require('musicmetadata');
+
+// Import styles
+import 'styles/player.css';
+import 'styles/buttons.css';
 
 function mapStateToProps(state) {
   return {
@@ -39,11 +75,8 @@ function mapDispatchToProps(dispatch) {
 @connect(mapStateToProps, mapDispatchToProps)
 export default class Player extends Component {
   state = {
-    item: List([]),
+    item: Map(),
     isPlaying: false,
-    isPause: false,
-    isLoading: false,
-    currentSongIndex: -1,
     volume: 0.5,
     duration: 0,
     seek: 0,
@@ -51,7 +84,7 @@ export default class Player extends Component {
   }
 
   static propTypes = {
-    list: React.PropTypes.instanceOf(Immutable.List).isRequired,
+    list: React.PropTypes.instanceOf(List).isRequired,
     autoplay: PropTypes.bool.isRequired
   }
 
@@ -94,7 +127,7 @@ export default class Player extends Component {
   }
 
   handleChange = event => {
-    console.log('seekTo: ', event.target.value)
+    console.log('seekTo: ', event.target.value, event.target.disabled)
     this.wavesurfer.seekTo(event.target.value / 100);
   }
   // wavesurfer event handlers
@@ -133,9 +166,7 @@ export default class Player extends Component {
 
   finish = () => {
     this.stop();
-    let { playNext, playNextItem } = this.props.actions;
-    //return playNext(this.state.item.get('id'));
-    return playNextItem(this.state.item.get('id'));
+    return this.playTo(this.state.item.get('id'), 1);
   }
 
   // react component lifecycle events
@@ -145,11 +176,9 @@ export default class Player extends Component {
     }
 
     let item = nextProps.list.find(item => (item.get('isPlaying') === true));
-    
+
     // already playing
-    if (item && item.get('id') === this.state.item.get('id')) {
-      this.stop();
-      this.ready();
+    if (this.state.isPlaying && (item && item.get('id') === this.state.item.get('id'))) {
       return;
     }
 
@@ -200,41 +229,50 @@ export default class Player extends Component {
   }
 
   // Player controls
-  play() {
+  play = () => {
+    let { playItem } = this.props.actions;
+    let item = this.props.list.find(item => (item.get('isPlaying') === true));
+
+    // Play the first song if none selected
+    // else play the last song that was selected and stopped
+    if (!item && !this.state.item.has('id')) {
+      return playItem(this.props.list.get(0).get('id'));
+    } else if (!item && this.state.item) {
+      return playItem(this.state.item.get('id'));
+    }
     this.wavesurfer.playPause();
     this.setState({
       isPlaying: this.wavesurfer.isPlaying()
     });
   }
 
-  stop() {
+  stop = () => {
     let {actions} = this.props;
     let item = this.props.list.find(item => (item.get('isPlaying') === true));
 
     this.wavesurfer.stop();
     this.setState({
-      isPlaying: this.wavesurfer.isPlaying(),
+      isPlaying: false,
       seek: this.wavesurfer.getCurrentTime(),
       duration: this.wavesurfer.getDuration()
     });
-
-    if (item) {
-      actions.editItem(item.get('id'), {
-        isPlaying: false
-      });
-    }
+    actions.stop(item);
   }
 
-  playTo = (id, direction) => {
+  playTo = direction => {
+    if(!this.state.item.has('id')) {
+      return false;
+    }
+    let id = this.state.item.get('id');
     let { playItem } = this.props.actions;
-
     let index = this.props.list.findIndex(item => (item.get('id') === id));
     let item = null;
-    if (Math.sign(direction)) {
+
+    if (Math.sign(direction) > 0) {
       let nextIndex = ((index + 1) === this.props.list.size) ? 0 : index + 1;
       item = this.props.list.get(nextIndex);
     } else {
-      let prevIndex = ((index - 1) < 0) ? this.props.list.size : index - 1;
+      let prevIndex = (index === 0) ? (this.props.list.size - 1) : index - 1;
       item = this.props.list.get(prevIndex);
     }
 
@@ -242,16 +280,16 @@ export default class Player extends Component {
   }
 
   render () {
-    let {playNext, playPrevious} = this.props.actions;
-    let {item} = this.state;
+    let { playNext, playPrevious } = this.props.actions;
+    let { item } = this.state;
     return (
       <div className="player">
         <div className="controls">
           <div className="btn-group">
-            <button className="round-button" onClick={() => this.playTo(item.get('id'), -1)} title="backward">skip_previous</button>
-            <button className="round-button" disabled={!this.state.seek} onClick={this.stop.bind(this)} title="stop">stop</button>
-            <button className="round-button" onClick={() => this.playTo(item.get('id'), 1)} title="forward">skip_next</button>
-            <button className="round-button" onClick={this.play.bind(this)} title="play">{ this.state.isPlaying ? 'pause' : 'play_arrow' }</button>
+            <button className="round-button" onClick={() => this.playTo(-1)} title="backward">skip_previous</button>
+            <button className="round-button" disabled={!this.state.seek} onClick={this.stop} title="stop">stop</button>
+            <button className="round-button" onClick={() => this.playTo(1)} title="forward">skip_next</button>
+            <button className="round-button" onClick={this.play} title="play">{ this.state.isPlaying ? 'pause' : 'play_arrow' }</button>
           </div>
           <div className="button-group checkbox-buttons">
             <input id="loop" type="checkbox" />
@@ -259,7 +297,8 @@ export default class Player extends Component {
             <input id="shuffle" type="checkbox" />
             <label htmlFor="shuffle">shuffle</label>
           </div>
-          <InputRange value={this.state.seek / this.state.duration * 100} min={0} max={100} step={0.1} onChange={this.handleChange.bind(this)} />
+          <InputRange value={this.state.seek / this.state.duration * 100} min={0} max={100} step={0.1} onChange={this.handleChange} disabled={!this.state.isPlaying && !this.state.seek} />
+          <TimeCode time={this.state.seek} duration={this.state.duration} />
         </div>
         <div ref="waves" style={{display: 'none'}}></div>
       </div>
