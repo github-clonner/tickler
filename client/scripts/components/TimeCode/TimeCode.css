@@ -1,6 +1,9 @@
+@import "styles/variables.css";
+
 .time-code {
-    font-family: "Roboto Mono", monospace;
+    font-family: var(--monoFont);
     margin: 0 10px;
     color: #666;
     cursor: default;
+    user-select: none;
 }

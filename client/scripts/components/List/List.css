@@ -1,8 +1,6 @@
 @import "styles/variables.css";
 
 :root {
-    --fontFamily: "Roboto", sans-serif;
-    --fontFamilyMono: "Roboto Mono", monospace;
     /*--activeRowBackground: #f6f6f6;*/
     /*--activeRowColor: #000;*/
     --hoverRowColor: #f6f6f6;
@@ -15,7 +13,7 @@
 .list {
     overflow: hidden;
     overflow-y: scroll;
-    font-family: var(--fontFamily);
+    font-family: var(--mainFont);
     font-weight: lighter;
     color: var(--color);
     cursor: pointer;
@@ -62,7 +60,7 @@
             text-align: right;
             font-weight: bold;
             flex-basis: 5%;
-            font-family: var(--fontFamilyMono);
+            font-family: var(--monoFont);
             font-weight: lighter;
         }
         & .dot, &:nth-child(2) {
@@ -85,7 +83,7 @@
         &:nth-child(5) {
             margin-left: 10px;
             flex-grow: 0.1;
-            font-family: var(--fontFamilyMono);
+            font-family: var(--monoFont);
         }
         &.two {
             min-width: 0;
