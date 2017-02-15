@@ -1,18 +1,53 @@
+///////////////////////////////////////////////////////////////////////////////
+// @file         : Stars.jsx                                                 //
+// @summary      : Stars component                                           //
+// @version      : 0.0.1                                                     //
+// @project      : tickelr                                                   //
+// @description  :                                                           //
+// @author       : Benjamin Maggi                                            //
+// @email        : benjaminmaggi@gmail.com                                   //
+// @date         : 13 Feb 2017                                               //
+// @license:     : MIT                                                       //
+// ------------------------------------------------------------------------- //
+//                                                                           //
+// Copyright 2017 Benjamin Maggi <benjaminmaggi@gmail.com>                   //
+//                                                                           //
+//                                                                           //
+// License:                                                                  //
+// Permission is hereby granted, free of charge, to any person obtaining a   //
+// copy of this software and associated documentation files                  //
+// (the "Software"), to deal in the Software without restriction, including  //
+// without limitation the rights to use, copy, modify, merge, publish,       //
+// distribute, sublicense, and/or sell copies of the Software, and to permit //
+// persons to whom the Software is furnished to do so, subject to the        //
+// following conditions:                                                     //
+//                                                                           //
+// The above copyright notice and this permission notice shall be included   //
+// in all copies or substantial portions of the Software.                    //
+//                                                                           //
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS   //
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF                //
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.    //
+// IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY      //
+// CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,      //
+// TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE         //
+// SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                    //
+//                                                                           //
+///////////////////////////////////////////////////////////////////////////////
+
 import React, { Component, PropTypes } from 'react';
 import path from 'path';
 import classNames from 'classnames';
-import { Youtube, Time } from '../../lib';
+import { Time } from 'lib';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux'
 import Immutable from 'immutable';
 import Chance from 'chance';
 import * as Actions from '../../actions/Playlist';
 import Stars from '../Stars/Stars';
-
-require('./List.css');
-require('styles/spinner.css');
-
-let youtube = new Youtube('AIzaSyAPBCwcnohnbPXScEiVMRM4jYWc43p_CZU');
+// Import styles
+import './List.css';
+import 'styles/spinner.css';
 
 function mapStateToProps(state) {
   return {
@@ -33,38 +68,29 @@ placeholder.className = "placeholder";
 export default class List extends Component {
 
   state = {
+    isDragDrop: false,
+    song: new Object()
   };
 
   static propTypes = {
+    placeholder: PropTypes.instanceOf(Element).isRequired
   };
 
   static defaultProps = {
     placeholder: document.createElement('li')
   };
 
-  constructor (...args) {
-    super(...args);
-  }
-
-  componentWillMount () {
-    this.props.placeholder.className = 'row placeholder';
-    return this.setState({
-      data: this.props.data
-    });
-  }
-
   componentDidMount () {
     let { actions } = this.props;
     actions.fetchList('PLA0CA9B8A2D82264B');
+    this.props.placeholder.className = 'row placeholder';
   }
 
   makeProgressBar (song) {
     if(!song.isLoading && !song.isPlaying) {
-      return {
-        'background': 'transparent'
-      };
-    } else {
-      let progress = song.progress;
+      return {};
+    } else if (song.isLoading) {
+      let { progress } = song;
       return {
         'background': `linear-gradient(to right, #eee 0%, #eee ${progress * 100}%,#f6f6f6 ${progress * 100}%,#f6f6f6 100%)`
       };
@@ -130,8 +156,6 @@ export default class List extends Component {
       return;
     }
 
-    //console.log('dragOver: target', event.target.className, ' currentTarget: ', event.currentTarget.className, '!', event.target, event.target.dataset)
-
     this.over = event.target;
     let rect = this.over.getBoundingClientRect();
     // Inside the dragOver method
@@ -139,6 +163,7 @@ export default class List extends Component {
     let height = this.over.offsetHeight / 2;
     let parent = event.target.parentNode;
 
+    // Over the top ?
     if (event.clientY < (rect.top + height)) {
       this.nodePlacement = 'before';
       parent.insertBefore(this.props.placeholder, event.target);
@@ -171,7 +196,6 @@ export default class List extends Component {
       silent: true
     }
     new Notification(song.title, options);
-    console.log(song.id)
     if (song.file && !song.isLoading) {
       return actions.playPauseItem(song.id, true);
     } else {
@@ -181,33 +205,6 @@ export default class List extends Component {
 
   handleClick = async song => {
     return false;
-    if (this.state.song === song.id) {
-      return;
-    }
-    let {actions} = this.props;
-    this.setState({
-      song: song.id,
-    });
-    // console.log('handleClick: ', song.title)
-    if (song.file) {
-      //return actions.playPauseItem(song.id, !song.isPlaying);
-    } else if (!song.file && !song.isLoading) {
-      actions.editItem(song.id, {
-        isLoading: true
-      });
-      try {
-        actions.fetchItem(song);
-      }
-      catch (error) {
-        console.log('error downloadVideo: ', error);
-      }
-      finally {
-        actions.editItem(song.id, {
-          isLoading: false
-        });
-      }
-      //actions.playPauseItem(song.id, !song.isPlaying);
-    }
   }
 
   makeSpinner () {
@@ -241,6 +238,18 @@ export default class List extends Component {
         }
       }
 
+      // Scroll to element if it's playing
+      // TODO: will constantly trigger scrollIntoView()
+      /*
+      if(song.isPlaying) {
+        let item = this.refs.list.querySelector(`[data-id="${index}"]`);
+        item.scrollIntoView({
+          block: 'end',
+          behavior: 'smooth'
+        });
+      }
+      */
+
       return (
         <li
           data-id={index}
@@ -256,9 +265,7 @@ export default class List extends Component {
           >
           <span>{index + 1}</span>
           <span className={exists}>{isPlayingIcon(song)}</span>
-          <span>
-            <p>{song.title}</p>
-          </span>
+          <span><p>{song.title}</p></span>
           <Stars stars={song.stars}/>
           <span>{this.computeDuration(song.duration)}</span>
         </li>

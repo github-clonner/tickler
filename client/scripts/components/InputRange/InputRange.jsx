@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : Header.jsx                                                //
-// @summary      : Header component                                          //
+// @file         : InputRange.jsx                                            //
+// @summary      : InputRange component                                      //
 // @version      : 0.0.1                                                     //
 // @project      : tickelr                                                   //
 // @description  :                                                           //
@@ -36,40 +36,78 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 import { remote } from 'electron';
-import React, { Component } from 'react';
-import 'styles/header.css';
+import React, { Component, PropTypes } from 'react';
+// Import styles
+import './InputRange.css';
 
-export default class Header extends Component {
-  constructor(...args) {
-    super(...args);
-    this.window = remote.getCurrentWindow();
+export default class InputRange extends Component {
+  state = {
+    value: 0
+  };
+
+  static defaultProps = {
+    disabled: false,
+    min: 0,
+    max: 100,
+    step: 1,
+    onChange: new Function()
+  };
+
+  static propTypes = {
+    disabled: PropTypes.bool,
+    min: PropTypes.number,
+    max: PropTypes.number,
+    step: PropTypes.number,
+    onChange: PropTypes.func
   }
 
-  exit = () => {
-    this.window.close();
+  handleChange = event => {
+    this.setState({
+      value: event.target.value
+    });
+    this.props.onChange(event);
   }
 
-  maximize = () => {
-    if (!this.window.isMaximized()) {
-      this.window.maximize();
-    } else {
-      this.window.unmaximize();
+  componentDidMount () {
+    this.refs.range.addEventListener('change', this.drawTrack, false);
+    this.refs.range.addEventListener('input', this.drawTrack, false);
+  }
+
+  componentWillUnmount () {
+    this.refs.range.removeEventListener('change', this.drawTrack);
+    this.refs.range.removeEventListener('input', this.drawTrack);
+  }
+
+  componentDidUpdate () {
+    this.drawTrack();
+  }
+
+  componentWillReceiveProps (nextProps) {
+    if(!nextProps) {
+      return;
     }
+    this.setState({
+      value: nextProps.value || 0
+    });
   }
 
-  minimize = () => {
-    this.window.minimize();
+  drawTrack = () => {
+    let {value} = this.state;
+    let background = `linear-gradient(to right, #ed1e24 0%, #ed1e24 ${value}%, #2f2f2f ${value}%, #2f2f2f 100%)`;
+    this.refs.range.style.background = background;
   }
 
-  render() {
-    return (
-      <nav className="navbar dark">
-        <ul className="buttons">
-          <li className="exit" onClick={this.exit}></li>
-          <li className="minimize" onClick={this.minimize}></li>
-          <li className="maximize" onClick={this.maximize}></li>
-        </ul>
-      </nav>
-    );
+  render () {
+    return <input
+      ref="range"
+      className="range"
+      type="range"
+      min={this.props.min}
+      max={this.props.max}
+      value={this.state.value}
+      onChange={this.handleChange}
+      step={this.props.step}
+      disabled={this.props.disabled}
+    />
   }
-};
+}

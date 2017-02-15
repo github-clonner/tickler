@@ -115,6 +115,10 @@ export default function Playlist (state = initialState, action) {
       }
     }
 
+    case 'STOP': {
+      return pause();
+    }
+
     case 'ORDER_LIST': {
       let from = state.get(action.from);
       let to = state.get(action.to);

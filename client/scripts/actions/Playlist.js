@@ -18,12 +18,14 @@ export const addItem = ({id, title, duration, file, stars}) => {
     }
   };
 };
+
 export const deleteItem = id => ({ type: 'DELETE_ITEM', id });
 export const editItem = (id, payload) => ({ type: 'EDIT_ITEM', id, payload });
 export const createFrom = payload => ({type: 'CREATEFROM', payload});
 export const playPauseItem = (id, payload) => ({ type: 'PLAYPAUSE_ITEM', id, payload });
 export const playNext = (id) => ({ type: 'PLAY_NEXT_ITEM', id });
 export const playPrevious = (id) => ({ type: 'PLAY_PREVIOUS_ITEM', id });
+export const stop = id => ({ type: 'STOP', id });
 export const receivePlayList = payload => ({type: 'RECEIVE_LIST', payload});
 export const orderPlayList = (from, to) => ({ type: 'ORDER_LIST', from, to });
 export const receiveItem = (id, payload) => ({type: 'RECEIVE_ITEM', id, payload});
@@ -89,8 +91,14 @@ export function playNextItem (id) {
   }
 }
 
+/**
+ * Play Item.
+ * Downloads the item if no local file
+ * @param  {String} id of the youtube video
+ * @return {null}
+ */
 export function playItem (id) {
-  return async function (dispatch, getState) {
+  return function (dispatch, getState) {
     let { Playlist } = getState();
     let item = Playlist.find(item => (item.get('id') === id));
 
