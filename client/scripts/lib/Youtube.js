@@ -123,7 +123,7 @@ export default class Youtube {
     .then(response => response.data);
   }
 
-  async getPlayListItems(playlistId) {
+  async getPlayListItems (playlistId) {
     let part = 'id,snippet,contentDetails';
     let options = {
       playlistId: playlistId,
@@ -164,58 +164,52 @@ export default class Youtube {
     let mux = new EchoStream({
       writable: true
     });
-    var fileName = path.resolve(`./media/${sanitize(video.title)}`);
+    let fileName = path.resolve(`./media/${sanitize(video.title)}`);
     let fileStream = fs.createWriteStream(fileName);
     return new Promise((resolve, reject) => {
       let yt = ytdl(uri, 'audioonly'/*{
-          filter: function(format) {
-            let isAudio = !format.bitrate && format.audioBitrate;
-            console.log('isAudio: ', isAudio, format.bitrate, format.audioBitrate, format.container)
-            return isAudio;
-          }
-        }*/)
-        .on('finish', () => {
-          //ipcRenderer.send('encode', fileName);
-          //ipcRenderer.on('encoded', (event, fileName) => {
-            this.events.emit('finish', {video, fileName});
-            return resolve(fileName);
-          //});
-          console.log('donwload finish !');
+        filter: function(format) {
+          let isAudio = !format.bitrate && format.audioBitrate;
+          console.log('isAudio: ', isAudio, format.bitrate, format.audioBitrate, format.container)
+          return isAudio;
+        }
+      }*/);
+      yt.on('finish', () => {
+        //this.events.emit('finish', {video, fileName});
+        //return resolve(fileName);
+      });
+      yt.on('error', error => {
+        this.events.emit('error', error);
+        return reject(error);
+      });
+
+      yt.on('info', info => {
+        this.events.emit('info', info);
+      });
+
+      yt.on('response', response => {
+        let size = response.headers['content-length'];
+        yt.pipe(fileStream);
+
+        // Keep track of progress.
+        let dataRead = 0;
+        yt.on('data', data => {
+          dataRead += data.length;
+          let progress = dataRead / size;
+          this.events.emit('progress', {video, progress});
         });
 
-        yt.on('error', error => {
-          this.events.emit('error', error);
-          return reject(error);
+        yt.on('end', () => {
+          this.events.emit('finish', {video, fileName});
+          return resolve(fileName);
         });
-
-        yt.on('info', info => {
-          this.events.emit('info', info);
-        });
-
-        yt.on('response', response => {
-          let size = response.headers['content-length'];
-          yt.pipe(fileStream);
-          //yt.pipe(mux);
-
-          // Keep track of progress.
-          let dataRead = 0;
-          yt.on('data', data => {
-            dataRead += data.length;
-            var progress = dataRead / size;
-            this.events.emit('progress', {video, progress});
-          });
-        });
-
-        this.events.once('abort', () => {
-          console.log('abort download');
-          yt.end();
-          fileStream.end();
-          return reject();
-        });
-
-        /*yt.on('end', function() {
-          console.log('Finished');
-        })*/
+      });
+      this.events.once('abort', () => {
+        console.log('abort download');
+        yt.end();
+        fileStream.end();
+        return reject();
+      });
     });
   }
 }

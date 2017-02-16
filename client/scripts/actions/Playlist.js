@@ -3,7 +3,10 @@ import getObjectProperty from 'lodash/get';
 import { Youtube, Time } from '../lib';
 
 const options = {
-  preload: true
+  preload: {
+    active: false,
+    items: 1
+  }
 };
 
 export const addItem = ({id, title, duration, file, stars}) => {
@@ -28,7 +31,6 @@ export const playPrevious = (id) => ({ type: 'PLAY_PREVIOUS_ITEM', id });
 export const stop = id => ({ type: 'STOP', id });
 export const receivePlayList = payload => ({type: 'RECEIVE_LIST', payload});
 export const orderPlayList = (from, to) => ({ type: 'ORDER_LIST', from, to });
-export const receiveItem = (id, payload) => ({type: 'RECEIVE_ITEM', id, payload});
 export const downloadProgress = payload => ({type: 'DOWNLOAD_PROGRESS', payload});
 
 
@@ -101,16 +103,40 @@ export function playItem (id) {
   return function (dispatch, getState) {
     let { Playlist } = getState();
     let item = Playlist.find(item => (item.get('id') === id));
-
     if(!item.get('file') && !item.get('isLoading')) {
-      console.log('fetch: ', item.get('id'), item.get('title'))
       dispatch(fetchItem(item, true));
     } else {
       dispatch(playPauseItem(item.get('id'), true));
     }
+    return dispatch(receiveItem(item.id));    
   }
 }
 
+/**
+ * Receive Item.
+ * Downloads the item if no local file
+ * @param  {String} id of the youtube video
+ * @return {null}
+ */
+export function receiveItem (id) {
+  return async function (dispatch, getState) {
+    if(!options.preload.active) {
+      return false;
+    }
+    let { Playlist } = getState();
+    let index = Playlist.findIndex(item => (item.get('id') === id));
+    for(let i = (index + 1); i <= (index + options.preload.items); i++) {
+      let item = Playlist.get(i);
+      if(!item.get('file') && !item.get('isLoading')) {
+        console.log('preload: ', item.get('title'))
+        return dispatch(fetchItem(item, false));
+        dispatch(editItem(item.get('id'), {
+          isLoading: true,
+        }));
+      }
+    }
+  }
+}
 
 export function fetchList (id) {
   return async function (dispatch, getState) {
