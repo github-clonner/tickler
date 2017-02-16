@@ -38,6 +38,7 @@
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import Time from 'lib/Time';
+import format from '@maggiben/duration-format';
 // Import styles
 import './TimeCode.css';
 
@@ -60,8 +61,8 @@ export default class TimeCode extends Component {
     if(this.state.format) {
       time = this.props.duration - time;
     }
-    let currentTime = new Time(time * 1000);
-    return this.state.format ? `-${currentTime.humanize()}` : currentTime.humanize();
+    let currentTime = format(time * 1000, '#{2H}:#{2M}:#{2S}')
+    return this.state.format ? `-${currentTime}` : currentTime;
   }
 
   toggleFormat = () => {
@@ -71,6 +72,7 @@ export default class TimeCode extends Component {
   }
 
   render () {
+    //format(this.props.time, '#{2H}:#{2M}:#{2S}')
     return (<span className="time-code" onClick={this.toggleFormat}>{this.decodeTime(this.props.time)}</span>);
   }
 }

@@ -2,11 +2,11 @@
 @import "https://fonts.googleapis.com/css?family=Roboto+Mono:100,400,700|Roboto:100,400,700";
 
 :root {
-  --mainColor: red;
-  --background: #212121;
+  --mainColor: #fafafa;
   --iconFont: "Material Icons";
   --monoFont: "Roboto Mono", monospace;
   --mainFont: "Roboto", sans-serif;
+  --controlsBackground: #212121;
 }
 
 /* http://meyerweb.com/eric/tools/css/reset/

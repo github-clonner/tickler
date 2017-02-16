@@ -93,7 +93,9 @@ export default class InputRange extends Component {
 
   drawTrack = () => {
     let {value} = this.state;
-    let background = `linear-gradient(to right, #ed1e24 0%, #ed1e24 ${value}%, #2f2f2f ${value}%, #2f2f2f 100%)`;
+    let {max, min} = this.props;
+    let percentage = value / (max - min) * 100;
+    let background = `linear-gradient(to right, #ed1e24 0%, #ed1e24 ${percentage}%, #2f2f2f ${percentage}%, #2f2f2f 100%)`;
     this.refs.range.style.background = background;
   }
 
