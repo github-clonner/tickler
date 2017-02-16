@@ -1,6 +1,6 @@
 export Header from './Header';
 export Toolbar from './Toolbar';
-export Player from './Player';
+export Player from './Player/Player';
 export List from './List/List';
 export DragDrop from './DragDrop';
 export TimeCode from './TimeCode/TimeCode';

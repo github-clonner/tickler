@@ -5,6 +5,8 @@
   --mainColor: red;
   --background: #212121;
   --iconFont: "Material Icons";
+  --monoFont: "Roboto Mono", monospace;
+  --mainFont: "Roboto", sans-serif;
 }
 
 /* http://meyerweb.com/eric/tools/css/reset/

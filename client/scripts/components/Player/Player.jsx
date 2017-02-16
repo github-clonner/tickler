@@ -46,16 +46,16 @@ import debounce from 'lodash/debounce';
 import Immutable, { List, Map } from 'immutable';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux'
-import * as Playist from '../actions/Playlist';
-import * as Audio from '../actions/Player';
+import * as Playist from 'actions/Playlist';
+import * as Audio from 'actions/Player';
 
-import { Progress, InputRange, TimeCode } from './index';
+import { Progress, InputRange, TimeCode } from '../index';
 
-//import musicmetadata from 'musicmetadata';
-const musicmetadata = require('musicmetadata');
+import musicmetadata from 'musicmetadata';
+//const musicmetadata = require('musicmetadata');
 
 // Import styles
-import 'styles/player.css';
+import './Player.css';
 import 'styles/buttons.css';
 
 function mapStateToProps(state) {
@@ -166,7 +166,7 @@ export default class Player extends Component {
 
   finish = () => {
     this.stop();
-    return this.playTo(this.state.item.get('id'), 1);
+    return this.playTo(1);
   }
 
   // react component lifecycle events
@@ -259,10 +259,15 @@ export default class Player extends Component {
     actions.stop(item);
   }
 
+  /*
+    TODO: when skipping into an unloaded track and while the track is being loaded if the user moves into another track
+    once the track finished it'll still play the song after being selected
+  */
   playTo = direction => {
     if(!this.state.item.has('id')) {
       return false;
     }
+
     let id = this.state.item.get('id');
     let { playItem } = this.props.actions;
     let index = this.props.list.findIndex(item => (item.get('id') === id));
@@ -275,7 +280,6 @@ export default class Player extends Component {
       let prevIndex = (index === 0) ? (this.props.list.size - 1) : index - 1;
       item = this.props.list.get(prevIndex);
     }
-
     return playItem(item.get('id'));
   }
 
@@ -296,6 +300,12 @@ export default class Player extends Component {
             <label htmlFor="loop">loop</label>
             <input id="shuffle" type="checkbox" />
             <label htmlFor="shuffle">shuffle</label>
+          </div>
+          <div className="volume">
+            <button type="button" className="round-button">volume_up</button>
+            <div className="slider">
+              <InputRange value={10} min={0} max={100} step={0.1} />
+            </div>
           </div>
           <InputRange value={this.state.seek / this.state.duration * 100} min={0} max={100} step={0.1} onChange={this.handleChange} disabled={!this.state.isPlaying && !this.state.seek} />
           <TimeCode time={this.state.seek} duration={this.state.duration} />
