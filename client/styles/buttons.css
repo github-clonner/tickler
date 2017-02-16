@@ -59,10 +59,9 @@
         outline: none;
         border: none;
         font-family: var(--buttonFont);
-        font-size: 25px;
-        line-height: 1;
+        font-size: 1em;
+        margin: 10px;
         white-space: nowrap;
-        font-smoothing: antialiased;
         background-color: transparent;
         color: var(--buttonColor);
         text-align: center;
