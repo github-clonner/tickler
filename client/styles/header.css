@@ -34,7 +34,7 @@ nav, .navbar {
     border-bottom-left-radius: 0px;
     border-bottom-right-radius: 0px;
     &.dark {
-        background-color: var(--background);/*#273138;*/
+        background-color: var(--controlsBackground);/*#273138;*/
         & ul.buttons li:not(:hover) {
             background-color: var(--buttonBackground);
         }

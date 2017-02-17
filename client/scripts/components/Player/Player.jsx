@@ -80,17 +80,19 @@ export default class Player extends Component {
     volume: 0.5,
     duration: 0,
     seek: 0,
-    value: 3
+    volume: 0.5
   }
 
   static propTypes = {
     list: React.PropTypes.instanceOf(List).isRequired,
-    autoplay: PropTypes.bool.isRequired
+    autoplay: PropTypes.bool.isRequired,
+    volume: PropTypes.number.isRequired
   }
 
   static defaultProps = {
     list: Immutable.List([]),
     autoplay: false,
+    volume: 0.1,
     audioContext: new AudioContext()
   }
 
@@ -126,9 +128,16 @@ export default class Player extends Component {
     // });
   }
 
+  handleVolume = event => {
+    console.log('volume: ', event.target.value);
+    this.setState({
+      volume: event.target.value
+    })
+    this.wavesurfer.setVolume(event.target.value);
+  }
+
   handleChange = event => {
-    console.log('seekTo: ', event.target.value, event.target.disabled)
-    this.wavesurfer.seekTo(event.target.value / 100);
+    return this.wavesurfer.seekTo(event.target.value / 100);
   }
   // wavesurfer event handlers
   loading = progress => {
@@ -304,7 +313,7 @@ export default class Player extends Component {
           <div className="volume">
             <button type="button" className="round-button">volume_up</button>
             <div className="slider">
-              <InputRange value={10} min={0} max={100} step={0.1} />
+              <InputRange value={this.state.volume} min={0} max={1} step={0.001} onChange={this.handleVolume}/>
             </div>
           </div>
           <InputRange value={this.state.seek / this.state.duration * 100} min={0} max={100} step={0.1} onChange={this.handleChange} disabled={!this.state.isPlaying && !this.state.seek} />

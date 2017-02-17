@@ -43,6 +43,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux'
 import Immutable from 'immutable';
 import Chance from 'chance';
+import format from '@maggiben/duration-format';
 import * as Actions from '../../actions/Playlist';
 import Stars from '../Stars/Stars';
 // Import styles
@@ -267,7 +268,7 @@ export default class List extends Component {
           <span className={exists}>{isPlayingIcon(song)}</span>
           <span><p>{song.title}</p></span>
           <Stars stars={song.stars}/>
-          <span>{this.computeDuration(song.duration)}</span>
+          <span>{format(song.duration, '#{2H}:#{2M}:#{2S}')}</span>
         </li>
       );
     });
