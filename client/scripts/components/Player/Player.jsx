@@ -80,7 +80,8 @@ export default class Player extends Component {
     volume: 0.5,
     duration: 0,
     seek: 0,
-    volume: 0.5
+    volume: 0.5,
+    isMuted: false
   }
 
   static propTypes = {
@@ -129,10 +130,9 @@ export default class Player extends Component {
   }
 
   handleVolume = event => {
-    console.log('volume: ', event.target.value);
     this.setState({
       volume: event.target.value
-    })
+    });
     this.wavesurfer.setVolume(event.target.value);
   }
 
@@ -171,6 +171,13 @@ export default class Player extends Component {
     this.setState({
       seek: this.wavesurfer.getCurrentTime()
     })
+  }
+
+  mute = event => {
+    this.wavesurfer.toggleMute();
+    this.setState({
+      isMuted: event.target.checked
+    });
   }
 
   finish = () => {
@@ -305,13 +312,14 @@ export default class Player extends Component {
             <button className="round-button" onClick={this.play} title="play">{ this.state.isPlaying ? 'pause' : 'play_arrow' }</button>
           </div>
           <div className="button-group checkbox-buttons">
-            <input id="loop" type="checkbox" />
+            <input id="loop" type="checkbox"/>
             <label htmlFor="loop">loop</label>
             <input id="shuffle" type="checkbox" />
             <label htmlFor="shuffle">shuffle</label>
           </div>
-          <div className="volume">
-            <button type="button" className="round-button">volume_up</button>
+          <div className="volume checkbox-buttons">
+            <input id="volume" type="checkbox" checked={this.state.isMuted} onChange={this.mute}/>
+            <label htmlFor="volume">volume_up</label>
             <div className="slider">
               <InputRange value={this.state.volume} min={0} max={1} step={0.001} onChange={this.handleVolume}/>
             </div>

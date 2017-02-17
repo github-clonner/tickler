@@ -46,9 +46,9 @@ import Chance from 'chance';
 import format from '@maggiben/duration-format';
 import * as Actions from '../../actions/Playlist';
 import Stars from '../Stars/Stars';
+import Spinner from '../Spinner/Spinner';
 // Import styles
 import './List.css';
-import 'styles/spinner.css';
 
 function mapStateToProps(state) {
   return {
@@ -208,14 +208,6 @@ export default class List extends Component {
     return false;
   }
 
-  makeSpinner () {
-    return (
-      <svg className="spinner" width="13px" height="13px" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
-        <circle className="path" fill="none" strokeWidth="6" strokeLinecap="round" cx="33" cy="33" r="30"></circle>
-      </svg>
-    );
-  }
-
   renderItem() {
     let {actions} = this.props;
 
@@ -233,7 +225,7 @@ export default class List extends Component {
         if (!song.file && !song.isLoading) {
           return 'wifi';
         } else if (song.isLoading) {
-          return this.makeSpinner();
+          return <Spinner />;
         } else {
           return (song.isPlaying) ? 'play_arrow' : 'stop';
         }

@@ -108,7 +108,7 @@ export function playItem (id) {
     } else {
       dispatch(playPauseItem(item.get('id'), true));
     }
-    return dispatch(receiveItem(item.id));    
+    return dispatch(receiveItem(item.id));
   }
 }
 
@@ -165,7 +165,7 @@ export function fetchList (id) {
       stars: 3,
       thumbnails: {
         default: {
-          url: "https://i.ytimg.com/vi/GDpmVUEjagg/default.jpg"
+          url: "https://pbs.twimg.com/profile_images/1119269505/0509071614Peter_Griffin.jpg"
         }
       }
     };

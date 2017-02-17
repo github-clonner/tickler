@@ -1,13 +1,15 @@
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 
-require('./coverflow.css');
+/* Import styles */
+import './Coverflow.css';
 
 /* Redux stuff */
 import Immutable from 'immutable';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux'
 import * as Actions from '../../actions';
+import Covers from './Covers';
 
 function mapStateToProps(state) {
   return {
@@ -41,6 +43,12 @@ export default class CoverFlow extends Component {
     });
   }
 
+  setTitle = cover => {
+    this.setState({
+      caption: cover.get('title')
+    });
+  }
+
   makeCovers () {
     return this.props.list.map((cover, index) => {
       let style = classNames('cover', {
@@ -64,11 +72,8 @@ export default class CoverFlow extends Component {
     return (
       <div className={style}>
         <div className="container" ref="container">
-
-          {/*
-          // commented because dnd
-          <ul className="covers">{this.makeCovers()}</ul>
-          */}
+          {/*<ul className="covers">{this.makeCovers()}</ul>*/}
+          <Covers list={this.props.list} setTitle={this.setTitle}/>
         </div>
         <span className="caption">{this.state.caption}</span>
       </div>

@@ -1,12 +1,12 @@
 import React, { Component, PropTypes } from 'react';
 import path from 'path';
-require('../../styles/toolbar.css');
+import './toolbar.css';
 
 /* Redux stuff */
 import Immutable from 'immutable';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux'
-import * as Actions from '../actions/Player';
+import * as Actions from 'actions/Player';
 
 function mapStateToProps(state) {
   return {
