@@ -79,8 +79,9 @@ export default function Playlist (state = initialState, action) {
 
     case 'EDIT_ITEM': {
       let index = getIndex(action.id);
+      console.log('EDIT_ITEM: ', action.payload)
       if (index > -1) {
-        return state.update(index, item => ( item.merge(Map(action.payload)) ));
+        return state.update(index, item => ( item.mergeDeep(Map(action.payload)) ));
       } else {
         return state;
       }

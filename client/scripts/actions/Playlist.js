@@ -38,16 +38,29 @@ export const downloadProgress = payload => ({type: 'DOWNLOAD_PROGRESS', payload}
 export function fetchItem (item, autoPlay = false) {
   return async function (dispatch, getState) {
     let { Playlist } = getState();
+    let fileName = null;
     let youtube = new Youtube('AIzaSyAPBCwcnohnbPXScEiVMRM4jYWc43p_CZU');
+
     let onProgress = ({video, progress}) => {
       dispatch(editItem(video.id, {
         isLoading: true,
         progress: progress
       }));
     };
-    let fileName = null;
+
+    let onInfo = ({video, info}) => {
+      dispatch(editItem(video.id, {
+        title: info.title,
+        thumbnails: {
+          default: {
+            url: info.thumbnail_url
+          }
+        }
+      }));
+    };
 
     youtube.events.on('progress', onProgress);
+    youtube.events.on('info', onInfo);
 
     dispatch(editItem(item.id, {
       isLoading: true,
@@ -157,6 +170,16 @@ export function fetchList (id) {
         stars: chance.integer({min: 0, max: 5})
       };
     });
+    payload.push({
+      id: 'tCjzSaP0XFE',
+      title: 'oepe',
+      stars: 3,
+      thumbnails: {
+        default: {
+          url: "https://pbs.twimg.com/profile_images/1119269505/0509071614Peter_Griffin.jpg"
+        }
+      }
+    })
     payload[0] = {
       id: '_mVW8tgGY_w',
       title: 'FurElise xx',

@@ -6,7 +6,7 @@ const Cover = (props) =>
       let style = classNames('cover', {
         active: cover.get('isPlaying')
       });
-      let url = cover.getIn(['thumbnails', 'default', 'url'])
+      let url = cover.getIn(['thumbnails', 'default', 'url']);
       return (
         <li className={style} key={index} onMouseOver={() => props.setTitle(cover)}>
           <img src={url} />

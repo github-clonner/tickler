@@ -184,7 +184,7 @@ export default class Youtube {
       });
 
       yt.on('info', info => {
-        this.events.emit('info', info);
+        this.events.emit('info', {video, info});
       });
 
       yt.on('response', response => {

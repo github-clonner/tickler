@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import path from 'path';
-import './toolbar.css';
+import './Toolbar.css';
 
 /* Redux stuff */
 import Immutable from 'immutable';
