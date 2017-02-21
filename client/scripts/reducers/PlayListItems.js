@@ -22,9 +22,27 @@ const Item = Record({
   progress: 0
 });
 
-const initialState = List([]);
+const PlayListInfo = Record({
+  id: null,
+  title: null,
+  description: null,
+  publishedAt: null,
+});
 
-export default function PlayListItems (state = initialState, action) {
+
+
+export function PlayList (state = new PlayListInfo(), action) {
+  switch (action.type) {
+    case 'RECEIVE_LIST': {
+      let playListInfo = new PlayListInfo(action.payload);
+      return playListInfo;
+    }
+    default:
+      return state;
+  }
+}
+
+export default function PlayListItems (state = List([]), action) {
 
   let getIndex = id => {
     // Get item by id
@@ -100,7 +118,7 @@ export default function PlayListItems (state = initialState, action) {
       console.log('PLAY_NEXT_ITEM', action.id)
       let index = getIndex(action.id);
       if (index > -1 && index + 1 < state.size) {
-        return pause().update(index + 1, item => ( item.set('isPlaying', true) ));
+        return pause().update(index + 1, item => ( item.set('isPlaying', true).set('selected', true) ));
       } else {
         return pause().update(0, item => ( item.set('isPlaying', true) ));
       }

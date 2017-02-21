@@ -3,10 +3,7 @@ import { render } from 'react-dom';
 import { Router, Route, Redirect, hashHistory, browserHistory, IndexRoute } from 'react-router';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 
-
-import App from './index';
-
-import { Home, About, NotFound, NewList } from './views';
+import { Main, Home, About, NotFound, NewList } from './views';
 /* redux stuff */
 import { createStore, combineReducers, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
@@ -50,7 +47,7 @@ injectTapEventPlugin();
 render((
   <Provider store={store}>
     <Router history={browserHistory}>
-      <Route path="/" component={App} name="Container">
+      <Route path="/" component={Main} name="Main">
         <IndexRoute component={Home} name='Home'/>
         <Route path="/about" component={About} />
         <Route path="/new-list" component={NewList} />

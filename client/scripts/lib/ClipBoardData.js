@@ -18,6 +18,7 @@ export default class ClipBoardData {
   constructor() {
     this.clipboard = clipboard;
     this.events = clipBoardDataEvents;
+    this.link = null;
     this.init();
   }
 
@@ -44,12 +45,16 @@ export default class ClipBoardData {
   decode () {
     const formats = this.clipboard.availableFormats();
     if (formats.indexOf('text/plain') > -1) {
-      const text = this.clipboard.readText();
+      const link = this.clipboard.readText();
       const video = new RegExp(/(?:youtube\.com.*(?:\?|&)(?:v)=|youtube\.com.*embed\/|youtube\.com.*v\/|youtu\.be\/)((?!videoseries)[a-zA-Z0-9_]*)/g);
       const list = new RegExp(/(?:youtube\.com.*(?:\?|&)(?:list)=)((?!videoseries)[a-zA-Z0-9_]*)/g);
 
-      if (text.match(video) || text.match(list)) {
-        const uri = url.parse(text);
+      if (this.link === link) {
+        return null;
+      }
+      if (link.match(video) || link.match(list)) {
+        this.link = link;
+        const uri = url.parse(link);
         const query = querystring.parse(uri.query);
         this.events.emit('data', query);
         return query;

@@ -181,13 +181,24 @@ export function fetchListItems (id) {
   };
 }
 
+export const receivePlayList = payload => ({ type: 'RECEIVE_LIST', payload });
+
+
 export function fetchList (id) {
   return async function (dispatch, getState) {
     let state = getState();
     let youtube = new Youtube('AIzaSyAPBCwcnohnbPXScEiVMRM4jYWc43p_CZU');
     try {
       let playList = await youtube.getPlayList(id);
-      //dispatch(receivePlayList(payload));
+      let item = playList.items.pop();
+      if (item) {
+        dispatch(receivePlayList({
+          id: getObjectProperty(item, 'id'),
+          title: getObjectProperty(item, 'snippet.title'),
+          description: getObjectProperty(item, 'snippet.description'),
+          publishedAt: getObjectProperty(item, 'snippet.publishedAt'),
+        }));
+      }
       console.debug(playList);
     } catch (error) {
       console.error(error);

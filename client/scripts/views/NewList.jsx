@@ -6,7 +6,8 @@ import * as Actions from 'actions/Playlist';
 
 function mapStateToProps(state) {
   return {
-    list: state.PlayListItems
+    list: state.PlayListItems,
+    info: state.PlayList
   };
 }
 
@@ -21,22 +22,37 @@ export default class NewList extends Component {
 
   constructor (context) {
     super(context);
-    console.log(arguments)
   }
 
   componentDidMount () {
     let { actions, location } = this.props;
-    console.log(this)
     actions.fetchList(location.state.list);
     actions.fetchListItems(location.state.list);
   }
 
   render() {
-    let { location } = this.props;
+    let { location, list, info } = this.props;
     return (
       <div>
         <h1>{ location.state.list }</h1>
         <h1>{ location.state.video }</h1>
+        <hr />
+        <ul>
+          { 
+            Object.keys(info.toJS()).map(item => {
+              return <li key={item}><pre>{item}: {info.get(item)}</pre></li>
+            }) 
+          }
+        </ul>
+        <hr />
+        <ul>
+          {
+            list.map((item, index) => {
+              let song = item.toJS();
+              return <li key={index}>{song.title}</li>
+            })
+          }
+        </ul>
       </div>
     );
   }
