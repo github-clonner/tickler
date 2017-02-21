@@ -13,7 +13,7 @@ import Covers from './Covers';
 
 function mapStateToProps(state) {
   return {
-    list: state.Playlist,
+    list: state.PlayListItems,
     toolbar: state.Player
   };
 }

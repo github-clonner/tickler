@@ -18,12 +18,13 @@ const Item = Record({
   isLoading: false,
   isPlaying: false,
   isReady: false,
+  selected: false,
   progress: 0
 });
 
 const initialState = List([]);
 
-export default function Playlist (state = initialState, action) {
+export default function PlayListItems (state = initialState, action) {
 
   let getIndex = id => {
     // Get item by id
@@ -47,7 +48,7 @@ export default function Playlist (state = initialState, action) {
 
   switch (action.type) {
 
-    case 'RECEIVE_LIST': {
+    case 'RECEIVE_LIST_ITEMS': {
       let playlist = action.payload.map(element => {
         let item = new Item();
         return item.merge(element);
@@ -125,6 +126,18 @@ export default function Playlist (state = initialState, action) {
       state = state.delete(action.from).insert(action.to, from);
       console.log(from.toJS(), to.toJS())
       return state;
+    }
+
+    case 'SELECT_ITEMS': {
+      return state.map(item => {
+        let selected = (action.payload.indexOf(item.get('id')) > -1);
+        return item.merge({
+          selected: selected
+        });
+      });
+      // return state
+      //   .update(selectedIndex, item => ( item.set('selected', false) )).map(item => )
+        //.update(index, item => ( item.set('selected', true) ));
     }
 
     default:

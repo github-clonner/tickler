@@ -15,6 +15,11 @@ export default class App extends React.Component {
     }
   };
 
+  constructor (context) {
+    super(context);
+    window.context = context;
+  }
+  
   componentDidMount() {
     ipcRenderer.once('config', (event, config) => {
       this.setState(prevState => ({
@@ -31,7 +36,6 @@ export default class App extends React.Component {
         <CoverFlow />
         <Equalizer />
         <div className="page-content">
-          <List />
           <main>
             {this.props.children}
           </main>

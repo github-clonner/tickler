@@ -123,6 +123,22 @@ export default class Youtube {
     .then(response => response.data);
   }
 
+  getPlayList (playlistId) {
+    let part = 'id,snippet,contentDetails';
+    let options = {
+      id: playlistId,
+      part: part,
+      maxResults: 50,
+      pageToken: null
+    };
+    return this.axios({
+      method: 'GET',
+      url: '/playlists',
+      params: options
+    })
+    .then(response => response.data);
+  }
+
   async getPlayListItems (playlistId) {
     let part = 'id,snippet,contentDetails';
     let options = {
@@ -152,14 +168,24 @@ export default class Youtube {
         if (error) {
           return reject(error);
         } else {
+          console.debug('getPlayListItems: ', items);
           return resolve(items);
         }
       });
     });
   }
+  
+  trackProgress = (video, size) => {
+    let dataRead = 0;
+    return data => {
+      dataRead += data.length;
+      let progress = dataRead / size;
+      return this.events.emit('progress', { video, progress });
+    };
+  }
 
   async downloadVideo(video) {
-    console.log('YOUTUBE: ', video.id);
+    console.debug('downloadVideo: ', video.id);
     let uri = `http://www.youtube.com/watch?v=${video.id}`;
     let mux = new EchoStream({
       writable: true
@@ -167,37 +193,21 @@ export default class Youtube {
     let fileName = path.resolve(`./media/${sanitize(video.title)}`);
     let fileStream = fs.createWriteStream(fileName);
     return new Promise((resolve, reject) => {
-      let yt = ytdl(uri, 'audioonly'/*{
-        filter: function(format) {
-          let isAudio = !format.bitrate && format.audioBitrate;
-          console.log('isAudio: ', isAudio, format.bitrate, format.audioBitrate, format.container)
-          return isAudio;
-        }
-      }*/);
-      yt.on('finish', () => {
-        //this.events.emit('finish', {video, fileName});
-        //return resolve(fileName);
-      });
+      let yt = ytdl(uri, 'audioonly');
       yt.on('error', error => {
         this.events.emit('error', error);
         return reject(error);
       });
 
       yt.on('info', info => {
-        this.events.emit('info', info);
+        this.events.emit('info', {video, info});
       });
 
       yt.on('response', response => {
         let size = response.headers['content-length'];
         yt.pipe(fileStream);
-
         // Keep track of progress.
-        let dataRead = 0;
-        yt.on('data', data => {
-          dataRead += data.length;
-          let progress = dataRead / size;
-          this.events.emit('progress', {video, progress});
-        });
+        yt.on('data', this.trackProgress(video, size));
 
         yt.on('end', () => {
           this.events.emit('finish', {video, fileName});

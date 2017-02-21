@@ -2,7 +2,7 @@ import { List, Map, Record } from 'immutable';
 
 const Toolbar = Record({
   equalizer: false,
-  levels: false,
+  levels: true,
   coverflow: false
 });
 
@@ -32,8 +32,9 @@ const initialToolbar = new Toolbar();
 export function ToolBar (state = initialToolbar, action) {
   switch (action.type) {
     case 'TOOLBAR_OPTIONS': {
-      let toolbar = new Toolbar();
-      return toolbar.merge(action.payload);
+      console.log(action.payload)
+      let toolbar = new Toolbar(action.payload);
+      return toolbar;//.merge(action.payload);
     }
     default:
       return state;

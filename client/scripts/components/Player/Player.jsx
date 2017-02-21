@@ -60,7 +60,7 @@ import 'styles/buttons.css';
 
 function mapStateToProps(state) {
   return {
-    list: state.Playlist,
+    list: state.PlayListItems,
     audio: state.Audio
   };
 }
@@ -248,6 +248,9 @@ export default class Player extends Component {
   play = () => {
     let { playItem } = this.props.actions;
     let item = this.props.list.find(item => (item.get('isPlaying') === true));
+    if (!item) {
+      item = this.props.list.findLast(item => item.get('selected'));
+    }
 
     // Play the first song if none selected
     // else play the last song that was selected and stopped
@@ -255,11 +258,15 @@ export default class Player extends Component {
       return playItem(this.props.list.get(0).get('id'));
     } else if (!item && this.state.item) {
       return playItem(this.state.item.get('id'));
+    } else if (item.has('id') && !item.get('file')) {
+      return playItem(item.get('id'));
+    } else if (item.has('id') && item.get('file')) {
+      playItem(item.get('id'));
+      this.wavesurfer.playPause();
+      return this.setState({
+        isPlaying: this.wavesurfer.isPlaying()
+      });
     }
-    this.wavesurfer.playPause();
-    this.setState({
-      isPlaying: this.wavesurfer.isPlaying()
-    });
   }
 
   stop = () => {

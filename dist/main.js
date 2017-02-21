@@ -84,6 +84,10 @@ ipcMain.on('encode', (event, fileName) => {
   */
 })
 
+ipcMain.on('debug', (event, message) => {
+  console.log(message);
+})
+
 class ElectonApplication {
 
   constructor (...args) {

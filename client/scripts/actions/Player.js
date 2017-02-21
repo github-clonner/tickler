@@ -8,3 +8,4 @@ export const wavesurfer = payload => ({ type: 'WAVESURFER', payload });
 
 /* options */
 export const options = payload => ({ type: 'OPTIONS', payload});
+

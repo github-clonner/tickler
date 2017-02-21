@@ -24,12 +24,13 @@ export const addItem = ({id, title, duration, file, stars}) => {
 
 export const deleteItem = id => ({ type: 'DELETE_ITEM', id });
 export const editItem = (id, payload) => ({ type: 'EDIT_ITEM', id, payload });
+export const selectItems = payload => ({ type: 'SELECT_ITEMS', payload });
 export const createFrom = payload => ({type: 'CREATEFROM', payload});
 export const playPauseItem = (id, payload) => ({ type: 'PLAYPAUSE_ITEM', id, payload });
 export const playNext = (id) => ({ type: 'PLAY_NEXT_ITEM', id });
 export const playPrevious = (id) => ({ type: 'PLAY_PREVIOUS_ITEM', id });
 export const stop = id => ({ type: 'STOP', id });
-export const receivePlayList = payload => ({type: 'RECEIVE_LIST', payload});
+export const receivePlayListItems = payload => ({type: 'RECEIVE_LIST_ITEMS', payload});
 export const orderPlayList = (from, to) => ({ type: 'ORDER_LIST', from, to });
 export const downloadProgress = payload => ({type: 'DOWNLOAD_PROGRESS', payload});
 
@@ -37,7 +38,6 @@ export const downloadProgress = payload => ({type: 'DOWNLOAD_PROGRESS', payload}
 /* Async Operations */
 export function fetchItem (item, autoPlay = false) {
   return async function (dispatch, getState) {
-    let { Playlist } = getState();
     let youtube = new Youtube('AIzaSyAPBCwcnohnbPXScEiVMRM4jYWc43p_CZU');
     let onProgress = ({video, progress}) => {
       dispatch(editItem(video.id, {
@@ -45,14 +45,21 @@ export function fetchItem (item, autoPlay = false) {
         progress: progress
       }));
     };
+
+    let onInfo = ({video, info}) => {
+      console.debug(video, info)
+    };
+
     let fileName = null;
 
     youtube.events.on('progress', onProgress);
+    youtube.events.on('info', onInfo);
 
     dispatch(editItem(item.id, {
       isLoading: true,
       progress: 0
     }));
+    
     try {
       fileName = await youtube.downloadVideo(item);
       dispatch(editItem(item.id, {
@@ -67,6 +74,7 @@ export function fetchItem (item, autoPlay = false) {
       }));
     } finally {
       youtube.events.removeListener('progress', onProgress);
+      youtube.events.removeListener('info', onInfo);
       dispatch(editItem(item.id, {
         isLoading: false
       }));
@@ -79,11 +87,11 @@ export function fetchItem (item, autoPlay = false) {
 
 export function playNextItem (id) {
   return async function (dispatch, getState) {
-    let { Playlist } = getState();
-    let index = Playlist.findIndex(item => (item.get('id') === id));
-    let nextIndex = ((index + 1) === Playlist.size) ? 0 : index + 1;
-    console.log(id, Playlist.get(index).toJS(), index, nextIndex, Playlist.size)
-    let nextItem = Playlist.get(nextIndex);
+    let { PlayListItems } = getState();
+    let index = PlayListItems.findIndex(item => (item.get('id') === id));
+    let nextIndex = ((index + 1) === PlayListItems.size) ? 0 : index + 1;
+    console.log(id, PlayListItems.get(index).toJS(), index, nextIndex, PlayListItems.size)
+    let nextItem = PlayListItems.get(nextIndex);
 
     if(!nextItem.get('file') && !nextItem.get('isLoading')) {
       dispatch(fetchItem(nextItem, true));
@@ -101,8 +109,8 @@ export function playNextItem (id) {
  */
 export function playItem (id) {
   return function (dispatch, getState) {
-    let { Playlist } = getState();
-    let item = Playlist.find(item => (item.get('id') === id));
+    let { PlayListItems } = getState();
+    let item = PlayListItems.find(item => (item.get('id') === id));
     if(!item.get('file') && !item.get('isLoading')) {
       dispatch(fetchItem(item, true));
     } else {
@@ -123,10 +131,10 @@ export function receiveItem (id) {
     if(!options.preload.active) {
       return false;
     }
-    let { Playlist } = getState();
-    let index = Playlist.findIndex(item => (item.get('id') === id));
+    let { PlayListItems } = getState();
+    let index = PlayListItems.findIndex(item => (item.get('id') === id));
     for(let i = (index + 1); i <= (index + options.preload.items); i++) {
-      let item = Playlist.get(i);
+      let item = PlayListItems.get(i);
       if(!item.get('file') && !item.get('isLoading')) {
         console.log('preload: ', item.get('title'))
         return dispatch(fetchItem(item, false));
@@ -138,7 +146,7 @@ export function receiveItem (id) {
   }
 }
 
-export function fetchList (id) {
+export function fetchListItems (id) {
   return async function (dispatch, getState) {
     let state = getState();
     let youtube = new Youtube('AIzaSyAPBCwcnohnbPXScEiVMRM4jYWc43p_CZU');
@@ -169,6 +177,20 @@ export function fetchList (id) {
         }
       }
     };
-    dispatch(receivePlayList(payload));
+    dispatch(receivePlayListItems(payload));
   };
+}
+
+export function fetchList (id) {
+  return async function (dispatch, getState) {
+    let state = getState();
+    let youtube = new Youtube('AIzaSyAPBCwcnohnbPXScEiVMRM4jYWc43p_CZU');
+    try {
+      let playList = await youtube.getPlayList(id);
+      //dispatch(receivePlayList(payload));
+      console.debug(playList);
+    } catch (error) {
+      console.error(error);
+    }
+  }
 }

@@ -42,9 +42,8 @@ import { Time } from 'lib';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux'
 import Immutable from 'immutable';
-import Chance from 'chance';
 import format from '@maggiben/duration-format';
-import * as Actions from '../../actions/Playlist';
+import * as Actions from 'actions/Playlist';
 import Stars from '../Stars/Stars';
 import Spinner from '../Spinner/Spinner';
 // Import styles
@@ -52,7 +51,7 @@ import './List.css';
 
 function mapStateToProps(state) {
   return {
-    list: state.Playlist
+    list: state.PlayListItems
   };
 }
 
@@ -83,7 +82,7 @@ export default class List extends Component {
 
   componentDidMount () {
     let { actions } = this.props;
-    actions.fetchList('PLA0CA9B8A2D82264B');
+    actions.fetchListItems('PLA0CA9B8A2D82264B');
     this.props.placeholder.className = 'row placeholder';
   }
 
@@ -197,6 +196,8 @@ export default class List extends Component {
       silent: true
     }
     new Notification(song.title, options);
+    // Select this item
+    actions.selectItems([song.id]);
     if (song.file && !song.isLoading) {
       return actions.playPauseItem(song.id, true);
     } else {
@@ -204,17 +205,42 @@ export default class List extends Component {
     }
   }
 
-  handleClick = async song => {
-    return false;
+  handleClick = (event, song) => {
+    event.preventDefault();
+    event.stopPropagation();
+    event.nativeEvent.stopImmediatePropagation();
+    let selected = [];
+
+    // console.log('event', song.id, event.shiftKey, event.ctrlKey, event.metaKey, event.altKey)
+
+    if (event.shiftKey) {
+      let lastIndex = this.props.list.findLastIndex(item => item.get('selected'));
+      let selectedIndex = this.props.list.findIndex(item => ( item.get('id') === song.id) );
+      let selected = [];
+      if (lastIndex < selectedIndex) {
+        selected = this.props.list.slice(lastIndex, selectedIndex + 1).map(item => (item.get('id'))).toJS();
+      } else if (lastIndex > selectedIndex) {
+        selected = this.props.list.slice(selectedIndex, lastIndex + 1).map(item => (item.get('id'))).toJS();
+      }
+      return this.props.actions.selectItems(selected);
+    } else if (event.metaKey) {
+      let items = this.props.list.filter(item => item.get('selected')).map(item => (item.get('id')));
+      let selectedIndex = this.props.list.findIndex(item => ( item.get('id') === song.id) );
+      let selected = [...items.toJS(), this.props.list.get(selectedIndex).get('id')];
+      return this.props.actions.selectItems(selected);
+    }
+    return this.props.actions.selectItems([song.id])
   }
 
-  renderItem() {
+  renderItem () {
     let {actions} = this.props;
 
     return this.props.list.map((item, index) => {
       let song = item.toJS();
       let style = classNames('row', {
-        active: song.isPlaying
+        active: song.isPlaying,
+        selected: song.selected,
+        loading: song.isLoading
       });
       let exists = classNames('dot', {
         local: song.file,
@@ -253,6 +279,7 @@ export default class List extends Component {
           onDrop={this.drop}
           className={style}
           key={index}
+          onClick={(event) => this.handleClick(event, song)}
           onDoubleClick={() => this.handleDoubleClick(song)}
           style={this.makeProgressBar(song)}
           >

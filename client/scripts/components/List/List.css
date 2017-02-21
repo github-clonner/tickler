@@ -42,13 +42,22 @@
         box-sizing: border-box;
         cursor: pointer;
         &.active {
+            /* background: var(--activeRowBackground); */
+            /* color: var(--activeRowColor); */
+            font-weight: bolder;
+        }
+        &.selected.active:not(.loading) {
+            background: var(--activeRowBackground);
+            color: var(--activeRowColor);
+        }
+        &.selected:not(.active):not(.loading) {
             background: var(--activeRowBackground);
             color: var(--activeRowColor);
         }
     }
     &:not(.is-drag-drop) {
         & .row:not(.placeholder) {
-            &:hover {
+            &:hover:not(.selected) {
                 background-color: var(--hoverRowColor);
             }
         }

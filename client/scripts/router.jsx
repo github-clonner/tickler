@@ -6,13 +6,14 @@ import injectTapEventPlugin from 'react-tap-event-plugin';
 
 import App from './index';
 
-import { Home, About, NotFound } from './views';
+import { Home, About, NotFound, NewList } from './views';
 /* redux stuff */
 import { createStore, combineReducers, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 import { Provider } from 'react-redux';
 import { syncHistoryWithStore, routerReducer } from 'react-router-redux';
 import * as reducers from './reducers';
+import ClipBoardData from 'lib/ClipBoardData';
 
 const reducer = combineReducers({
   ...reducers,
@@ -24,6 +25,21 @@ const store = createStore(
   applyMiddleware(thunk)
 );
 const history = syncHistoryWithStore(browserHistory, store);
+
+const clipBoardData = new ClipBoardData();
+clipBoardData.events.on('data', data => {
+  console.log('data: ', data.list, data.v, history, browserHistory);
+  history.push({
+    pathname: '/new-list',
+    query: { 
+      modal: true 
+    },
+    state: {
+      list: data.list,
+      video: data.v
+    }
+  });
+})
 
 // Needed for onTouchTap
 // Can go away when react 1.0 release
@@ -37,8 +53,8 @@ render((
       <Route path="/" component={App} name="Container">
         <IndexRoute component={Home} name='Home'/>
         <Route path="/about" component={About} />
+        <Route path="/new-list" component={NewList} />
       </Route>
-      <Route path="/about" component={About} />
       <Redirect from="/*" to="/" />
       <Route path="*" component={NotFound} />
     </Router>
