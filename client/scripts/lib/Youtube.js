@@ -97,7 +97,7 @@ const youtubeEvents = new YoutubeEvents();
 
 export default class Youtube {
 
-  constructor(apiKey) {
+  constructor({apiKey, options = {}}) {
     this.apiKey = apiKey || 'AIzaSyAPBCwcnohnbPXScEiVMRM4jYWc43p_CZU';
     this.axios = axios.create({
       baseURL: 'https://www.googleapis.com/youtube/v3',
@@ -105,6 +105,7 @@ export default class Youtube {
         key: this.apiKey
       }
     });
+    this.options = options;
     this.events = youtubeEvents;//new YoutubeEvents();
   }
 
@@ -185,17 +186,17 @@ export default class Youtube {
   }
 
   async downloadVideo(video) {
+    if(!this.options.saveTo) {
+      return Promise.reject(false);
+    }
     console.debug('downloadVideo: ', video.id);
     let uri = `http://www.youtube.com/watch?v=${video.id}`;
-    let mux = new EchoStream({
-      writable: true
-    });
-    let fileName = path.resolve(`./media/${sanitize(video.title)}`);
+    let fileName = path.resolve(this.options.saveTo, sanitize(video.title));
     let fileStream = fs.createWriteStream(fileName);
     return new Promise((resolve, reject) => {
       let yt = ytdl(uri, 'audioonly');
       yt.on('error', error => {
-        this.events.emit('error', error);
+        this.events.emit('error', {video, error});
         return reject(error);
       });
 

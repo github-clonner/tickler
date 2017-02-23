@@ -25,7 +25,6 @@ const config = {
 }//JSON.parse(fs.readFileSync("package.json"));
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-var mainWindow;
 var application;
 
 // This method will be called when Electron has finished
@@ -59,8 +58,12 @@ class ElectonApplication {
       y: this.mainWindowState.y,
       width: this.mainWindowState.width,
       height: this.mainWindowState.height,
+      backgroundThrottling: false, // do not throttle animations/timers when page is background
       minWidth: 800,
       minHeight: 400,
+      darkTheme: true, // Forces dark theme (GTK+3)
+      titleBarStyle: 'hidden-inset', // Hide title bar (Mac)
+      useContentSize: true, // Specify web page size without OS chrome
       center: true,
       frame: false,
       icon: makeIcon('icon.png')
@@ -124,14 +127,14 @@ class ElectonApplication {
   * Receive minimize event and trigger command
   */
   minimizeApp = event => {
-    return mainWindow.minimize();
+    return this.mainWindow.minimize();
   }
 
   /**
   * Receive hide event and trigger command
   */
   hideApp = event => {
-    return mainWindow.hide();
+    return this.mainWindow.hide();
   }
 
   /**
@@ -139,14 +142,14 @@ class ElectonApplication {
   */
   closeApp = event => {
     if (process.platform !== "darwin") {
-      mainWindow.destroy();
+      this.mainWindow.destroy();
     } else {
-      mainWindow.hide();
+      this.mainWindow.hide();
     }
   }
 
   destroyApp = event => {
-    return mainWindow.close();
+    return this.mainWindow.close();
   }
 
   willQuit = event => {
@@ -155,19 +158,19 @@ class ElectonApplication {
 
   initializeMediaShortcuts() {
     globalShortcut.register('MediaPlayPause', () => {
-      mainWindow.webContents.send('MediaPlayPause');
+      this.mainWindow.webContents.send('MediaPlayPause');
     });
 
     globalShortcut.register('MediaStop', () => {
-      mainWindow.webContents.send('MediaStop');
+      this.mainWindow.webContents.send('MediaStop');
     });
 
     globalShortcut.register('MediaPreviousTrack', () => {
-      mainWindow.webContents.send('MediaPreviousTrack');
+      this.mainWindow.webContents.send('MediaPreviousTrack');
     });
 
     globalShortcut.register('MediaNextTrack', () => {
-      mainWindow.webContents.send('MediaNextTrack');
+      this.mainWindow.webContents.send('MediaNextTrack');
     });
   }
 }

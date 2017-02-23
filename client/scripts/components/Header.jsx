@@ -39,10 +39,33 @@ import { remote } from 'electron';
 import React, { Component } from 'react';
 import 'styles/header.css';
 
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import * as Actions from 'actions/Player';
+
+function mapStateToProps(state) {
+  return {
+    router: state.routing
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    actions: bindActionCreators(Actions, dispatch)
+  };
+}
+
+@connect(mapStateToProps, mapDispatchToProps)
 export default class Header extends Component {
   constructor(...args) {
     super(...args);
     this.window = remote.getCurrentWindow();
+  }
+
+  componentWillMount() {
+    console.log('props', this.props)
+    console.log('state', this.state)
+    console.log('contx', this.context)
   }
 
   exit = () => {
@@ -60,8 +83,10 @@ export default class Header extends Component {
   minimize = () => {
     this.window.minimize();
   }
+  
 
   render() {
+    //const { location } = this.props.state;
     return (
       <nav className="navbar dark">
         <ul className="buttons">

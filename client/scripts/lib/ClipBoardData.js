@@ -34,12 +34,19 @@ export default class ClipBoardData {
   }
 
   init () {
-    window.addEventListener('focus', event => { 
-      this.setInterval();
-    }, false);
-    window.addEventListener('blur', event => { 
-      this.clearInterval();
-    }, false);
+    // window.addEventListener('focus', event => { 
+    //   this.setInterval();
+    // }, false);
+    // window.addEventListener('blur', event => { 
+    //   this.clearInterval();
+    // }, false);
+    // ...same thing if you paste a link
+    window.addEventListener('paste', this.onPaste, false);
+  }
+
+  onPaste = event => {
+    console.log(event)
+    const data = this.decode(this.clipboard);
   }
 
   decode () {

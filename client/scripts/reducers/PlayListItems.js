@@ -58,7 +58,7 @@ export default function PlayListItems (state = List([]), action) {
     // Find item that's playing
     let index = state.findIndex(item => (item.get('isPlaying') === true));
     if (index > -1) {
-      return state.update(index, item => ( item.set('isPlaying', false) ));
+      return state.update(index, item => ( item.set('isPlaying', false).set('selected', false) ));
     } else {
       return state;
     }
@@ -108,7 +108,7 @@ export default function PlayListItems (state = List([]), action) {
     case 'PLAYPAUSE_ITEM': {
       let index = getIndex(action.id);
       if (index > -1) {
-        return pause().update(index, item => ( item.set('isPlaying', action.payload) ));
+        return pause().update(index, item => ( item.set('isPlaying', action.payload).set('selected', true) ));
       } else {
         return state;
       }
