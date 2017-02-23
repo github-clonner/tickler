@@ -9,41 +9,35 @@ import WebpackCleanupPlugin from 'webpack-cleanup-plugin'
 
 //import packme from './bootstrapper';
 
-const babelSettings = JSON.parse(fs.readFileSync(".babelrc"));
+const babelSettings = JSON.parse(fs.readFileSync('.babelrc'));
 
 const env = {
   NODE_ENV: process.env.NODE_ENV || 'development',
 };
 
 export default {
-  debug: true,
+  context: path.resolve(__dirname, './client/scripts'),
   entry: {
-    //'webpack-dev-server/client?http://0.0.0.0:8080',
-    //'webpack/hot/only-dev-server',
-    'bundle': ['babel-polyfill', './client/scripts/index'],
-    //'electron': './main'
+    'bundle': ['babel-polyfill', './index.jsx'],
+    'vendor': ['react']
   },
   output: {
     path: path.resolve('dist'),
     filename: '[name].js'
   },
-  devServer: {
-    contentBase: './dist',
-    hot: true,
-    inline: true,
-    colors: true,
-    open: false,
-    host: "localhost",
-    port: 7070
-  },
   devtool: 'inline-source-map',
-  target: 'electron',
+  target: 'electron-renderer',
   plugins: [
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'vendor',
+      minChunks: Infinity,
+      filename: 'vendor.bundle.js'
+    }),
     new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoErrorsPlugin(),
-    new webpack.optimize.DedupePlugin(),
-    new webpack.DefinePlugin({
-      'process.env': JSON.stringify(env)
+    new webpack.NamedModulesPlugin(),
+    new webpack.NoEmitOnErrorsPlugin(),
+    new webpack.EnvironmentPlugin({
+      NODE_ENV: 'development'
     }),
     new HtmlwebpackPlugin({
       //template: 'index.js',
@@ -59,97 +53,67 @@ export default {
     new ElectronPlugin({
       // if a file in this path is modified/emitted, electron will be restarted
       // *required*
-      relaunchPathMatch: "./main",
+      relaunchPathMatch: './main',
       // the path to launch electron with
       // *required*
       path: path.resolve('dist'),
       // the command line arguments to launch electron with
       // optional
-      args: ["--enable-logging"],
+      args: ['--enable-logging'],
       // the options to pass to child_process.spawn
       // see: https://nodejs.org/api/child_process.html#child_process_child_process_spawnsync_command_args_options
       // optional
       options: {
-        env: {NODE_ENV: "development"}
+        env: {
+          NODE_ENV: 'development'
+        }
       }
     }),
     new WebpackCleanupPlugin({
-      exclude: ["package.json", "main.js", "index.html", 'bootstrapper.js'],
+      exclude: ['package.json', 'main.js', 'index.html', 'bootstrapper.js', 'window.js'],
     })
     //new ExtractTextPlugin('style.css', { allChunks: true })
   ],
   resolve: {
-    extensions: [ '', '.js', '.jsx', '.coffee', '.less', '.ttf', '.eot', '.woff' ],
-    moduleDirectories: [
-      'node_modules'
+    extensions: [ '*', '.js', '.jsx' ],
+    modules: [
+      path.resolve(__dirname, 'node_modules')
     ],
     alias: {
-      styles: path.resolve('./client/styles'),
-      lib: path.resolve('./client/scripts/lib'),
-      actions: path.resolve('./client/scripts/actions')
+      lib: path.resolve(__dirname, './client/scripts/lib'),
+      actions: path.resolve(__dirname, './client/scripts/actions'),
+      styles: path.resolve(__dirname, './client/styles')
     }
   },
-  resolveLoader: {
-    moduleDirectories: [ 'node_modules' ]
-  },
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.html$/,
-        loader: "file?name=[name].[ext]",
-      },
-      {
-        test: /\.json$/,
-        loader: "json-loader"
+        loader: 'file?name=[name].[ext]',
       },
       {
         test: /\.(jpe?g|png|gif|svg)$/i,
-        loaders: 'file?hash=sha512&digest=hex&name=[hash].[ext]'
+        use: [{
+          loader: 'url-loader',
+          options: {
+            limit: 30000,
+            name: '[name]-[hash].[ext]'
+          }
+        }]
       },
       {
         test: /\.css$/,
-        loaders: [
+        use: [
           'style-loader',
-          'css-loader?importLoaders=1',
-          //'css-loader?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]!postcss-loader',
-          //'css-loader?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]',
+          'css-loader',
           'postcss-loader'
         ]
-      },
-      {
-        test: /\.mp3$/,
-        loader: "file?name=[name].[ext]",
       },
       {
         test: /\.jsx?$/,
         exclude: /node_modules/,
         loaders: [ 'react-hot-loader', 'babel-loader' ],
       }
-    ]
-  },
-  postcss: function (webpack) {
-    return [
-      require("postcss-import")({
-        root: process.cwd(),
-        path: [
-          path.resolve('./client')
-        ]
-      }),
-      require("postcss-url")(),
-      require("postcss-cssnext")({
-        browsers: [
-          'ie >= 10',
-          'Safari >= 7',
-          'ff >= 28',
-          'Chrome >= 34'
-        ]
-      }),
-      // add your "plugins" here
-      // ...
-      // and if you want to compress,
-      // just use css-loader option that already use cssnano under the hood
-      //require("postcss-browser-reporter")(),
-      //require("postcss-reporter")(),
     ]
   }
 }

@@ -12,18 +12,27 @@ import {
 import fs from 'fs';
 import path from 'path';
 import windowStateKeeper from 'electron-window-state';
-import ytdl from 'ytdl-core';
-const ffmpeg = require('fluent-ffmpeg');
-const config = JSON.parse(fs.readFileSync("package.json"));
+const config = {
+  paths: {
+    downloads: app.getPath('downloads'),
+    music: app.getPath('music'),
+    videos: app.getPath('videos'),
+    appData: app.getPath('appData'),
+    userData: app.getPath('userData')
+  },
+  package: JSON.parse(fs.readFileSync(path.resolve(app.getAppPath(), 'package.json'))),
+  env: process.env
+}//JSON.parse(fs.readFileSync("package.json"));
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let mainWindow;
+var application;
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', () => {
-  initMainWindow();
+  // Create the browser window.
+  application = new ElectonApplication();
 });
 
 // Create app icon
@@ -32,57 +41,6 @@ function makeIcon(name) {
   console.log('file: ', file)
   return nativeImage.createFromPath(file);
 }
-
-function createSong(fileName, bitrate = 192) {
-  return new Promise((resolve, reject) => {
-    let x = new ffmpeg(fileName)
-    .audioBitrate(bitrate)
-    .saveToFile(fileName + '.mp3')
-    .on('progress', function(info) {
-      console.log('progress ' + info.percent + '%');
-    })
-    .on('end', function() {
-      console.log('encoding finish')
-      return resolve(fileName + '.mp3');
-    });
-  })
-}
-
-function downloadSong () {
-  var url = 'https://www.youtube.com/watch?v=TGbwL8kSpEk';
-  var audioOutput = path.resolve(__dirname, 'sound.mp4');
-  ytdl(url, { filter: function(f) {
-    return f.container === 'mp4' && !f.encoding; } })
-    // Write audio to file since ffmpeg supports only one input stream.
-    .pipe(fs.createWriteStream(audioOutput))
-    .on('finish', function() {
-      ffmpeg()
-      .input(ytdl(url, { filter: function(f) {
-        return f.container === 'mp4' && !f.audioEncoding; } }))
-        .videoCodec('copy')
-        .input(audioOutput)
-        .audioCodec('copy')
-        .save(path.resolve(__dirname, 'output.mp4'))
-        .on('error', console.error)
-        .on('progress', function(info) {
-          console.log('progress ' + info.percent + '%', info.timemark);
-        })
-        .on('end', function() {
-          console.log('encoding finish')
-          console.log();
-        });
-    });
-}
-ipcMain.on('encode', (event, fileName) => {
-  console.log('econde: ', fileName);
-  downloadSong()
-  /*
-  createSong(fileName, 192)
-  .then(newFileName => {
-    event.sender.send('encoded', newFileName)
-  });
-  */
-})
 
 ipcMain.on('debug', (event, message) => {
   console.log(message);
@@ -100,15 +58,21 @@ class ElectonApplication {
       y: this.mainWindowState.y,
       width: this.mainWindowState.width,
       height: this.mainWindowState.height,
+      backgroundThrottling: false, // do not throttle animations/timers when page is background
       minWidth: 800,
       minHeight: 400,
+      darkTheme: true, // Forces dark theme (GTK+3)
+      titleBarStyle: 'hidden-inset', // Hide title bar (Mac)
+      useContentSize: true, // Specify web page size without OS chrome
       center: true,
       frame: false,
       icon: makeIcon('icon.png')
     });
 
     this.mainWindow.loadURL(`file://${__dirname}/index.html`);
-    this.mainWindow.webContents.openDevTools();
+    if (process.env.NODE_ENV === 'development') {
+      this.mainWindow.webContents.openDevTools();
+    }
     this.mainWindow.webContents.on('will-navigate', (event, url) => {
       if (url.indexOf('build/index.html#') < 0) {
         event.preventDefault();
@@ -116,7 +80,7 @@ class ElectonApplication {
     });
 
     this.mainWindowState.manage(this.mainWindow);
-    initializeMediaShortcuts();
+    this.initializeMediaShortcuts();
     menuBar();
 
     this.showAndFocus = this.showAndFocus.bind(this);
@@ -126,26 +90,32 @@ class ElectonApplication {
     this.mainWindow.webContents.on('did-finish-load', this.didFinishLoad);
 
     app.on('activate', this.showAndFocus);
+    app.on('will-quit', this.willQuit);
     ipcMain.on('showApp', this.showAndFocus);
     ipcMain.on('maximizeApp', this.maximizeApp);
-
+    ipcMain.on('minimizeApp', this.minimizeApp);
+    ipcMain.on('hideApp', this.hideApp);
+    ipcMain.on('closeApp', this.closeApp);
+    ipcMain.on('destroyApp', this.destroyApp);
   }
 
-  didFinishLoad () {
+  didFinishLoad = () => {
     this.mainWindow.setTitle('Soundnode');
     this.mainWindow.show();
     this.mainWindow.focus();
     this.mainWindow.webContents.send('config' , config);
     this.mainWindow.webContents.send('systemPreferences' , systemPreferences);
-    console.log(systemPreferences)
-
   }
-  showAndFocus () {
+
+  showAndFocus = event => {
     this.mainWindow.show();
     this.mainWindow.focus();
   }
 
-  maximizeApp () {
+  /**
+  * Receive maximize event and trigger command
+  */
+  maximizeApp = event => {
     if (this.mainWindow.isMaximized()) {
       this.mainWindow.unmaximize();
     } else {
@@ -153,98 +123,56 @@ class ElectonApplication {
     }
   }
 
-  makeTray (name) {
-    let file = path.join(__dirname, '../' , 'media', name);
-    let icon = nativeImage.createFromPath(file);
-    icon = icon.resize({
-      width: 16,
-      height: 16
-    })
-    let appIcon = new Tray(icon);
+  /**
+  * Receive minimize event and trigger command
+  */
+  minimizeApp = event => {
+    return this.mainWindow.minimize();
   }
-}
 
-// Create the browser window.
-function initMainWindow() {
-
-  let application = new ElectonApplication();
-}
-
-app.on('will-quit', () => {
-  // Unregister all shortcuts.
-  globalShortcut.unregisterAll()
-})
-
-app.on('activate', () => {
-  //showAndFocus();
-});
-
-/**
- * Receive maximize event and trigger command
- */
-ipcMain.on('maximizeApp', () => {
-  /*if (mainWindow.isMaximized()) {
-    mainWindow.unmaximize();
-  } else {
-    mainWindow.maximize();
-  }*/
-});
-
-/**
- * Receive minimize event and trigger command
- */
-ipcMain.on('minimizeApp', () => {
-  mainWindow.minimize()
-});
-
-/**
- * Receive hide event and trigger command
- */
-ipcMain.on('hideApp', () => {
-  //mainWindow.hide();
-});
-
-ipcMain.on('showApp', () => {
-  //showAndFocus();
-});
-
-/**
- * Receive close event and trigger command
- */
-ipcMain.on('closeApp', () => {
-  if (process.platform !== "darwin") {
-    mainWindow.destroy();
-  } else {
-    mainWindow.hide();
+  /**
+  * Receive hide event and trigger command
+  */
+  hideApp = event => {
+    return this.mainWindow.hide();
   }
-});
 
-//
-ipcMain.on('destroyApp', () => {
-  mainWindow.close();
-});
+  /**
+  * Receive close event and trigger command
+  */
+  closeApp = event => {
+    if (process.platform !== "darwin") {
+      this.mainWindow.destroy();
+    } else {
+      this.mainWindow.hide();
+    }
+  }
 
-function showAndFocus() {
-  mainWindow.show();
-  mainWindow.focus();
-}
+  destroyApp = event => {
+    return this.mainWindow.close();
+  }
 
-function initializeMediaShortcuts() {
-  globalShortcut.register('MediaPlayPause', () => {
-    mainWindow.webContents.send('MediaPlayPause');
-  });
+  willQuit = event => {
+    return globalShortcut.unregisterAll();
+  }
 
-  globalShortcut.register('MediaStop', () => {
-    mainWindow.webContents.send('MediaStop');
-  });
+  initializeMediaShortcuts() {
+    globalShortcut.register('MediaPlayPause', () => {
+      this.mainWindow.webContents.send('MediaPlayPause');
+    });
 
-  globalShortcut.register('MediaPreviousTrack', () => {
-    mainWindow.webContents.send('MediaPreviousTrack');
-  });
+    globalShortcut.register('MediaStop', () => {
+      this.mainWindow.webContents.send('MediaStop');
+    });
 
-  globalShortcut.register('MediaNextTrack', () => {
-    mainWindow.webContents.send('MediaNextTrack');
-  });
+    globalShortcut.register('MediaPreviousTrack', () => {
+      this.mainWindow.webContents.send('MediaPreviousTrack');
+    });
+
+    globalShortcut.register('MediaNextTrack', () => {
+      this.mainWindow.webContents.send('MediaNextTrack');
+    });
+  }
 }
 
 function menuBar() {

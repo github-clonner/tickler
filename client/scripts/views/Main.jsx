@@ -1,4 +1,4 @@
-import { remote, ipcRenderer } from 'electron';
+import { remote, ipcRenderer, app } from 'electron';
 import React from 'react';
 import { render } from 'react-dom';
 import ReactDOMServer from 'react-dom/server';
@@ -21,6 +21,7 @@ export default class Main extends React.Component {
   
   componentDidMount() {
     ipcRenderer.once('config', (event, config) => {
+      console.debug(config);
       this.setState(prevState => ({
         config: config
       }));

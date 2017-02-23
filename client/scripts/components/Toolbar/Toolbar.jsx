@@ -7,6 +7,10 @@ import * as Actions from 'actions/Player';
 
 import './Toolbar.css';
 
+import { coverflow, equalizer, levels } from '../../../../assets/images';
+
+const images = { coverflow, equalizer, levels };
+
 function mapStateToProps(state) {
   return {
     toolbar: state.Player
@@ -40,7 +44,7 @@ const Toolbar = (props) =>
           }}
         />
         <label className="radio-button" htmlFor={button}>
-        <img src={path.resolve(`assets/images/${button}.svg`)}></img>
+        <img src={images[button]}></img>
         </label>
       </li>);
     })

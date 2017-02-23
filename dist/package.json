@@ -1,7 +1,13 @@
 {
   "name": "Tickler",
   "version": "1.0.0",
-  "description": "",
-  "main": "bootstrapper.js",
+  "description": "Audio player",
+  "author": {
+    "name": "Benjamin Maggi",
+    "email": "benjaminmaggi@gmail.com",
+    "url": "https://github.com/maggiben"
+  },
+  "license": "MIT",
+  "main": "window.js",
   "js-flags": "--harmony"
 }

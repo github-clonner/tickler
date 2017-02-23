@@ -1,6 +1,14 @@
 import Chance from 'chance';
 import getObjectProperty from 'lodash/get';
 import { Youtube, Time } from '../lib';
+import os from 'os';
+
+const youtube = new Youtube({
+  apiKey: 'AIzaSyAPBCwcnohnbPXScEiVMRM4jYWc43p_CZU',
+  options: {
+    saveTo: os.tmpdir()
+  }
+});
 
 const options = {
   preload: {
@@ -38,22 +46,31 @@ export const downloadProgress = payload => ({type: 'DOWNLOAD_PROGRESS', payload}
 /* Async Operations */
 export function fetchItem (item, autoPlay = false) {
   return async function (dispatch, getState) {
-    let youtube = new Youtube('AIzaSyAPBCwcnohnbPXScEiVMRM4jYWc43p_CZU');
-    let onProgress = ({video, progress}) => {
+    const onProgress = ({video, progress}) => {
       dispatch(editItem(video.id, {
         isLoading: true,
         progress: progress
       }));
     };
 
-    let onInfo = ({video, info}) => {
+    const onInfo = ({video, info}) => {
       console.debug(video, info)
+    };
+
+    const onError = ({vide, error}) => {
+      dispatch(playNextItem(item.id));
+    };
+
+    const removeAllListeners = () => {
+      youtube.events.removeListener('progress', onProgress);
+      youtube.events.removeListener('info', onInfo);
     };
 
     let fileName = null;
 
     youtube.events.on('progress', onProgress);
     youtube.events.on('info', onInfo);
+    youtube.events.on('error', onError);
 
     dispatch(editItem(item.id, {
       isLoading: true,
@@ -73,8 +90,7 @@ export function fetchItem (item, autoPlay = false) {
         progress: 0
       }));
     } finally {
-      youtube.events.removeListener('progress', onProgress);
-      youtube.events.removeListener('info', onInfo);
+      removeAllListeners();
       dispatch(editItem(item.id, {
         isLoading: false
       }));
@@ -149,7 +165,6 @@ export function receiveItem (id) {
 export function fetchListItems (id) {
   return async function (dispatch, getState) {
     let state = getState();
-    let youtube = new Youtube('AIzaSyAPBCwcnohnbPXScEiVMRM4jYWc43p_CZU');
     let playList = await youtube.getPlayListItems(id);
     let ids = playList.map(item => getObjectProperty(item, 'snippet.resourceId.videoId'));
     let {items} = await youtube.getVideos(ids);
@@ -187,7 +202,6 @@ export const receivePlayList = payload => ({ type: 'RECEIVE_LIST', payload });
 export function fetchList (id) {
   return async function (dispatch, getState) {
     let state = getState();
-    let youtube = new Youtube('AIzaSyAPBCwcnohnbPXScEiVMRM4jYWc43p_CZU');
     try {
       let playList = await youtube.getPlayList(id);
       let item = playList.items.pop();
