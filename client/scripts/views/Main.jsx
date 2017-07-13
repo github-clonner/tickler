@@ -5,7 +5,7 @@ import ReactDOMServer from 'react-dom/server';
 import { Link } from 'react-router';
 
 import styles from 'styles/main.css';
-import { Header, Toolbar, Player, List, CoverFlow, Equalizer, DragDrop } from '../components';
+// import { Header, Toolbar, Player, List, CoverFlow, Equalizer, DragDrop } from '../components';
 
 export default class Main extends React.Component {
   state = {
@@ -30,18 +30,7 @@ export default class Main extends React.Component {
 
   render () {
     return (
-      <div className="page">
-        <Header />
-        <Toolbar />
-        <CoverFlow />
-        <Equalizer />
-        <div className="page-content">
-          <main>
-            {this.props.children}
-          </main>
-        </div>
-        <Player />
-      </div>
+      <div className="page"></div>
     );
   }
 };

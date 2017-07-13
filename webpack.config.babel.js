@@ -51,9 +51,9 @@ export default {
       logLevel: 0
     }),
     new ElectronPlugin({
-      // if a file in this path is modified/emitted, electron will be restarted
+      // if a module ID matches this regex and that module has changed, electron will be restarted
       // *required*
-      relaunchPathMatch: './main',
+      test: /^.\/main/,
       // the path to launch electron with
       // *required*
       path: path.resolve('dist'),
