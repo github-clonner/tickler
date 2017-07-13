@@ -124,9 +124,9 @@ class About extends React.Component {
 }
 
 
-window.goUrl =  () => {
+window.goUrl =  (url) => {
   console.log('goto !')
-  store.dispatch(push('/about'))
+  store.dispatch(push(url || '/about'))
 }
 
 
@@ -139,12 +139,7 @@ render(
   <Provider store={store}>
     { /* ConnectedRouter will use the store from Provider automatically */ }
     <ConnectedRouter history={history}>
-      <div name="pedro">
-        
-          <Route path="/" component={App} />
-          <Route path="/about" component={About}/>
-        
-      </div>
+      { routes }
     </ConnectedRouter>
   </Provider>,
   document.getElementById('app')
