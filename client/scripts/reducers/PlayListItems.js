@@ -1,4 +1,8 @@
 import { List, Map, Record } from 'immutable';
+import { remote, ipcRenderer, app } from 'electron';
+ipcRenderer.once('config', (event, config) => {
+  console.debug(config);
+});
 
 const Item = Record({
   id: null,

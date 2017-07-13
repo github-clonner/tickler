@@ -97,7 +97,7 @@ const youtubeEvents = new YoutubeEvents();
 
 export default class Youtube {
 
-  constructor(apiKey) {
+  constructor({apiKey, options}) {
     this.apiKey = apiKey || 'AIzaSyAPBCwcnohnbPXScEiVMRM4jYWc43p_CZU';
     this.axios = axios.create({
       baseURL: 'https://www.googleapis.com/youtube/v3',
@@ -105,7 +105,8 @@ export default class Youtube {
         key: this.apiKey
       }
     });
-    this.events = youtubeEvents;//new YoutubeEvents();
+    this.options = Object.assign({}, options);
+    this.events = youtubeEvents;
   }
 
   async getVideos(ids) {
@@ -190,7 +191,7 @@ export default class Youtube {
     let mux = new EchoStream({
       writable: true
     });
-    let fileName = path.resolve(`./media/${sanitize(video.title)}`);
+    let fileName = path.resolve(this.options.saveDir, sanitize(video.title));
     let fileStream = fs.createWriteStream(fileName);
     return new Promise((resolve, reject) => {
       let yt = ytdl(uri, 'audioonly');

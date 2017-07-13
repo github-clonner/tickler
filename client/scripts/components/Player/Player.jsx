@@ -58,10 +58,11 @@ import musicmetadata from 'musicmetadata';
 import './Player.css';
 import 'styles/buttons.css';
 
-function mapStateToProps(state) {
+function mapStateToProps(state, ownProps) {
   return {
     list: state.PlayListItems,
-    audio: state.Audio
+    audio: state.Audio,
+    ownProps: ownProps
   };
 }
 
@@ -214,6 +215,7 @@ export default class Player extends Component {
   }
 
   componentDidMount () {
+    console.log('things:', this.props.ownProps)
     let {audio} = this.props;
     this.wavesurfer.init({
       container: this.refs.waves,
