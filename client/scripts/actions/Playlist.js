@@ -163,11 +163,13 @@ export function receiveItem (id) {
 }
 
 export function fetchListItems (id) {
+  console.log('fetchListItems')
   return async function (dispatch, getState) {
     let state = getState();
     let playList = await youtube.getPlayListItems(id);
     let ids = playList.map(item => getObjectProperty(item, 'snippet.resourceId.videoId'));
-    let {items} = await youtube.getVideos(ids);
+    let { items } = await youtube.getVideos(ids);
+    console.log('items', items)
     let chance = new Chance();
     let payload = items.map(item => {
       let time = new Time(getObjectProperty(item, 'contentDetails.duration'));
@@ -180,18 +182,6 @@ export function fetchListItems (id) {
         stars: chance.integer({min: 0, max: 5})
       };
     });
-    payload[0] = {
-      id: '_mVW8tgGY_w',
-      title: 'FurElise xx',
-      duration: 176,
-      file: 'media/FurElise.ogg',
-      stars: 3,
-      thumbnails: {
-        default: {
-          url: "https://pbs.twimg.com/profile_images/1119269505/0509071614Peter_Griffin.jpg"
-        }
-      }
-    };
     dispatch(receivePlayListItems(payload));
   };
 }

@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : Toolbar.jsx                                               //
-// @summary      : Toolbar component                                         //
+// @file         : index.jsx                                                 //
+// @summary      : Application entry point                                   //
 // @version      : 0.0.1                                                     //
 // @project      : tickelr                                                   //
 // @description  :                                                           //
@@ -35,56 +35,50 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-import path from 'path';
+import { remote, ipcRenderer, app } from 'electron';
 import React from 'react';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
-import classNames from 'classnames';
-import * as Actions from 'actions/Player';
+import { render } from 'react-dom';
+import ReactDOMServer from 'react-dom/server';
+import { Link } from 'react-router';
+import 'styles/main.css';
+import styles from './Main.css';
+import { Header, Toolbar, Player, List, CoverFlow, Equalizer, DragDrop } from '../../components';
 
-import './Toolbar.css';
-
-import { coverflow, equalizer, levels } from '../../../../assets/images';
-
-const images = { coverflow, equalizer, levels };
-
-function mapStateToProps(state) {
-  return {
-    toolbar: state.Player
+export default class Main extends React.Component {
+  state = {
+    config: {
+      dependencies: {}
+    }
   };
-}
 
-function mapDispatchToProps(dispatch) {
-  return {
-    actions: bindActionCreators(Actions, dispatch)
-  };
-}
+  constructor (context) {
+    super(context);
+    window.context = context;
+  }
+  
+  componentDidMount() {
+    ipcRenderer.once('config', (event, config) => {
+      console.debug(config);
+      this.setState(prevState => ({
+        config: config
+      }));
+    });
+  }
 
-const Toolbar = (props) =>
-  <ul className="toolbar">{Object.keys(props.toolbar.toJS()).map((button, index) => {
+  render () {
     return (
-      <li className="radio-button" key={index}>
-        <input
-          type="radio"
-          name="toolbar"
-          id={button}
-          value={button}
-          checked={props.toolbar[button]}
-          onChange={event => {
-            let { value } = event.target;
-            let { actions, toolbar } = props;
-            let options = Object.keys(toolbar.toJS()).reduce((previous, option) => {
-              previous[option] = (option === value);
-              return previous;
-            }, {});
-            actions.toolbarOptions(options);
-          }}
-        />
-        <label className="radio-button" htmlFor={button}>
-        <img src={images[button]}></img>
-        </label>
-      </li>);
-    })
-  }</ul>
-
-export default connect(mapStateToProps, mapDispatchToProps)(Toolbar);
+      <div className="page">
+        <Header /> 
+        <Toolbar />
+        <CoverFlow />
+        <Equalizer />
+        <div className="page-content">
+          <List className="list">>
+            { this.props.children }
+          </List>
+        </div>
+        <Player />
+      </div>
+    );
+  }
+};

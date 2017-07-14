@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : Stars.jsx                                                 //
-// @summary      : Stars component                                           //
+// @file         : List.jsx                                                  //
+// @summary      : List component                                            //
 // @version      : 0.0.1                                                     //
 // @project      : tickelr                                                   //
 // @description  :                                                           //
@@ -35,7 +35,8 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import path from 'path';
 import classNames from 'classnames';
 import { Time } from 'lib';

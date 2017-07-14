@@ -25,7 +25,7 @@ export default {
     path: path.resolve('dist'),
     filename: '[name].js'
   },
-  devtool: 'inline-source-map',
+  devtool: 'eval-source-map',
   target: 'electron-renderer',
   plugins: [
     new webpack.optimize.CommonsChunkPlugin({

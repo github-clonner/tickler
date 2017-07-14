@@ -38,7 +38,8 @@
 import fileSystem from 'fs';
 import path from 'path';
 import { remote } from 'electron';
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import WaveSurfer from 'wavesurfer.js';
 import debounce from 'lodash/debounce';
 
@@ -85,7 +86,7 @@ export default class Player extends Component {
   }
 
   static propTypes = {
-    list: React.PropTypes.instanceOf(List).isRequired,
+    list: PropTypes.instanceOf(List).isRequired,
     autoplay: PropTypes.bool.isRequired,
     volume: PropTypes.number.isRequired
   }

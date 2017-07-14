@@ -36,7 +36,9 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 import { remote } from 'electron';
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+
 // Import styles
 import './InputRange.css';
 

@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : Toolbar.jsx                                               //
-// @summary      : Toolbar component                                         //
+// @file         : index.jsx                                                 //
+// @summary      : Application entry point                                   //
 // @version      : 0.0.1                                                     //
 // @project      : tickelr                                                   //
 // @description  :                                                           //
@@ -35,56 +35,14 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-import path from 'path';
-import React from 'react';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
-import classNames from 'classnames';
-import * as Actions from 'actions/Player';
+import React, { Component } from 'react';
 
-import './Toolbar.css';
-
-import { coverflow, equalizer, levels } from '../../../../assets/images';
-
-const images = { coverflow, equalizer, levels };
-
-function mapStateToProps(state) {
-  return {
-    toolbar: state.Player
-  };
-}
-
-function mapDispatchToProps(dispatch) {
-  return {
-    actions: bindActionCreators(Actions, dispatch)
-  };
-}
-
-const Toolbar = (props) =>
-  <ul className="toolbar">{Object.keys(props.toolbar.toJS()).map((button, index) => {
+export default class About extends Component {
+  render () {
     return (
-      <li className="radio-button" key={index}>
-        <input
-          type="radio"
-          name="toolbar"
-          id={button}
-          value={button}
-          checked={props.toolbar[button]}
-          onChange={event => {
-            let { value } = event.target;
-            let { actions, toolbar } = props;
-            let options = Object.keys(toolbar.toJS()).reduce((previous, option) => {
-              previous[option] = (option === value);
-              return previous;
-            }, {});
-            actions.toolbarOptions(options);
-          }}
-        />
-        <label className="radio-button" htmlFor={button}>
-        <img src={images[button]}></img>
-        </label>
-      </li>);
-    })
-  }</ul>
-
-export default connect(mapStateToProps, mapDispatchToProps)(Toolbar);
+      <div>
+        <h1>About</h1>
+      </div>
+    );
+  }
+}

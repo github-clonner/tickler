@@ -97,33 +97,6 @@ const store = createStore(
 // https://github.com/zilverline/react-tap-event-plugin
 //injectTapEventPlugin();
 
-class App extends React.Component {
-
-    render() {
-
-        return (
-            <div>
-                <h1>App component</h1>
-                <br/>
-                <Link to="/about">About</Link>
-                {this.props.children}
-            </div>
-        )
-    }
-}
-
-class About extends React.Component {
-
-    render() {
-        return (
-            <div>
-                <h1>Kitchen sink component</h1>
-            </div>
-        )
-    }
-}
-
-
 window.goUrl =  (url) => {
   console.log('goto !')
   store.dispatch(push(url || '/about'))

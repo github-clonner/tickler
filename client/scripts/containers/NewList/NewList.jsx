@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : Toolbar.jsx                                               //
-// @summary      : Toolbar component                                         //
+// @file         : NewList.jsx                                               //
+// @summary      : Builds a list of files                                    //
 // @version      : 0.0.1                                                     //
 // @project      : tickelr                                                   //
 // @description  :                                                           //
@@ -35,22 +35,16 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-import path from 'path';
-import React from 'react';
+import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
-import classNames from 'classnames';
-import * as Actions from 'actions/Player';
-
-import './Toolbar.css';
-
-import { coverflow, equalizer, levels } from '../../../../assets/images';
-
-const images = { coverflow, equalizer, levels };
+import { connect } from 'react-redux'
+import { List, Map } from 'immutable';
+import * as Actions from 'actions/Playlist';
 
 function mapStateToProps(state) {
   return {
-    toolbar: state.Player
+    list: state.PlayListItems,
+    info: state.PlayList
   };
 }
 
@@ -60,31 +54,43 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-const Toolbar = (props) =>
-  <ul className="toolbar">{Object.keys(props.toolbar.toJS()).map((button, index) => {
-    return (
-      <li className="radio-button" key={index}>
-        <input
-          type="radio"
-          name="toolbar"
-          id={button}
-          value={button}
-          checked={props.toolbar[button]}
-          onChange={event => {
-            let { value } = event.target;
-            let { actions, toolbar } = props;
-            let options = Object.keys(toolbar.toJS()).reduce((previous, option) => {
-              previous[option] = (option === value);
-              return previous;
-            }, {});
-            actions.toolbarOptions(options);
-          }}
-        />
-        <label className="radio-button" htmlFor={button}>
-        <img src={images[button]}></img>
-        </label>
-      </li>);
-    })
-  }</ul>
+@connect(mapStateToProps, mapDispatchToProps)
+export default class NewList extends Component {
 
-export default connect(mapStateToProps, mapDispatchToProps)(Toolbar);
+  constructor (context) {
+    super(context);
+  }
+
+  componentDidMount () {
+    let { actions, location } = this.props;
+    actions.fetchList(location.state.list);
+    actions.fetchListItems(location.state.list);
+  }
+
+  render() {
+    let { location, list, info } = this.props;
+    return (
+      <div>
+        <h1>{ location.state.list }</h1>
+        <h1>{ location.state.video }</h1>
+        <hr />
+        <ul>
+          { 
+            Object.keys(info.toJS()).map(item => {
+              return <li key={item}><pre>{item}: {info.get(item)}</pre></li>
+            }) 
+          }
+        </ul>
+        <hr />
+        <ul>
+          {
+            list.map((item, index) => {
+              let song = item.toJS();
+              return <li key={index}>{song.title}</li>
+            })
+          }
+        </ul>
+      </div>
+    );
+  }
+}
