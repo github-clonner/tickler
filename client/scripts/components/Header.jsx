@@ -62,12 +62,6 @@ export default class Header extends Component {
     this.window = remote.getCurrentWindow();
   }
 
-  componentWillMount() {
-    console.log('props', this.props)
-    console.log('state', this.state)
-    console.log('contx', this.context)
-  }
-
   exit = () => {
     this.window.close();
   }

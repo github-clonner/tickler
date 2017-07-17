@@ -38,15 +38,15 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import Time from 'lib/Time';
-import format from '@maggiben/duration-format';
+import Time, { parseDuration } from 'lib/Time';
+import durationFormat from '@maggiben/duration-format';
 // Import styles
 import './TimeCode.css';
 
 export default class TimeCode extends Component {
   state = {
     format: false
-  }
+  };
 
   static defaultProps = {
     currentTime: 0,
@@ -56,13 +56,13 @@ export default class TimeCode extends Component {
   static propTypes = {
     currentTime: PropTypes.number,
     duration: PropTypes.number
-  }
+  };
 
   decodeTime (time) {
-    if(this.state.format) {
+    if (this.state.format) {
       time = this.props.duration - time;
     }
-    let currentTime = format(time * 1000, '#{2H}:#{2M}:#{2S}')
+    const currentTime = durationFormat(time * 1000, '#{2H}:#{2M}:#{2S}')
     return this.state.format ? `-${currentTime}` : currentTime;
   }
 
@@ -73,7 +73,12 @@ export default class TimeCode extends Component {
   }
 
   render () {
-    //format(this.props.time, '#{2H}:#{2M}:#{2S}')
-    return (<span className="time-code" onClick={this.toggleFormat}>{this.decodeTime(this.props.time)}</span>);
+    const duration = this.decodeTime(this.props.time);
+    return (<span className="time-code" onClick={this.toggleFormat}>{duration}</span>);
   }
 }
+
+export const TrackDuration = props => {
+  const { duration, format } = props;
+  return (<span>{durationFormat(parseDuration(duration), '#{2H}:#{2M}:#{2S}')}</span>);
+};

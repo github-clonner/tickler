@@ -1,18 +1,21 @@
 import React from 'react';
 import classNames from 'classnames';
 
-const Cover = (props) =>
-  <ul className="covers">{props.list.map((cover, index) => {
-      let style = classNames('cover', {
+const Cover = (props) => {
+  const { list, setTitle } = props;
+  return (<ul className="covers">{
+    list.map((cover, index) => {
+      const style = classNames('cover', {
         active: cover.get('isPlaying')
       });
-      let url = cover.getIn(['thumbnails', 'default', 'url'])
+      const url = cover.getIn(['thumbnails', 'default', 'url']);
       return (
-        <li className={style} key={index} onMouseOver={() => props.setTitle(cover)}>
+        <li className={style} key={index} onMouseOver={() => setTitle(cover)}>
           <img src={url} />
         </li>
       );
     })
-  }</ul>
+  }</ul>);
+}
 
 export default Cover;

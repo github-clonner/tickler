@@ -19,7 +19,7 @@ export default {
   context: path.resolve(__dirname, './client/scripts'),
   entry: {
     'bundle': ['babel-polyfill', './index.jsx'],
-    'vendor': ['react']
+    'vendor': ['react', 'redux', 'axios', 'ytdl-core', 'immutable']
   },
   output: {
     path: path.resolve('dist'),

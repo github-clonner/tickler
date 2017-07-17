@@ -39,30 +39,29 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import path from 'path';
 import classNames from 'classnames';
-import { Time } from 'lib';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux'
 import Immutable from 'immutable';
-import format from '@maggiben/duration-format';
 import * as Actions from 'actions/Playlist';
 import Stars from '../Stars/Stars';
 import Spinner from '../Spinner/Spinner';
+import { TrackDuration } from '../TimeCode/TimeCode';
 // Import styles
 import './List.css';
 
-function mapStateToProps(state) {
+const mapStateToProps = function (state) {
   return {
     list: state.PlayListItems
   };
 }
 
-function mapDispatchToProps(dispatch) {
+const mapDispatchToProps = function (dispatch) {
   return {
     actions: bindActionCreators(Actions, dispatch)
   };
 }
 
-var placeholder = document.createElement("li");
+const placeholder = document.createElement("li");
 placeholder.className = "placeholder";
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -82,9 +81,10 @@ export default class List extends Component {
   };
 
   componentDidMount () {
-    let { actions } = this.props;
+    const { actions } = this.props;
     //actions.fetchListItems('PLA0CA9B8A2D82264B');
-    actions.fetchListItems('PLkHvEl7zu06o70dpsiVrRbYFLWreD9Jcw');
+    // actions.fetchListItems('PLkHvEl7zu06o70dpsiVrRbYFLWreD9Jcw'); //PL7XlqX4npddfrdpMCxBnNZXg2GFll7t5y
+    actions.fetchListItems('PL7XlqX4npddfrdpMCxBnNZXg2GFll7t5y'); // Pageable
     this.props.placeholder.className = 'row placeholder';
   }
 
@@ -96,15 +96,6 @@ export default class List extends Component {
       return {
         'background': `linear-gradient(to right, #eee 0%, #eee ${progress * 100}%,#f6f6f6 ${progress * 100}%,#f6f6f6 100%)`
       };
-    }
-  }
-
-  computeDuration (duration) {
-    if(duration.constructor === String) {
-        return duration;
-    } else {
-        let time = new Time(duration);
-        return time.humanize();
     }
   }
 
@@ -188,7 +179,7 @@ export default class List extends Component {
 
 
   handleDoubleClick = song => {
-    let {actions} = this.props;
+    const { actions } = this.props;
     let options = {
       title: 'Now Playing',
       body: song.title,
@@ -235,21 +226,21 @@ export default class List extends Component {
   }
 
   renderItem () {
-    let {actions} = this.props;
+    const { actions, list } = this.props;
 
-    return this.props.list.map((item, index) => {
-      let song = item.toJS();
-      let style = classNames('row', {
+    return list.map((item, index) => {
+      const song = item.toJS();
+      const style = classNames('row', {
         active: song.isPlaying,
         selected: song.selected,
         loading: song.isLoading
       });
-      let exists = classNames('dot', {
+      const exists = classNames('dot', {
         local: song.file,
         'is-iconic': !song.isLoading
       });
 
-      let isPlayingIcon = song => {
+      const isPlayingIcon = song => {
         if (!song.file && !song.isLoading) {
           return 'wifi';
         } else if (song.isLoading) {
@@ -289,14 +280,14 @@ export default class List extends Component {
           <span className={exists}>{isPlayingIcon(song)}</span>
           <span><p>{song.title}</p></span>
           <Stars stars={song.stars}/>
-          <span>{format(song.duration, '#{2H}:#{2M}:#{2S}')}</span>
+          <TrackDuration duration={song.duration} format="#{2H}:#{2M}:#{2S}" />
         </li>
       );
     });
   }
 
   render () {
-    let dragList = classNames('list', {
+    const dragList = classNames('list', {
       'is-drag-drop': this.state.isDragDrop
     });
 

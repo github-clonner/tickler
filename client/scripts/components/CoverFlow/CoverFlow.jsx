@@ -51,10 +51,10 @@ export default class CoverFlow extends Component {
 
   makeCovers () {
     return this.props.list.map((cover, index) => {
-      let style = classNames('cover', {
+      const style = classNames('cover', {
         active: cover.get('isPlaying')
       });
-      let url = cover.getIn(['thumbnails', 'default', 'url'])
+      const url = cover.getIn(['thumbnails', 'default', 'url'])
       return (
         <li className={style} key={index} onMouseOver={() => this.onMouseOver(cover)}>
           <img src={url} />
@@ -64,8 +64,8 @@ export default class CoverFlow extends Component {
   }
 
   render () {
-    let {toolbar} = this.props;
-    let style = classNames('coverflow', {
+    const {toolbar} = this.props;
+    const style = classNames('coverflow', {
       active: toolbar.coverflow
     });
 

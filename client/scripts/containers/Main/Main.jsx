@@ -36,15 +36,12 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 import { remote, ipcRenderer, app } from 'electron';
-import React from 'react';
-import { render } from 'react-dom';
-import ReactDOMServer from 'react-dom/server';
-import { Link } from 'react-router';
+import React, { Component } from 'react';
 import 'styles/main.css';
 import styles from './Main.css';
 import { Header, Toolbar, Player, List, CoverFlow, Equalizer, DragDrop } from '../../components';
 
-export default class Main extends React.Component {
+export default class Main extends Component {
   state = {
     config: {
       dependencies: {}
@@ -58,7 +55,7 @@ export default class Main extends React.Component {
   
   componentDidMount() {
     ipcRenderer.once('config', (event, config) => {
-      console.debug(config);
+      console.log(config);
       this.setState(prevState => ({
         config: config
       }));

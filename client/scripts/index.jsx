@@ -118,15 +118,6 @@ render(
   document.getElementById('app')
 )
 
-/*
-render((
-  <Provider store={store}>
-    <Router history={history} routes={routes} />
-  </Provider>
-), domElement);
-*/
-
-
 
 
 
