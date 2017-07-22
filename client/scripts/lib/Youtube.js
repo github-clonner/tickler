@@ -45,10 +45,13 @@ import sanitize from 'sanitize-filename';
 import { EventEmitter } from 'events';
 import jsonata from 'jsonata';
 import Ajv from 'ajv';
+import skeemas from 'skeemas';
 import ApiProperties from '../../schemas/youtube.json';
+import GoogleApiDiscovery from './GoogleApiDiscovery';
 
-
-window.ApiProperties = ApiProperties;
+// const youtubeApi = new GoogleApiDiscovery('youtube', {
+//   version: 'v3'
+// });
 
 class EchoStream extends Stream.Writable {
   constructor(options) {
@@ -124,16 +127,31 @@ const customFormats = {
   }
 };
 
-const validateResponse = function () {
+const validateResponseV6 = function () {
   const ajv = new Ajv({
     formats: customFormats,
     allErrors: true,
-    unknownFormats: 'ignore'
+    unknownFormats: 'ignore',
+    // meta: false
   });
+  // const schemaDraft = await axios.get('http://json-schema.org/draft-03/schema').then(response => response.data);
   Object.keys(ApiProperties.schemas).forEach(schemaId => {
-    ajv.addSchema(ApiProperties.schemas[schemaId], schemaId);
+    const schemas = ApiProperties.schemas[schemaId];
+    ajv.addSchema(schemas, schemaId);
   });
   return ajv.validate.bind(ajv);
+}
+
+const validateResponse = function () {
+  const validator = skeemas();
+  const youtubeApi = new GoogleApiDiscovery('youtube', {
+    version: 'v3'
+  });
+  Object.keys(ApiProperties.schemas).forEach(schemaId => {
+    const schemas = ApiProperties.schemas[schemaId];
+    validator.addRef(schemas, schemaId);
+  });
+  return validator.validate;
 }
 
 /*
@@ -203,6 +221,10 @@ export class ApiConsumer {
 
   constructor(apiKey, options) {
     this.apiKey = apiKey;
+    //const googleApiDiscovery = new GoogleApiDiscovery('youtube');
+    //window.saas = googleApiDiscovery;
+    //console.log('googleApiDiscovery', googleApiDiscovery);
+
     const resources = Object.assign({}, ApiProperties.resources, options);
     this.axios = axios.create({
       baseURL: ApiProperties.baseURL,
@@ -219,9 +241,9 @@ export class ApiConsumer {
   buildResourceList (entities) {
     this.$resource = {};
     for(let [entity, resources] of Object.entries(entities)) {
-      console.log('resource', entity, Object.keys(resources));
+      // console.log('resource', entity, Object.keys(resources));
       this.$resource[entity] = Object.entries(resources.methods).reduce((methods, [name, config]) => {
-        console.log('method', name, config.path);
+        // console.log('method', name, config.path);
         const required = Object
         .entries(config.parameters)
         .filter(([ parameter, options ]) => {
@@ -249,7 +271,7 @@ export class ApiConsumer {
 
   serializer (params) {
     params = Object.assign({}, params);
-    const { id } = params;    
+    const { id } = params;
     if (Array.isArray(id) && id.length) {
       params.id = id.join(',');
       params.maxResults = id.length;
@@ -269,6 +291,7 @@ export default class Youtube {
   constructor({apiKey, options = {}}) {
     this.apiKey = apiKey;
     this.validate = validateResponse();
+    console.log('validate', this.validate)
     this.axios = axios.create({
       baseURL: 'https://www.googleapis.com/youtube/v3',
       paramsSerializer: this.serializer,
@@ -300,7 +323,7 @@ export default class Youtube {
 
   serializer (params) {
     params = Object.assign({}, params);
-    const { id } = params;    
+    const { id } = params;
     if (Array.isArray(id) && id.length) {
       params.id = id.join(',');
       params.maxResults = id.length;
@@ -382,7 +405,7 @@ export default class Youtube {
     } while(params.pageToken);
     return playlistItems;
   }
-  
+
   trackProgress = (video, size) => {
     let dataRead = 0;
     return data => {

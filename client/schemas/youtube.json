@@ -1566,7 +1566,7 @@
    "description": "Basic details about a comment, such as its author and text.",
    "properties": {
     "authorChannelId": {
-     "type": "string",
+     "type": "any",
      "description": "The id of the author's YouTube channel, if any."
     },
     "authorChannelUrl": {
