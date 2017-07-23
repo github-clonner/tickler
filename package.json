@@ -71,6 +71,7 @@
     "redux-thunk": "^2.2.0",
     "sanitize-filename": "^1.6.1",
     "skeemas": "^1.2.4",
+    "urijs": "^1.18.10",
     "wavesurfer.js": "^1.4.0",
     "ytdl-core": "^0.14.4"
   },

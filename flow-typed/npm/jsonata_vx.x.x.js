@@ -14,22 +14,22 @@
  */
 
 declare module 'jsonata' {
-  declare module.exports: any;
+
+  declare type Callback = (error: ?InvalidExpression, value: ?any) => void;
+
+  declare class InvalidExpression extends Error {
+    code: string;
+    position: number;
+    token: string;
+    value: string;
+  }
+
+  declare interface Jsonata {
+    assign(name: string, value: any): void;
+    evaluate(input: Object, bindings?: Object, callback?: Callback): void;
+    registerFunction(name: string, implementation: Function, signature?: string): void;
+  }
+
+  declare function jsonata(expression: string): Jsonata;
+  declare export default typeof jsonata;
 }
-
-// declare module 'jsonata' {
-
-//   declare class InvalidExpression extends Error {
-//     code: string;
-//     position: number;
-//     token: string;
-//     value: string;
-//   }
-
-//   declare type Callback = (error: ?Error, value: ?any) => void;
-
-//   declare module.exports: {
-//     (expression: string): void
-//     evaluate(input: Object, bindings?: Object, callback?: Callback): void
-//   }
-// }

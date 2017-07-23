@@ -154,144 +154,81 @@ const validateResponse = function () {
   return validator.validate;
 }
 
-/*
-"list": {
-     "id": "youtube.playlistItems.list",
-     "path": "playlistItems",
-     "httpMethod": "GET",
-     "description": "Returns a collection of playlist items that match the API request parameters. You can retrieve all of the playlist items in a specified playlist or retrieve one or more playlist items by their unique IDs.",
-     "parameters": {
-      "id": {
-       "type": "string",
-       "description": "The id parameter specifies a comma-separated list of one or more unique playlist item IDs.",
-       "location": "query"
-      },
-      "maxResults": {
-       "type": "integer",
-       "description": "The maxResults parameter specifies the maximum number of items that should be returned in the result set.",
-       "default": "5",
-       "format": "uint32",
-       "minimum": "0",
-       "maximum": "50",
-       "location": "query"
-      },
-      "onBehalfOfContentOwner": {
-       "type": "string",
-       "description": "Note: This parameter is intended exclusively for YouTube content partners.\n\nThe onBehalfOfContentOwner parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner.",
-       "location": "query"
-      },
-      "pageToken": {
-       "type": "string",
-       "description": "The pageToken parameter identifies a specific page in the result set that should be returned. In an API response, the nextPageToken and prevPageToken properties identify other pages that could be retrieved.",
-       "location": "query"
-      },
-      "part": {
-       "type": "string",
-       "description": "The part parameter specifies a comma-separated list of one or more playlistItem resource properties that the API response will include.\n\nIf the parameter identifies a property that contains child properties, the child properties will be included in the response. For example, in a playlistItem resource, the snippet property contains numerous fields, including the title, description, position, and resourceId properties. As such, if you set part=snippet, the API response will contain all of those properties.",
-       "required": true,
-       "location": "query"
-      },
-      "playlistId": {
-       "type": "string",
-       "description": "The playlistId parameter specifies the unique ID of the playlist for which you want to retrieve playlist items. Note that even though this is an optional parameter, every request to retrieve playlist items must specify a value for either the id parameter or the playlistId parameter.",
-       "location": "query"
-      },
-      "videoId": {
-       "type": "string",
-       "description": "The videoId parameter specifies that the request should return only the playlist items that contain the specified video.",
-       "location": "query"
-      }
-     },
-     "parameterOrder": [
-      "part"
-     ],
-     "response": {
-      "$ref": "PlaylistItemListResponse"
-     },
-     "scopes": [
-      "https://www.googleapis.com/auth/youtube",
-      "https://www.googleapis.com/auth/youtube.force-ssl",
-      "https://www.googleapis.com/auth/youtube.readonly",
-      "https://www.googleapis.com/auth/youtubepartner"
-     ],
-     "supportsSubscription": true
-    }
-*/
-export class ApiConsumer {
+// export class ApiConsumer {
 
-  constructor(apiKey, options) {
-    this.apiKey = apiKey;
-    //const googleApiDiscovery = new GoogleApiDiscovery('youtube');
-    //window.saas = googleApiDiscovery;
-    //console.log('googleApiDiscovery', googleApiDiscovery);
+//   constructor(apiKey, options) {
+//     this.apiKey = apiKey;
+//     //const googleApiDiscovery = new GoogleApiDiscovery('youtube');
+//     //window.saas = googleApiDiscovery;
+//     //console.log('googleApiDiscovery', googleApiDiscovery);
 
-    const resources = Object.assign({}, ApiProperties.resources, options);
-    this.axios = axios.create({
-      baseURL: ApiProperties.baseURL,
-      paramsSerializer: this.serializer,
-      params: {
-        key: this.apiKey,
-        part: 'id,snippet,contentDetails,status',
-      }
-    });
+//     const resources = Object.assign({}, ApiProperties.resources, options);
+//     this.axios = axios.create({
+//       baseURL: ApiProperties.baseURL,
+//       paramsSerializer: this.serializer,
+//       params: {
+//         key: this.apiKey,
+//         part: 'id,snippet,contentDetails,status',
+//       }
+//     });
 
-    this.buildResourceList(resources);
-  }
+//     this.buildResourceList(resources);
+//   }
 
-  buildResourceList (entities) {
-    this.$resource = {};
-    for(let [entity, resources] of Object.entries(entities)) {
-      // console.log('resource', entity, Object.keys(resources));
-      this.$resource[entity] = Object.entries(resources.methods).reduce((methods, [name, config]) => {
-        // console.log('method', name, config.path);
-        const required = Object
-        .entries(config.parameters)
-        .filter(([ parameter, options ]) => {
-          return options.required;
-        })
-        .map(([ parameter, options ]) => {
-          return {
-            [parameter]: options.default || null
-          };
-        });
-        return Object.assign(methods, {
-          [name]: {
-            method: config.httpMethod,
-            url: config.path,
-            params: {
-              key: this.apiKey,
-              required
-            }
-          }
-        });
-      }, {});
-    }
-    return this.$resource;
-  }
+//   buildResourceList (entities) {
+//     this.$resource = {};
+//     for(let [entity, resources] of Object.entries(entities)) {
+//       // console.log('resource', entity, Object.keys(resources));
+//       this.$resource[entity] = Object.entries(resources.methods).reduce((methods, [name, config]) => {
+//         // console.log('method', name, config.path);
+//         const required = Object
+//         .entries(config.parameters)
+//         .filter(([ parameter, options ]) => {
+//           return options.required;
+//         })
+//         .map(([ parameter, options ]) => {
+//           return {
+//             [parameter]: options.default || null
+//           };
+//         });
+//         return Object.assign(methods, {
+//           [name]: {
+//             method: config.httpMethod,
+//             url: config.path,
+//             params: {
+//               key: this.apiKey,
+//               required
+//             }
+//           }
+//         });
+//       }, {});
+//     }
+//     return this.$resource;
+//   }
 
-  serializer (params) {
-    params = Object.assign({}, params);
-    const { id } = params;
-    if (Array.isArray(id) && id.length) {
-      params.id = id.join(',');
-      params.maxResults = id.length;
-    } else if (id && id.length) {
-      params.maxResults = id.split(',').length;
-    }
-    // clean null undefined
-    const entries = Object.entries(params).filter(param => param.slice(-1).pop() != null);
-    const searchParams = new URLSearchParams(entries);
-    return searchParams.toString();
-  }
-}
+//   serializer (params) {
+//     params = Object.assign({}, params);
+//     const { id } = params;
+//     if (Array.isArray(id) && id.length) {
+//       params.id = id.join(',');
+//       params.maxResults = id.length;
+//     } else if (id && id.length) {
+//       params.maxResults = id.split(',').length;
+//     }
+//     // clean null undefined
+//     const entries = Object.entries(params).filter(param => param.slice(-1).pop() != null);
+//     const searchParams = new URLSearchParams(entries);
+//     return searchParams.toString();
+//   }
+// }
 
-window.$re = new ApiConsumer('abc', {});
+// window.$re = new ApiConsumer('abc', {});
 
 export default class Youtube {
   constructor({apiKey, options = {}}) {
     this.apiKey = apiKey;
     this.validate = validateResponse();
-    console.log('validate', this.validate)
+    // console.log('validate', this.validate)
     this.axios = axios.create({
       baseURL: 'https://www.googleapis.com/youtube/v3',
       paramsSerializer: this.serializer,
@@ -361,7 +298,7 @@ export default class Youtube {
       return this.axios.get('/videos', { params })
       .then(response => {
         const isValid = this.validate('VideoListResponse', response);
-        console.log('isValid', isValid);
+        // console.log('isValid', isValid);
         if(isValid) {
           return response
         } else {
@@ -395,7 +332,7 @@ export default class Youtube {
         const { items, nextPageToken } = result;
         // remove invalids with .filter(item => item.status.privacyStatus != 'public')
         const isValid = this.validate('PlaylistItemListResponse', result);
-        console.log('isValid', isValid)
+        // console.log('isValid', isValid)
         playlistItems.push(...items);
         params.pageToken = nextPageToken;
       } catch (error) {

@@ -40,8 +40,26 @@
 import fs from 'fs';
 import path from 'path';
 import axios from 'axios';
-import jsonata from 'jsonata';
+import URITemplate from 'urijs/src/URITemplate';
 import skeemas from 'skeemas';
+
+/* Type Definitions */
+import type { Axios } from 'axios';
+
+export type DiscoveryParams = {
+  path: string,
+  name: string, // The name of the API. (string)
+  version: string, // The version of the API. (string)
+  params: {
+    fields: string // Selector specifying which fields to include in a partial response.
+  }
+};
+
+export type DirectoryItem = {
+  discoveryRestUrl: string,
+  version: string,
+  documentationLink: string
+};
 
 const cache = new Map();
 
@@ -118,7 +136,6 @@ export default class ApiDiscovery {
   }
 }
 
-
 export class GoogleApi<Auth, Options> {
   options: any;
   auth: any;
@@ -130,7 +147,7 @@ export class GoogleApi<Auth, Options> {
     }
   });
 
-  constructor(auth: Auth, options: Options) {
+  constructor(auth?: Auth, options?: Options) {
     this.$http.interceptors.response.use(response => {
       const { params } = response.config;
       if (!params) {
@@ -162,14 +179,15 @@ export class GoogleApi<Auth, Options> {
   }
 
 
-  async list () : any {
+  async list () : Promise<*> {
     const directory = await this.get();
     const { items } = directory;
     console.log('directoryList', items);
     return items;
   }
 
-  async get (url?: string, params?: any) : any {
+  async get (url?: string, params?: any) : Promise<*> {
+    console.log('get', url, params, this.$http.defaults.baseURL);
     try {
       return await this.$http.get(url, { params })//.then(response => response.data);
     } catch (error) {
@@ -177,3 +195,119 @@ export class GoogleApi<Auth, Options> {
     }
   }
 }
+
+type Resource = {
+  methods: any
+};
+
+// import ApiProperties from '../../schemas/youtube.json';
+export class ApiConsumer {
+
+  options: Object;
+  auth: any;
+  apiKey: string;
+  $http: Axios = axios.create({
+    baseURL: 'https://www.googleapis.com',
+    params: {
+      auth: this.auth
+    }
+  });
+  $resource: any = {};
+
+  constructor(apiKey: string, options: Object, resources: Array<?Resource>) {
+    this.apiKey = apiKey;
+    const ApiProperties = require('../../schemas/youtube.json');
+    this.buildResourceList(ApiProperties.resources);
+  }
+
+  buildResourceList (resources: Array<?Resource>) {
+    for(let [entity, resource] of Object.entries(resources)) {
+      const { methods } = (resource: any);
+      this.$resource[entity] = Object.entries(methods).reduce((methods, [ name, config ]) => {
+        const { parameters, httpMethod, path } = (config: any);
+
+        /* Get required parameters */
+        const $required = Object
+        .entries(parameters)
+        .filter(([ parameter, options ]) => {
+          return (options: any).required;
+        });
+
+        /* Get default parameters */
+        const $default = Object
+        .entries(parameters)
+        .filter(([ parameter, options ]) => {
+          // return {
+          //   [parameter]: (options: any).default || null
+          // };
+          return (options: any).default;
+        })
+        .map(([ parameter, options ]) => {
+          return {
+            [parameter]: (options: any).default
+          };
+        });
+
+        return Object.assign(methods, {
+          [name]: {
+            method: httpMethod,
+            url: path,
+            params: {
+              $default,
+              $required
+            }
+          }
+        });
+      }, {});
+    }
+    return this.$resource;
+  }
+}
+
+export class Discover extends GoogleApi {
+  apis: Array<DirectoryItem>;
+  discoveryParams: DiscoveryParams = {
+    path: '/{name}/{version}/apis',
+    name: 'discovery',
+    version: 'v1',
+    params: {
+      fields: 'discoveryVersion,items,kind'
+    }
+  };
+
+  constructor(...args: any) {
+    super(...args);
+    const { params, path } = this.discoveryParams;
+    const template = URITemplate(path);
+    const url =  template.expand(this.apiDiscoveryParams);
+    console.log('Discovery URL:', url, params);
+    this.buildApiDirectory(url, params);
+  }
+
+  async buildApiDirectory (url: string, params?: any) {
+    const directory = await this.get(url, params);
+    const { items } = directory;
+    const apis = items
+    .filter(item => {
+      return item.preferred
+    })
+    .reduce((dictionary, item) => {
+      return Object.assign(dictionary, {
+        [item.id]: item
+      });
+    }, {});
+    console.log('directoryList', apis);
+    this.apis = apis;
+    return apis;
+  }
+}
+
+
+const getApis = function () {
+  const allApis: Discover = new Discover();
+  return allApis;
+}
+
+const apiConsumer: ApiConsumer = new ApiConsumer('abc', {}, require('../../schemas/youtube.json').resources);
+window.re = apiConsumer;
+window.aes = getApis();
