@@ -48,10 +48,11 @@ import type { Axios } from 'axios';
 
 export type DiscoveryParams = {
   path: string,
-  name: string, // The name of the API. (string)
-  version: string, // The version of the API. (string)
+  name?: string, // The name of the API. (string)
+  version?: string, // The version of the API. (string)
   params: {
-    fields: string // Selector specifying which fields to include in a partial response.
+    fields?: string, // Selector specifying which fields to include in a partial response.
+    preferred?: boolean
   }
 };
 
@@ -120,13 +121,6 @@ export default class ApiDiscovery {
     return service;
   }
 
-  async list () {
-    const directory = await this.get();
-    const { items } = directory;
-    console.log('directoryList', items);
-    return items;
-  }
-
   async get (url?: string, params?: any) : any {
     try {
       return await this.$http.get(url, { params })//.then(response => response.data);
@@ -178,14 +172,6 @@ export class GoogleApi<Auth, Options> {
     return searchParams.toString();
   }
 
-
-  async list () : Promise<*> {
-    const directory = await this.get();
-    const { items } = directory;
-    console.log('directoryList', items);
-    return items;
-  }
-
   async get (url?: string, params?: any) : Promise<*> {
     console.log('get', url, params, this.$http.defaults.baseURL);
     try {
@@ -200,7 +186,6 @@ type Resource = {
   methods: any
 };
 
-// import ApiProperties from '../../schemas/youtube.json';
 export class ApiConsumer {
 
   options: Object;
@@ -264,48 +249,122 @@ export class ApiConsumer {
   }
 }
 
-export class Discover extends GoogleApi {
+export type DirectoryList = {
+  id: string,
+  discoveryVersion?: string,
+  items: Array<DirectoryItem>,
+  kind: string,
+  type: string
+};
+
+const SchemaKeys = {
+  id: string,
+  type: string,
+  $ref: string,
+  description: string,
+  default: string,
+  required: boolean,
+  format: string,
+  pattern: string,
+  minimum: string,
+  maximum: string,
+  enum: Array<string>,
+  enumDescriptions: Array<string>,
+  repeated: boolean,
+  location: string,
+  properties: any,
+  additionalProperties: any,
+  items: any,
+  annotations: {
+    required: Array<string>,
+  }
+};
+
+type Schema = $Keys<typeof SchemaKeys>;
+
+
+/*
+
+Retrieve the list of APIs supported at this endpoint. Try it now.
+
+The discovery.apis.list method returns the list all APIs supported
+by the Google APIs Discovery Service. The data for each entry is a subset
+of the Discovery Document for that API, and the list provides a directory
+of supported APIs.
+If a specific API has multiple versions, each of the versions has its own entry in the list.
+
+*/
+export class ApiDirectory extends GoogleApi {
   apis: Array<DirectoryItem>;
   discoveryParams: DiscoveryParams = {
-    path: '/{name}/{version}/apis',
-    name: 'discovery',
+    path: '/discovery/{version}/apis',
     version: 'v1',
     params: {
-      fields: 'discoveryVersion,items,kind'
+      preferred: true
     }
   };
 
   constructor(...args: any) {
     super(...args);
-    const { params, path } = this.discoveryParams;
+
+    const { path, name, version, params } = this.discoveryParams;
     const template = URITemplate(path);
-    const url =  template.expand(this.apiDiscoveryParams);
-    console.log('Discovery URL:', url, params);
-    this.buildApiDirectory(url, params);
+    const url = template.expand({ version });
+
+    const apiDirectory = this.getApiDirectory(url, params);
   }
 
-  async buildApiDirectory (url: string, params?: any) {
-    const directory = await this.get(url, params);
-    const { items } = directory;
-    const apis = items
-    .filter(item => {
-      return item.preferred
-    })
-    .reduce((dictionary, item) => {
-      return Object.assign(dictionary, {
-        [item.id]: item
-      });
-    }, {});
-    console.log('directoryList', apis);
-    this.apis = apis;
-    return apis;
+  async getApiDirectory (url: string, params?: any) {
+    try {
+      const result = await this.get(url, params);//.then(response => response.data);
+      const schemas = await this.getShemas(result.items.find(item => item.name === 'youtube'));
+      console.log('ApiDirectory', schemas);
+      return result;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async getShemas (directory: DirectoryItem) : Promise<*> {
+    const { discoveryRestUrl } = directory;
+    const params = {
+      fields: 'schemas'
+    };
+    try {
+      const { schemas } = await this.get(discoveryRestUrl, params);//.then(response => response.data);
+      return schemas;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async getParameters (directory: DirectoryItem) {
+
+  }
+
+  async getResources (directory: DirectoryItem) {
+
   }
 }
 
+// const { items } = directory;
+
+// const apis = items
+// .filter(item => {
+//   return item.preferred
+// })
+// .reduce((dictionary, item) => {
+//   return Object.assign(dictionary, {
+//     [item.id]: item
+//   });
+// }, {});
+// console.log('directoryList', apis);
+// return apis;
+
 
 const getApis = function () {
-  const allApis: Discover = new Discover();
-  return allApis;
+  const apiDirectory: ApiDirectory = new ApiDirectory();
+  return apiDirectory;
 }
 
 const apiConsumer: ApiConsumer = new ApiConsumer('abc', {}, require('../../schemas/youtube.json').resources);
