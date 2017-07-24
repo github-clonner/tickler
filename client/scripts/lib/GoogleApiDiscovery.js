@@ -257,30 +257,41 @@ export type DirectoryList = {
   type: string
 };
 
-const SchemaKeys = {
-  id: string,
-  type: string,
-  $ref: string,
-  description: string,
-  default: string,
-  required: boolean,
-  format: string,
-  pattern: string,
-  minimum: string,
-  maximum: string,
-  enum: Array<string>,
-  enumDescriptions: Array<string>,
-  repeated: boolean,
-  location: string,
-  properties: any,
-  additionalProperties: any,
-  items: any,
-  annotations: {
-    required: Array<string>,
-  }
-};
+// type ParameterEx = {
+//   id: string,
+//   type?: string,
+//   $ref?: string,
+//   description?: string,
+//   default?: string,
+//   required?: boolean,
+//   format?: string,
+//   pattern?: string,
+//   minimum?: string,
+//   maximum?: string,
+//   enum?: Array<string>,
+//   enumDescriptions?: Array<string>,
+//   repeated?: boolean,
+//   location?: string,
+//   properties?: any,
+//   additionalProperties?: any,
+//   items?: any,
+//   annotations?: any
+// };
 
-type Schema = $Keys<typeof SchemaKeys>;
+
+// type ResourceEx = {
+//   id: string,
+//   parameters?: ParameterEx
+// };
+
+// const R: ResourceEx = {
+//   id: 'DEADBEEF',
+//   parameters: {
+//     woot: ParameterEx = {
+//       id: 'NUKE'
+//     }
+//   }
+// };
 
 
 /*
@@ -368,5 +379,5 @@ const getApis = function () {
 }
 
 const apiConsumer: ApiConsumer = new ApiConsumer('abc', {}, require('../../schemas/youtube.json').resources);
-window.re = apiConsumer;
-window.aes = getApis();
+// window.re = apiConsumer;
+// window.aes = getApis();

@@ -274,14 +274,14 @@ const schema = {
   }
 }
 
-const read = function (path) {
-  if (fs.existsSync(path)
-  try {
-    const content = fs.readFileSync(path, options);
-    return JSON.parse(content);
-  } catch (error) {
-    console.error(error);
-    throw error;
+const read = function (path, options) {
+  if (fs.existsSync(path)) {
+    try {
+      return JSON.parse(fs.readFileSync(path, options));
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   }
 };
 
