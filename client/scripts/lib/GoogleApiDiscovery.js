@@ -63,73 +63,7 @@ export type DirectoryItem = {
   documentationLink: string
 };
 
-const cache = new Map();
-
-export default class ApiDiscovery {
-  options: any;
-  apiKey: string;
-  $http: any = axios.create({
-    baseURL: 'https://www.googleapis.com/discovery/v1/apis',
-    paramsSerializer: this.serializer,
-    params: {
-      key: this.apiKey,
-      prettyPrint: false,
-      alt: 'json',
-      fields: null
-    }
-  });
-
-  constructor(apiKey: string, options: any) {
-    this.apiKey = apiKey;
-    this.options = options;
-    this.$http.interceptors.response.use(response => {
-      const { params } = response.config;
-      if (!params) {
-        return response.data;
-      }
-      else if (Array.isArray(params.fields) && params.fields.length) {
-        console.log('fields skipped');
-      } else if (params.fields && params.fields.length) {
-        console.log('fields', params.fields.split(','));
-      }
-      return response.data;
-    }, function (error) {
-      // Do something with response error
-      return Promise.reject(error);
-    });
-  }
-
-  serializer (params: any)  {
-    params = Object.assign({}, params);
-    const { fields } = params;
-    if (Array.isArray(fields) && fields.length) {
-      params.fields = fields.join(',');
-    }
-    // clean null undefined
-    const entries = Object.entries(params).filter(param => param.slice(-1).pop() != null);
-    /* $FlowIssue */
-    const searchParams: URLSearchParams = new URLSearchParams(entries);
-    return searchParams.toString();
-  }
-
-  async getDiscoveryService (url?: string) {
-    const params = {
-      fields: 'basePath,baseUrl,parameters,resources,schemas'
-    };
-    const service = await this.get('discovery/v1/rest', params);
-    const { schemas } = service;
-    console.log('getDiscoveryService', service, schemas);
-    return service;
-  }
-
-  async get (url?: string, params?: any) : any {
-    try {
-      return await this.$http.get(url, { params })//.then(response => response.data);
-    } catch (error) {
-      console.error(error);
-    }
-  }
-}
+var Cache = null;
 
 export class GoogleApi<Auth, Options> {
   options: any;
@@ -138,7 +72,7 @@ export class GoogleApi<Auth, Options> {
     baseURL: 'https://www.googleapis.com',
     paramsSerializer: this.serializer,
     params: {
-      auth: this.auth
+      key: 'AIzaSyAPBCwcnohnbPXScEiVMRM4jYWc43p_CZU'
     }
   });
 
@@ -174,9 +108,17 @@ export class GoogleApi<Auth, Options> {
   }
 
   async get (url?: string, params?: any) : Promise<*> {
-    // console.log('get', url, params, this.$http.defaults.baseURL);
+    // console.log('get', url, params);
     try {
-      return await this.$http.get(url, { params })//.then(response => response.data);
+      return await this.$http.get(url, { params });
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async request (config: any) : Promise<*> {
+    try {
+      return await this.$http(config);
     } catch (error) {
       console.error(error);
     }
@@ -187,69 +129,6 @@ type Resource = {
   methods: any
 };
 
-export class ApiConsumer {
-
-  options: Object;
-  auth: any;
-  apiKey: string;
-  $http: Axios = axios.create({
-    baseURL: 'https://www.googleapis.com',
-    params: {
-      auth: this.auth
-    }
-  });
-  $resource: any = {};
-
-  constructor(apiKey: string, options: Object, resources: Array<?Resource>) {
-    this.apiKey = apiKey;
-    const ApiProperties = require('../../schemas/youtube.json');
-    this.buildResourceList(ApiProperties.resources);
-  }
-
-  buildResourceList (resources: Array<?Resource>) {
-    for(let [entity, resource] of Object.entries(resources)) {
-      const { methods } = (resource: any);
-      this.$resource[entity] = Object.entries(methods).reduce((methods, [ name, config ]) => {
-        const { parameters, httpMethod, path } = (config: any);
-
-        /* Get required parameters */
-        const $required = Object
-        .entries(parameters)
-        .filter(([ parameter, options ]) => {
-          return (options: any).required;
-        });
-
-        /* Get default parameters */
-        const $default = Object
-        .entries(parameters)
-        .filter(([ parameter, options ]) => {
-          // return {
-          //   [parameter]: (options: any).default || null
-          // };
-          return (options: any).default;
-        })
-        .map(([ parameter, options ]) => {
-          return {
-            [parameter]: (options: any).default
-          };
-        });
-
-        return Object.assign(methods, {
-          [name]: {
-            method: httpMethod,
-            url: path,
-            params: {
-              $default,
-              $required
-            }
-          }
-        });
-      }, {});
-    }
-    return this.$resource;
-  }
-}
-
 export type DirectoryList = {
   id: string,
   discoveryVersion?: string,
@@ -258,46 +137,9 @@ export type DirectoryList = {
   type: string
 };
 
-// type ParameterEx = {
-//   id: string,
-//   type?: string,
-//   $ref?: string,
-//   description?: string,
-//   default?: string,
-//   required?: boolean,
-//   format?: string,
-//   pattern?: string,
-//   minimum?: string,
-//   maximum?: string,
-//   enum?: Array<string>,
-//   enumDescriptions?: Array<string>,
-//   repeated?: boolean,
-//   location?: string,
-//   properties?: any,
-//   additionalProperties?: any,
-//   items?: any,
-//   annotations?: any
-// };
-
-
-// type ResourceEx = {
-//   id: string,
-//   parameters?: ParameterEx
-// };
-
-// const R: ResourceEx = {
-//   id: 'DEADBEEF',
-//   parameters: {
-//     woot: ParameterEx = {
-//       id: 'NUKE'
-//     }
-//   }
-// };
-
-
 /*
 
-Retrieve the list of APIs supported at this endpoint. Try it now.
+Retrieve the list of APIs supported at this endpoint.
 
 The discovery.apis.list method returns the list all APIs supported
 by the Google APIs Discovery Service. The data for each entry is a subset
@@ -306,8 +148,8 @@ of supported APIs.
 If a specific API has multiple versions, each of the versions has its own entry in the list.
 
 */
+
 export class ApiDirectory extends GoogleApi {
-  apis: Array<DirectoryItem>;
   discoveryService: ServiceParams = {
     name: 'discovery',
     path: 'https://www.googleapis.com/discovery/{version}/apis',
@@ -316,96 +158,218 @@ export class ApiDirectory extends GoogleApi {
       preferred: true
     }
   };
+  service: any;
+  discovery: any;
 
   constructor(...args: any) {
     super(...args);
   }
 
-  async getApiDirectory () : Promise<*> {
-    const { path, name, version, params } = this.discoveryService;
+  async init () {
+    if (Cache && Cache.has('discovery')) {
+      return this.service;
+    }
     try {
-      const template = URITemplate(path);
-      const url = template.expand({ version });
-
-      const result = await this.get(url, params);
-      const schemas = await this.getShemas(result.items.find(item => item.name === 'youtube'));
-      console.log('ApiDirectory', schemas);
-      return result;
+      const item = await this.list('discovery');
+      const description = await this.getRest(item);
+      this.service = { item, description };
+      return this.service;
     } catch (error) {
       console.error(error);
+      throw error;
     }
   }
 
-  get urlXXX () {
-
+  url (name?: string, preferred?: boolean = true) {
     const googleapis = 'https://www.googleapis.com';
-
     const service = {
-      options: {
-        name: 'discovery',
-        version: 'v1'
-      },
-      params: {
-        name: 'discovery',
-        preferred: true
-      },
+      params: { name, preferred },
       url: {
         hostname: 'www.googleapis.com',
         protocol: 'https:',
-        pathname: '{name}/{version}/apis',
+        pathname: 'discovery/v1/apis',
       }
     };
-    const baseURL = new URL(googleapis);
-    baseURL.pathname = URITemplate(discoveryUrl.pathname).expand(service);
-    baseURL.search = new URLSearchParams(service.params).toString();
+    const baseURL = new URL(service.url.pathname, googleapis);
+    // Filter empty
+    //const params = Object.entries(service.params).filter(param => param.slice(-1).pop() != null);
+    //baseURL.search = new URLSearchParams(params).toString();
     return baseURL.toString();
   }
 
-  get url () {
-    const { path, name, version } = this.discoveryService;
-    return URITemplate(path).expand({ name, version });
+  async list (name?: string, preferred?: boolean = true) : Promise<*> {
+    if(name && Cache && Cache.has(name)) {
+      return Cache.get(name);
+    }
+
+    try {
+      const params = { name, preferred };
+      const { items } = await this.get('discovery/v1/apis', params);
+      Cache = new Map(items.reduce((entries, item) => entries.concat([[item.name, item]]), []));
+      if(name && Cache) {
+        return Cache.get(name);
+      } else {
+        return Array.from(Cache.values());
+      }
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   }
 
-  async list () : Promise<*> {
+  async getRest (item: string | DirectoryItem, params?: any) : Promise<*> {
     try {
-      return await this.get(this.url, params);
+      if (typeof item === 'string') {
+        item = await this.list(item);
+      }
+      const { discoveryRestUrl } = item;
+      const result = await this.get(discoveryRestUrl, params);
       return result;
     } catch (error) {
       console.error(error);
-      return error;
+      throw error;
     }
   }
 
-  async getRest (service: ServiceParams) : Promise<*> {
-    const { path, version, params } = this.discoveryService;
-    const url = URITemplate(path).expand({ version });
-    try {
-      const { schemas } = await this.get(url, params);//.then(response => response.data);
-      return schemas;
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  async getShemas (directory: DirectoryItem) : Promise<*> {
-    console.log('getShemas', directory)
-    const { discoveryRestUrl } = directory;
+  async getShemas (directoryItem: DirectoryItem) : Promise<*> {
     const params = {
       fields: 'schemas'
     };
     try {
-      const { schemas } = await this.get(discoveryRestUrl, params);//.then(response => response.data);
+      const { schemas } = await this.getRest(DirectoryItem, params);
       return schemas;
     } catch (error) {
       console.error(error);
+      throw error;
+    }
+  }
+}
+
+export class ApiClient extends GoogleApi {
+
+  constructor (...args: any) {
+    super(...args);
+  }
+
+  async init (name: string) {
+    const directory = new ApiDirectory();
+    const item = await directory.list(name);
+    const description = await directory.getRest(item);
+    this.service = description;
+    this.$resource = this.buildResources(description.resources);
+    return this;
+  }
+
+  dict (entries) {
+    if(Array.isArray(entries) && entries.length) {
+      return Object.assign({}, ...entries.map( ([key, value]) => ({[key]: value}) ));
+    } else {
+      return null;
     }
   }
 
-  async getParameters (directory: DirectoryItem) {
+  validator (parameters: any) {
 
+    const required = Object
+      .entries(parameters)
+      .filter(([ name, parameter ]) => parameter.required)
+      .map(([ name, parameter ]) => ([name, null]));
+      
+    const assumed = Object
+      .entries(parameters)
+      .filter(([ name, parameter ]) => parameter.default)
+      .map(([ name, parameter ]) => ([name, parameter.default]));
+
+    const entries = Object.entries(parameters);
+    const keys = Object.keys(parameters);
+    const requiredX = validEntries.filter(([ key, value ]) => value.required).map(([ name, parameter ]) => name);
+    const schema = validEntries.reduce((schema, [key, value]) => {
+      return Object.assign({}, schema, {
+        [key]: {
+          type: value.type,
+          default: value.default,
+          minimum: value.minimum,
+          maximum: value.maximum,
+        }
+      });
+    }, {});
   }
 
-  async getResources (directory: DirectoryItem) {
+  buildMethods (methods) {
+    return methods.reduce((actions, [ name, { httpMethod, path, parameters, response } ]) => {
+      const required = Object
+        .entries(parameters)
+        .filter(([ name, parameter ]) => parameter.required)
+        .map(([ name, parameter ]) => ([name, null]));
+      
+      const assumed = Object
+        .entries(parameters)
+        .filter(([ name, parameter ]) => parameter.default)
+        .map(([ name, parameter ]) => ([name, parameter.default]));
 
+      const request = (parameters: any, method: any) => {
+        const validEntries = Object.entries(parameters);
+        const validKeys = Object.keys(parameters);
+        const requiredKeys = validEntries.filter(([ key, value ]) => value.required).map(([ name, parameter ]) => name);
+        const validSchema = validEntries.reduce((schema, [key, value]) => {
+          return Object.assign({}, schema, {
+            [key]: {
+              type: value.type,
+              default: value.default,
+              minimum: value.minimum,
+              maximum: value.maximum,
+            }
+          });
+        }, {});
+
+        return async (params: any) => {
+          try {
+            
+            const hasValidParams = Object.entries(params)
+            .every(function ([key, value]) {
+              return validKeys.includes(key) && skeemas.validate(value, validSchema[key]);
+            });
+
+            const hasRequiredParams = requiredKeys.every(param => {
+              return Object.keys(params).includes(param);
+            });
+            
+            // console.log('validKeys', validKeys)
+            // console.log('requiredKeys', requiredKeys);
+            // console.log('hasValidParams', hasValidParams)
+            // console.log('hasRequiredParams', hasRequiredParams)
+            // console.log('params', params);
+
+            return await this.request(Object.assign({}, method, { params }));
+          } catch (error) {
+            console.error(error);
+            throw error;
+          }
+        }
+      }
+
+      // const validator = this.validator(parameters);
+
+      return Object.assign({}, actions, {
+        [name]: request(parameters, {
+          method: httpMethod,
+          url: this.service.basePath + path,
+          params: {
+            ...this.dict(required),
+            ...this.dict(assumed)
+          }
+        })
+      });
+    }, {});
+  }
+
+  buildResources (resources) {
+    return Object.entries(resources).reduce((resources, [ name, { methods } ]) => {
+      return Object.assign({}, resources, {
+        [name]: this.buildMethods(Object.entries(methods))
+      })
+    }, {});
   }
 }
+
+
