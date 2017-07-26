@@ -27,3 +27,7 @@ media/
 
 # Linter cache
 .eslintcache
+coverage/
+.nyc_output/
+dist/vendor.bundle.js
+dist/window.js
