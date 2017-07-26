@@ -43,6 +43,7 @@ import axios from 'axios';
 import { URL, URLSearchParams } from 'url';
 import URITemplate from 'urijs/src/URITemplate';
 import skeemas from 'skeemas';
+import safe from './safeobj';
 
 /* Type Definitions */
 import type { Axios } from 'axios';
@@ -248,6 +249,9 @@ export class ApiClient extends GoogleApi {
 
   constructor (...args: any) {
     super(...args);
+    this.$resource = safe({
+      baseURL: 'https://www.googleapis.com'
+    });
   }
 
   async init (name: string) {
@@ -273,21 +277,20 @@ export class ApiClient extends GoogleApi {
   }
 
   validator (parameters: any) {
-
     const required = Object
       .entries(parameters)
       .filter(([ name, parameter ]) => parameter.required)
-      .map(([ name, parameter ]) => ([name, null]));
-      
+      .map(([ name, parameter ]) => name);
+
     const assumed = Object
       .entries(parameters)
       .filter(([ name, parameter ]) => parameter.default)
-      .map(([ name, parameter ]) => ([name, parameter.default]));
+      .map(([ name, parameter ]) => ([ name, parameter.default ]));
 
     const entries = Object.entries(parameters);
     const keys = Object.keys(parameters);
-    const requiredX = validEntries.filter(([ key, value ]) => value.required).map(([ name, parameter ]) => name);
-    const schema = validEntries.reduce((schema, [key, value]) => {
+    // const requiredX = entries.filter(([ key, value ]) => value.required).map(([ name, parameter ]) => name);
+    const schema = entries.reduce((schema, [ key, value ]) => {
       return Object.assign({}, schema, {
         [key]: {
           type: value.type,
@@ -297,6 +300,10 @@ export class ApiClient extends GoogleApi {
         }
       });
     }, {});
+
+    return function (expression: any) {
+      return true;
+    };
   }
 
   buildMethods (methods) {
@@ -305,13 +312,14 @@ export class ApiClient extends GoogleApi {
         .entries(parameters)
         .filter(([ name, parameter ]) => parameter.required)
         .map(([ name, parameter ]) => ([name, null]));
-      
+
       const assumed = Object
         .entries(parameters)
         .filter(([ name, parameter ]) => parameter.default)
         .map(([ name, parameter ]) => ([name, parameter.default]));
 
-      const request = (parameters: any, method: any) => {
+      const request = (validator: any, method: any) => {
+        /*
         const validEntries = Object.entries(parameters);
         const validKeys = Object.keys(parameters);
         const requiredKeys = validEntries.filter(([ key, value ]) => value.required).map(([ name, parameter ]) => name);
@@ -325,10 +333,12 @@ export class ApiClient extends GoogleApi {
             }
           });
         }, {});
+        */
 
         return async (params: any) => {
           try {
-            
+
+            /*
             const hasValidParams = Object.entries(params)
             .every(function ([key, value]) {
               return validKeys.includes(key) && skeemas.validate(value, validSchema[key]);
@@ -337,7 +347,8 @@ export class ApiClient extends GoogleApi {
             const hasRequiredParams = requiredKeys.every(param => {
               return Object.keys(params).includes(param);
             });
-            
+            */
+
             // console.log('validKeys', validKeys)
             // console.log('requiredKeys', requiredKeys);
             // console.log('hasValidParams', hasValidParams)
@@ -352,16 +363,16 @@ export class ApiClient extends GoogleApi {
         }
       }
 
-      // const validator = this.validator(parameters);
+      const validator = this.validator(parameters);
 
       return Object.assign({}, actions, {
-        [name]: request(parameters, {
+        [name]: request(validator, {
           method: httpMethod,
-          url: this.service.basePath + path,
+          url: this.service.basePath + path/*,
           params: {
             ...this.dict(required),
             ...this.dict(assumed)
-          }
+          }*/
         })
       });
     }, {});

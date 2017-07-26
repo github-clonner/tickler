@@ -8,7 +8,6 @@ const should = chai.should();
 const expect = chai.expect;
 const assert = chai.assert;
 
-/*
 describe('Test ApiDirectory', function() {
 
   it('it should get discovery service url', function (done) {
@@ -20,7 +19,7 @@ describe('Test ApiDirectory', function() {
       .to.be.an.instanceof(URL);
     expect(url.protocol)
       .to.be.a('string')
-      .and.to.equal('https:');      
+      .and.to.equal('https:');
     expect(url.hostname)
       .to.be.a('string')
       .and.to.equal('www.googleapis.com');
@@ -49,7 +48,6 @@ describe('Test ApiDirectory', function() {
   });
 
 });
-*/
 
 describe('Test youtube: ApiClient', function() {
 
@@ -88,6 +86,29 @@ describe('Test youtube: ApiClient', function() {
       .and.to.have.lengthOf(1);
   });
 
+  it('it safely handles unknown resources', async function () {
+
+    const client = new ApiClient({
+      api: 'youtube',
+      key: 'AIzaSyAPBCwcnohnbPXScEiVMRM4jYWc43p_CZU'
+    });
+    console.log('------------------------------------------')
+    console.log('------------------------------------------')
+    console.log('------------------------------------------')
+    console.log('VIDEOS', client.$resource.videos.list, 'V:', typeof client.$resource, 'result', client.$resource.videos.list());
+    console.log('------------------------------------------')
+    console.log('------------------------------------------')
+    console.log('------------------------------------------')
+
+    /*
+    const result = await client.$resource.videos.list({
+      id: 'Ks-_Mh1QhMc',
+      part: 'snippet,contentDetails'
+    });
+    */
+    // console.log(result)
+
+  });
 });
 
 /*
