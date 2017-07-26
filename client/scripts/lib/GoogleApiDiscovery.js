@@ -108,7 +108,6 @@ export class GoogleApi<Auth, Options> {
   }
 
   async get (url?: string, params?: any) : Promise<*> {
-    // console.log('get', url, params);
     try {
       return await this.$http.get(url, { params });
     } catch (error) {
@@ -204,7 +203,7 @@ export class ApiDirectory extends GoogleApi {
 
     try {
       const params = { name, preferred };
-      const { items } = await this.get('discovery/v1/apis', params);
+      const { items } = await super.get('discovery/v1/apis', params);
       Cache = new Map(items.reduce((entries, item) => entries.concat([[item.name, item]]), []));
       if(name && Cache) {
         return Cache.get(name);
@@ -223,7 +222,7 @@ export class ApiDirectory extends GoogleApi {
         item = await this.list(item);
       }
       const { discoveryRestUrl } = item;
-      const result = await this.get(discoveryRestUrl, params);
+      const result = await super.get(discoveryRestUrl, params);
       return result;
     } catch (error) {
       console.error(error);
@@ -252,12 +251,17 @@ export class ApiClient extends GoogleApi {
   }
 
   async init (name: string) {
-    const directory = new ApiDirectory();
-    const item = await directory.list(name);
-    const description = await directory.getRest(item);
-    this.service = description;
-    this.$resource = this.buildResources(description.resources);
-    return this;
+    try {
+      const directory = new ApiDirectory();
+      const item = await directory.list(name);
+      const description = await directory.getRest(item);
+      this.service = description;
+      this.$resource = this.buildResources(description.resources);
+      return this;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   }
 
   dict (entries) {
@@ -340,7 +344,7 @@ export class ApiClient extends GoogleApi {
             // console.log('hasRequiredParams', hasRequiredParams)
             // console.log('params', params);
 
-            return await this.request(Object.assign({}, method, { params }));
+            return await super.request(Object.assign({}, method, { params }));
           } catch (error) {
             console.error(error);
             throw error;

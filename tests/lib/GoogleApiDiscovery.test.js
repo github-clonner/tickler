@@ -51,7 +51,7 @@ describe('Test ApiDirectory', function() {
 });
 */
 
-describe('Test Youtube:v3 ApiClient', function() {
+describe('Test youtube: ApiClient', function() {
 
   it('it should get playlistItems', async function () {
     const client = new ApiClient({
@@ -83,14 +83,25 @@ describe('Test Youtube:v3 ApiClient', function() {
       id: 'Ks-_Mh1QhMc',
       part: 'snippet,contentDetails'
     });
-    console.log('items: ', items);
-    // expect(pageInfo)
-    //   .to.be.an('object')
-    //   .and.to.have.all.keys(['totalResults', 'resultsPerPage'])
-    //   .and.to.have.property('resultsPerPage', 25);
-    // expect(items)
-    //   .to.be.an('array')
-    //   .and.to.have.lengthOf(pageInfo.totalResults);;
+    expect(items)
+      .to.be.an('array')
+      .and.to.have.lengthOf(1);
   });
 
 });
+
+/*
+describe('Test urlshortener ApiClient', function() {
+  it('it should get urlshortener', async function () {
+    const client = new ApiClient({
+      api: 'youtube',
+      key: 'AIzaSyAPBCwcnohnbPXScEiVMRM4jYWc43p_CZU'
+    });
+    const { $resource, service } = await client.init('urlshortener');
+    const result = await $resource.url.insert({
+      longUrl: 'http://google.com/'
+    });
+    console.log('result', service, $resource)
+  });
+});
+*/
