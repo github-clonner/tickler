@@ -37,7 +37,7 @@
 
 import React, { Component } from 'react';
 import classNames from 'classnames';
-require('../../styles/dragdrop.css');
+import './DragDrop.css';
 
 export default class DragDrop extends Component {
   state = {
