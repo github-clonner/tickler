@@ -36,12 +36,17 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 
-import { PlayList as LLP } from './LoadPlayList';
+import Settings from '../lib/Settings';
 import { List, Map, Record } from 'immutable';
 
-const zz = new LLP('./music.json');
+const settings = new Settings();
 
-console.log('PlayListItems: ', zz)
+settings.set('cosa', '1994');
+const cosa = settings.get('cosa');
+
+console.warn('COSA', cosa);
+
+window.settings = settings;
 /*const Item = Record({
   id: null,
   kind: null,

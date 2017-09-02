@@ -26,6 +26,7 @@
     "pacmac": "build --mac --dir",
     "test": "nyc --all --reporter=lcov --reporter=text mocha tests/**/*.test.js",
     "test:old": "NODE_ENV=test nyc --all --reporter=lcov --reporter=text mocha tests/**/*.test.js",
+    "test:before": "rm -rf ./coverage .nyc_output .nyc_tmp && mkdir .nyc_tmp",
     "typecheck": "flow check",
     "coverage": "flow coverage"
   },
@@ -47,8 +48,8 @@
     ]
   },
   "build": {
-    "productName": "ElectronReact",
-    "appId": "org.develar.ElectronReact",
+    "productName": "Tickler",
+    "appId": "org.develar.Tickler",
     "category": "public.app-category.tools",
     "asar": true,
     "mac": {
@@ -94,7 +95,7 @@
     "skeemas": "^1.2.4",
     "urijs": "^1.18.10",
     "wavesurfer.js": "^1.4.0",
-    "ytdl-core": "^0.14.4"
+    "ytdl-core": "^0.17.0"
   },
   "devDependencies": {
     "babel-core": "^6.25.0",
@@ -109,7 +110,7 @@
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-0": "^6.24.1",
     "babel-register": "^6.24.1",
-    "chai": "^4.1.0",
+    "chai": "^4.1.2",
     "chance": "^1.0.10",
     "css-loader": "^0.28.4",
     "devtron": "^1.4.0",
@@ -126,7 +127,7 @@
     "eslint-plugin-react": "^7.1.0",
     "extract-text-webpack-plugin": "^3.0.0",
     "file-loader": "^0.11.2",
-    "flow-bin": "^0.49.1",
+    "flow-bin": "^0.54.0",
     "html-webpack-plugin": "^2.29.0",
     "html-webpack-template": "^5.6.0",
     "istanbul": "^0.4.5",

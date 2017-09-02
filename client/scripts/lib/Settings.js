@@ -1,12 +1,14 @@
+// @flow
+
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : index.jsx                                                 //
-// @summary      : Application entry point                                   //
+// @file         : Settings.js                                               //
+// @summary      : Save and load user preferences                            //
 // @version      : 0.0.1                                                     //
 // @project      : tickelr                                                   //
 // @description  :                                                           //
 // @author       : Benjamin Maggi                                            //
 // @email        : benjaminmaggi@gmail.com                                   //
-// @date         : 13 Feb 2017                                               //
+// @date         : 02 Sep 2017                                               //
 // @license:     : MIT                                                       //
 // ------------------------------------------------------------------------- //
 //                                                                           //
@@ -35,65 +37,65 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-import { remote, ipcRenderer, app } from 'electron';
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import 'styles/main.css';
-import styles from './Main.css';
-import { Header, Toolbar, Player, List, CoverFlow, Equalizer, DragDrop } from '../../components';
+import path from 'path';
+import fs from 'fs';
+import { read, write, remove, OS_DIRECTORIES} from './FileSystem';
 
-export default class Main extends Component {
-  state = {
-    config: {
-      dependencies: {}
+export default class Settings {
+  settings: any;
+  file: string;
+
+  constructor () {
+    this.settings = new Map();
+    this.file = path.join(OS_DIRECTORIES.appData, 'settings.json');
+    if (!fs.existsSync(this.file)) {
+      this.create();
+    } else {
+      this.load();
     }
-  };
+  }
 
-  static propTypes = {
-    list: PropTypes.string
-  };
+  get (key: string, defaultValue?: any = null) : any {
+    const { file, settings } = this;
+    return (key && settings.has(key)) ? settings.get(key) : defaultValue;
+  }
 
-  static defaultProps = {
-    list: 'PLsPUh22kYmNBl4h0i4mI5zDflExXJMo_x',
-    paths: {
-      home: remote.app.getPath('home'),
-      appData: remote.app.getPath('appData'),
-      temp: remote.app.getPath('temp'),
-      music: remote.app.getPath('music'),
-      videos: remote.app.getPath('videos')
+  load () : Object | Error {
+    const { file } = this;
+    try {
+      const data = read(file);
+      this.settings = new Map(Object.entries(data));
+      return this.settings;
+    } catch (error) {
+      return error;
     }
-  };
-
-  constructor (context) {
-    super(context);
-    window.context = context;
   }
 
-  componentDidMount() {
-    console.info('app paths:', this.props.paths);
-    ipcRenderer.once('config', (event, config) => {
-      this.setState(prevState => ({
-        config: config,
-      }));
-      console.info('app config:', config);
-    });
+  save () : void | Error {
+    const { file, settings } = this;
+    const object = {};
+    settings.set('modifiedAt', new Date());
+    for (let [key, value] of settings) {
+      object[key] = value
+    }
+    return write(file, object);
   }
 
-  render () {
-    const { list } = this.props;
-    return (
-      <div className="page">
-        <Header />
-        <Toolbar />
-        <CoverFlow />
-        <Equalizer />
-        <div className="page-content">
-          <List className="list" list={list}>
-            { this.props.children }
-          </List>
-        </div>
-        <Player />
-      </div>
-    );
+  create () : void | Error {
+    const { file, settings } = this;
+    settings.set('createdAt', new Date());
+    return this.save();
   }
-};
+
+  remove () : void | Error {
+    const { file, settings } = this;
+    settings.clear();
+    return remove(file);
+  }
+
+  set (key: string, value: any) : void | Error {
+    const { file, settings } = this;
+    settings.set(key, value);
+    return this.save();
+  }
+}

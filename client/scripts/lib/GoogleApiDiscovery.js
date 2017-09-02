@@ -1,5 +1,3 @@
-// @flow
-
 ///////////////////////////////////////////////////////////////////////////////
 // @file         : GoogleApiDiscovery.js                                     //
 // @summary      : Interface for Google API Discovery Service                //

@@ -1,12 +1,14 @@
+// @flow
+
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : index.jsx                                                 //
-// @summary      : Application entry point                                   //
+// @file         : FileSystem.js                                             //
+// @summary      : Save and load JSON data                                   //
 // @version      : 0.0.1                                                     //
 // @project      : tickelr                                                   //
 // @description  :                                                           //
 // @author       : Benjamin Maggi                                            //
 // @email        : benjaminmaggi@gmail.com                                   //
-// @date         : 13 Feb 2017                                               //
+// @date         : 02 Sep 2017                                               //
 // @license:     : MIT                                                       //
 // ------------------------------------------------------------------------- //
 //                                                                           //
@@ -35,65 +37,55 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-import { remote, ipcRenderer, app } from 'electron';
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import 'styles/main.css';
-import styles from './Main.css';
-import { Header, Toolbar, Player, List, CoverFlow, Equalizer, DragDrop } from '../../components';
+import { remote } from 'electron';
+import path from 'path';
+import fs from 'fs';
 
-export default class Main extends Component {
-  state = {
-    config: {
-      dependencies: {}
+export const OS_DIRECTORIES = {
+  home: remote.app.getPath('home'),
+  appData: remote.app.getPath('appData'),
+  temp: remote.app.getPath('temp'),
+  music: remote.app.getPath('music'),
+  videos: remote.app.getPath('videos')
+};
+
+export const read = function (path: string, options?: string | Object = 'utf8') : Object | Error {
+  if (path && fs.existsSync(path)) {
+    try {
+      const data: string = fs.readFileSync(path, options);
+      return JSON.parse(data);
+    } catch (error) {
+      console.error(error);
+      throw error;
     }
-  };
+  } else {
+    return new Error('File not found');
+  }
+};
 
-  static propTypes = {
-    list: PropTypes.string
-  };
-
-  static defaultProps = {
-    list: 'PLsPUh22kYmNBl4h0i4mI5zDflExXJMo_x',
-    paths: {
-      home: remote.app.getPath('home'),
-      appData: remote.app.getPath('appData'),
-      temp: remote.app.getPath('temp'),
-      music: remote.app.getPath('music'),
-      videos: remote.app.getPath('videos')
+export const write = function (path: string, content: Object, options?: string | Object = 'utf8') : void | Error {
+  if (path && fs.existsSync(path)) {
+    try {
+      const str: string = JSON.stringify(content, null, 2);
+      return fs.writeFileSync(path, str, options);
+    } catch (error) {
+      console.error(error);
+      throw error;
     }
-  };
-
-  constructor (context) {
-    super(context);
-    window.context = context;
+  } else {
+    return new Error('File not found');
   }
+};
 
-  componentDidMount() {
-    console.info('app paths:', this.props.paths);
-    ipcRenderer.once('config', (event, config) => {
-      this.setState(prevState => ({
-        config: config,
-      }));
-      console.info('app config:', config);
-    });
-  }
-
-  render () {
-    const { list } = this.props;
-    return (
-      <div className="page">
-        <Header />
-        <Toolbar />
-        <CoverFlow />
-        <Equalizer />
-        <div className="page-content">
-          <List className="list" list={list}>
-            { this.props.children }
-          </List>
-        </div>
-        <Player />
-      </div>
-    );
+export const remove = function (path: string) : void | Error {
+  if (path && fs.existsSync(path)) {
+    try {
+      return fs.unlinkSync(path);
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  } else {
+    return new Error('File not found');
   }
 };

@@ -43,7 +43,6 @@ export default class Equalizer extends Component {
   }
 
   componentDidMount () {
-    console.log('eq componentDidMount', this.props.audio.wavesurfer)
     this.width = this.refs.canvas.width;
     this.height = this.refs.canvas.height - 2;
     this.ctx = this.refs.canvas.getContext('2d');

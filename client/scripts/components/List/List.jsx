@@ -84,11 +84,11 @@ export default class List extends Component {
   componentDidMount () {
     const { actions } = this.props;
     console.log('List props', this.props)
-    //actions.fetchListItems('PLA0CA9B8A2D82264B');
+    actions.fetchListItems('PLA0CA9B8A2D82264B');
     // actions.fetchListItems('PLkHvEl7zu06o70dpsiVrRbYFLWreD9Jcw'); //PL7XlqX4npddfrdpMCxBnNZXg2GFll7t5y
-    
+
     // actions.fetchListItems('PL7XlqX4npddfrdpMCxBnNZXg2GFll7t5y'); // Pageable
-    
+
     // actions.fetchListItems('PLsPUh22kYmNBl4h0i4mI5zDflExXJMo_x');
     this.props.placeholder.className = 'row placeholder';
   }
