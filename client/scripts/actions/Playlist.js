@@ -1,5 +1,6 @@
 import Chance from 'chance';
 import getObjectProperty from 'lodash/get';
+import jsonata from 'jsonata';
 import { Youtube, Time } from '../lib';
 import os from 'os';
 
@@ -162,12 +163,33 @@ export function receiveItem (id) {
   }
 }
 
+const playlistQuery = jsonata(`
+  $.{
+    'id': id, 
+    'title': snippet.title,
+    'description': snippet.description,
+    'thumbnails': snippet.thumbnails,
+    'duration': contentDetails.duration
+  }
+`);
+
 export function fetchListItems (id) {
   return async function (dispatch, getState) {
-    let state = getState();
-    let playList = await youtube.getPlayListItems(id);
-    let ids = playList.map(item => getObjectProperty(item, 'snippet.resourceId.videoId'));
-    let {items} = await youtube.getVideos(ids);
+    const playList = await youtube.getPlayListItems(id);
+    const ids = playList.map(item => item.snippet.resourceId.videoId);
+    const disabled = playList.filter(item => item.status.privacyStatus != 'public').map(item => item.snippet.resourceId.videoId);
+    console.info('ids', ids, 'disabled', disabled)
+    const items = await youtube.getVideos(ids);
+    try {
+      const payload = playlistQuery.evaluate(items);
+      console.log('payload', payload);
+      return dispatch(receivePlayListItems(payload));
+    } catch (error) {
+      console.error(error);
+      return error;
+    }
+    
+    /*
     let chance = new Chance();
     let payload = items.map(item => {
       let time = new Time(getObjectProperty(item, 'contentDetails.duration'));
@@ -180,19 +202,8 @@ export function fetchListItems (id) {
         stars: chance.integer({min: 0, max: 5})
       };
     });
-    payload[0] = {
-      id: '_mVW8tgGY_w',
-      title: 'FurElise xx',
-      duration: 176,
-      file: 'media/FurElise.ogg',
-      stars: 3,
-      thumbnails: {
-        default: {
-          url: "https://pbs.twimg.com/profile_images/1119269505/0509071614Peter_Griffin.jpg"
-        }
-      }
-    };
     dispatch(receivePlayListItems(payload));
+    */
   };
 }
 
@@ -201,10 +212,10 @@ export const receivePlayList = payload => ({ type: 'RECEIVE_LIST', payload });
 
 export function fetchList (id) {
   return async function (dispatch, getState) {
-    let state = getState();
+    const state = getState();
     try {
-      let playList = await youtube.getPlayList(id);
-      let item = playList.items.pop();
+      const playList = await youtube.getPlayList(id);
+      const item = playList.items.pop();
       if (item) {
         dispatch(receivePlayList({
           id: getObjectProperty(item, 'id'),

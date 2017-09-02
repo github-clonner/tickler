@@ -6,12 +6,16 @@
     "react",
     "stage-0"
   ],
+  "env": {
+    "test": {
+      "plugins": [ "istanbul" ]
+    }
+  },
   "sourceMaps": true,
-  "comments": false,
   "compact": false,
   "plugins": [
     "transform-decorators-legacy",
-    "transform-async-to-generator",
-    "transform-class-properties"
+    "transform-class-properties",
+    "transform-flow-strip-types"
   ]
 }

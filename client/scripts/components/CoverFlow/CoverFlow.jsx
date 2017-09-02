@@ -1,4 +1,4 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
 import classNames from 'classnames';
 
 /* Import styles */
@@ -49,30 +49,15 @@ export default class CoverFlow extends Component {
     });
   }
 
-  makeCovers () {
-    return this.props.list.map((cover, index) => {
-      let style = classNames('cover', {
-        active: cover.get('isPlaying')
-      });
-      let url = cover.getIn(['thumbnails', 'default', 'url'])
-      return (
-        <li className={style} key={index} onMouseOver={() => this.onMouseOver(cover)}>
-          <img src={url} />
-        </li>
-      );
-    })
-  }
-
   render () {
-    let {toolbar} = this.props;
-    let style = classNames('coverflow', {
+    const {toolbar} = this.props;
+    const style = classNames('coverflow', {
       active: toolbar.coverflow
     });
 
     return (
       <div className={style}>
         <div className="container" ref="container">
-          {/*<ul className="covers">{this.makeCovers()}</ul>*/}
           <Covers list={this.props.list} setTitle={this.setTitle}/>
         </div>
         <span className="caption">{this.state.caption}</span>

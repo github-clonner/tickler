@@ -36,7 +36,9 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 import { remote } from 'electron';
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+
 // Import styles
 import './InputRange.css';
 
@@ -92,10 +94,10 @@ export default class InputRange extends Component {
   }
 
   drawTrack = () => {
-    let {value} = this.state;
-    let {max, min} = this.props;
-    let percentage = value / (max - min) * 100;
-    let background = `linear-gradient(to right, #ed1e24 0%, #ed1e24 ${percentage}%, #2f2f2f ${percentage}%, #2f2f2f 100%)`;
+    const {value} = this.state;
+    const {max, min} = this.props;
+    const percentage = value / (max - min) * 100;
+    const background = `linear-gradient(to right, #ed1e24 0%, #ed1e24 ${percentage}%, #2f2f2f ${percentage}%, #2f2f2f 100%)`;
     this.refs.range.style.background = background;
   }
 

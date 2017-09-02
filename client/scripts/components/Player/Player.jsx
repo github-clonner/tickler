@@ -38,7 +38,8 @@
 import fileSystem from 'fs';
 import path from 'path';
 import { remote } from 'electron';
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import WaveSurfer from 'wavesurfer.js';
 import debounce from 'lodash/debounce';
 
@@ -85,7 +86,7 @@ export default class Player extends Component {
   }
 
   static propTypes = {
-    list: React.PropTypes.instanceOf(List).isRequired,
+    list: PropTypes.instanceOf(List).isRequired,
     autoplay: PropTypes.bool.isRequired,
     volume: PropTypes.number.isRequired
   }
@@ -104,8 +105,8 @@ export default class Player extends Component {
 
   resize = debounce(event => {
     event.preventDefault();
-    let orgWidth = this.wavesurfer.drawer.containerWidth;
-    let newWidth = this.wavesurfer.drawer.container.clientWidth;
+    const orgWidth = this.wavesurfer.drawer.containerWidth;
+    const newWidth = this.wavesurfer.drawer.container.clientWidth;
     if (orgWidth != newWidth) {
       this.wavesurfer.drawer.containerWidth = newWidth;
       this.wavesurfer.drawBuffer();
@@ -113,13 +114,13 @@ export default class Player extends Component {
   }, 500);
 
   async load (item, autoplay) {
-    let file = item.get('file');
+    const file = item.get('file');
     if(!file || !fileSystem.statSync(file)) {
       console.log('file not found', file, song.get('id'))
       return false;
     }
     fileSystem.readFile(file, (error, buffer) => {
-      let blob = new window.Blob([new Uint8Array(buffer)]);
+      const blob = new window.Blob([new Uint8Array(buffer)]);
       this.wavesurfer.loadBlob(blob);
     })
     // let stream = fileSystem.createReadStream(file)
@@ -214,7 +215,7 @@ export default class Player extends Component {
   }
 
   componentDidMount () {
-    let {audio} = this.props;
+    const { audio } = this.props;
     this.wavesurfer.init({
       container: this.refs.waves,
       barWidth: 2,
@@ -246,7 +247,7 @@ export default class Player extends Component {
 
   // Player controls
   play = () => {
-    let { playItem } = this.props.actions;
+    const { playItem } = this.props.actions;
     let item = this.props.list.find(item => (item.get('isPlaying') === true));
     if (!item) {
       item = this.props.list.findLast(item => item.get('selected'));
@@ -270,8 +271,8 @@ export default class Player extends Component {
   }
 
   stop = () => {
-    let {actions} = this.props;
-    let item = this.props.list.find(item => (item.get('isPlaying') === true));
+    const { actions } = this.props;
+    const item = this.props.list.find(item => (item.get('isPlaying') === true));
 
     this.wavesurfer.stop();
     this.setState({
@@ -307,8 +308,6 @@ export default class Player extends Component {
   }
 
   render () {
-    let { playNext, playPrevious } = this.props.actions;
-    let { item } = this.state;
     return (
       <div className="player">
         <div className="controls">

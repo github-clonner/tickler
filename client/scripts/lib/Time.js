@@ -36,24 +36,13 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
+import durationFormat from '@maggiben/duration-format';
+
 export default class Time {
   constructor(duration) {
     this.duration = duration;
   }
 
-  humanize () {
-    let duration = Math.abs(parseInt(this.duration, 10));
-    let milliseconds = Math.floor((duration % 1000) / 100);
-    let seconds = Math.floor((duration / 1000) % 60);
-    let minutes = Math.floor((duration / (1000 * 60)) % 60);
-    let hours = Math.floor((duration / (1000 * 60 * 60)) % 24);
-
-    hours = (hours < 10) ? '0' + hours : hours;
-    minutes = (minutes < 10) ? '0' + minutes : minutes;
-    seconds = (seconds < 10) ? '0' + seconds : seconds;
-
-    return hours + ':' + minutes + ':' + seconds;
-  }
   toTime () {
     let time = this.convert(this.duration);
     return time;
@@ -92,3 +81,15 @@ export default class Time {
     return duration * 1000;
   }
 }
+
+/* A shorthand to parse and format durations */
+export const parseDuration = function (duration, format) {
+  if (duration && duration.length) {
+    const time = new Time(duration).toTime();
+    if (format) {
+      return durationFormat(time, format);
+    } else {
+      return time;
+    }
+  }
+};

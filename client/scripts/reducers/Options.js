@@ -2,7 +2,8 @@ import { List, Map, Record } from 'immutable';
 
 const DefaultOptions = Record({
   paths: null,
-  package: null
+  package: null,
+  playlist: ''
 });
 
 export function Options (state = new DefaultOptions(), action) {

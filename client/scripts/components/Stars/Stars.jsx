@@ -35,10 +35,11 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 // Import styles
-import './stars.css';
+import './Stars.css';
 
 export default class Stars extends Component {
   static defaultProps = {
@@ -52,13 +53,15 @@ export default class Stars extends Component {
   }
 
   makeStars (stars) {
-    return '☆'.repeat(this.props.maxStars).split('').fill('★', 0, stars).map((x, index) => {
-      let style = x === '★' ? 'full' : 'empty';
-      return (<span className={style} key={index}>{x}</span>);
-    })
+    const { maxStars } = this.props;
+    return Array.from({length: maxStars}, (value, index) => {
+      const star = (index < stars) ? ['full', '★'] : ['empty', '☆'];
+      return (<span className={star[0]} key={index}>{star[1]}</span>);
+    });
   }
 
   render () {
-    return (<span className="stars">{this.makeStars(this.props.stars)}</span>);
+    const { stars } = this.props;
+    return (<span className="stars">{this.makeStars(stars)}</span>);
   }
 }

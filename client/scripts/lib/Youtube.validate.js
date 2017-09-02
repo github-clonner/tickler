@@ -43,6 +43,55 @@ import fs from 'fs';
 import path from 'path';
 import sanitize from 'sanitize-filename';
 import { EventEmitter } from 'events';
+import jsonata from 'jsonata';
+import Ajv from 'ajv';
+import skeemas from 'skeemas';
+import ApiProperties from '../../schemas/youtube.json';
+import GoogleApiDiscovery from './GoogleApiDiscovery';
+
+// const youtubeApi = new GoogleApiDiscovery('youtube', {
+//   version: 'v3'
+// });
+
+class EchoStream extends Stream.Writable {
+  constructor(options) {
+    super(options);
+    this.body = new Array();
+  }
+  _write(chunk, encoding, callback) {
+    if (!(chunk instanceof Buffer)) {
+        return this.emit('error', new Error('Invalid data'));
+    }
+    this.body.push(chunk);
+    return callback();
+  }
+
+  toBuffer () {
+    return Buffer.concat(this.body);
+  }
+
+  toBufferX () {
+    let buffers = [];
+    this._writableState.getBuffer().forEach(function(data) {
+      buffers.push(data.chunk);
+    });
+    return Buffer.concat(buffers);
+  }
+
+  toArray () {
+    let buffer = this.toBuffer();
+    return new Uint8Array(buffer);
+  }
+
+  toString () {
+    return String.fromCharCode.apply(null, this.toArray());
+  }
+
+  end (chunk, encoding, callback) {
+    let ret = Stream.Writable.prototype.end.apply(this, arguments);
+    if (!ret) this.emit('finish');
+  }
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // create single EventEmitter instance                                       //
@@ -55,9 +104,131 @@ class YoutubeEvents extends EventEmitter {
 
 const youtubeEvents = new YoutubeEvents();
 
+const customFormats = {
+  'uint32': {
+    validate(data) { return Number.isInteger(data) },
+    type: 'number'
+  },
+  'int32': {
+    validate(data) { return Number.isInteger(data) },
+    type: 'number'
+  },
+  'uint64': {
+    validate(data) { return Number.isInteger(data) },
+    type: 'number'
+  },
+  'int64': {
+    validate(data) { return Number.isInteger(data) },
+    type: 'number'
+  },
+  'double': {
+    validate(data) { return Number.isFinite(data) },
+    type: 'number'
+  }
+};
+
+const validateResponseV6 = function () {
+  const ajv = new Ajv({
+    formats: customFormats,
+    allErrors: true,
+    unknownFormats: 'ignore',
+    // meta: false
+  });
+  // const schemaDraft = await axios.get('http://json-schema.org/draft-03/schema').then(response => response.data);
+  Object.keys(ApiProperties.schemas).forEach(schemaId => {
+    const schemas = ApiProperties.schemas[schemaId];
+    ajv.addSchema(schemas, schemaId);
+  });
+  return ajv.validate.bind(ajv);
+}
+
+const validateResponse = function () {
+  const validator = skeemas();
+  const youtubeApi = new GoogleApiDiscovery('youtube', {
+    version: 'v3'
+  });
+  Object.keys(ApiProperties.schemas).forEach(schemaId => {
+    const schemas = ApiProperties.schemas[schemaId];
+    validator.addRef(schemas, schemaId);
+  });
+  return validator.validate;
+}
+
+// export class ApiConsumer {
+
+//   constructor(apiKey, options) {
+//     this.apiKey = apiKey;
+//     //const googleApiDiscovery = new GoogleApiDiscovery('youtube');
+//     //window.saas = googleApiDiscovery;
+//     //console.log('googleApiDiscovery', googleApiDiscovery);
+
+//     const resources = Object.assign({}, ApiProperties.resources, options);
+//     this.axios = axios.create({
+//       baseURL: ApiProperties.baseURL,
+//       paramsSerializer: this.serializer,
+//       params: {
+//         key: this.apiKey,
+//         part: 'id,snippet,contentDetails,status',
+//       }
+//     });
+
+//     this.buildResourceList(resources);
+//   }
+
+//   buildResourceList (entities) {
+//     this.$resource = {};
+//     for(let [entity, resources] of Object.entries(entities)) {
+//       // console.log('resource', entity, Object.keys(resources));
+//       this.$resource[entity] = Object.entries(resources.methods).reduce((methods, [name, config]) => {
+//         // console.log('method', name, config.path);
+//         const required = Object
+//         .entries(config.parameters)
+//         .filter(([ parameter, options ]) => {
+//           return options.required;
+//         })
+//         .map(([ parameter, options ]) => {
+//           return {
+//             [parameter]: options.default || null
+//           };
+//         });
+//         return Object.assign(methods, {
+//           [name]: {
+//             method: config.httpMethod,
+//             url: config.path,
+//             params: {
+//               key: this.apiKey,
+//               required
+//             }
+//           }
+//         });
+//       }, {});
+//     }
+//     return this.$resource;
+//   }
+
+//   serializer (params) {
+//     params = Object.assign({}, params);
+//     const { id } = params;
+//     if (Array.isArray(id) && id.length) {
+//       params.id = id.join(',');
+//       params.maxResults = id.length;
+//     } else if (id && id.length) {
+//       params.maxResults = id.split(',').length;
+//     }
+//     // clean null undefined
+//     const entries = Object.entries(params).filter(param => param.slice(-1).pop() != null);
+//     const searchParams = new URLSearchParams(entries);
+//     return searchParams.toString();
+//   }
+// }
+
+// window.$re = new ApiConsumer('abc', {});
+
 export default class Youtube {
   constructor({apiKey, options = {}}) {
     this.apiKey = apiKey;
+    this.validate = validateResponse();
+    // console.log('validate', this.validate)
     this.axios = axios.create({
       baseURL: 'https://www.googleapis.com/youtube/v3',
       paramsSerializer: this.serializer,
@@ -102,12 +273,38 @@ export default class Youtube {
     return searchParams.toString();
   }
 
+  async getVideosOld (ids) {
+    const params = {};
+    const videos = [];
+    do {
+      try {
+        params.id = ids.splice(0, MAX_IDS).join(',');
+        const result = await this.axios.get('/videos', { params }).then(response => response.data);
+        const { items } = result;
+        videos.push(...items);
+      } catch (error) {
+        console.error(error);
+        break;
+      }
+    } while (ids.length > 0);
+    return videos;
+  }
+
   async getVideos (id) {
     const { maxResults } = this.axios.defaults.params;
     const params = {};
     const fetch = (value, index) => {
       params.id = id.slice(index * maxResults, index * maxResults + maxResults);
       return this.axios.get('/videos', { params })
+      .then(response => {
+        const isValid = this.validate('VideoListResponse', response);
+        // console.log('isValid', isValid);
+        if(isValid) {
+          return response
+        } else {
+          return Promise.reject('invalid payload');
+        }
+      })
       .then(response => response.data.items)
       .catch(error => {
         console.error(error);
@@ -133,6 +330,9 @@ export default class Youtube {
       try {
         const result = await this.axios.get('/playlistItems', { params }).then(response => response.data);
         const { items, nextPageToken } = result;
+        // remove invalids with .filter(item => item.status.privacyStatus != 'public')
+        const isValid = this.validate('PlaylistItemListResponse', result);
+        // console.log('isValid', isValid)
         playlistItems.push(...items);
         params.pageToken = nextPageToken;
       } catch (error) {

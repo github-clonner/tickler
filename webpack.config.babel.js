@@ -19,13 +19,13 @@ export default {
   context: path.resolve(__dirname, './client/scripts'),
   entry: {
     'bundle': ['babel-polyfill', './index.jsx'],
-    'vendor': ['react']
+    'vendor': ['react', 'redux', 'axios', 'ytdl-core', 'immutable']
   },
   output: {
     path: path.resolve('dist'),
     filename: '[name].js'
   },
-  devtool: 'inline-source-map',
+  devtool: 'eval-source-map',
   target: 'electron-renderer',
   plugins: [
     new webpack.optimize.CommonsChunkPlugin({
@@ -51,9 +51,9 @@ export default {
       logLevel: 0
     }),
     new ElectronPlugin({
-      // if a file in this path is modified/emitted, electron will be restarted
+      // if a module ID matches this regex and that module has changed, electron will be restarted
       // *required*
-      relaunchPathMatch: './main',
+      test: /^.\/main/,
       // the path to launch electron with
       // *required*
       path: path.resolve('dist'),

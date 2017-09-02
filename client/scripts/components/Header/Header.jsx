@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : Toolbar.jsx                                               //
-// @summary      : Toolbar component                                         //
+// @file         : Header.jsx                                                //
+// @summary      : Header component                                          //
 // @version      : 0.0.1                                                     //
 // @project      : tickelr                                                   //
 // @description  :                                                           //
@@ -35,22 +35,17 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-import path from 'path';
-import React from 'react';
+import { remote } from 'electron';
+import React, { Component } from 'react';
+import 'styles/header.css';
+
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import classNames from 'classnames';
 import * as Actions from 'actions/Player';
-
-import './Toolbar.css';
-
-import { coverflow, equalizer, levels } from '../../../../assets/images';
-
-const images = { coverflow, equalizer, levels };
 
 function mapStateToProps(state) {
   return {
-    toolbar: state.Player
+    router: state.routing
   };
 }
 
@@ -60,31 +55,40 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-const Toolbar = (props) =>
-  <ul className="toolbar">{Object.keys(props.toolbar.toJS()).map((button, index) => {
-    return (
-      <li className="radio-button" key={index}>
-        <input
-          type="radio"
-          name="toolbar"
-          id={button}
-          value={button}
-          checked={props.toolbar[button]}
-          onChange={event => {
-            let { value } = event.target;
-            let { actions, toolbar } = props;
-            let options = Object.keys(toolbar.toJS()).reduce((previous, option) => {
-              previous[option] = (option === value);
-              return previous;
-            }, {});
-            actions.toolbarOptions(options);
-          }}
-        />
-        <label className="radio-button" htmlFor={button}>
-        <img src={images[button]}></img>
-        </label>
-      </li>);
-    })
-  }</ul>
+@connect(mapStateToProps, mapDispatchToProps)
+export default class Header extends Component {
+  constructor(...args) {
+    super(...args);
+    this.window = remote.getCurrentWindow();
+  }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Toolbar);
+  exit = () => {
+    this.window.close();
+  }
+
+  maximize = () => {
+    if (!this.window.isMaximized()) {
+      this.window.maximize();
+    } else {
+      this.window.unmaximize();
+    }
+  }
+
+  minimize = () => {
+    this.window.minimize();
+  }
+  
+
+  render() {
+    //const { location } = this.props.state;
+    return (
+      <nav className="navbar dark">
+        <ul className="buttons">
+          <li className="exit" onClick={this.exit}></li>
+          <li className="minimize" onClick={this.minimize}></li>
+          <li className="maximize" onClick={this.maximize}></li>
+        </ul>
+      </nav>
+    );
+  }
+};

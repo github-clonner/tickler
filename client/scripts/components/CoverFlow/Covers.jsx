@@ -1,18 +1,30 @@
 import React from 'react';
 import classNames from 'classnames';
+import { noalbum } from '../../../../assets/images';
 
-const Cover = (props) =>
-  <ul className="covers">{props.list.map((cover, index) => {
-      let style = classNames('cover', {
+const getDefaultCoverImage = function (thumbnails) {
+  try {
+    return thumbnails.default.url;
+  } catch (error) {
+    return noalbum; 
+  }
+};
+
+const Cover = (props) => {
+  const { list, setTitle } = props;
+  return (<ul className="covers">{
+    list.map((cover, index) => {
+      const style = classNames('cover', {
         active: cover.get('isPlaying')
       });
-      let url = cover.getIn(['thumbnails', 'default', 'url'])
+      const thumbnails = cover.get('thumbnails');
       return (
-        <li className={style} key={index} onMouseOver={() => props.setTitle(cover)}>
-          <img src={url} />
+        <li className={style} key={index} onMouseOver={() => setTitle(cover)}>
+          <img src={getDefaultCoverImage(thumbnails)} />
         </li>
       );
     })
-  }</ul>
+  }</ul>);
+};
 
 export default Cover;
