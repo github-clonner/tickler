@@ -24,7 +24,8 @@
     "lint": "eslint --cache ./client",
     "lint-fix": "npm run lint -- --fix",
     "pacmac": "build --mac --dir",
-    "test": "NODE_ENV=test nyc --all --reporter=lcov --reporter=text mocha tests/**/*.test.js",
+    "test": "nyc --all --reporter=lcov --reporter=text mocha tests/**/*.test.js",
+    "test:old": "NODE_ENV=test nyc --all --reporter=lcov --reporter=text mocha tests/**/*.test.js",
     "typecheck": "flow check",
     "coverage": "flow coverage"
   },

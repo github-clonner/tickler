@@ -37,6 +37,7 @@
 
 import { remote, ipcRenderer, app } from 'electron';
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import 'styles/main.css';
 import styles from './Main.css';
 import { Header, Toolbar, Player, List, CoverFlow, Equalizer, DragDrop } from '../../components';
@@ -48,6 +49,14 @@ export default class Main extends Component {
     }
   };
 
+  static propTypes = {
+    list: PropTypes.string
+  };
+
+  static defaultProps = {
+    list: 'PLsPUh22kYmNBl4h0i4mI5zDflExXJMo_x'
+  };
+  
   constructor (context) {
     super(context);
     window.context = context;
@@ -63,6 +72,7 @@ export default class Main extends Component {
   }
 
   render () {
+    const { list } = this.props;
     return (
       <div className="page">
         <Header /> 
@@ -70,7 +80,7 @@ export default class Main extends Component {
         <CoverFlow />
         <Equalizer />
         <div className="page-content">
-          <List className="list">>
+          <List className="list" list={list}>
             { this.props.children }
           </List>
         </div>

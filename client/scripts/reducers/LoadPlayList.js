@@ -272,10 +272,10 @@ const schema = {
       }
     }
   }
-}
+};
 
 const read = function (path, options) {
-  if (fs.existsSync(path)) {
+  if (path && fs.existsSync(path)) {
     try {
       return JSON.parse(fs.readFileSync(path, options));
     } catch (error) {
@@ -295,10 +295,27 @@ const write = function (path, content) {
   }
 };
 
-
-export default class Settings extends Map {
+export class Settings extends Map {
   constructor (...args) {
-    super(...args)
+    super(...args);
+  }
+}
+
+export class PlayList {
+  constructor () {
+    const file = path.join(process.cwd(), 'media', 'playlist.json');
+    console.log('file:', file, read(file));
+  }
+
+  read (path, options) {
+    if (path && fs.existsSync(path)) {
+      try {
+        return JSON.parse(fs.readFileSync(path, options));
+      } catch (error) {
+        console.error(error);
+        throw error;
+      }
+    }
   }
 }
 

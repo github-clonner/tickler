@@ -49,20 +49,6 @@ export default class CoverFlow extends Component {
     });
   }
 
-  makeCovers () {
-    return this.props.list.map((cover, index) => {
-      const style = classNames('cover', {
-        active: cover.get('isPlaying')
-      });
-      const url = cover.getIn(['thumbnails', 'default', 'url'])
-      return (
-        <li className={style} key={index} onMouseOver={() => this.onMouseOver(cover)}>
-          <img src={url} />
-        </li>
-      );
-    })
-  }
-
   render () {
     const {toolbar} = this.props;
     const style = classNames('coverflow', {
@@ -72,7 +58,6 @@ export default class CoverFlow extends Component {
     return (
       <div className={style}>
         <div className="container" ref="container">
-          {/*<ul className="covers">{this.makeCovers()}</ul>*/}
           <Covers list={this.props.list} setTitle={this.setTitle}/>
         </div>
         <span className="caption">{this.state.caption}</span>
