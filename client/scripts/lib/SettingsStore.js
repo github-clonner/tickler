@@ -1,12 +1,14 @@
+// @flow
+
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : InputRange.jsx                                            //
-// @summary      : InputRange component                                      //
+// @file         : SettingsStore.js                                          //
+// @summary      : Save and load user preferences                            //
 // @version      : 0.0.1                                                     //
 // @project      : tickelr                                                   //
 // @description  :                                                           //
 // @author       : Benjamin Maggi                                            //
 // @email        : benjaminmaggi@gmail.com                                   //
-// @date         : 13 Feb 2017                                               //
+// @date         : 02 Sep 2017                                               //
 // @license:     : MIT                                                       //
 // ------------------------------------------------------------------------- //
 //                                                                           //
@@ -35,82 +37,96 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import path from 'path';
+import fs from 'fs';
+import Ajv from 'ajv';
+import schema from '../../schemas/settings.json';
+import { read, write, remove, OS_DIRECTORIES } from './FileSystem';
 
-// Import styles
-import './InputRange.css';
+const ajv = new Ajv({
+  allErrors: true,
+  useDefaults: true
+});
 
-export default class InputRange extends Component {
-  state = {
-    value: 0
-  };
+const DEFAULT_SETTINGS_FILENAME = 'settings.json';
 
-  static defaultProps = {
-    disabled: false,
-    min: 0,
-    max: 100,
-    step: 1,
-    onChange() {}
-  };
+export default class SettingsStore {
+  settings: Map<string, *>;
+  file: string;
 
-  static propTypes = {
-    disabled: PropTypes.bool,
-    min: PropTypes.number,
-    max: PropTypes.number,
-    step: PropTypes.number,
-    onChange: PropTypes.func
-  }
-
-  handleChange = event => {
-    const value = parseFloat(event.target.value);
-    this.setState({ value });
-    this.props.onChange(value);
-  }
-
-  componentDidMount () {
-    this.refs.range.addEventListener('change', this.drawTrack, false);
-    this.refs.range.addEventListener('input', this.drawTrack, false);
-  }
-
-  componentWillUnmount () {
-    this.refs.range.removeEventListener('change', this.drawTrack);
-    this.refs.range.removeEventListener('input', this.drawTrack);
-  }
-
-  componentDidUpdate () {
-    this.drawTrack();
-  }
-
-  componentWillReceiveProps (nextProps) {
-    if(!nextProps) {
-      return;
+  constructor () {
+    this.settings = new Map();
+    this.validate = ajv.compile(schema);
+    this.file = path.join(OS_DIRECTORIES.userData, DEFAULT_SETTINGS_FILENAME);
+    if (!fs.existsSync(this.file)) {
+      this.create();
+    } else {
+      this.load();
     }
-    this.setState({
-      value: nextProps.value || 0
-    });
   }
 
-  drawTrack = () => {
-    const { value } = this.state;
-    const { max, min } = this.props;
-    const percentage = value / (max - min) * 100;
-    const background = `linear-gradient(to right, #ed1e24 0%, #ed1e24 ${percentage}%, #2f2f2f ${percentage}%, #2f2f2f 100%)`;
-    this.refs.range.style.background = background;
+  get (key: string, defaultValue?: any = null) : any {
+    const { file, settings } = this;
+    return (key && settings.has(key)) ? settings.get(key) : defaultValue;
   }
 
-  render () {
-    const { min, max, value, step, disabled } = this.props;
-    return <input
-      ref="range"
-      className="range"
-      type="range"
-      min={min}
-      max={max}
-      value={this.state.value}
-      onChange={this.handleChange}
-      step={step}
-      disabled={disabled}
-    />
+  load () : Object | Error {
+    const { file } = this;
+    try {
+      const data = read(file);
+      this.settings = new Map(Object.entries(data));
+      return this.settings;
+    } catch (error) {
+      return error;
+    }
+  }
+
+  toJSON () : Object {
+    const { settings } = this;
+    const object = {};
+    if (settings.size) {
+      for (let [key, value] of settings) {
+        object[key] = value
+      }
+    }
+    return object;
+  }
+
+  save () : void | Error {
+    const { file, settings } = this;
+    const object = this.toJSON();
+    settings.set('modifiedAt', new Date());
+    const result = write(file, object);
+    return result;
+  }
+
+  create () : void | Error {
+    let defaults = {};
+    this.validate(defaults);
+    this.settings = new Map(Object.entries(defaults));
+    this.settings.set('createdAt', new Date());
+    console.log('new settings', defaults);
+    return this.save();
+  }
+
+  delete (key: string) : boolean {
+    const { settings } = this;
+    if (settings.delete(key)) {
+      return this.save();
+    } else {
+      return false;
+    }
+  }
+
+  clear () : void | Error {
+    const { file, settings } = this;
+    settings.clear();
+    return remove(file);
+  }
+
+  set (key: string, value: any) : void | Error {
+    const { file, settings } = this;
+    settings.set(key, value);
+    return this.save();
   }
 }

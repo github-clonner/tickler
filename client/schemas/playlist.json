@@ -1,10 +1,14 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$schema": "http://json-schema.org/draft-06/schema#",
   "type": "object",
   "title": "Playlist",
   "description": "A playlist object",
   "required": ["id", "name", "tracks"],
   "properties": {
+    "id": {
+      "type": "string",
+      "description": "The ID of the playlist."
+    },
     "name": {
       "type": "string",
       "description": "The name of the playlist."
@@ -12,10 +16,6 @@
     "description": {
       "type": ["string", "null"],
       "description": "The playlist description."
-    },
-    "id": {
-      "type": "string",
-      "description": "The ID of the playlist."
     },
     "href": {
       "type": "string",
@@ -51,9 +51,10 @@
             "type": "string"
           }
         },
-        "href": {
+        "uri": {
           "type": "string",
-          "description": "A link to the Web API endpoint providing full details of the artist."
+          "format": "uri",
+          "description": "The URI for the artist."
         }
       }
     },
@@ -140,11 +141,6 @@
             "type": "string"
           }
         },
-        "href": {
-          "type": "string",
-          "format": "uri",
-          "description": "A link to the Web API endpoint providing full details of the album."
-        },
         "copyrights": {
           "type": "array",
           "description": "The copyright statements of the album.",
@@ -167,18 +163,18 @@
     "TrackDetails": {
       "type": "object",
       "description": "Playlist track item.",
-      "required": ["id", "name", "artist", "file", "thumbnails"],
+      "required": ["id", "name", "artists", "thumbnails"],
       "properties": {
         "id": {
           "type": "string",
           "description": "The ID of the track."
         },
-        "artist": {
+        "artists": {
           "type": "array",
-          "description": "The artists who performed the track. Each artist object includes a link in href to more detailed information about the artist.",
           "items": {
             "$ref": "#/definitions/ArtistDetails"
-          }
+          },
+          "description": "The artists who performed the track. Each artist object includes a link in href to more detailed information about the artist."
         },
         "name": {
           "type": "string",
@@ -210,10 +206,16 @@
           "description": "The track lyrics."
         },
         "duration": {
-          "type": "integer",
-          "default": 0,
-          "minimum": 0,
-          "description": "The track length in milliseconds."
+          "oneOf": [{
+            "type": "integer",
+            "default": 0,
+            "minimum": 0,
+            "description": "The track length in milliseconds."
+          }, {
+            "type": "string",
+            "pattern": "^P(?=\\w*\\d)(?:\\d+Y|Y)?(?:\\d+M|M)?(?:\\d+W|W)?(?:\\d+D|D)?(?:T(?:\\d+H|H)?(?:\\d+M|M)?(?:\\d+(?:\\­.\\d{1,2})?S|S)?)?$",
+            "description": "The track length. The tag value is an ISO 8601 duration in the format PT#M#S, in which the letters PT indicate that the value specifies a period of time, and the letters M and S refer to length in minutes and seconds, respectively. The # characters preceding the M and S letters are both integers that specify the number of minutes (or seconds) of the video. For example, a value of PT15M51S indicates that the video is 15 minutes and 51 seconds long."
+          }]
         },
         "file": {
           "type": "string",

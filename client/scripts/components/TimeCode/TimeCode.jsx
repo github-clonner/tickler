@@ -80,5 +80,5 @@ export default class TimeCode extends Component {
 
 export const TrackDuration = props => {
   const { duration, format } = props;
-  return (<span>{durationFormat(parseDuration(duration), '#{2H}:#{2M}:#{2S}')}</span>);
+  return (<span>{durationFormat(Number.isInteger(duration) ? duration : parseDuration(duration), '#{2H}:#{2M}:#{2S}')}</span>);
 };

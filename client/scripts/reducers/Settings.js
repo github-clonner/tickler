@@ -2,7 +2,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 // @file         : Settings.js                                               //
-// @summary      : Save and load user preferences                            //
+// @summary      :                                                           //
 // @version      : 0.0.1                                                     //
 // @project      : tickelr                                                   //
 // @description  :                                                           //
@@ -37,65 +37,22 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-import path from 'path';
-import fs from 'fs';
-import { read, write, remove, OS_DIRECTORIES} from './FileSystem';
+import SettingsStore from '../lib/SettingsStore';
 
-export default class Settings {
-  settings: any;
-  file: string;
+const settings = new SettingsStore();
 
-  constructor () {
-    this.settings = new Map();
-    this.file = path.join(OS_DIRECTORIES.appData, 'settings.json');
-    if (!fs.existsSync(this.file)) {
-      this.create();
-    } else {
-      this.load();
+export default function Settings (state = settings, action) {
+  switch (action.type) {
+    case 'SETTINGS_GET': {
+      const { key } = action;
+      return state;
     }
-  }
-
-  get (key: string, defaultValue?: any = null) : any {
-    const { file, settings } = this;
-    return (key && settings.has(key)) ? settings.get(key) : defaultValue;
-  }
-
-  load () : Object | Error {
-    const { file } = this;
-    try {
-      const data = read(file);
-      this.settings = new Map(Object.entries(data));
-      return this.settings;
-    } catch (error) {
-      return error;
+    case 'SETTINGS_SET': {
+      const { key, value } = action;
+      state.set(key, value);
+      return state;
     }
-  }
-
-  save () : void | Error {
-    const { file, settings } = this;
-    const object = {};
-    settings.set('modifiedAt', new Date());
-    for (let [key, value] of settings) {
-      object[key] = value
-    }
-    return write(file, object);
-  }
-
-  create () : void | Error {
-    const { file, settings } = this;
-    settings.set('createdAt', new Date());
-    return this.save();
-  }
-
-  remove () : void | Error {
-    const { file, settings } = this;
-    settings.clear();
-    return remove(file);
-  }
-
-  set (key: string, value: any) : void | Error {
-    const { file, settings } = this;
-    settings.set(key, value);
-    return this.save();
+    default:
+      return state;
   }
 }

@@ -1,12 +1,14 @@
+// @flow
+
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : InputRange.jsx                                            //
-// @summary      : InputRange component                                      //
+// @file         : Settings.js                                               //
+// @summary      :                                                           //
 // @version      : 0.0.1                                                     //
 // @project      : tickelr                                                   //
 // @description  :                                                           //
 // @author       : Benjamin Maggi                                            //
 // @email        : benjaminmaggi@gmail.com                                   //
-// @date         : 13 Feb 2017                                               //
+// @date         : 02 Sep 2017                                               //
 // @license:     : MIT                                                       //
 // ------------------------------------------------------------------------- //
 //                                                                           //
@@ -35,82 +37,6 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+export const get = key => ({ type: 'SETTINGS_GET', key });
+export const set = (key, value) => ({ type: 'SETTINGS_SET', key, value });
 
-// Import styles
-import './InputRange.css';
-
-export default class InputRange extends Component {
-  state = {
-    value: 0
-  };
-
-  static defaultProps = {
-    disabled: false,
-    min: 0,
-    max: 100,
-    step: 1,
-    onChange() {}
-  };
-
-  static propTypes = {
-    disabled: PropTypes.bool,
-    min: PropTypes.number,
-    max: PropTypes.number,
-    step: PropTypes.number,
-    onChange: PropTypes.func
-  }
-
-  handleChange = event => {
-    const value = parseFloat(event.target.value);
-    this.setState({ value });
-    this.props.onChange(value);
-  }
-
-  componentDidMount () {
-    this.refs.range.addEventListener('change', this.drawTrack, false);
-    this.refs.range.addEventListener('input', this.drawTrack, false);
-  }
-
-  componentWillUnmount () {
-    this.refs.range.removeEventListener('change', this.drawTrack);
-    this.refs.range.removeEventListener('input', this.drawTrack);
-  }
-
-  componentDidUpdate () {
-    this.drawTrack();
-  }
-
-  componentWillReceiveProps (nextProps) {
-    if(!nextProps) {
-      return;
-    }
-    this.setState({
-      value: nextProps.value || 0
-    });
-  }
-
-  drawTrack = () => {
-    const { value } = this.state;
-    const { max, min } = this.props;
-    const percentage = value / (max - min) * 100;
-    const background = `linear-gradient(to right, #ed1e24 0%, #ed1e24 ${percentage}%, #2f2f2f ${percentage}%, #2f2f2f 100%)`;
-    this.refs.range.style.background = background;
-  }
-
-  render () {
-    const { min, max, value, step, disabled } = this.props;
-    return <input
-      ref="range"
-      className="range"
-      type="range"
-      min={min}
-      max={max}
-      value={this.state.value}
-      onChange={this.handleChange}
-      step={step}
-      disabled={disabled}
-    />
-  }
-}

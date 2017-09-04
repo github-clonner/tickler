@@ -1,0 +1,92 @@
+{
+  "$schema": "http://json-schema.org/draft-06/schema#",
+  "type": "object",
+  "title": "Settings Schema",
+  "description": "Application settings and user preferences",
+  "properties": {
+    "audio": {
+      "$ref": "#/definitions/Audio",
+      "default": {},
+      "description": "Audio options"
+    },
+    "player": {
+      "$ref": "#/definitions/Player",
+      "default": {},
+      "description": "Player options"
+    },
+    "playlist": {
+      "$ref": "#/definitions/PlayList",
+      "default": {},
+      "description": "Playlist options"
+    },
+    "createdAt": {
+      "type": ["string", "null"],
+      "default": null,
+      "format": "date-time",
+      "description": "File creation date"
+    },
+    "modifiedAt": {
+      "type": ["string", "null"],
+      "default": null,
+      "format": "date-time",
+      "description": "File modification date"
+    }
+  },
+  "definitions": {
+    "Audio": {
+      "type": "object",
+      "description": "Audio options",
+      "properties": {
+        "volume": {
+          "type": "number",
+          "default": 0.5,
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Playback volume (0 = silent, 1 = maximum)"
+        }
+      }
+    },
+    "Player": {
+      "type": "object",
+      "description": "Player options",
+      "properties": {
+        "autoplay": {
+          "type": "boolean",
+          "default": false,
+          "description": "If true will automatically start playing"
+        }
+      }
+    },
+    "PlayList": {
+      "type": "object",
+      "description": "PlayList options",
+      "properties": {
+        "folders": {
+          "type": "array",
+          "default": ["music", "videos", "userData"],
+          "items": {
+            "type": "string",
+            "enum": ["music", "videos", "userData"],
+            "uniqueItems": true,
+            "description": "Default folders to search for audio and playlist files"
+          }
+        },
+        "formats": {
+          "type": "array",
+          "default": ["mp3", "mp4", "m4a", "aac", "flac", "wav", "ogg", "3gpp"],
+          "items": {
+            "type": "string",
+            "enum": ["mp3", "mp4", "m4a", "aac", "flac", "wav", "ogg", "3gpp"],
+            "uniqueItems": true,
+            "description": "Supported audio formats"
+          }
+        },
+        "current": {
+          "type": ["string", "null"],
+          "default": "playlist.json",
+          "description": "Current loaded playlist"
+        }
+      }
+    }
+  }
+}

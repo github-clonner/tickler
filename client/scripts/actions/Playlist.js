@@ -1,16 +1,49 @@
 import Chance from 'chance';
+import schema from '../../schemas/playlist.json';
 import getObjectProperty from 'lodash/get';
 import jsonata from 'jsonata';
-import { Youtube, Time } from '../lib';
+import Ajv from 'ajv';
+import { Youtube, Time, parseDuration, SettingsStore, getPath } from '../lib';
+import fs from 'fs';
 import os from 'os';
+import path from 'path';
 
+const customFormats = {
+  'uint32': {
+    validate(data) { return Number.isInteger(data) },
+    type: 'number'
+  },
+  'int32': {
+    validate(data) { return Number.isInteger(data) },
+    type: 'number'
+  },
+  'uint64': {
+    validate(data) { return Number.isInteger(data) },
+    type: 'number'
+  },
+  'int64': {
+    validate(data) { return Number.isInteger(data) },
+    type: 'number'
+  },
+  'double': {
+    validate(data) { return Number.isFinite(data) },
+    type: 'number'
+  }
+};
+
+const ajv = new Ajv({
+  formats: customFormats,
+  allErrors: true,
+  unknownFormats: 'ignore'
+});
+
+const settings = new SettingsStore();
 const youtube = new Youtube({
   apiKey: 'AIzaSyAPBCwcnohnbPXScEiVMRM4jYWc43p_CZU',
   options: {
     saveTo: os.tmpdir()
   }
 });
-
 const options = {
   preload: {
     active: false,
@@ -77,7 +110,7 @@ export function fetchItem (item, autoPlay = false) {
       isLoading: true,
       progress: 0
     }));
-    
+
     try {
       fileName = await youtube.downloadVideo(item);
       dispatch(editItem(item.id, {
@@ -164,14 +197,55 @@ export function receiveItem (id) {
 }
 
 const playlistQuery = jsonata(`
-  $.{
-    'id': id, 
-    'title': snippet.title,
-    'description': snippet.description,
-    'thumbnails': snippet.thumbnails,
-    'duration': contentDetails.duration
-  }
+  $.(
+    $AccName := function() { $.contentDetails.duration };
+    $.{
+      'id': id,
+      'title': snippet.title,
+      'name': snippet.title,
+      'artists': [{
+        'id': 'sfasdf',
+        'name': 'nook'
+      }],
+      'description': snippet.description,
+      'thumbnails': snippet.thumbnails,
+      'duration': $parseDuration(contentDetails.duration)
+    }
+  )
 `);
+playlistQuery.registerFunction('parseDuration', (duration) => parseDuration(duration), '<s:n>');
+
+export function getCurrent () {
+  return async function (dispatch, getState) {
+    const { current, folders } = settings.get('playlist');
+    const file = folders
+    .map(folder => {
+      return path.isAbsolute(folder) ? path.join(folder, current) : path.join(getPath(folder), current);
+    })
+    .find(file => {
+      return fs.existsSync(file);
+    });
+
+    if (file) {
+      try {
+        const playlist = JSON.parse(fs.readFileSync(file, options));
+        const validate = ajv.compile(schema);
+        if (validate(playlist)) {
+          console.log('playlist:', playlist);
+          return dispatch(receivePlayListItems(playlist.tracks));
+        } else {
+          console.error(validate.errors);
+          throw new Error('Unknown playlist format');
+        }
+      } catch (error) {
+        console.error(error);
+        throw error;
+      }
+    } else {
+      throw new Error('PlayList not found');
+    }
+  };
+};
 
 export function fetchListItems (id) {
   return async function (dispatch, getState) {
@@ -188,7 +262,7 @@ export function fetchListItems (id) {
       console.error(error);
       return error;
     }
-    
+
     /*
     let chance = new Chance();
     let payload = items.map(item => {
@@ -208,7 +282,6 @@ export function fetchListItems (id) {
 }
 
 export const receivePlayList = payload => ({ type: 'RECEIVE_LIST', payload });
-
 
 export function fetchList (id) {
   return async function (dispatch, getState) {

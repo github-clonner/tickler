@@ -42,7 +42,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import WaveSurfer from 'wavesurfer.js';
 import debounce from 'lodash/debounce';
-
+import * as Settings from 'actions/Settings';
 /* Redux stuff */
 import Immutable, { List, Map } from 'immutable';
 import { bindActionCreators } from 'redux';
@@ -53,7 +53,6 @@ import * as Audio from 'actions/Player';
 import { Progress, InputRange, TimeCode } from '../index';
 
 import musicmetadata from 'musicmetadata';
-//const musicmetadata = require('musicmetadata');
 
 // Import styles
 import './Player.css';
@@ -62,14 +61,19 @@ import 'styles/buttons.css';
 function mapStateToProps(state) {
   return {
     list: state.PlayListItems,
-    audio: state.Audio
+    audio: state.Audio,
+    options: {
+      player: state.Settings.get('player'),
+      audio: state.Settings.get('audio')
+    }
   };
 }
 
 function mapDispatchToProps(dispatch) {
   return {
     actions: bindActionCreators(Playist, dispatch),
-    audio: bindActionCreators(Audio, dispatch)
+    audio: bindActionCreators(Audio, dispatch),
+    settings: bindActionCreators(Settings, dispatch)
   };
 }
 
@@ -78,25 +82,28 @@ export default class Player extends Component {
   state = {
     item: Map(),
     isPlaying: false,
-    volume: 0.5,
     duration: 0,
     seek: 0,
-    volume: 0.5,
     isMuted: false
-  }
+  };
 
   static propTypes = {
     list: PropTypes.instanceOf(List).isRequired,
-    autoplay: PropTypes.bool.isRequired,
-    volume: PropTypes.number.isRequired
-  }
+    options: PropTypes.shape({
+      audio: PropTypes.shape({
+        volume: PropTypes.number.isRequired
+      }),
+      player: PropTypes.shape({
+        autoplay: PropTypes.bool.isRequired
+      })
+    })
+  };
 
   static defaultProps = {
     list: Immutable.List([]),
     autoplay: false,
-    volume: 0.1,
     audioContext: new AudioContext()
-  }
+  };
 
   constructor (...args) {
     super(...args);
@@ -122,7 +129,7 @@ export default class Player extends Component {
     fileSystem.readFile(file, (error, buffer) => {
       const blob = new window.Blob([new Uint8Array(buffer)]);
       this.wavesurfer.loadBlob(blob);
-    })
+    });
     // let stream = fileSystem.createReadStream(file)
     // musicmetadata(stream, function (error, metadata) {
     //   if (error) throw error;
@@ -130,15 +137,15 @@ export default class Player extends Component {
     // });
   }
 
-  handleVolume = event => {
-    this.setState({
-      volume: event.target.value
-    });
-    this.wavesurfer.setVolume(event.target.value);
+  handleVolume = volume => {
+    const { wavesurfer } = this;
+    const { settings } = this.props;
+    settings.set('audio', { volume });
+    wavesurfer.setVolume(volume);
   }
 
-  handleChange = event => {
-    return this.wavesurfer.seekTo(event.target.value / 100);
+  handleChange = value => {
+    return this.wavesurfer.seekTo(value / 100);
   }
   // wavesurfer event handlers
   loading = progress => {
@@ -171,7 +178,7 @@ export default class Player extends Component {
   seek = progress => {
     this.setState({
       seek: this.wavesurfer.getCurrentTime()
-    })
+    });
   }
 
   mute = event => {
@@ -192,7 +199,7 @@ export default class Player extends Component {
       return;
     }
 
-    let item = nextProps.list.find(item => (item.get('isPlaying') === true));
+    const item = nextProps.list.find(item => (item.get('isPlaying') === true));
 
     // already playing
     if (this.state.isPlaying && (item && item.get('id') === this.state.item.get('id'))) {
@@ -215,31 +222,31 @@ export default class Player extends Component {
   }
 
   componentDidMount () {
-    const { audio } = this.props;
-    this.wavesurfer.init({
+    const { list, audio, options, audioContext } = this.props;
+    const { wavesurfer } = this;
+
+    wavesurfer.init({
       container: this.refs.waves,
       barWidth: 2,
       height: 60,
-      audioContext: this.props.audioContext
+      audioContext
     });
 
     audio.context(this.props.audioContext);
-    audio.wavesurfer(this.wavesurfer);
-    audio.analyser(this.wavesurfer.backend.analyser);
+    audio.wavesurfer(wavesurfer);
+    audio.analyser(wavesurfer.backend.analyser);
 
-    this.wavesurfer.on('loading', this.loading);
-    this.wavesurfer.on('ready', this.ready);
-    this.wavesurfer.on('audioprocess', this.audioprocess);
-    this.wavesurfer.on('seek', this.seek);
-    this.wavesurfer.on('finish', this.finish);
+    wavesurfer.on('loading', this.loading);
+    wavesurfer.on('ready', this.ready);
+    wavesurfer.on('audioprocess', this.audioprocess);
+    wavesurfer.on('seek', this.seek);
+    wavesurfer.on('finish', this.finish);
 
-    //this.props.audio.wavesurfer(this.wavesurfer);
-
-    let item = this.props.list.find(item => (item.get('isPlaying') === true));
+    const item = list.find(item => (item.get('isPlaying') === true));
     if (item) {
       this.setState({
-        item: item,
-        isPlaying: this.props.autoplay
+        item,
+        isPlaying: options.player.autoplay
       });
       this.load(item.get('file'));
     }
@@ -272,13 +279,14 @@ export default class Player extends Component {
 
   stop = () => {
     const { actions } = this.props;
+    const { getCurrentTime, getDuration } = this.wavesurfer;
     const item = this.props.list.find(item => (item.get('isPlaying') === true));
 
     this.wavesurfer.stop();
     this.setState({
       isPlaying: false,
-      seek: this.wavesurfer.getCurrentTime(),
-      duration: this.wavesurfer.getDuration()
+      seek: getCurrentTime(),
+      duration: getDuration()
     });
     actions.stop(item);
   }
@@ -288,26 +296,27 @@ export default class Player extends Component {
     once the track finished it'll still play the song after being selected
   */
   playTo = direction => {
-    if(!this.state.item.has('id')) {
+    if (!this.state.item.has('id')) {
       return false;
     }
 
-    let id = this.state.item.get('id');
-    let { playItem } = this.props.actions;
-    let index = this.props.list.findIndex(item => (item.get('id') === id));
+    const id = this.state.item.get('id');
+    const { playItem } = this.props.actions;
+    const index = this.props.list.findIndex(item => (item.get('id') === id));
     let item = null;
 
     if (Math.sign(direction) > 0) {
-      let nextIndex = ((index + 1) === this.props.list.size) ? 0 : index + 1;
+      const nextIndex = ((index + 1) === this.props.list.size) ? 0 : index + 1;
       item = this.props.list.get(nextIndex);
     } else {
-      let prevIndex = (index === 0) ? (this.props.list.size - 1) : index - 1;
+      const prevIndex = (index === 0) ? (this.props.list.size - 1) : index - 1;
       item = this.props.list.get(prevIndex);
     }
     return playItem(item.get('id'));
   }
 
   render () {
+    const { options } = this.props;
     return (
       <div className="player">
         <div className="controls">
@@ -327,7 +336,7 @@ export default class Player extends Component {
             <input id="volume" type="checkbox" checked={this.state.isMuted} onChange={this.mute}/>
             <label htmlFor="volume">volume_up</label>
             <div className="slider">
-              <InputRange value={this.state.volume} min={0} max={1} step={0.001} onChange={this.handleVolume}/>
+              <InputRange value={options.audio.volume} min={0} max={1} step={0.001} onChange={this.handleVolume}/>
             </div>
           </div>
           <InputRange value={this.state.seek / this.state.duration * 100} min={0} max={100} step={0.1} onChange={this.handleChange} disabled={!this.state.isPlaying && !this.state.seek} />
@@ -335,6 +344,6 @@ export default class Player extends Component {
         </div>
         <div ref="waves" style={{display: 'none'}}></div>
       </div>
-    )
+    );
   }
 }

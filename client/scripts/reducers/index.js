@@ -1,2 +1,3 @@
-export PlayListItems, { PlayList } from './PlayListItems';
+export PlayListItems from './PlayListItems';
+export Settings from './Settings';
 export { Player, Audio } from './Player';

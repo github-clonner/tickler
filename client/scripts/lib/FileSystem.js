@@ -37,55 +37,50 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-import { remote } from 'electron';
+import electron from 'electron';
 import path from 'path';
 import fs from 'fs';
 
+const isRenderer = (process && process.type === 'renderer');
+
+export const getPath = function (name: string) {
+  return isRenderer ? electron.remote.app.getPath(name) : electron.app.getPath(name);
+};
+
 export const OS_DIRECTORIES = {
-  home: remote.app.getPath('home'),
-  appData: remote.app.getPath('appData'),
-  temp: remote.app.getPath('temp'),
-  music: remote.app.getPath('music'),
-  videos: remote.app.getPath('videos')
+  home: getPath('home'),
+  appData: getPath('appData'),
+  userData: getPath('userData'),
+  temp: getPath('temp'),
+  music: getPath('music'),
+  videos: getPath('videos')
 };
 
 export const read = function (path: string, options?: string | Object = 'utf8') : Object | Error {
-  if (path && fs.existsSync(path)) {
-    try {
-      const data: string = fs.readFileSync(path, options);
-      return JSON.parse(data);
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  } else {
-    return new Error('File not found');
+  try {
+    const data: string = fs.readFileSync(path, options);
+    return JSON.parse(data);
+  } catch (error) {
+    console.error(error);
+    throw error;
   }
 };
 
-export const write = function (path: string, content: Object, options?: string | Object = 'utf8') : void | Error {
-  if (path && fs.existsSync(path)) {
-    try {
-      const str: string = JSON.stringify(content, null, 2);
-      return fs.writeFileSync(path, str, options);
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  } else {
-    return new Error('File not found');
+export const write = function (path: string, content: Object, options?: string | Object) : void | Error {
+  try {
+    const data: string = JSON.stringify(content, null, 2);
+    return fs.writeFileSync(path, data, options);
+  } catch (error) {
+    console.error(error);
+    throw error;
   }
 };
 
 export const remove = function (path: string) : void | Error {
-  if (path && fs.existsSync(path)) {
-    try {
-      return fs.unlinkSync(path);
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  } else {
-    return new Error('File not found');
+  try {
+    return fs.unlinkSync(path);
+  } catch (error) {
+    console.error(error);
+    throw error;
   }
 };

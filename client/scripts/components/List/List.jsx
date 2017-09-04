@@ -37,12 +37,11 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import path from 'path';
 import classNames from 'classnames';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux'
-import Immutable from 'immutable';
 import * as Actions from 'actions/Playlist';
+import * as Settings from 'actions/Settings';
 import Stars from '../Stars/Stars';
 import Spinner from '../Spinner/Spinner';
 import { TrackDuration } from '../TimeCode/TimeCode';
@@ -51,15 +50,19 @@ import './List.css';
 
 const mapStateToProps = function (state) {
   return {
-    list: state.PlayListItems
+    list: state.PlayListItems,
+    options: {
+      playlist: state.Settings.get('playlist')
+    }
   };
-}
+};
 
 const mapDispatchToProps = function (dispatch) {
   return {
-    actions: bindActionCreators(Actions, dispatch)
+    actions: bindActionCreators(Actions, dispatch),
+    settings: bindActionCreators(Settings, dispatch)
   };
-}
+};
 
 const placeholder = document.createElement('li');
 placeholder.className = 'placeholder';
@@ -74,7 +77,13 @@ export default class List extends Component {
 
   static propTypes = {
     placeholder: PropTypes.instanceOf(Element).isRequired,
-    // list
+    options: PropTypes.shape({
+      playlist: PropTypes.shape({
+        folders: PropTypes.array.isRequired,
+        formats: PropTypes.array.isRequired,
+        current: PropTypes.string.isRequired
+      })
+    })
   };
 
   static defaultProps = {
@@ -82,9 +91,10 @@ export default class List extends Component {
   };
 
   componentDidMount () {
-    const { actions } = this.props;
-    console.log('List props', this.props)
-    actions.fetchListItems('PLA0CA9B8A2D82264B');
+    const { actions, options, settings } = this.props;
+    actions.getCurrent();
+    // actions.fetchListItems('PLA0CA9B8A2D82264B');
+
     // actions.fetchListItems('PLkHvEl7zu06o70dpsiVrRbYFLWreD9Jcw'); //PL7XlqX4npddfrdpMCxBnNZXg2GFll7t5y
 
     // actions.fetchListItems('PL7XlqX4npddfrdpMCxBnNZXg2GFll7t5y'); // Pageable

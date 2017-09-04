@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : index.jsx                                                 //
-// @summary      : Application entry point                                   //
-// @version      : 0.0.1                                                     //
+// @file         : Main.jsx                                                  //
+// @summary      : UI Main container                                         //
+// @version      : 0.0.2                                                     //
 // @project      : tickelr                                                   //
 // @description  :                                                           //
 // @author       : Benjamin Maggi                                            //
@@ -35,12 +35,12 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-import { remote, ipcRenderer, app } from 'electron';
+import { remote, ipcRenderer } from 'electron';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import 'styles/main.css';
-import styles from './Main.css';
 import { Header, Toolbar, Player, List, CoverFlow, Equalizer, DragDrop } from '../../components';
+import 'styles/main.css';
+import './Main.css';
 
 export default class Main extends Component {
   state = {
@@ -54,23 +54,10 @@ export default class Main extends Component {
   };
 
   static defaultProps = {
-    list: 'PLsPUh22kYmNBl4h0i4mI5zDflExXJMo_x',
-    paths: {
-      home: remote.app.getPath('home'),
-      appData: remote.app.getPath('appData'),
-      temp: remote.app.getPath('temp'),
-      music: remote.app.getPath('music'),
-      videos: remote.app.getPath('videos')
-    }
+    list: 'PLsPUh22kYmNBl4h0i4mI5zDflExXJMo_x'
   };
 
-  constructor (context) {
-    super(context);
-    window.context = context;
-  }
-
-  componentDidMount() {
-    console.info('app paths:', this.props.paths);
+  componentDidMount () {
     ipcRenderer.once('config', (event, config) => {
       this.setState(prevState => ({
         config: config,
@@ -80,7 +67,7 @@ export default class Main extends Component {
   }
 
   render () {
-    const { list } = this.props;
+    const { list, children } = this.props;
     return (
       <div className="page">
         <Header />
@@ -89,7 +76,7 @@ export default class Main extends Component {
         <Equalizer />
         <div className="page-content">
           <List className="list" list={list}>
-            { this.props.children }
+            { children }
           </List>
         </div>
         <Player />
