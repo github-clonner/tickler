@@ -53,6 +53,7 @@ import * as Audio from 'actions/Player';
 import { Progress, InputRange, TimeCode } from '../index';
 
 import musicmetadata from 'musicmetadata';
+import * as mm from 'music-metadata';
 
 // Import styles
 import './Player.css';
@@ -82,6 +83,7 @@ export default class Player extends Component {
   state = {
     item: Map(),
     isPlaying: false,
+    volume: 0.5,
     duration: 0,
     seek: 0,
     isMuted: false
@@ -130,16 +132,24 @@ export default class Player extends Component {
       const blob = new window.Blob([new Uint8Array(buffer)]);
       this.wavesurfer.loadBlob(blob);
     });
-    // let stream = fileSystem.createReadStream(file)
-    // musicmetadata(stream, function (error, metadata) {
-    //   if (error) throw error;
-    //   // console.log(metadata);
-    // });
+    console.log('get metadata', file)
+    mm.parseFile(file, { duration: true })
+    .then(function (metadata) {
+      console.log(util.inspect(metadata, { showHidden: false, depth: null }));
+    });
+    /*
+    const stream = fileSystem.createReadStream(file)
+    musicmetadata(stream, function (error, metadata) {
+      console.log('metadata', error, metadata);
+      if (error) throw error;
+    });
+    */
   }
 
   handleVolume = volume => {
     const { wavesurfer } = this;
     const { settings } = this.props;
+    this.setState({ volume });
     settings.set('audio', { volume });
     wavesurfer.setVolume(volume);
   }
@@ -285,8 +295,8 @@ export default class Player extends Component {
     this.wavesurfer.stop();
     this.setState({
       isPlaying: false,
-      seek: getCurrentTime(),
-      duration: getDuration()
+      seek: this.wavesurfer.getCurrentTime(),
+      duration: this.wavesurfer.getDuration()
     });
     actions.stop(item);
   }
@@ -336,7 +346,7 @@ export default class Player extends Component {
             <input id="volume" type="checkbox" checked={this.state.isMuted} onChange={this.mute}/>
             <label htmlFor="volume">volume_up</label>
             <div className="slider">
-              <InputRange value={options.audio.volume} min={0} max={1} step={0.001} onChange={this.handleVolume}/>
+              <InputRange value={this.state.volume} min={0} max={1} step={0.001} onChange={this.handleVolume}/>
             </div>
           </div>
           <InputRange value={this.state.seek / this.state.duration * 100} min={0} max={100} step={0.1} onChange={this.handleChange} disabled={!this.state.isPlaying && !this.state.seek} />

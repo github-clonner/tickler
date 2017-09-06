@@ -38,6 +38,8 @@ const ajv = new Ajv({
 });
 
 const settings = new SettingsStore();
+console.log('settings', settings);
+
 const youtube = new Youtube({
   apiKey: 'AIzaSyAPBCwcnohnbPXScEiVMRM4jYWc43p_CZU',
   options: {
@@ -181,8 +183,8 @@ export function receiveItem (id) {
     if(!options.preload.active) {
       return false;
     }
-    let { PlayListItems } = getState();
-    let index = PlayListItems.findIndex(item => (item.get('id') === id));
+    const { PlayListItems } = getState();
+    const index = PlayListItems.findIndex(item => (item.get('id') === id));
     for(let i = (index + 1); i <= (index + options.preload.items); i++) {
       let item = PlayListItems.get(i);
       if(!item.get('file') && !item.get('isLoading')) {

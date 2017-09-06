@@ -291,11 +291,13 @@ export default class List extends Component {
           onDoubleClick={() => this.handleDoubleClick(song)}
           style={this.makeProgressBar(song)}
           >
-          <span>{index + 1}</span>
-          <span className={exists}>{isPlayingIcon(song)}</span>
-          <span><p>{song.title}</p></span>
-          <Stars stars={song.stars}/>
-          <TrackDuration duration={song.duration} format="#{2H}:#{2M}:#{2S}" />
+          <span>{ index + 1 }</span>
+          <span className={exists}>{ isPlayingIcon(song) }</span>
+          <span>
+            <p>{ song.title }</p>
+          </span>
+          <Stars stars={ song.stars }/>
+          <TrackDuration duration={ song.duration } format="#{2H}:#{2M}:#{2S}" />
         </li>
       );
     });
@@ -307,9 +309,9 @@ export default class List extends Component {
     });
 
     return (
-      <div className={dragList}>
-        <ul className="container" ref="list" onDragOver={this.dragOver}>
-          {this.renderItem()}
+      <div className={ dragList }>
+        <ul className="container" ref="list" onDragOver={ this.dragOver }>
+          { this.renderItem() }
         </ul>
       </div>
     );

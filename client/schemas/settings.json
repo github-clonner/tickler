@@ -19,6 +19,18 @@
       "default": {},
       "description": "Playlist options"
     },
+    "providers": {
+      "$ref": "#/definitions/Provider",
+      "default": {
+        "youtube": {
+          "name": "youtube",
+          "security": {
+            "apiKey": "AIzaSyAPBCwcnohnbPXScEiVMRM4jYWc43p_CZU"
+          }
+        }
+      },
+      "description": "Service providers."
+    },
     "createdAt": {
       "type": ["string", "null"],
       "default": null,
@@ -54,6 +66,20 @@
           "type": "boolean",
           "default": false,
           "description": "If true will automatically start playing"
+        }
+      }
+    },
+    "Provider": {
+      "type": "object",
+      "description": "Service provider",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Provider name"
+        },
+        "security": {
+          "type": "object",
+          "description": "Provider security"
         }
       }
     },
