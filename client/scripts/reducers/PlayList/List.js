@@ -37,83 +37,7 @@
 
 import { List, Map, Record } from 'immutable';
 
-/*const Item = Record({
-  id: null,
-  kind: null,
-  title: null,
-  artist: null,
-  album: null,
-  year: 0,
-  comment: null,
-  track: 0,
-  genre: null,
-  thumbnails: null,
-  lyrics: null,
-  duration: 0,
-  file: null,
-  stars: 0,
-  isLoading: false,
-  isPlaying: false,
-  isReady: false,
-  selected: false,
-  progress: 0
-});*/
-
-const ItemTemplate = Object.freeze({
-  id: null,
-  kind: null,
-  title: null,
-  artist: null,
-  album: null,
-  year: 0,
-  comment: null,
-  track: 0,
-  genre: null,
-  thumbnails: null,
-  lyrics: null,
-  duration: 0,
-  file: null,
-  stars: 0,
-  isLoading: false,
-  isPlaying: false,
-  isReady: false,
-  selected: false,
-  progress: 0,
-  status: null
-});
-
-class Item extends Record(ItemTemplate) {
-  constructor(values, name) {
-    const props = new Set(Object.keys(ItemTemplate));
-    const newValues = {};
-    for (let prop of props) {
-      newValues[prop] = values[prop] || ItemTemplate[prop];
-    }
-    super(newValues);
-  }
-}
-
-const PlayListInfo = Record({
-  id: null,
-  title: null,
-  description: null,
-  publishedAt: null,
-  uri: null,
-  tracks: null
-});
-
-export function PlayList (state = {}, action) {
-  switch (action.type) {
-    case 'RECEIVE_LIST': {
-      console.log('RECEIVE_LIST');
-      // return new PlayListInfo(action.payload);
-    }
-    default:
-      return state;
-  }
-}
-
-export default function PlayListItems (state = List([]), action) {
+export default function PlayList (state = List([]), action) {
 
   const getIndex = function (id) {
     // Get item by id
@@ -139,10 +63,9 @@ export default function PlayListItems (state = List([]), action) {
 
     case 'RECEIVE_LIST_ITEMS': {
       const playlist = action.payload.map(item => {
-        // let item = new Item();
-        // return item.merge(item);
         return new Item(item);
       });
+
       return List(playlist);
     }
 
@@ -154,7 +77,7 @@ export default function PlayListItems (state = List([]), action) {
       return List(playlist);
     }
 
-    case 'ADD_ITEM': {
+    case 'PLAYLIST_ITEM_ADD': {
       const item = new Item();
       return state.push(item.merge(action.payload));
     }
@@ -168,7 +91,7 @@ export default function PlayListItems (state = List([]), action) {
       }
     }
 
-    case 'EDIT_ITEM': {
+    case 'PLAYLIST_ITEM_EDIT': {
       const index = getIndex(action.id);
       if (index > -1) {
         return state.update(index, item => ( item.merge(Map(action.payload)) ));
@@ -177,7 +100,7 @@ export default function PlayListItems (state = List([]), action) {
       }
     }
 
-    case 'PLAYPAUSE_ITEM': {
+    case 'PLAYLIST_ITEM_PLAYPAUSE': {
       const index = getIndex(action.id);
       if (index > -1) {
         return pause().update(index, item => ( item.set('isPlaying', action.payload).set('selected', true) ));
@@ -186,8 +109,8 @@ export default function PlayListItems (state = List([]), action) {
       }
     }
 
-    case 'PLAY_NEXT_ITEM': {
-      console.log('PLAY_NEXT_ITEM', action.id)
+    case 'PLAYLIST_ITEM_PLAY_NEXT': {
+      console.log('PLAYLIST_ITEM_PLAY_NEXT', action.id)
       const index = getIndex(action.id);
       if (index > -1 && index + 1 < state.size) {
         return pause().update(index + 1, item => ( item.set('isPlaying', true).set('selected', true) ));
@@ -196,7 +119,7 @@ export default function PlayListItems (state = List([]), action) {
       }
     }
 
-    case 'PLAY_PREVIOUS_ITEM': {
+    case 'PLAYLIST_ITEM_PLAY_REVIOUS': {
       const index = getIndex(action.id);
       if (index > -1 && index - 1 >= 0) {
         return pause().update(index - 1, item => ( item.set('isPlaying', true) ));
@@ -206,11 +129,7 @@ export default function PlayListItems (state = List([]), action) {
       }
     }
 
-    case 'STOP': {
-      return pause();
-    }
-
-    case 'ORDER_LIST': {
+    case 'PLAYLIST_ORDER': {
       const from = state.get(action.from);
       const to = state.get(action.to);
       state = state.delete(action.from).insert(action.to, from);
@@ -218,16 +137,13 @@ export default function PlayListItems (state = List([]), action) {
       return state;
     }
 
-    case 'SELECT_ITEMS': {
+    case 'PLAYLIST_ITEM_SELECT': {
       return state.map(item => {
         const selected = (action.payload.indexOf(item.get('id')) > -1);
         return item.merge({
           selected: selected
         });
       });
-      // return state
-      //   .update(selectedIndex, item => ( item.set('selected', false) )).map(item => )
-        //.update(index, item => ( item.set('selected', true) ));
     }
 
     default:

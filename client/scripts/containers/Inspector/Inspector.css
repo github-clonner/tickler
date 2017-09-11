@@ -1,0 +1,16 @@
+@import "styles/variables.css";
+
+:root {
+  --hoverRowColor: #f6f6f6;
+  --activeRowBackground: repeating-linear-gradient(-55deg, #222, #222 10px, #333 10px, #333 20px);
+  --activeRowColor: #fafafa;
+  --color: #484848;
+  --outlineColor: #CCC;
+}
+
+.inspector {
+  height: 100%;
+  box-sizing: border-box;
+  position: relative;
+  flex: 1 1 auto;
+}

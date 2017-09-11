@@ -1,3 +1,5 @@
+// @flow
+
 ///////////////////////////////////////////////////////////////////////////////
 // @file         : TimeCode.jsx                                              //
 // @summary      : TimeCode component                                        //
@@ -38,32 +40,48 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import Time, { parseDuration } from 'lib/Time';
+import Time, { parseDuration } from '../../lib/Time';
 import durationFormat from '@maggiben/duration-format';
 // Import styles
 import './TimeCode.css';
 
-export default class TimeCode extends Component {
+type Props = {
+  time: number,
+  duration: number
+};
+
+type State = {
+  format: bool
+};
+
+export default class TimeCode extends Component<Props, State> {
   state = {
     format: false
   };
 
   static defaultProps = {
-    currentTime: 0,
+    time: 0,
     duration: 0
   };
 
   static propTypes = {
-    currentTime: PropTypes.number,
+    time: PropTypes.number,
     duration: PropTypes.number
   };
 
-  decodeTime (time) {
-    if (this.state.format) {
-      time = this.props.duration - time;
+  format (time: number) : string {
+    const { format } = this.state;
+    return durationFormat(time * 1000, `${(format ? '-' : '')}#{2H}:#{2M}:#{2S}`);
+  }
+
+  stringify () : string {
+    const { format } = this.state;
+    const { duration, time } = this.props;
+    if (format) {
+      return this.format(duration - (format ? time : 0));
+    } else {
+      return this.format(time);
     }
-    const currentTime = durationFormat(time * 1000, '#{2H}:#{2M}:#{2S}')
-    return this.state.format ? `-${currentTime}` : currentTime;
   }
 
   toggleFormat = () => {
@@ -73,12 +91,11 @@ export default class TimeCode extends Component {
   }
 
   render () {
-    const duration = this.decodeTime(this.props.time);
-    return (<span className="time-code" onClick={this.toggleFormat}>{duration}</span>);
+    return (<span className="time-code" onClick={ this.toggleFormat }>{ this.stringify() }</span>);
   }
 }
 
-export const TrackDuration = props => {
-  const { duration, format } = props;
-  return (<span>{durationFormat(Number.isInteger(duration) ? duration : parseDuration(duration), '#{2H}:#{2M}:#{2S}')}</span>);
+export const TrackDuration = (props: Props) => {
+  const { duration } = props;
+  return (<span>{ durationFormat(Number.isInteger(duration) ? duration : parseDuration(duration), '#{2H}:#{2M}:#{2S}') }</span>);
 };

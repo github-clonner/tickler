@@ -37,6 +37,6 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-export const get = key => ({ type: 'SETTINGS_GET', key });
-export const set = (key, value) => ({ type: 'SETTINGS_SET', key, value });
+export const get = (key: string) : any => ({ type: 'SETTINGS_GET', key });
+export const set = (key: string, value:any) : any => ({ type: 'SETTINGS_SET', key, value });
 

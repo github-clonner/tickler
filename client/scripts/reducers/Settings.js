@@ -41,7 +41,7 @@ import SettingsStore from '../lib/SettingsStore';
 
 const settings = new SettingsStore();
 
-export default function Settings (state = settings, action) {
+export default function Settings (state: any = settings, action: any) {
   switch (action.type) {
     case 'SETTINGS_GET': {
       const { key } = action;

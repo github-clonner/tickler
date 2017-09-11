@@ -41,6 +41,7 @@ import electron from 'electron';
 import path from 'path';
 import fs from 'fs';
 
+// $FlowIssue
 const isRenderer = (process && process.type === 'renderer');
 
 export const getPath = function (name: string) {

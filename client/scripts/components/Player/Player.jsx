@@ -52,9 +52,6 @@ import * as Audio from 'actions/Player';
 
 import { Progress, InputRange, TimeCode } from '../index';
 
-import musicmetadata from 'musicmetadata';
-import * as mm from 'music-metadata';
-
 // Import styles
 import './Player.css';
 import 'styles/buttons.css';
@@ -132,18 +129,6 @@ export default class Player extends Component {
       const blob = new window.Blob([new Uint8Array(buffer)]);
       this.wavesurfer.loadBlob(blob);
     });
-    console.log('get metadata', file)
-    mm.parseFile(file, { duration: true })
-    .then(function (metadata) {
-      console.log(util.inspect(metadata, { showHidden: false, depth: null }));
-    });
-    /*
-    const stream = fileSystem.createReadStream(file)
-    musicmetadata(stream, function (error, metadata) {
-      console.log('metadata', error, metadata);
-      if (error) throw error;
-    });
-    */
   }
 
   handleVolume = volume => {

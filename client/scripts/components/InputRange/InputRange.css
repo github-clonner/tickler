@@ -1,31 +1,31 @@
 @import "styles/variables.css";
 
 :root {
-    --background: #2f2f2f;
+  --background: #2f2f2f;
 }
 
 input[type="range"].range {
+  appearance: none;
+  height: 8px;
+  border-radius: 5px;
+  outline: none;
+  &::-webkit-slider-thumb {
     appearance: none;
-    height: 8px;
-    border-radius: 5px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all .15s ease-in-out;
+    position: relative;
+    background: radial-gradient(ellipse at center, #2f2f2f 30%, #666 30%, #666 100%);
+    &:hover {
+      background: radial-gradient(ellipse at center, #2f2f2f 30%, #c1c1c1 30%, #c1c1c1 100%);
+    }
+  }
+  &:active::-webkit-slider-thumb {
+    background: radial-gradient(ellipse at center, #2f2f2f 30%, #fff 30%, #fff 100%);
+  }
+  &:focus {
     outline: none;
-    &::-webkit-slider-thumb {
-        appearance: none;
-        width: 16px;
-        height: 16px;
-        border-radius: 50%;
-        cursor: pointer;
-        transition: all .15s ease-in-out;
-        position: relative;
-        background: radial-gradient(ellipse at center, #2f2f2f 30%, #666 30%, #666 100%);
-        &:hover {
-            background: radial-gradient(ellipse at center, #2f2f2f 30%, #c1c1c1 30%, #c1c1c1 100%);
-        }
-    }
-    &:active::-webkit-slider-thumb {
-        background: radial-gradient(ellipse at center, #2f2f2f 30%, #fff 30%, #fff 100%);
-    }
-    &:focus {
-        outline: none;
-    }
+  }
 }

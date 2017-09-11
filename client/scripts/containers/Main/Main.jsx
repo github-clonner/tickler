@@ -75,7 +75,7 @@ export default class Main extends Component {
         <CoverFlow />
         <Equalizer />
         <div className="page-content">
-          <List className="list" list={list}>
+          <List className="list" list={ list } >
             { children }
           </List>
         </div>

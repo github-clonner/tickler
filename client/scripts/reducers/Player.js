@@ -32,9 +32,8 @@ const initialToolbar = new Toolbar();
 export function ToolBar (state = initialToolbar, action) {
   switch (action.type) {
     case 'TOOLBAR_OPTIONS': {
-      console.log(action.payload)
       let toolbar = new Toolbar(action.payload);
-      return toolbar;//.merge(action.payload);
+      return toolbar;
     }
     default:
       return state;

@@ -1,3 +1,5 @@
+// @flow
+
 ///////////////////////////////////////////////////////////////////////////////
 // @file         : Stars.jsx                                                 //
 // @summary      : Stars component                                           //
@@ -41,7 +43,13 @@ import classNames from 'classnames';
 // Import styles
 import './Stars.css';
 
-export default class Stars extends Component {
+type Props = {
+  stars: number,
+  maxStars: number
+};
+
+export default class Stars extends Component<Props, void> {
+
   static defaultProps = {
     stars: 0,
     maxStars: 5
@@ -52,7 +60,7 @@ export default class Stars extends Component {
     maxStars: PropTypes.number
   }
 
-  makeStars (stars) {
+  makeStars (stars: number) {
     const { maxStars } = this.props;
     return Array.from({length: maxStars}, (value, index) => {
       const star = (index < stars) ? ['full', '★'] : ['empty', '☆'];
@@ -62,6 +70,6 @@ export default class Stars extends Component {
 
   render () {
     const { stars } = this.props;
-    return (<span className="stars">{this.makeStars(stars)}</span>);
+    return (<span className="stars">{ this.makeStars(stars) }</span>);
   }
 }

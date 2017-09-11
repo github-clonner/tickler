@@ -1,3 +1,5 @@
+// @flow
+
 ///////////////////////////////////////////////////////////////////////////////
 // @file         : Toolbar.jsx                                               //
 // @summary      : Toolbar component                                         //
@@ -35,56 +37,79 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-import path from 'path';
 import React from 'react';
+import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import classNames from 'classnames';
-import * as Actions from 'actions/Player';
-
+import * as Actions from '../../actions/ToolBar';
+import type { ToolBar } from '../../types';
+// Import images
+import * as images from './images';
+// Import styles
 import './Toolbar.css';
 
-import { coverflow, equalizer, levels } from '../../../../assets/images';
+type Props = {
+  toolbar: ToolBar,
+  actions: any
+};
 
-const images = { coverflow, equalizer, levels };
+type State = {
+  ToolBar: ToolBar
+};
 
-function mapStateToProps(state) {
+function mapStateToProps (state: State) {
   return {
-    toolbar: state.Player
+    toolbar: state.ToolBar.toJS()
   };
 }
 
-function mapDispatchToProps(dispatch) {
+function mapDispatchToProps (dispatch: Dispatch) {
   return {
     actions: bindActionCreators(Actions, dispatch)
   };
 }
 
-const Toolbar = (props) =>
-  <ul className="toolbar">{Object.keys(props.toolbar.toJS()).map((button, index) => {
+const Toolbar = (props: Props) => {
+
+  const { actions, toolbar } = props;
+  const buttons = Object.keys(toolbar);
+
+  function handleChange ({ target }: SyntheticInputEvent<HTMLInputElement>) : void {
+    const { value } = target;
+    const options = buttons.reduce((previous, option) => {
+      return Object.assign({}, previous, {
+        [option]: (option === value)
+      });
+    }, {});
+    console.log('actions.set()', options);
+    actions.set(options);
+  }
+
+  function makeButtons (button: string, index: number) : any {
     return (
-      <li className="radio-button" key={index}>
+      <li className="radio-button" key={ index } >
         <input
           type="radio"
           name="toolbar"
-          id={button}
-          value={button}
-          checked={props.toolbar[button]}
-          onChange={event => {
-            let { value } = event.target;
-            let { actions, toolbar } = props;
-            let options = Object.keys(toolbar.toJS()).reduce((previous, option) => {
-              previous[option] = (option === value);
-              return previous;
-            }, {});
-            actions.toolbarOptions(options);
-          }}
+          id={ button }
+          value={ button }
+          checked={ props.toolbar[button] }
+          onChange={ handleChange }
         />
-        <label className="radio-button" htmlFor={button}>
-        <img src={images[button]}></img>
+        <label className="radio-button" htmlFor={ button } >
+          <img src={ images[button] }></img>
         </label>
-      </li>);
-    })
-  }</ul>
+      </li>
+    );
+  }
+
+  return ( <ul className="toolbar">{ buttons.map(makeButtons) }</ul> );
+
+};
+
+Toolbar.propTypes = {
+  toolbar: PropTypes.object.isRequired,
+  actions: PropTypes.object.isRequired
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(Toolbar);

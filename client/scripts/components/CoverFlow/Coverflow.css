@@ -16,7 +16,7 @@
     overflow: hidden;
     &.active {
         height: 140px;
-        & .container, & .caption {
+        & .container, & .title {
             opacity: 1;
         }
     }
@@ -61,7 +61,7 @@
             height: 64px;
         }
     }
-    & .caption {
+    & .title {
         position: absolute;
         background: rgba(255, 255, 255, 0.2);
         color: #fff;

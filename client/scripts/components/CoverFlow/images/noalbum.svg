@@ -1,0 +1,19 @@
+<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg">
+ <defs>
+  <style>.cls-1{fill:none;stroke:#000;stroke-linecap:round;stroke-linejoin:round;}</style>
+ </defs>
+ <title>Artboard 3</title>
+ <g>
+  <title>background</title>
+  <rect fill="none" id="canvas_background" height="102" width="102" y="-1" x="-1"/>
+ </g>
+ <g>
+  <title>Layer 1</title>
+  <line id="svg_1" y2="68.26" x2="42.64" y1="30.12" x1="42.64" class="cls-1"/>
+  <line id="svg_2" y2="24.12" x2="74.4" y1="30.12" x1="42.64" class="cls-1"/>
+  <line id="svg_3" y2="32.37" x2="74.4" y1="38.37" x1="42.64" class="cls-1"/>
+  <ellipse id="svg_4" transform="rotate(-17.739999771118164 -19.379999160766594,13.67000007629395) " ry="6.74" rx="8.71" cy="82.6" cx="14.710001" class="cls-1"/>
+  <line id="svg_5" y2="62.26" x2="74.46" y1="24.12" x1="74.46" class="cls-1"/>
+  <ellipse id="svg_6" transform="rotate(-17.739999771118164 -16.04000091552734,23.079999923706055) " ry="6.74" rx="8.71" cy="86.01" cx="49.869999" class="cls-1"/>
+ </g>
+</svg>

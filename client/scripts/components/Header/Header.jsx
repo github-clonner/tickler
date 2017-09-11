@@ -1,3 +1,5 @@
+// @flow
+
 ///////////////////////////////////////////////////////////////////////////////
 // @file         : Header.jsx                                                //
 // @summary      : Header component                                          //
@@ -37,28 +39,36 @@
 
 import { remote } from 'electron';
 import React, { Component } from 'react';
-import 'styles/header.css';
-
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import * as Actions from 'actions/Player';
+import * as Actions from '../../actions/Player';
+import './Header.css';
 
-function mapStateToProps(state) {
+type Props = {
+  router: any,
+  actions: any
+};
+
+function mapStateToProps (state) {
   return {
     router: state.routing
   };
 }
 
-function mapDispatchToProps(dispatch) {
+function mapDispatchToProps (dispatch: *) {
   return {
     actions: bindActionCreators(Actions, dispatch)
   };
 }
 
+// $FlowIssue
 @connect(mapStateToProps, mapDispatchToProps)
-export default class Header extends Component {
-  constructor(...args) {
-    super(...args);
+export default class Header extends Component<Props, void> {
+
+  window: BrowserWindow;
+
+  constructor(props: Props, context: any) {
+    super(props, context);
     this.window = remote.getCurrentWindow();
   }
 
@@ -77,7 +87,7 @@ export default class Header extends Component {
   minimize = () => {
     this.window.minimize();
   }
-  
+
 
   render() {
     //const { location } = this.props.state;

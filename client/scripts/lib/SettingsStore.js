@@ -53,6 +53,7 @@ const DEFAULT_SETTINGS_FILENAME = 'settings.json';
 export default class SettingsStore {
   settings: Map<string, *>;
   file: string;
+  validate: Function;
 
   constructor () {
     this.settings = new Map();
@@ -79,6 +80,10 @@ export default class SettingsStore {
     } catch (error) {
       return error;
     }
+  }
+
+  toString() : string {
+    return JSON.stringify(this.toJSON(), null, 2);
   }
 
   toJSON () : Object {
@@ -109,12 +114,10 @@ export default class SettingsStore {
     return this.save();
   }
 
-  delete (key: string) : boolean {
+  delete (key: string) : void | Error {
     const { settings } = this;
     if (settings.delete(key)) {
       return this.save();
-    } else {
-      return false;
     }
   }
 

@@ -1,3 +1,5 @@
+// @flow
+
 ///////////////////////////////////////////////////////////////////////////////
 // @file         : InputRange.jsx                                            //
 // @summary      : InputRange component                                      //
@@ -37,11 +39,23 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-
 // Import styles
 import './InputRange.css';
 
-export default class InputRange extends Component {
+type Props = {
+  disabled: bool,
+  min: number,
+  max: number,
+  step: number,
+  onChange: Function
+};
+
+type State = {
+  value: number
+};
+
+export default class InputRange extends Component<Props, State> {
+
   state = {
     value: 0
   };
@@ -60,10 +74,10 @@ export default class InputRange extends Component {
     max: PropTypes.number,
     step: PropTypes.number,
     onChange: PropTypes.func
-  }
+  };
 
-  handleChange = event => {
-    const value = parseFloat(event.target.value);
+  handleChange = ({ target }: SyntheticInputEvent<HTMLInputElement>) => {
+    const value = parseFloat(target.value);
     this.setState({ value });
     this.props.onChange(value);
   }
@@ -82,7 +96,7 @@ export default class InputRange extends Component {
     this.drawTrack();
   }
 
-  componentWillReceiveProps (nextProps) {
+  componentWillReceiveProps (nextProps: Object) {
     if(!nextProps) {
       return;
     }
@@ -100,7 +114,7 @@ export default class InputRange extends Component {
   }
 
   render () {
-    const { min, max, value, step, disabled } = this.props;
+    const { min, max, step, disabled } = this.props;
     return <input
       ref="range"
       className="range"

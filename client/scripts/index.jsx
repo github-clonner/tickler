@@ -58,8 +58,8 @@ const history = createHistory();
 const middleware = routerMiddleware(history);
 
 
-/* router */
-import routes from './routes.jsx';
+/* routes */
+import routes from './routes';
 /* clipboard manager */
 // import ClipBoardData from 'lib/ClipBoardData';
 
@@ -80,8 +80,8 @@ const store = createStore(
 // clipBoardData.events.on('data', data => {
 //   history.push({
 //     pathname: '/new-list',
-//     query: { 
-//       modal: true 
+//     query: {
+//       modal: true
 //     },
 //     state: {
 //       list: data.list,

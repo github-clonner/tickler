@@ -8,3 +8,4 @@ export InputRange from './InputRange/InputRange';
 //export Spinner from './Spinner/Spinner';
 export CoverFlow from './CoverFlow/CoverFlow';
 export Equalizer from './Equalizer/Equalizer';
+export Editor from './Editor/Editor';
