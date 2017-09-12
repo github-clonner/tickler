@@ -43,6 +43,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import querystring from 'querystring';
 import url from 'url';
+import { js_beautify } from 'js-beautify';
 import * as Actions from 'actions/PlayList';
 import * as Settings from 'actions/Settings';
 import { Header, Toolbar, Editor, Player } from '../../components';
@@ -87,11 +88,12 @@ export default class Inspector extends Component<Props, State>  {
     const { file, options } = this.props;
     console.log('Inspector.Props', file, options);
     console.log('Inspector.State', this.state);
+    const code = '{"debug":false,"uv":true,"ipv6":true,"tls_npn":true,"tls_alpn":true,"tls_sni":true,"tls_ocsp":true,"tls":true}';
     return (
       <div className="page">
         <Header />
         <div className="page-content">
-          <Editor file={ file } options={ options } />
+          <Editor file={ file } options={ options } code={ js_beautify(code, { indent_size: 2 }) } />
         </div>
         <Player />
       </div>

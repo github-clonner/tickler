@@ -88,11 +88,13 @@ type Options = {
 };
 
 type Props = {
+  code: string,
   onFocusChange: Function,
   options: Options
 };
 
 type DefaultProps = {
+  code: string,
   onFocusChange: Function,
   options: Options
 };
@@ -106,6 +108,7 @@ export default class Editor extends React.Component<Props, State> {
 
   constructor (props: Props, context: any) {
     super(props, context);
+    this.state.code = props.code;
   }
 
   options: Options;
@@ -113,11 +116,12 @@ export default class Editor extends React.Component<Props, State> {
   editor: ?Element;
 
   state = {
-    code: js_beautify(settings.toString(), { indent_size: 2 }),
+    // code: js_beautify(settings.toString(), { indent_size: 2 }),
     isFocused: false
   };
 
   static defaultProps = {
+    code: js_beautify(settings.toString(), { indent_size: 2 }),
     onFocusChange(focused: bool) { },
     options: {
       autofocus: true,

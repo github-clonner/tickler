@@ -110,12 +110,12 @@ export default class List extends Component {
         console.log(song);
       }
     }, {
-      type: "separator"
+      type: 'separator'
     }, {
       label: 'Select All',
       click() {}
     }, {
-      type: "separator"
+      type: 'separator'
     }, {
       label: 'Explore item folder',
       enabled: fs.existsSync(song.file),
@@ -123,7 +123,7 @@ export default class List extends Component {
         return shell.showItemInFolder(song.file);
       }
     }, {
-      type: "separator"
+      type: 'separator'
     }, {
       label: 'Remove from PlayList',
       click() {}
