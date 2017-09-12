@@ -38,11 +38,8 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 import { List, Map, Record } from 'immutable';
-import type { Action } from '../types';
-
-//Redux types (provided by redux lib)
-type ReduxInitAction = { type: '@@redux/INIT' };
-type ReduxAction<Action> = ReduxInitAction | Action;
+import type { ToolBarActions } from '../types';
+import { ToolBarActionKeys as Action } from '../types';
 
 const ToolBarState = Record({
   equalizer: false,
@@ -52,9 +49,9 @@ const ToolBarState = Record({
 
 const toolBarState = new ToolBarState();
 
-export default function ToolBar (state: ToolBarState = toolBarState, action: ReduxAction<Action>) {
+export default function ToolBar (state: ToolBarState = toolBarState, action: ToolBarActions) {
   switch (action.type) {
-    case 'TOOLBAR_SET': {
+    case Action.SET: {
       const toolbar = new ToolBarState();
       return toolbar.merge(action.payload);
     }

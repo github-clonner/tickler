@@ -43,8 +43,6 @@ export const PlayerActionKeys = {
   SET_WAVESURFER: 'SET_WAVESURFER'
 };
 
-export const getPlayerActionType = (actionType: $Keys<typeof PlayerActionKeys>) => (actionType);
-
 export type PlayerActions =
   | Action<typeof PlayerActionKeys.SET_CONTEXT, any>
   | Action<typeof PlayerActionKeys.SET_ANALYSER, any>

@@ -39,7 +39,7 @@ import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux'
 import { List, Map } from 'immutable';
-import * as Actions from 'actions/Playlist';
+import * as Actions from 'actions/PlayList';
 
 function mapStateToProps(state) {
   return {

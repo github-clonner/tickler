@@ -38,7 +38,8 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 import type { ToolBar } from '../types';
+import { ToolBarActionKeys as Action } from '../types';
 
-export const set = (payload: ToolBar) => ({ type: 'TOOLBAR_SET', payload });
-export const create = (payload: ToolBar) => ({ type: 'TOOLBAR_CREATE', payload });
-export const remove = (payload: ToolBar) => ({ type: 'TOOLBAR_REMOVE', payload });
+export const set = (payload: ToolBar) => ({ type: Action.SET, payload });
+export const create = (payload: ToolBar) => ({ type: Action.CREATE, payload });
+export const remove = (payload: ToolBar) => ({ type: Action.REMOVE, payload });

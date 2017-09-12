@@ -186,6 +186,15 @@ export default function PlayListItems (state = List([]), action) {
       }
     }
 
+    case 'PAUSE_ITEM': {
+      const index = getIndex(action.id);
+      if (index > -1) {
+        return state.update(index, item => item.set('isPlaying', false));
+      } else {
+        return state;
+      }
+    }
+
     case 'PLAY_NEXT_ITEM': {
       console.log('PLAY_NEXT_ITEM', action.id)
       const index = getIndex(action.id);

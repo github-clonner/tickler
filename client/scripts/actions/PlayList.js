@@ -76,6 +76,7 @@ export const editItem = (id, payload) => ({ type: 'EDIT_ITEM', id, payload });
 export const selectItems = payload => ({ type: 'SELECT_ITEMS', payload });
 export const createFrom = payload => ({type: 'CREATEFROM', payload});
 export const playPauseItem = (id, payload) => ({ type: 'PLAYPAUSE_ITEM', id, payload });
+export const pauseItem = (id) => ({ type: 'PAUSE_ITEM', id });
 export const playNext = (id) => ({ type: 'PLAY_NEXT_ITEM', id });
 export const playPrevious = (id) => ({ type: 'PLAY_PREVIOUS_ITEM', id });
 export const stop = id => ({ type: 'STOP', id });

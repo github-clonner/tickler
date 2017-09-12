@@ -1,14 +1,14 @@
 // @flow
 
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : Player.js                                                //
-// @summary      : Player reducer                                            //
-// @version      : 0.2.0                                                     //
+// @file         : ContextMenu.js                                            //
+// @summary      : Context menu class                                        //
+// @version      : 0.0.1                                                     //
 // @project      : tickelr                                                   //
 // @description  :                                                           //
 // @author       : Benjamin Maggi                                            //
 // @email        : benjaminmaggi@gmail.com                                   //
-// @date         : 12 Sep 2017                                               //
+// @date         : 02 Sep 2017                                               //
 // @license:     : MIT                                                       //
 // ------------------------------------------------------------------------- //
 //                                                                           //
@@ -37,38 +37,51 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-import type { PlayerActions } from '../types';
-import { PlayerActionKeys as Action } from '../types';
-import WaveSurfer from 'wavesurfer.js';
+import { remote } from 'electron';
+const { Menu, MenuItem } = remote;
 
-const audio = {
-  context: new AudioContext(),
-  analyser: null,
-  wavesurfer: Object.create(WaveSurfer)
-};
-
-export function Audio (state: Object = audio, action: PlayerActions) {
-  
-  switch (action.type) {
-
-    case Action.SET_CONTEXT: {
-      state.context = action.payload;
-      return state;
-    }
-
-    case Action.SET_ANALYSER: {
-      state.analyser = action.payload;
-      return state;
-    }
-
-    case Action.SET_WAVESURFER: {
-      state.wavesurfer = action.payload;
-      return state;
-    }
-
-    default:
-      return state;
+export class ContextMenu {
+  menu: any;
+  constructor (template?: Array<Object>) {
+    this.menu = template ? Menu.buildFromTemplate(template) : new Menu();
+    // window.addEventListener('contextmenu', this.handleMenu, false);
   }
 
+  handleMenu = event => {
+    event.preventDefault();
+    this.menu.popup(remote.getCurrentWindow());
+  }
+}
+
+export const buildContextMenu = function (template: Array<Object>) {
+  return Menu.buildFromTemplate(template);
+};
+
+export function buildContextMenuXX () {
+  
+  const menu = new Menu();
+
+  // Build menu one item at a time, unlike
+  menu.append(new MenuItem ({
+    label: 'MenuItem1',
+    click() { 
+       console.log('item 1 clicked')
+    }
+  }))
+
+  menu.append(new MenuItem({type: 'separator'}))
+  menu.append(new MenuItem({label: 'MenuItem2', type: 'checkbox', checked: true}))
+  menu.append(new MenuItem ({
+    label: 'MenuItem3',
+    click() {
+       console.log('item 3 clicked')
+    }
+  }))
+
+  // Prevent default action of right click in chromium. Replace with our menu.
+  window.addEventListener('contextmenu', (e) => {
+    e.preventDefault()
+    menu.popup(remote.getCurrentWindow())
+  }, false)
 }
 

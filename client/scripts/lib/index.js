@@ -3,3 +3,4 @@ export FileSystem, { getPath, read, write, remove, OS_DIRECTORIES } from './File
 export SettingsStore from './SettingsStore';
 export PlayListStore from './PlayListStore';
 export Youtube from './Youtube';
+export { ContextMenu, buildContextMenu } from './ContextMenu';

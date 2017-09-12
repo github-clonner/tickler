@@ -193,12 +193,16 @@ export default class Player extends Component {
     if(!nextProps.list.size) {
       return;
     }
-
     const item = nextProps.list.find(item => (item.get('isPlaying') === true));
-
     // already playing
     if (this.state.isPlaying && (item && item.get('id') === this.state.item.get('id'))) {
       return;
+    } else if (!item && this.state.isPlaying) {
+      const currentId = this.state.item.get('id');
+      const nextItem = nextProps.list.find(item => (item.get('id') === currentId));
+      if (nextItem && !nextItem.get('isPlaying')) {
+        this.stop();
+      }
     }
 
     if(item && item.get('file') && !item.get('isLoading')) {

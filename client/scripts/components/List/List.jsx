@@ -40,11 +40,14 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux'
-import * as Actions from 'actions/Playlist';
+import * as Actions from 'actions/PlayList';
 import * as Settings from 'actions/Settings';
 import Stars from '../Stars/Stars';
 import Spinner from '../Spinner/Spinner';
 import { TrackDuration } from '../TimeCode/TimeCode';
+import { ContextMenu, buildContextMenu } from '../../lib';
+import { shell } from 'electron';
+import fs from 'fs';
 // Import styles
 import './List.css';
 
@@ -89,6 +92,53 @@ export default class List extends Component {
   static defaultProps = {
     placeholder: document.createElement('li')
   };
+
+  buildListItemMenu (song) {
+    const { actions } = this.props;
+
+    return buildContextMenu([{
+      label: song.isPlaying ? 'Pause': 'Play',
+      click() {
+        const { id, file, isLoading, isPlaying } = song;
+        if (file && !isLoading) {
+          return isPlaying ? actions.pauseItem(id) : actions.playItem(id, true);
+        }
+      }
+    }, {
+      label: 'Media Information...',
+      click() {
+        console.log(song);
+      }
+    }, {
+      type: "separator"
+    }, {
+      label: 'Select All',
+      click() {}
+    }, {
+      type: "separator"
+    }, {
+      label: 'Explore item folder',
+      enabled: fs.existsSync(song.file),
+      click() {
+        return shell.showItemInFolder(song.file);
+      }
+    }, {
+      type: "separator"
+    }, {
+      label: 'Remove from PlayList',
+      click() {}
+    }, {
+      label: 'Delete from Library',
+      click() {}
+    }]);
+  }
+
+  handleContextMenu (event, song) {
+    event.preventDefault();
+    const menu = this.buildListItemMenu(song);
+    const { clientX, clientY } = event;
+    menu.popup(clientX, clientY, true);
+  }
 
   componentDidMount () {
     const { actions, options, settings } = this.props;
@@ -194,8 +244,12 @@ export default class List extends Component {
 
 
   handleDoubleClick = song => {
+    this.playPause(song);
+  }
+
+  playPause (song) {
     const { actions } = this.props;
-    let options = {
+    const options = {
       title: 'Now Playing',
       body: song.title,
       sound: false,
@@ -287,8 +341,9 @@ export default class List extends Component {
           onDrop={this.drop}
           className={style}
           key={index}
-          onClick={(event) => this.handleClick(event, song)}
-          onDoubleClick={() => this.handleDoubleClick(song)}
+          onClick={(event) => this.handleClick(event, song) }
+          onDoubleClick={() => this.handleDoubleClick(song) }
+          onContextMenu={(event) => this.handleContextMenu(event, song) }
           style={this.makeProgressBar(song)}
           >
           <span>{ index + 1 }</span>

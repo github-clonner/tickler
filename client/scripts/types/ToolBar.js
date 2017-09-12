@@ -39,7 +39,7 @@
 
 import type { Action } from './Action';
 
-export const ActionKeys = {
+export const ToolBarActionKeys = {
   ADD: 'TOOLBAR_ADD',
   SET: 'TOOLBAR_SET',
   CREATE: 'TOOLBAR_CREATE',
@@ -47,9 +47,7 @@ export const ActionKeys = {
   HIDE: 'TOOLBAR_HIDE'
 };
 
-export const getActionType = (actionType: $Keys<typeof ActionKeys>) => (actionType);
-
-export type Icon = {
+type ToolBarIcon = {
   url: string,
   width: number,
   height: number
@@ -59,19 +57,19 @@ export type ToolBarButton = {
   name: string,
   hint?: string,
   active?: bool,
-  icon?: Icon
+  icon?: ToolBarIcon
 };
 
-export type ToolBarButtons = {
+export type ToolBar = {
   equalizer: bool,
   levels: bool,
   coverflow: bool
 };
 
 export type ToolBarActions =
-  | Action<typeof ActionKeys.ADD, ToolBarButtons>
-  | Action<typeof ActionKeys.SET, ToolBarButtons>
-  | Action<typeof ActionKeys.CREATE, ToolBarButtons>
-  | Action<typeof ActionKeys.REMOVE, ToolBarButtons>
-  | Action<typeof ActionKeys.HIDE, ToolBarButtons>
+  | Action<typeof ToolBarActionKeys.ADD, ToolBarButtons>
+  | Action<typeof ToolBarActionKeys.SET, ToolBarButtons>
+  | Action<typeof ToolBarActionKeys.CREATE, ToolBarButtons>
+  | Action<typeof ToolBarActionKeys.REMOVE, ToolBarButtons>
+  | Action<typeof ToolBarActionKeys.HIDE, ToolBarButtons>
   ;

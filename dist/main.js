@@ -1,4 +1,42 @@
-"use strict";
+// @flow
+
+///////////////////////////////////////////////////////////////////////////////
+// @file         : Main.js                                                   //
+// @summary      : Electron main process manager                             //
+// @version      : 0.2.0                                                     //
+// @project      : tickelr                                                   //
+// @description  :                                                           //
+// @author       : Benjamin Maggi                                            //
+// @email        : benjaminmaggi@gmail.com                                   //
+// @date         : 12 Sep 2017                                               //
+// @license:     : MIT                                                       //
+// ------------------------------------------------------------------------- //
+//                                                                           //
+// Copyright 2017 Benjamin Maggi <benjaminmaggi@gmail.com>                   //
+//                                                                           //
+//                                                                           //
+// License:                                                                  //
+// Permission is hereby granted, free of charge, to any person obtaining a   //
+// copy of this software and associated documentation files                  //
+// (the "Software"), to deal in the Software without restriction, including  //
+// without limitation the rights to use, copy, modify, merge, publish,       //
+// distribute, sublicense, and/or sell copies of the Software, and to permit //
+// persons to whom the Software is furnished to do so, subject to the        //
+// following conditions:                                                     //
+//                                                                           //
+// The above copyright notice and this permission notice shall be included   //
+// in all copies or substantial portions of the Software.                    //
+//                                                                           //
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS   //
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF                //
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.    //
+// IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY      //
+// CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,      //
+// TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE         //
+// SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                    //
+//                                                                           //
+///////////////////////////////////////////////////////////////////////////////
+
 import {
   app,
   nativeImage,
@@ -18,7 +56,8 @@ const config = {
     music: app.getPath('music'),
     videos: app.getPath('videos'),
     appData: app.getPath('appData'),
-    userData: app.getPath('userData')
+    userData: app.getPath('userData'),
+    cwd: process.cwd()
   },
   package: JSON.parse(fs.readFileSync(path.resolve(app.getAppPath(), 'package.json'))),
   env: process.env
@@ -242,22 +281,58 @@ function menuBar() {
 
   const basicTemplate = [{
     label: "Application",
-    submenu: [
-      { label: "About Application", selector: "orderFrontStandardAboutPanel:" },
-      { type: "separator" },
-      { label: "Quit", accelerator: "Command+Q", click: function() { app.quit(); }}
-    ]}, {
+    submenu: [{
+        label: "About Application",
+        selector: "orderFrontStandardAboutPanel:"
+      },
+      {
+        type: "separator"
+      },
+      {
+        label: "Quit",
+        accelerator: "Command+Q",
+        click: function() {
+          app.quit();
+        }
+      }
+    ]
+  }, {
     label: "Edit",
-    submenu: [
-      { label: "Undo", accelerator: "CmdOrCtrl+Z", selector: "undo:" },
-      { label: "Redo", accelerator: "Shift+CmdOrCtrl+Z", selector: "redo:" },
-      { type: "separator" },
-      { label: "Cut", accelerator: "CmdOrCtrl+X", selector: "cut:" },
-      { label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:" },
-      { label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:" },
-      { label: "Select All", accelerator: "CmdOrCtrl+A", selector: "selectAll:" }
-    ]}
-  ];
+    submenu: [{
+        label: "Undo",
+        accelerator: "CmdOrCtrl+Z",
+        selector: "undo:"
+      },
+      {
+        label: "Redo",
+        accelerator: "Shift+CmdOrCtrl+Z",
+        selector: "redo:"
+      },
+      {
+        type: "separator"
+      },
+      {
+        label: "Cut",
+        accelerator: "CmdOrCtrl+X",
+        selector: "cut:"
+      },
+      {
+        label: "Copy",
+        accelerator: "CmdOrCtrl+C",
+        selector: "copy:"
+      },
+      {
+        label: "Paste",
+        accelerator: "CmdOrCtrl+V",
+        selector: "paste:"
+      },
+      {
+        label: "Select All",
+        accelerator: "CmdOrCtrl+A",
+        selector: "selectAll:"
+      }
+    ]
+  }];
 
   const menu = Menu.buildFromTemplate(basicTemplate);
   Menu.setApplicationMenu(menu)
