@@ -1,14 +1,14 @@
 // @flow
 
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : CoverFlow.jsx                                             //
-// @summary      : CoverFlow widget                                          //
+// @file         : Settings.js                                               //
+// @summary      : Settings flow type definition                             //
 // @version      : 0.0.1                                                     //
 // @project      : tickelr                                                   //
 // @description  :                                                           //
 // @author       : Benjamin Maggi                                            //
 // @email        : benjaminmaggi@gmail.com                                   //
-// @date         : 07 Sep 2017                                               //
+// @date         : 13 Sep 2017                                               //
 // @license:     : MIT                                                       //
 // ------------------------------------------------------------------------- //
 //                                                                           //
@@ -37,77 +37,31 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import classNames from 'classnames';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux'
-import * as Actions from '../../actions';
-import Covers from './Covers';
-/* Import styles */
-import './CoverFlow.css';
-
-
-type ToolBar = {
-  equalizer: bool,
-  levels: bool,
-  coverflow: bool
+export type Audio = {
+  volume?: number;
 };
 
-type Props = {
-  list: Array<Object>,
-  toolbar: ToolBar
+export type Player = {
+  autoplay?: boolean;
 };
 
-type State = {
-  PlayListItems: Record<*>,
-  ToolBar: Record<*>
+export type Provider = {
+  name?: string;
+  security?: any;
 };
 
-function mapStateToProps (state: State) {
-  return {
-    list: state.PlayListItems.toJS(),
-    toolbar: state.ToolBar.toJS()
-  };
-}
+export type PlayList = {
+  folders?: Array<"music" | "videos" | "userData">;
+  folder?: string;
+  formats?: Array<"mp3" | "mp4" | "m4a" | "aac" | "flac" | "wav" | "ogg" | "3gpp">;
+  current?: string | null;
+};
 
-function mapDispatchToProps (dispatch: *) {
-  return {
-    actions: bindActionCreators(Actions, dispatch)
-  };
-}
-
-// $FlowIssue
-@connect(mapStateToProps, mapDispatchToProps)
-export default class CoverFlow extends Component<Props, * > {
-
-  state = {
-    title: 'Song Name'
-  };
-
-  static propTypes = {
-    list: PropTypes.array.isRequired,
-    toolbar: PropTypes.object.isRequired
-  };
-
-  setTitle = ({ title }: Object) : void => {
-    return this.setState({ title });
-  }
-
-  render () {
-    const { toolbar, list } = this.props;
-    const { title } = this.state;
-    const style = classNames('coverflow', {
-      active: toolbar.coverflow
-    });
-
-    return (
-      <div className={ style }>
-        <div className="container" ref="container">
-          <Covers list={ list } setTitle={ this.setTitle }/>
-        </div>
-        <span className="title">{ title }</span>
-      </div>
-    );
-  }
-}
+export type Settings = {
+  audio?: Audio;
+  player?: Player;
+  playlist?: PlayList;
+  providers?: Provider;
+  createdAt?: string | null;
+  modifiedAt?: string | null;
+};

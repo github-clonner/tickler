@@ -1,14 +1,14 @@
 // @flow
 
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : CoverFlow.jsx                                             //
-// @summary      : CoverFlow widget                                          //
+// @file         : PlayList.js                                               //
+// @summary      : PlayList flow type definition                             //
 // @version      : 0.0.1                                                     //
 // @project      : tickelr                                                   //
 // @description  :                                                           //
 // @author       : Benjamin Maggi                                            //
 // @email        : benjaminmaggi@gmail.com                                   //
-// @date         : 07 Sep 2017                                               //
+// @date         : 12 Sep 2017                                               //
 // @license:     : MIT                                                       //
 // ------------------------------------------------------------------------- //
 //                                                                           //
@@ -37,77 +37,61 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import classNames from 'classnames';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux'
-import * as Actions from '../../actions';
-import Covers from './Covers';
-/* Import styles */
-import './CoverFlow.css';
-
-
-type ToolBar = {
-  equalizer: bool,
-  levels: bool,
-  coverflow: bool
+export type Artist = {
+  id: string;
+  name: string;
+  genres?: Array<string>;
+  uri?: string;
 };
 
-type Props = {
-  list: Array<Object>,
-  toolbar: ToolBar
+export type Thumbnail = {
+  height?: number;
+  url: string;
+  width?: number;
 };
 
-type State = {
-  PlayListItems: Record<*>,
-  ToolBar: Record<*>
+export type Thumbnails = {
+  default: Thumbnail;
+  high?: Thumbnail;
+  maxres?: Thumbnail;
+  medium?: Thumbnail;
+  standard?: Thumbnail;
 };
 
-function mapStateToProps (state: State) {
-  return {
-    list: state.PlayListItems.toJS(),
-    toolbar: state.ToolBar.toJS()
-  };
-}
+export type Album = {
+  id: string;
+  type?: "album" | "single" | "compilation";
+  name: string;
+  artists?: Array<Artist>;
+  genres: Array<string>;
+  copyrights?: Array<{
+    text?: string;
+    type?: string;
+  }>;
+};
 
-function mapDispatchToProps (dispatch: *) {
-  return {
-    actions: bindActionCreators(Actions, dispatch)
-  };
-}
+export type Track = {
+  id: string;
+  artists: Array<Artist>;
+  name: string;
+  album?: Album;
+  year?: string;
+  comment?: string;
+  thumbnails: Thumbnails;
+  genre?: string;
+  lyrics?: string;
+  duration?: number | string;
+  file?: string;
+  playing?: boolean;
+  progress?: number;
+  status?: string;
+  stars?: number;
+};
 
-// $FlowIssue
-@connect(mapStateToProps, mapDispatchToProps)
-export default class CoverFlow extends Component<Props, * > {
-
-  state = {
-    title: 'Song Name'
-  };
-
-  static propTypes = {
-    list: PropTypes.array.isRequired,
-    toolbar: PropTypes.object.isRequired
-  };
-
-  setTitle = ({ title }: Object) : void => {
-    return this.setState({ title });
-  }
-
-  render () {
-    const { toolbar, list } = this.props;
-    const { title } = this.state;
-    const style = classNames('coverflow', {
-      active: toolbar.coverflow
-    });
-
-    return (
-      <div className={ style }>
-        <div className="container" ref="container">
-          <Covers list={ list } setTitle={ this.setTitle }/>
-        </div>
-        <span className="title">{ title }</span>
-      </div>
-    );
-  }
-}
+export type PlayList = {
+  id: string;
+  name: string;
+  description?: string | null;
+  href?: string;
+  tracks: Array<Track>;
+};

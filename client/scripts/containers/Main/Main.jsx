@@ -62,7 +62,7 @@ export default class Main extends Component {
       this.setState(prevState => ({
         config: config,
       }));
-      console.info('app config:', config);
+      // console.info('app config:', config);
     });
   }
 

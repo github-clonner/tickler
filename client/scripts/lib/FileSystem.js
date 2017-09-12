@@ -48,15 +48,22 @@ export const getPath = function (name: string) {
   return isRenderer ? electron.remote.app.getPath(name) : electron.app.getPath(name);
 };
 
-export const OS_DIRECTORIES = {
-  home: getPath('home'),
-  appData: getPath('appData'),
-  userData: getPath('userData'),
-  temp: getPath('temp'),
-  music: getPath('music'),
-  videos: getPath('videos')
-};
+/**
+ * List of special directories
+ * More info: https://electron.atom.io/docs/api/app/#appgetpathname
+ */
+export const OS_DIRECTORIES = ['home', 'appData', 'userData', 'temp', 'music', 'videos', 'exe'].reduce((directories, name) => {
+  return Object.assign({}, directories, {
+    [name]: getPath(name)
+  })
+}, {});
 
+/**
+ * Synchronus JSON file reader
+ * @param {string} file path
+ * @param {string|object} If options is a string, then it specifies the encoding
+ * @returns {object} the parsed json file
+ */
 export const read = function (path: string, options?: string | Object = 'utf8') : Object | Error {
   try {
     const data: string = fs.readFileSync(path, options);

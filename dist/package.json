@@ -7,6 +7,11 @@
     "email": "benjaminmaggi@gmail.com",
     "url": "https://github.com/maggiben"
   },
+  "tickler": {
+    "options": {
+      "extensions": ["mp3", "mp4", "m4a", "aac", "flac", "wav", "ogg", "3gpp"]
+    }
+  },
   "license": "MIT",
   "main": "window.js",
   "js-flags": "--harmony"

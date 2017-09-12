@@ -37,7 +37,7 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-import type { ToolBarActions, ToolBar, ActionIds } from '../types';
+import type { ToolBar } from '../types';
 
 export const set = (payload: ToolBar) => ({ type: 'TOOLBAR_SET', payload });
 export const create = (payload: ToolBar) => ({ type: 'TOOLBAR_CREATE', payload });

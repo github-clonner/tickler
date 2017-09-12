@@ -1,44 +1,49 @@
-import Chance from 'chance';
+// @flow
+
+///////////////////////////////////////////////////////////////////////////////
+// @file         : PlayList.js                                               //
+// @summary      : Playlist actions                                          //
+// @version      : 0.2.0                                                     //
+// @project      : tickelr                                                   //
+// @description  :                                                           //
+// @author       : Benjamin Maggi                                            //
+// @email        : benjaminmaggi@gmail.com                                   //
+// @date         : 12 Sep 2017                                               //
+// @license:     : MIT                                                       //
+// ------------------------------------------------------------------------- //
+//                                                                           //
+// Copyright 2017 Benjamin Maggi <benjaminmaggi@gmail.com>                   //
+//                                                                           //
+//                                                                           //
+// License:                                                                  //
+// Permission is hereby granted, free of charge, to any person obtaining a   //
+// copy of this software and associated documentation files                  //
+// (the "Software"), to deal in the Software without restriction, including  //
+// without limitation the rights to use, copy, modify, merge, publish,       //
+// distribute, sublicense, and/or sell copies of the Software, and to permit //
+// persons to whom the Software is furnished to do so, subject to the        //
+// following conditions:                                                     //
+//                                                                           //
+// The above copyright notice and this permission notice shall be included   //
+// in all copies or substantial portions of the Software.                    //
+//                                                                           //
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS   //
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF                //
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.    //
+// IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY      //
+// CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,      //
+// TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE         //
+// SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                    //
+//                                                                           //
+///////////////////////////////////////////////////////////////////////////////
+
 import schema from '../../schemas/playlist.json';
 import getObjectProperty from 'lodash/get';
 import jsonata from 'jsonata';
-import Ajv from 'ajv';
-import { Youtube, Time, parseDuration, SettingsStore, getPath } from '../lib';
+import { Youtube, Time, parseDuration, SettingsStore, PlayListStore, getPath } from '../lib';
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
-
-const customFormats = {
-  'uint32': {
-    validate(data) { return Number.isInteger(data) },
-    type: 'number'
-  },
-  'int32': {
-    validate(data) { return Number.isInteger(data) },
-    type: 'number'
-  },
-  'uint64': {
-    validate(data) { return Number.isInteger(data) },
-    type: 'number'
-  },
-  'int64': {
-    validate(data) { return Number.isInteger(data) },
-    type: 'number'
-  },
-  'double': {
-    validate(data) { return Number.isFinite(data) },
-    type: 'number'
-  }
-};
-
-const ajv = new Ajv({
-  formats: customFormats,
-  allErrors: true,
-  unknownFormats: 'ignore'
-});
-
-const settings = new SettingsStore();
-console.log('settings', settings);
 
 const youtube = new Youtube({
   apiKey: 'AIzaSyAPBCwcnohnbPXScEiVMRM4jYWc43p_CZU',
@@ -219,33 +224,8 @@ playlistQuery.registerFunction('parseDuration', (duration) => parseDuration(dura
 
 export function getCurrent () {
   return async function (dispatch, getState) {
-    const { current, folders } = settings.get('playlist');
-    const file = folders
-    .map(folder => {
-      return path.isAbsolute(folder) ? path.join(folder, current) : path.join(getPath(folder), current);
-    })
-    .find(file => {
-      return fs.existsSync(file);
-    });
-
-    if (file) {
-      try {
-        const playlist = JSON.parse(fs.readFileSync(file, options));
-        const validate = ajv.compile(schema);
-        if (validate(playlist)) {
-          console.log('playlist:', playlist);
-          return dispatch(receivePlayListItems(playlist.tracks));
-        } else {
-          console.error(validate.errors);
-          throw new Error('Unknown playlist format');
-        }
-      } catch (error) {
-        console.error(error);
-        throw error;
-      }
-    } else {
-      throw new Error('PlayList not found');
-    }
+    const playListStore = new PlayListStore();
+    return dispatch(receivePlayListItems(playListStore.playlist.tracks));
   };
 };
 
@@ -264,22 +244,6 @@ export function fetchListItems (id) {
       console.error(error);
       return error;
     }
-
-    /*
-    let chance = new Chance();
-    let payload = items.map(item => {
-      let time = new Time(getObjectProperty(item, 'contentDetails.duration'));
-      return {
-        id: item.id,
-        kind: item.kind,
-        title: getObjectProperty(item, 'snippet.title'),
-        duration: time.toTime(),
-        thumbnails: getObjectProperty(item, 'snippet.thumbnails'),
-        stars: chance.integer({min: 0, max: 5})
-      };
-    });
-    dispatch(receivePlayListItems(payload));
-    */
   };
 }
 

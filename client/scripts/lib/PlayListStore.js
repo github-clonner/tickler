@@ -1,14 +1,14 @@
 // @flow
 
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : SettingsStore.js                                          //
-// @summary      : Save and load user preferences                            //
+// @file         : PlayListStore.js                                          //
+// @summary      : PlayList store class                                      //
 // @version      : 0.0.1                                                     //
 // @project      : tickelr                                                   //
 // @description  :                                                           //
 // @author       : Benjamin Maggi                                            //
 // @email        : benjaminmaggi@gmail.com                                   //
-// @date         : 02 Sep 2017                                               //
+// @date         : 12 Sep 2017                                               //
 // @license:     : MIT                                                       //
 // ------------------------------------------------------------------------- //
 //                                                                           //
@@ -39,98 +39,122 @@
 
 import path from 'path';
 import fs from 'fs';
+import os from 'os';
 import Ajv from 'ajv';
-import schema from '../../schemas/settings.json';
+import uuid from 'uuid';
+import schema from '../../schemas/playlist.json';
 import { read, write, remove, getPath } from './FileSystem';
-import { tickler } from '../../../package.json';
+import SettingsStore from './SettingsStore';
+import { PlayList } from '../types';
 
+const settings = new SettingsStore();
 const ajv = new Ajv({
   allErrors: true,
   useDefaults: true
 });
 
-const DEFAULT_SETTINGS_FILENAME = 'settings.json';
+export default class PlayListStore {
 
-export default class SettingsStore {
-  settings: Map<string, *>;
-  file: string;
+  playlist: PlayList;
   validate: Function;
 
-  constructor () {
-    this.settings = new Map();
+  constructor (file?: string) {
     this.validate = ajv.compile(schema);
-    this.file = path.join(getPath('userData'), DEFAULT_SETTINGS_FILENAME);
-    if (!fs.existsSync(this.file)) {
-      this.create();
+    const { current, folders } = settings.get('playlist');
+    if (file && fs.existsSync(file)) {
+      this.playlist = this.load(file);
+      console.log('playlist loaded', this.playlist);
     } else {
-      this.load();
-    }
-  }
-
-  get (key: string, defaultValue?: any = null) : any {
-    const { file, settings } = this;
-    return (key && settings.has(key)) ? settings.get(key) : defaultValue;
-  }
-
-  load () : Object | Error {
-    const { file } = this;
-    try {
-      const data = read(file);
-      this.settings = new Map(Object.entries(data));
-      return this.settings;
-    } catch (error) {
-      return error;
-    }
-  }
-
-  toString() : string {
-    return JSON.stringify(this.toJSON(), null, 2);
-  }
-
-  toJSON () : Object {
-    const { settings } = this;
-    const object = {};
-    if (settings.size) {
-      for (let [key, value] of settings) {
-        object[key] = value
+      const match = this.find(folders, current);
+      if (match) {
+        console.log('playlist found', match);
+        this.playlist = this.load(match);
+      } else {
+        console.log('playlist not found, create new');
+        this.playlist = this.create();
       }
     }
-    return object;
   }
 
-  save () : void | Error {
-    const { file, settings } = this;
-    const object = this.toJSON();
-    settings.set('modifiedAt', new Date());
-    const result = write(file, object);
-    return result;
+  /*
+   * Find a playlist
+   */
+  find (folders: Array<string>, glob: string) : void | string {
+    const { current } = settings.get('playlist');
+    return folders
+    .map(folder => {
+      return path.isAbsolute(folder) ? path.join(folder, current) : path.join(getPath(folder), current);
+    })
+    .find(file => {
+      return fs.existsSync(file);
+    });
   }
 
-  create () : void | Error {
-    let defaults = {};
-    this.validate(defaults);
-    this.settings = new Map(Object.entries(defaults));
-    this.settings.set('createdAt', new Date());
-    console.log('new settings', defaults);
-    return this.save();
-  }
-
-  delete (key: string) : void | Error {
-    const { settings } = this;
-    if (settings.delete(key)) {
-      return this.save();
+  /*
+   * Load playlist from disk
+   */
+  load (file: string) : PlayList | Error {
+    if (fs.existsSync(file)) {
+      const stats = fs.statSync(file);
+      if (stats.isFile()) {
+        try {
+          console.log('Playlist loading', file);
+          this.playlist = read(file);
+          if (this.validate(this.playlist)) {
+            return this.playlist;
+          } else {
+            console.error(this.validate.errors);
+            throw new Error('Invalid playlist format');
+          }
+        } catch (error) {
+          console.error(error);
+          throw error;
+        }
+      } else {
+        throw new Error('Invalid playlist format');
+      }
+    } else {
+      throw new Error('Playlist not found');
     }
   }
 
-  clear () : void | Error {
-    const { file, settings } = this;
-    settings.clear();
-    return remove(file);
+  /*
+   * Save playlist to disk
+   */
+  save (file: string, data: PlayList = this.playlist) : void | Error {
+    const { playlist } = this;
+    return write(file, this.playlist);
   }
 
-  set (key: string, value: any) : void | Error {
-    const { file, settings } = this;
-    settings.set(key, value);
-    return this.save();
+  /*
+   * Create empty playlist usually inside the user’s music directory
+   */
+  create () : void | Error {
+    const { username } = os.userInfo();
+    const { current, folder } = settings.get('playlist');
+    // Default playlist file location+name    
+    const file = path.join(getPath(folder), current);
+    
+    this.playlist = {
+      name: `${username} playlist`,
+      id: uuid.v1()
+    };
+
+    this.validate(this.playlist);
+    this.save(file, this.playlist);
+    return this.playlist;
+  }
+
+  /*
+   * Remove playlist from disk
+   */
+  remove (file: string) : void | Error {
+    if (fs.existsSync(file)) {
+      const stats = fs.statSync(file);
+      if (stats.isFile()) {
+        return remove(file);
+      }
+    }
   }
 }
+

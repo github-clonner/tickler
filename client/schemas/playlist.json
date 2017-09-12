@@ -25,6 +25,7 @@
     "tracks": {
       "type": "array",
       "description": "Playlist tracks.",
+      "default": [],
       "items": {
         "$ref": "#/definitions/TrackDetails"
       }
@@ -65,7 +66,6 @@
       "properties": {
         "height": {
           "type": "integer",
-          "format": "uint32",
           "description": "(Optional) Height of the thumbnail image."
         },
         "url": {
@@ -75,7 +75,6 @@
         },
         "width": {
           "type": "integer",
-          "format": "uint32",
           "description": "(Optional) Width of the thumbnail image."
         }
       }

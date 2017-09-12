@@ -47,7 +47,7 @@ import * as Settings from 'actions/Settings';
 import Immutable, { List, Map } from 'immutable';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux'
-import * as Playist from 'actions/Playlist';
+import * as PlayList from 'actions/PlayList';
 import * as Audio from 'actions/Player';
 
 import { Progress, InputRange, TimeCode } from '../index';
@@ -69,7 +69,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    actions: bindActionCreators(Playist, dispatch),
+    actions: bindActionCreators(PlayList, dispatch),
     audio: bindActionCreators(Audio, dispatch),
     settings: bindActionCreators(Settings, dispatch)
   };

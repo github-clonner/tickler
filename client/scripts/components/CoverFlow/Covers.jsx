@@ -37,7 +37,6 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-
 import React from 'react';
 import classNames from 'classnames';
 import noalbum from './images/noalbum.svg';

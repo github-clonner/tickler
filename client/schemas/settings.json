@@ -97,6 +97,11 @@
             "description": "Default folders to search for audio and playlist files"
           }
         },
+        "folder": {
+          "type": "string",
+          "default": "music",
+          "description": "Music library folder"
+        },
         "formats": {
           "type": "array",
           "default": ["mp3", "mp4", "m4a", "aac", "flac", "wav", "ogg", "3gpp"],

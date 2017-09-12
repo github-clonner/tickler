@@ -1,8 +1,6 @@
-// @flow
-
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : CoverFlow.jsx                                             //
-// @summary      : CoverFlow widget                                          //
+// @file         : ToolBar.js                                                //
+// @summary      : ToolBar flow types                                        //
 // @version      : 0.0.1                                                     //
 // @project      : tickelr                                                   //
 // @description  :                                                           //
@@ -37,77 +35,18 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import classNames from 'classnames';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux'
-import * as Actions from '../../actions';
-import Covers from './Covers';
-/* Import styles */
-import './CoverFlow.css';
+import type { Action } from './Action';
 
-
-type ToolBar = {
-  equalizer: bool,
-  levels: bool,
-  coverflow: bool
+export const PlayerActionKeys = {
+  SET_CONTEXT: 'SET_CONTEXT',
+  SET_ANALYSER: 'SET_ANALYSER',
+  SET_WAVESURFER: 'SET_WAVESURFER'
 };
 
-type Props = {
-  list: Array<Object>,
-  toolbar: ToolBar
-};
+export const getPlayerActionType = (actionType: $Keys<typeof PlayerActionKeys>) => (actionType);
 
-type State = {
-  PlayListItems: Record<*>,
-  ToolBar: Record<*>
-};
-
-function mapStateToProps (state: State) {
-  return {
-    list: state.PlayListItems.toJS(),
-    toolbar: state.ToolBar.toJS()
-  };
-}
-
-function mapDispatchToProps (dispatch: *) {
-  return {
-    actions: bindActionCreators(Actions, dispatch)
-  };
-}
-
-// $FlowIssue
-@connect(mapStateToProps, mapDispatchToProps)
-export default class CoverFlow extends Component<Props, * > {
-
-  state = {
-    title: 'Song Name'
-  };
-
-  static propTypes = {
-    list: PropTypes.array.isRequired,
-    toolbar: PropTypes.object.isRequired
-  };
-
-  setTitle = ({ title }: Object) : void => {
-    return this.setState({ title });
-  }
-
-  render () {
-    const { toolbar, list } = this.props;
-    const { title } = this.state;
-    const style = classNames('coverflow', {
-      active: toolbar.coverflow
-    });
-
-    return (
-      <div className={ style }>
-        <div className="container" ref="container">
-          <Covers list={ list } setTitle={ this.setTitle }/>
-        </div>
-        <span className="title">{ title }</span>
-      </div>
-    );
-  }
-}
+export type PlayerActions =
+  | Action<typeof PlayerActionKeys.SET_CONTEXT, any>
+  | Action<typeof PlayerActionKeys.SET_ANALYSER, any>
+  | Action<typeof PlayerActionKeys.SET_WAVESURFER, any>
+  ;
