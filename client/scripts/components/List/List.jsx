@@ -46,10 +46,36 @@ import Stars from '../Stars/Stars';
 import Spinner from '../Spinner/Spinner';
 import { TrackDuration } from '../TimeCode/TimeCode';
 import { ContextMenu, buildContextMenu } from '../../lib';
-import { shell } from 'electron';
+import { shell, remote } from 'electron';
 import fs from 'fs';
+import { push } from 'react-router-redux';
 // Import styles
 import './List.css';
+
+/*
+{
+      x: this.mainWindowState.x,
+      y: this.mainWindowState.y,
+      width: this.mainWindowState.width,
+      height: this.mainWindowState.height,
+      backgroundThrottling: false, // do not throttle animations/timers when page is background
+      minWidth: 800,
+      minHeight: 400,
+      darkTheme: true, // Forces dark theme (GTK+3)
+      titleBarStyle: 'hidden-inset', // Hide title bar (Mac)
+      useContentSize: true, // Specify web page size without OS chrome
+      center: true,
+      frame: false,
+      icon: makeIcon('icon.png')
+    }
+*/
+const openModal = function () {
+  const modal = new remote.BrowserWindow({
+    parent: remote.getCurrentWindow(),
+    modal: true
+  });
+  modal.loadURL(`file://${__dirname}/dist/index.html`);
+}
 
 const mapStateToProps = function (state) {
   return {
@@ -63,7 +89,11 @@ const mapStateToProps = function (state) {
 const mapDispatchToProps = function (dispatch) {
   return {
     actions: bindActionCreators(Actions, dispatch),
-    settings: bindActionCreators(Settings, dispatch)
+    settings: bindActionCreators(Settings, dispatch),
+    inspect: url => dispatch(push({
+      pathname: url,
+      state: { some: 'state' }
+    }))
   };
 };
 
@@ -94,11 +124,11 @@ export default class List extends Component {
   };
 
   buildListItemMenu (song) {
-    const { actions } = this.props;
+    const { actions, inspect } = this.props;
 
     return buildContextMenu([{
       label: song.isPlaying ? 'Pause': 'Play',
-      click() {
+      click () {
         const { id, file, isLoading, isPlaying } = song;
         if (file && !isLoading) {
           return isPlaying ? actions.pauseItem(id) : actions.playItem(id, true);
@@ -106,30 +136,58 @@ export default class List extends Component {
       }
     }, {
       label: 'Media Information...',
-      click() {
+      click () {
         console.log(song);
+        return openModal();
       }
     }, {
       type: 'separator'
     }, {
       label: 'Select All',
-      click() {}
+      click () {}
     }, {
       type: 'separator'
     }, {
       label: 'Explore item folder',
       enabled: fs.existsSync(song.file),
-      click() {
+      click () {
         return shell.showItemInFolder(song.file);
       }
     }, {
       type: 'separator'
     }, {
       label: 'Remove from PlayList',
-      click() {}
+      click () {}
     }, {
       label: 'Delete from Library',
-      click() {}
+      click () {}
+    }, {
+      type: 'separator'
+    }, {
+      label: 'Inspect',
+      click () {
+        const { dialog } = remote;
+        dialog.showOpenDialog({
+          title: 'Open playlist',
+          defaultPath: '/Users/bmaggi/Music',
+          filters: [{
+            name: 'PlayList files', extensions: ['json']
+          }, {
+            name: 'All Files', extensions: ['*']
+          }]
+        }, (files) => {
+          // files is an array that contains all the selected
+          const file = files.pop();
+          if (file && fs.existsSync(file)) {
+            const stats = fs.statSync(file);
+            console.log('selected files: ', files, stats)
+            return inspect('/inspector/caca.txt?readOnly=true&mode=javascript');
+          } else {
+            console.log('No file selected');
+            return;
+          }
+        });
+      }
     }]);
   }
 

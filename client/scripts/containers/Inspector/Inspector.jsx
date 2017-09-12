@@ -40,13 +40,16 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
+import fs from 'fs';
 import { connect } from 'react-redux';
 import querystring from 'querystring';
 import url from 'url';
 import { js_beautify } from 'js-beautify';
+import jsonata from 'jsonata';
 import * as Actions from 'actions/PlayList';
 import * as Settings from 'actions/Settings';
 import { Header, Toolbar, Editor, Player } from '../../components';
+import { read, write, remove } from '../../lib/FileSystem';
 import '../../../styles/main.css';
 import './Inspector.css';
 
@@ -59,11 +62,80 @@ type State = {
   code: string
 };
 
+/*
+const optionsQuery = jsonata(`
+  $.(
+    $toNumber := function($x) { $length($x) < 1 ? 0 : $number($x) };
+    $.{
+      'mode': $string(mode),
+      'indentUnit': $number(indentUnit),
+      'indentWithTabs': $boolean(indentWithTabs),
+      'smartIndent': $boolean(smartIndent),
+      'tabSize': $number(tabSize),
+      'lineSeparator': $string(lineSeparator),
+      'specialChars': specialChars,
+      'electricChars': $boolean(electricChars),
+      'inputStyle': $string(inputStyle),
+      'spellcheck': $boolean(spellcheck),
+      'rtlMoveVisually': $boolean(rtlMoveVisually),
+      'wholeLineUpdateBefore': $boolean(wholeLineUpdateBefore),
+      'theme': $string(theme),
+      'keyMap': $string(keyMap),
+      'extraKeys': extraKeys,
+      'configureMouse': configureMouse,
+      'lineWrapping': $boolean(lineWrapping),
+      'gutters': gutters,
+      'fixedGutter': $boolean(fixedGutter),
+      'coverGutterNextToScrollbar': $boolean(coverGutterNextToScrollbar),
+      'scrollbarStyle': $string(scrollbarStyle),
+      'lineNumbers': $boolean(lineNumbers),
+      'firstLineNumber': $number(firstLineNumber),
+      'showCursorWhenSelecting': $boolean(showCursorWhenSelecting),
+      'resetSelectionOnContextMenu': $boolean(resetSelectionOnContextMenu),
+      'lineWiseCopyCut': $boolean(lineWiseCopyCut),
+      'pasteLinesPerSelection': $boolean(pasteLinesPerSelection),
+      'readOnly': $boolean(readOnly),
+      'disableInput': $boolean(disableInput),
+      'dragDrop': $boolean(dragDrop),
+      'allowDropFileTypes': allowDropFileTypes,
+      'cursorBlinkRate': $number(cursorBlinkRate),
+      'cursorScrollMargin': $number(cursorScrollMargin),
+      'cursorHeight': $number(cursorHeight),
+      'singleCursorHeightPerLine': $boolean(singleCursorHeightPerLine),
+      'workTime': $number(workTime),
+      'workDelay': $number(workDelay),
+      'flattenSpans': $boolean(flattenSpans),
+      'addModeClass': $boolean(addModeClass),
+      'pollInterval': $number(pollInterval),
+      'undoDepth': $number(undoDepth),
+      'historyEventDelay': $number(historyEventDelay),
+      'viewportMargin': $number(viewportMargin),
+      'maxHighlightLength': $number(maxHighlightLength),
+      'moveInputWithCursor': $boolean(moveInputWithCursor),
+      'tabindex': $toNumber(tabindex),
+      'autofocus': $boolean(autofocus),
+      'direction': $string(direction),
+      'matchTags': $boolean(matchTags)
+    }
+  )
+`);
+*/
+
+const optionsQuery = jsonata(`
+  $.(
+    $toNumber := function($x) { $length($x) < 1 ? 0 : $number($x) };
+    $.{
+      'mode': $string(mode),
+      'readOnly': $boolean(readOnly)
+    }
+  )
+`);
+
 function mapStateToProps(state, ownProps) {
   console.log('ownProps', ownProps);
   const { query } = url.parse(ownProps.location.pathname);
-  const options = querystring.parse(query);
-  console.log('ownProps options', options, state.Settings.get('inspector'));
+  console.log('query: ', url.parse(ownProps.location.pathname))
+  const options = optionsQuery.evaluate(querystring.parse(query));
   return {
     file: ownProps.match.params.file,
     options: Object.assign({}, state.Settings.get('inspector'), options)
@@ -84,16 +156,33 @@ export default class Inspector extends Component<Props, State>  {
     options: PropTypes.object
   };
 
+  load (file: string) {
+    if (fs.existsSync(file)) {
+      const stats = fs.statSync(file);
+      if (stats.isFile()) {
+        try {
+          const data = read(file);
+          return js_beautify(JSON.stringify(data), { indent_size: 2 })
+        } catch (error) {
+          console.error(error);
+          throw error;
+        }
+      } else {
+        throw new Error('Invalid file format');
+      }
+    } else {
+      throw new Error('File not found');
+    }
+  }
+
   render () {
     const { file, options } = this.props;
-    console.log('Inspector.Props', file, options);
-    console.log('Inspector.State', this.state);
-    const code = '{"debug":false,"uv":true,"ipv6":true,"tls_npn":true,"tls_alpn":true,"tls_sni":true,"tls_ocsp":true,"tls":true}';
+    const code = this.load('./package.json');
     return (
       <div className="page">
         <Header />
         <div className="page-content">
-          <Editor file={ file } options={ options } code={ js_beautify(code, { indent_size: 2 }) } />
+          <Editor file={ file } options={ options } code={ code } />
         </div>
         <Player />
       </div>
