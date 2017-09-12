@@ -48,7 +48,7 @@ import Immutable, { List, Map } from 'immutable';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux'
 import * as Playist from 'actions/Playlist';
-import * as Audio from 'actions/Player';
+import * as Audio from 'actions/Audio';
 
 import { Progress, InputRange, TimeCode } from '../index';
 

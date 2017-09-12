@@ -1,16 +1,66 @@
+// @flow
+
+///////////////////////////////////////////////////////////////////////////////
+// @file         : Equalizer.jsx                                             //
+// @summary      : Equalizer widget                                          //
+// @version      : 0.0.1                                                     //
+// @project      : tickelr                                                   //
+// @description  :                                                           //
+// @author       : Benjamin Maggi                                            //
+// @email        : benjaminmaggi@gmail.com                                   //
+// @date         : 11 Sep 2017                                               //
+// @license:     : MIT                                                       //
+// ------------------------------------------------------------------------- //
+//                                                                           //
+// Copyright 2017 Benjamin Maggi <benjaminmaggi@gmail.com>                   //
+//                                                                           //
+//                                                                           //
+// License:                                                                  //
+// Permission is hereby granted, free of charge, to any person obtaining a   //
+// copy of this software and associated documentation files                  //
+// (the "Software"), to deal in the Software without restriction, including  //
+// without limitation the rights to use, copy, modify, merge, publish,       //
+// distribute, sublicense, and/or sell copies of the Software, and to permit //
+// persons to whom the Software is furnished to do so, subject to the        //
+// following conditions:                                                     //
+//                                                                           //
+// The above copyright notice and this permission notice shall be included   //
+// in all copies or substantial portions of the Software.                    //
+//                                                                           //
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS   //
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF                //
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.    //
+// IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY      //
+// CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,      //
+// TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE         //
+// SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                    //
+//                                                                           //
+///////////////////////////////////////////////////////////////////////////////
+
 import React, { Component } from 'react';
 import { findDOMNode } from "react-dom";
 import classNames from 'classnames';
-
-require('./equalizer.css');
 /* Redux stuff */
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux'
 import * as Actions from '../../actions';
+/* Import styles */
+import './Equalizer.css';
+
+type ToolBar = {
+  equalizer: bool,
+  levels: bool,
+  coverflow: bool
+};
+
+type Props = {
+  audio: any,
+  toolbar: ToolBar
+};
 
 function mapStateToProps(state) {
   return {
-    toolbar: state.Player,
+    toolbar: state.ToolBar.toJS(),
     audio: state.Audio
   };
 }
@@ -22,10 +72,22 @@ function mapDispatchToProps(dispatch) {
 }
 
 @connect(mapStateToProps, mapDispatchToProps)
-export default class Equalizer extends Component {
+export default class Equalizer extends Component<Props, void> {
 
-  constructor(...args) {
-    super(...args);
+  analyser: any;
+  meterWidth: number;
+  gap: number;
+  capHeight: number;
+  capStyle: string;
+  meterNum: number;
+  capYPositionArray: Array<any>;
+  ctx: any;
+  gradient: any;
+  width: number;
+  height: number;
+
+  constructor(props: Props, context: any) {
+    super(props, context);
     // Audio analyser
     this.analyser = null;
     //width of the meters in the spectrum
@@ -52,7 +114,7 @@ export default class Equalizer extends Component {
     this.gradient.addColorStop(0, '#81254a');
   }
 
-  componentWillReceiveProps (nextProps) {
+  componentWillReceiveProps (nextProps: Props) {
     if (!nextProps.audio.analyser) {
       return;
     }
@@ -75,15 +137,15 @@ export default class Equalizer extends Component {
     for (var i = 0; i < this.meterNum; i++) {
       var value = array[i * step];
       if (this.capYPositionArray.length < Math.round(this.meterNum)) {
-          this.capYPositionArray.push(value);
+        this.capYPositionArray.push(value);
       };
       this.ctx.fillStyle = this.capStyle;
       // Draw the bar cap, with transition effect
       if (value < this.capYPositionArray[i]) {
-          this.ctx.fillRect(i * 12, this.height - (--this.capYPositionArray[i]), this.meterWidth, this.capHeight);
+        this.ctx.fillRect(i * 12, this.height - (--this.capYPositionArray[i]), this.meterWidth, this.capHeight);
       } else {
-          this.ctx.fillRect(i * 12, this.height - value, this.meterWidth, this.capHeight);
-          this.capYPositionArray[i] = value;
+        this.ctx.fillRect(i * 12, this.height - value, this.meterWidth, this.capHeight);
+        this.capYPositionArray[i] = value;
       };
       // Set the filllStyle to gradient for a better look
       this.ctx.fillStyle = this.gradient;
@@ -96,12 +158,12 @@ export default class Equalizer extends Component {
   }
 
   render () {
-    let {toolbar} = this.props;
+    let { toolbar } = this.props;
     let style = classNames('equalizer', {
       active: toolbar.equalizer
     });
     return (
-      <div className={style}>
+      <div className={ style }>
         <canvas ref='canvas' width="800" height="350" className="draw-surface"></canvas>
       </div>
     );

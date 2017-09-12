@@ -1,14 +1,14 @@
 // @flow
 
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : CoverFlow.jsx                                             //
-// @summary      : CoverFlow widget                                          //
+// @file         : Audio.js                                                  //
+// @summary      : Audio context actions                                     //
 // @version      : 0.0.1                                                     //
 // @project      : tickelr                                                   //
 // @description  :                                                           //
 // @author       : Benjamin Maggi                                            //
 // @email        : benjaminmaggi@gmail.com                                   //
-// @date         : 07 Sep 2017                                               //
+// @date         : 11 Sep 2017                                               //
 // @license:     : MIT                                                       //
 // ------------------------------------------------------------------------- //
 //                                                                           //
@@ -37,78 +37,38 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import classNames from 'classnames';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux'
-import * as Actions from '../../actions';
-import Covers from './Covers';
-/* Import styles */
-import './Coverflow.css';
-
-
-type ToolBar = {
-  equalizer: bool,
-  levels: bool,
-  coverflow: bool
+type Audio = {
+  context: any,
+  analyser: any,
+  wavesurfer: any
 };
 
-type Props = {
-  list: Array<Object>,
-  toolbar: ToolBar
+const audio: Audio = {
+  context: null,
+  analyser: null,
+  wavesurfer: null
 };
 
-type State = {
-  PlayListItems: Record<*>,
-  ToolBar: Record<*>
-};
+export function Audio (state: Audio = audio, action: any) {
+  switch (action.type) {
 
-function mapStateToProps (state: State) {
-  return {
-    list: state.PlayListItems.toJS(),
-    toolbar: state.ToolBar.toJS()
-  };
-}
+    case 'CONTEXT': {
+      state.context = action.payload;
+      return state;
+    }
 
-function mapDispatchToProps (dispatch: *) {
-  return {
-    actions: bindActionCreators(Actions, dispatch)
-  };
-}
+    case 'ANALYSER': {
+      state.analyser = action.payload;
+      return state;
+    }
 
-// $FlowIssue
-@connect(mapStateToProps, mapDispatchToProps)
-export default class CoverFlow extends Component<Props, * > {
+    case 'WAVESURFER': {
+      state.wavesurfer = action.payload;
+      return state;
+    }
 
-  state = {
-    title: 'Song Name'
-  };
-
-  static propTypes = {
-    list: PropTypes.array.isRequired,
-    toolbar: PropTypes.object.isRequired
-  };
-
-  setTitle = ({ title }: Object) : void => {
-    return this.setState({ title });
-  };
-
-  render () {
-    const { toolbar, list } = this.props;
-    const { title } = this.state;
-    const style = classNames('coverflow', {
-      active: toolbar.coverflow
-    });
-
-    return (
-      <div className={ style }>
-        <div className="container" ref="container">
-          <Covers list={ list } setTitle={ this.setTitle }/>
-        </div>
-        <span className="title">{ title }</span>
-      </div>
-    );
+    default:
+      return state;
   }
 }
+
