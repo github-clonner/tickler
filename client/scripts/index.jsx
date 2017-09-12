@@ -99,7 +99,10 @@ const store = createStore(
 
 window.goUrl =  (url) => {
   console.log('goto !')
-  store.dispatch(push(url || '/about'))
+  store.dispatch(push({
+    pathname: url || '/about',
+    state: { some: 'state' }
+  }))
 }
 
 

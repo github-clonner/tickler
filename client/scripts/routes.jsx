@@ -46,7 +46,7 @@ export default (
     <Route exact path="/" component={ Main } />
     <Route path="/about" component={ About } />
     <Route path="/list" component={ NewList } />
-    <Route path="/inspector" component={ Inspector } />
+    <Route path="/inspector/:file?" component={ Inspector } />
     <Redirect from="/*" exact to="/" />
   </Switch>
 );

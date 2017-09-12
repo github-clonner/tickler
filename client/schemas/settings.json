@@ -19,6 +19,11 @@
       "default": {},
       "description": "Playlist options"
     },
+    "inspector": {
+      "$ref": "#/definitions/Inspector",
+      "default": {},
+      "description": "Inspector options"
+    },
     "providers": {
       "$ref": "#/definitions/Provider",
       "default": {
@@ -45,6 +50,44 @@
     }
   },
   "definitions": {
+    "Inspector": {
+      "type": "object",
+      "description": "Inspector options",
+      "properties": {
+        "autofocus": {
+          "type": "boolean",
+          "default": true
+        },
+        "matchBrackets": {
+          "type": "boolean",
+          "default": true
+        },
+        "keyMap": {
+          "type": "string",
+          "default": "sublime"
+        },
+        "mode": {
+          "type": "string",
+          "default": "javascript"
+        },
+        "lineNumbers": {
+          "type": "boolean",
+          "default": true
+        },
+        "styleActiveLine": {
+          "type": "boolean",
+          "default": true
+        },
+        "indentUnit": {
+          "type": "number",
+          "default": 2
+        },
+        "theme": {
+          "type": "string",
+          "default": "monokai"
+        }
+      }
+    },
     "Audio": {
       "type": "object",
       "description": "Audio options",

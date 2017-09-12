@@ -39,38 +39,59 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import querystring from 'querystring';
+import url from 'url';
+import * as Actions from 'actions/PlayList';
+import * as Settings from 'actions/Settings';
 import { Header, Toolbar, Editor, Player } from '../../components';
 import '../../../styles/main.css';
 import './Inspector.css';
 
 type Props = {
-  file: string
+  file: string,
+  options: Object
 };
 
 type State = {
   code: string
 };
 
+function mapStateToProps(state, ownProps) {
+  console.log('ownProps', ownProps);
+  const { query } = url.parse(ownProps.location.pathname);
+  const options = querystring.parse(query);
+  console.log('ownProps options', options, state.Settings.get('inspector'));
+  return {
+    file: ownProps.match.params.file,
+    options: Object.assign({}, state.Settings.get('inspector'), options)
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    actions: bindActionCreators(Actions, dispatch)
+  };
+}
+
+@connect(mapStateToProps, mapDispatchToProps)
 export default class Inspector extends Component<Props, State>  {
 
   static propTypes = {
-    file: PropTypes.string
+    file: PropTypes.string,
+    options: PropTypes.object
   };
-
-  static defaultProps = {
-    file: './index.js'
-  };
-
-  componentDidMount () {
-  }
 
   render () {
-    const { file } = this.props;
+    const { file, options } = this.props;
+    console.log('Inspector.Props', file, options);
+    console.log('Inspector.State', this.state);
     return (
       <div className="page">
         <Header />
         <div className="page-content">
-          <Editor file={ file } />
+          <Editor file={ file } options={ options } />
         </div>
         <Player />
       </div>
