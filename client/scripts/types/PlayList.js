@@ -95,3 +95,14 @@ export type PlayList = {
   href?: string;
   tracks: Array<Track>;
 };
+
+export const DialogOptions = {
+  open: {
+    title: 'Open playlist',
+    defaultPath: '/Users/bmaggi/Music'
+  },
+  save: {
+    title: 'Open playlist',
+    defaultPath: '/Users/bmaggi/Music'
+  }
+}

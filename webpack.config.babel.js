@@ -7,10 +7,6 @@ import ElectronConnectWebpackPlugin from 'electron-connect-webpack-plugin';
 import ElectronPlugin from 'electron-webpack-plugin';
 import WebpackCleanupPlugin from 'webpack-cleanup-plugin'
 
-//import packme from './bootstrapper';
-
-const babelSettings = JSON.parse(fs.readFileSync('.babelrc'));
-
 const env = {
   NODE_ENV: process.env.NODE_ENV || 'development',
 };
@@ -18,13 +14,21 @@ const env = {
 export default {
   context: path.resolve(__dirname, './client/scripts'),
   entry: {
-    'bundle': ['babel-polyfill', './index.jsx'],
-    'vendor': ['react', 'redux', 'axios', 'ytdl-core', 'immutable']
+    bundle: ['./index.jsx'],
+    vendor: ['react', 'redux', 'axios', 'ytdl-core', 'immutable']
   },
   output: {
     path: path.resolve('dist'),
     filename: '[name].js'
   },
+  node: {
+    console: true,
+    process: true,
+    Buffer: true,
+    __filename: true,
+    __dirname: false,
+  },
+  cache: true,
   devtool: 'eval-source-map',
   target: 'electron-renderer',
   plugins: [
@@ -74,6 +78,13 @@ export default {
     })
     //new ExtractTextPlugin('style.css', { allChunks: true })
   ],
+  resolveLoader: {
+    modules: [
+      path.resolve(__dirname, 'node_modules'),
+      path.resolve(__dirname, 'loaders')
+    ],
+    extensions: ['.js', '.jsx', '.json']
+  },
   resolve: {
     extensions: [ '*', '.js', '.jsx' ],
     modules: [
@@ -109,10 +120,46 @@ export default {
           'postcss-loader'
         ]
       },
+      // {
+      //   test: /\.jsx?$/,
+      //   include: [ /node_modules\/datauri/ ],
+      //   use: [
+      //     { loader: 'remove-hashbag-loader' },
+      //     {
+      //       loader: 'babel-loader',
+      //       options: {
+      //         presets: [[ 'env', { targets: { 'node': 7 }, useBuiltIns: true }], 'stage-0' ],
+      //         plugins: []
+      //       }
+      //     }
+      //   ]
+      // },
+      {
+        test: /\.txt$/,
+        exclude: /node_modules/,
+        use: { loader: 'raw-loader' }
+      },
+      {
+        test: /\.(types)$/i,
+        include: /node_modules\/mimer/,
+        use: [
+          { loader: 'file-loader', options: { name: '[name].[ext]', context: 'data', outputPath(filename) {
+              const { name, context } = this;
+              const outputpath = path.join(context, filename);
+              console.log(context, filename, outputpath);
+              return outputpath;
+            }
+          }
+        }
+        ]
+      },
       {
         test: /\.jsx?$/,
         exclude: /node_modules/,
-        loaders: [ 'react-hot-loader', 'babel-loader' ],
+        use: [
+          { loader: 'react-hot-loader' },
+          { loader: 'babel-loader' }
+        ],
       }
     ]
   }

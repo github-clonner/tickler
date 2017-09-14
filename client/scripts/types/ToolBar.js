@@ -67,9 +67,9 @@ export type ToolBar = {
 };
 
 export type ToolBarActions =
-  | Action<typeof ToolBarActionKeys.ADD, ToolBarButtons>
-  | Action<typeof ToolBarActionKeys.SET, ToolBarButtons>
-  | Action<typeof ToolBarActionKeys.CREATE, ToolBarButtons>
-  | Action<typeof ToolBarActionKeys.REMOVE, ToolBarButtons>
-  | Action<typeof ToolBarActionKeys.HIDE, ToolBarButtons>
+  | Action<typeof ToolBarActionKeys.ADD, ToolBar>
+  | Action<typeof ToolBarActionKeys.SET, ToolBar>
+  | Action<typeof ToolBarActionKeys.CREATE, ToolBar>
+  | Action<typeof ToolBarActionKeys.REMOVE, ToolBar>
+  | Action<typeof ToolBarActionKeys.HIDE, ToolBar>
   ;

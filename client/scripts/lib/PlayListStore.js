@@ -63,14 +63,11 @@ export default class PlayListStore {
     const { current, folders } = settings.get('playlist');
     if (file && fs.existsSync(file)) {
       this.playlist = this.load(file);
-      console.log('playlist loaded', this.playlist);
     } else {
       const match = this.find(folders, current);
       if (match) {
-        console.log('playlist found', match);
         this.playlist = this.load(match);
       } else {
-        console.log('playlist not found, create new');
         this.playlist = this.create();
       }
     }
@@ -98,16 +95,13 @@ export default class PlayListStore {
       const stats = fs.statSync(file);
       if (stats.isFile()) {
         try {
-          console.log('Playlist loading', file);
           this.playlist = read(file);
           if (this.validate(this.playlist)) {
             return this.playlist;
           } else {
-            console.error(this.validate.errors);
             throw new Error('Invalid playlist format');
           }
         } catch (error) {
-          console.error(error);
           throw error;
         }
       } else {
@@ -132,9 +126,9 @@ export default class PlayListStore {
   create () : void | Error {
     const { username } = os.userInfo();
     const { current, folder } = settings.get('playlist');
-    // Default playlist file location+name    
+    // Default playlist file location+name
     const file = path.join(getPath(folder), current);
-    
+
     this.playlist = {
       name: `${username} playlist`,
       id: uuid.v1()

@@ -38,10 +38,38 @@
 import { remote, ipcRenderer } from 'electron';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import URL from 'url';
+import * as Actions from '../../actions/PlayList';
 import { Header, Toolbar, Player, List, CoverFlow, Equalizer, DragDrop } from '../../components';
 import 'styles/main.css';
 import './Main.css';
 
+function mapStateToProps (state, ownProps) {
+  console.log('main ownProps', ownProps);
+  const options = decodeURIComponent(ownProps.match.params.options);
+  const { query, pathname } = URL.parse(options, true);
+  // Extract params, apply transform, remove undefined
+  // const options = Object.entries(optionsQuery.evaluate(query)).reduce((acc, [option, value]) => {
+  //   return value ? Object.assign({}, acc, {
+  //     [option]: value
+  //   }) : acc;
+  // }, state.Settings.get('inspector'));
+
+  return {
+    options: options
+  };
+}
+
+function mapDispatchToProps(dispatch: Dispatch) {
+  return {
+    actions: bindActionCreators(Actions, dispatch)
+  };
+}
+
+// $FlowIssue
+@connect(mapStateToProps, mapDispatchToProps)
 export default class Main extends Component {
   state = {
     config: {

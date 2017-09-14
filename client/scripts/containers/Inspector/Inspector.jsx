@@ -41,13 +41,14 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import fs from 'fs';
+import path from 'path';
 import { connect } from 'react-redux';
 import querystring from 'querystring';
 import url from 'url';
 import { js_beautify } from 'js-beautify';
 import jsonata from 'jsonata';
-import * as Actions from 'actions/PlayList';
-import * as Settings from 'actions/Settings';
+import * as Actions from '../../actions/PlayList';
+import * as Settings from '../../actions/Settings';
 import { Header, Toolbar, Editor, Player } from '../../components';
 import { read, write, remove } from '../../lib/FileSystem';
 import '../../../styles/main.css';
@@ -58,11 +59,6 @@ type Props = {
   options: Object
 };
 
-type State = {
-  code: string
-};
-
-/*
 const optionsQuery = jsonata(`
   $.(
     $toNumber := function($x) { $length($x) < 1 ? 0 : $number($x) };
@@ -119,37 +115,33 @@ const optionsQuery = jsonata(`
     }
   )
 `);
-*/
 
-const optionsQuery = jsonata(`
-  $.(
-    $toNumber := function($x) { $length($x) < 1 ? 0 : $number($x) };
-    $.{
-      'mode': $string(mode),
-      'readOnly': $boolean(readOnly)
-    }
-  )
-`);
-
-function mapStateToProps(state, ownProps) {
+function mapStateToProps (state, ownProps) {
   console.log('ownProps', ownProps);
-  const { query } = url.parse(ownProps.location.pathname);
-  console.log('query: ', url.parse(ownProps.location.pathname))
-  const options = optionsQuery.evaluate(querystring.parse(query));
+  const file = decodeURIComponent(ownProps.match.params.file);
+  const { query, pathname } = url.parse(file, true);
+  // Extract params, apply transform, remove undefined
+  const options = Object.entries(optionsQuery.evaluate(query)).reduce((acc, [option, value]) => {
+    return value ? Object.assign({}, acc, {
+      [option]: value
+    }) : acc;
+  }, state.Settings.get('inspector'));
+
   return {
-    file: ownProps.match.params.file,
-    options: Object.assign({}, state.Settings.get('inspector'), options)
+    file: pathname,
+    options: options
   };
 }
 
-function mapDispatchToProps(dispatch) {
+function mapDispatchToProps(dispatch: Dispatch) {
   return {
     actions: bindActionCreators(Actions, dispatch)
   };
 }
 
+// $FlowIssue
 @connect(mapStateToProps, mapDispatchToProps)
-export default class Inspector extends Component<Props, State>  {
+export default class Inspector extends Component<Props, void>  {
 
   static propTypes = {
     file: PropTypes.string,
@@ -177,7 +169,7 @@ export default class Inspector extends Component<Props, State>  {
 
   render () {
     const { file, options } = this.props;
-    const code = this.load('./package.json');
+    const code = this.load(file);
     return (
       <div className="page">
         <Header />

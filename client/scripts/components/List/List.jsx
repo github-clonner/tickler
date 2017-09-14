@@ -48,7 +48,10 @@ import { TrackDuration } from '../TimeCode/TimeCode';
 import { ContextMenu, buildContextMenu } from '../../lib';
 import { shell, remote } from 'electron';
 import fs from 'fs';
+import path from 'path';
+import URL, { URL as URI} from 'url';
 import { push } from 'react-router-redux';
+import { DialogOptions } from '../../types/PlayList';
 // Import styles
 import './List.css';
 
@@ -69,12 +72,99 @@ import './List.css';
       icon: makeIcon('icon.png')
     }
 */
-const openModal = function () {
-  const modal = new remote.BrowserWindow({
-    parent: remote.getCurrentWindow(),
-    modal: true
+// const openModal = function () {
+//   const url = URL.format({
+//     protocol: 'file',
+//     slashes: true,
+//     pathname: path.join(process.cwd(), 'dist', 'index.html'),
+//     hash: '#/about',
+//     search: 'readOnly=true&mode=javascript'
+//   });
+
+//   const parent = remote.getCurrentWindow();
+
+//   const main = URL.parse(parent.getURL());
+//   main.hash = 'about';
+//   main.search = 'readOnly=true&mode=javascript';
+//   console.log('OPEN', url, main, main.toString(), URL.format(main));
+
+//   const modal = new remote.BrowserWindow({
+//     parent: parent,
+//     modal: true,
+//     show: false
+//   });
+//   modal.loadURL(URL.format(main));
+//   modal.on('closed', event => {
+//     console.log('modal closed', __dirname, process.cwd());
+//   });
+//   modal.on('app-command', (event, command) => {
+//     console.log('modal app-command', event, command);
+//   });
+//   modal.webContents.on('before-input-event', (event, input) => {
+//     if (input.key === 'Escape') {
+//       modal.close();
+//     }
+//   });
+//   modal.once('ready-to-show', () => {
+//     modal.show();
+//     modal.focus();
+//   });
+// }
+
+const loadView = ({title,scriptUrl}) => {
+  return (`
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <title>${title}</title>
+        <meta charset="UTF-8">
+      </head>
+      <body>
+        <div id="view"></div>
+        <script src="${scriptUrl}"></script>
+      </body>
+    </html>
+  `)
+}
+
+const viewData = 'data:text/html;charset=UTF-8,' + encodeURIComponent(loadView({
+  title: "Account",
+  scriptUrl: "./account.view.js"
+}));
+
+console.log('viewData', viewData)
+const openModal = function (route) {
+  const basePath = path.join(process.cwd(), 'dist', 'index.html');
+  const parent = remote.getCurrentWindow();
+  const base = URL.format({
+    protocol: 'file',
+    slashes: true,
+    pathname: basePath
   });
-  modal.loadURL(`file://${__dirname}/dist/index.html`);
+  // const location = path.parse(decodeURIComponent(base));
+  const target = new URI(base);
+  target.search = 'readOnly=true&mode=javascript&index=about';
+  const modal = new remote.BrowserWindow({
+    webviewTag: true,
+    parent: parent,
+    modal: true,
+    show: false
+  });
+  console.log('Modal URL', 'target', target, URL.format(target))
+  modal.loadURL(URL.format(target));
+  modal.once('closed', event => {
+    console.log('modal closed', __dirname, process.cwd());
+  });
+  modal.webContents.on('before-input-event', (event, input) => {
+    if (input.key === 'Escape') {
+      modal.close();
+    }
+  });
+  modal.once('ready-to-show', () => {
+    modal.show();
+    modal.focus();
+  });
+  window.modal = modal;
 }
 
 const mapStateToProps = function (state) {
@@ -90,9 +180,10 @@ const mapDispatchToProps = function (dispatch) {
   return {
     actions: bindActionCreators(Actions, dispatch),
     settings: bindActionCreators(Settings, dispatch),
-    inspect: url => dispatch(push({
-      pathname: url,
-      state: { some: 'state' }
+    inspect: (file: string, options: Object, state?: any) => dispatch(push({
+      pathname: `/inspector/${file}`,
+      search: options,
+      state: state
     }))
   };
 };
@@ -138,7 +229,7 @@ export default class List extends Component {
       label: 'Media Information...',
       click () {
         console.log(song);
-        return openModal();
+        return openModal('/about');
       }
     }, {
       type: 'separator'
@@ -164,24 +255,24 @@ export default class List extends Component {
     }, {
       type: 'separator'
     }, {
-      label: 'Inspect',
+      label: 'Open...',
+      click () {
+        return actions.openPlayList();
+      }
+    }, {
+      label: 'View Source',
       click () {
         const { dialog } = remote;
-        dialog.showOpenDialog({
-          title: 'Open playlist',
-          defaultPath: '/Users/bmaggi/Music',
-          filters: [{
-            name: 'PlayList files', extensions: ['json']
-          }, {
-            name: 'All Files', extensions: ['*']
-          }]
-        }, (files) => {
+        dialog.showOpenDialog(DialogOptions.open, files => {
+          if (!Array.isArray(files) || files.length < 1) {
+            return;
+          }
           // files is an array that contains all the selected
-          const file = files.pop();
+          const file = files.slice(0).pop();
           if (file && fs.existsSync(file)) {
             const stats = fs.statSync(file);
             console.log('selected files: ', files, stats)
-            return inspect('/inspector/caca.txt?readOnly=true&mode=javascript');
+            return inspect(encodeURIComponent(file), 'readOnly=true&mode=javascript');
           } else {
             console.log('No file selected');
             return;
@@ -195,7 +286,7 @@ export default class List extends Component {
     event.preventDefault();
     const menu = this.buildListItemMenu(song);
     const { clientX, clientY } = event;
-    menu.popup(clientX, clientY, true);
+    menu.popup();
   }
 
   componentDidMount () {
@@ -411,6 +502,7 @@ export default class List extends Component {
           </span>
           <Stars stars={ song.stars }/>
           <TrackDuration duration={ song.duration } format="#{2H}:#{2M}:#{2S}" />
+          <span onClick={ e => this.handleContextMenu(event, song) }>•••</span>
         </li>
       );
     });

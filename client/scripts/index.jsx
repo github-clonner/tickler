@@ -35,31 +35,66 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-
+import { remote } from 'electron';
 import React from 'react';
 import { render } from 'react-dom';
 import injectTapEventPlugin from 'react-tap-event-plugin';
-
+import url, { URLSearchParams } from 'url';
 /* redux stuff */
 import thunk from 'redux-thunk';
 import { createStore, combineReducers, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
 
-import createHistory from 'history/createBrowserHistory'
+import createBrowserHistory from 'history/createBrowserHistory'
+import createHashHistory from 'history/createHashHistory'
 import { Router, Route, Switch, Link } from 'react-router-dom';
 import { ConnectedRouter, routerReducer, routerMiddleware, push } from 'react-router-redux';
 import * as reducers from './reducers';
-
+/* routes */
+import routes from './routes';
 
 // Create a history of your choosing (we're using a browser history in this case)
-const history = createHistory();
+// const history = createHashHistory();
+const history = createBrowserHistory({
+  basename: window.location.pathname
+});
+
+// history.push({
+//   pathname: '/new-list',
+//   query: {
+//     modal: true
+//   },
+//   state: {
+//     list: data.list,
+//     video: data.v
+//   }
+// });
 
 // Build the middleware for intercepting and dispatching navigation actions
 const middleware = routerMiddleware(history);
 
+const win = remote.getCurrentWindow();
 
-/* routes */
-import routes from './routes';
+const { query } = url.parse(window.location.href, true, true);
+
+if (query.index) {
+  history.push({
+    pathname: '/' + query.index,
+    query: {
+      modal: true
+    },
+    state: {
+      list: new Date(),
+      video: '/Users'
+    }
+  });
+}
+
+
+console.log('history', history, window.location)
+console.log('query', query);
+console.log('webContents', win.webContents)
+
 /* clipboard manager */
 // import ClipBoardData from 'lib/ClipBoardData';
 
@@ -112,9 +147,9 @@ const domElement = document.getElementById('app')
 // store.dispatch(push('/foo'))
 
 render(
-  <Provider store={store}>
+  <Provider store={ store }>
     { /* ConnectedRouter will use the store from Provider automatically */ }
-    <ConnectedRouter history={history}>
+    <ConnectedRouter history={ history }>
       { routes }
     </ConnectedRouter>
   </Provider>,

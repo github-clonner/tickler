@@ -24,17 +24,10 @@
       "default": {},
       "description": "Inspector options"
     },
-    "providers": {
-      "$ref": "#/definitions/Provider",
-      "default": {
-        "youtube": {
-          "name": "youtube",
-          "security": {
-            "apiKey": "AIzaSyAPBCwcnohnbPXScEiVMRM4jYWc43p_CZU"
-          }
-        }
-      },
-      "description": "Service providers."
+    "plugins": {
+      "type": "object",
+      "default": {},
+      "description": "Plugin"
     },
     "createdAt": {
       "type": ["string", "null"],
@@ -98,6 +91,16 @@
           "minimum": 0,
           "maximum": 1,
           "description": "Playback volume (0 = silent, 1 = maximum)"
+        },
+        "formats": {
+          "type": "array",
+          "default": ["mp3", "mp4", "m4a", "aac", "flac", "wav", "ogg", "3gpp"],
+          "items": {
+            "type": "string",
+            "enum": ["mp3", "mp4", "m4a", "aac", "flac", "wav", "ogg", "3gpp"],
+            "uniqueItems": true,
+            "description": "Supported audio formats"
+          }
         }
       }
     },
@@ -109,6 +112,38 @@
           "type": "boolean",
           "default": false,
           "description": "If true will automatically start playing"
+        },
+        "preload": {
+          "type": "object",
+          "description": "Preload remote content",
+          "properties": {
+            "active": {
+              "type": "boolean",
+              "default": false,
+              "description": "enables preload"
+            },
+            "concurrency": {
+              "type": "number",
+              "default": 1,
+              "minimum": 10,
+              "maximum": 1,
+              "description": "Number of parallel operations"
+            }
+          }
+        }
+      }
+    },
+    "Plugin": {
+      "type": "object",
+      "description": "Plugin profile",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Plugin name"
+        },
+        "settings": {
+          "type": "object",
+          "description": "Plugin settings"
         }
       }
     },
@@ -123,6 +158,31 @@
         "security": {
           "type": "object",
           "description": "Provider security"
+        },
+        "settings": {
+          "type": "object",
+          "description": "Provider settings"
+        }
+      }
+    },
+    "FileFormatFilter": {
+      "type": "object",
+      "description": "File format filter",
+      "properties": {
+        "name": {
+          "type": "string",
+          "default": "All Files",
+          "description": "Format name"
+        },
+        "extensions": {
+          "type": "array",
+          "default": ["*"],
+          "description": "Valid file extensions",
+          "items": {
+            "type": "string",
+            "uniqueItems": true,
+            "description": "File extension without wildcards or dots"
+          }
         }
       }
     },
@@ -147,12 +207,20 @@
         },
         "formats": {
           "type": "array",
-          "default": ["mp3", "mp4", "m4a", "aac", "flac", "wav", "ogg", "3gpp"],
+          "description": "File type filter",
+          "default": [],
+          "items": {
+            "$ref": "#/definitions/FileFormatFilter"
+          }
+        },
+        "formats": {
+          "type": "array",
+          "default": ["json"],
           "items": {
             "type": "string",
-            "enum": ["mp3", "mp4", "m4a", "aac", "flac", "wav", "ogg", "3gpp"],
+            "enum": ["json"],
             "uniqueItems": true,
-            "description": "Supported audio formats"
+            "description": "Supported playlist formats"
           }
         },
         "current": {

@@ -180,7 +180,8 @@ export default function PlayListItems (state = List([]), action) {
     case 'PLAYPAUSE_ITEM': {
       const index = getIndex(action.id);
       if (index > -1) {
-        return pause().update(index, item => ( item.set('isPlaying', action.payload).set('selected', true) ));
+        const isPlaying = action.payload;
+        return pause().update(index, item => ( item.set('isPlaying', isPlaying).set('selected', true) ));
       } else {
         return state;
       }

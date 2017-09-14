@@ -9,3 +9,4 @@ export InputRange from './InputRange/InputRange';
 export CoverFlow from './CoverFlow/CoverFlow';
 export Equalizer from './Equalizer/Equalizer';
 export Editor from './Editor/Editor';
+export WebView from './WebView/WebView';

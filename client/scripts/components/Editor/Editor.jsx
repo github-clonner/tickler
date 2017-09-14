@@ -99,26 +99,12 @@ type DefaultProps = {
   options: Options
 };
 
-type State = {
-  code: string,
-  isFocused: bool
-};
 
-export default class Editor extends React.Component<Props, State> {
-
-  constructor (props: Props, context: any) {
-    super(props, context);
-    this.state.code = props.code;
-  }
+export default class Editor extends React.Component<Props, void> {
 
   options: Options;
   codeMirror: Object;
   editor: ?Element;
-
-  state = {
-    // code: js_beautify(settings.toString(), { indent_size: 2 }),
-    isFocused: false
-  };
 
   static defaultProps = {
     code: js_beautify(settings.toString(), { indent_size: 2 }),
@@ -155,15 +141,15 @@ export default class Editor extends React.Component<Props, State> {
   };
 
   updateCode (newCode: string) : any {
-    return this.setState({
-      code: newCode || 'newCode'
-    });
+    // return this.setState({
+    //   code: newCode || 'newCode'
+    // });
   }
 
   focusChanged (focused: bool) : any {
-    return this.setState({
-      isFocused: focused || false
-    });
+    // return this.setState({
+    //   isFocused: focused || false
+    // });
   }
 
   componentDidMount () : any {
@@ -191,8 +177,8 @@ export default class Editor extends React.Component<Props, State> {
   }
 
   render () {
-    const { options } = this.props;
-    const { code } = this.state;
+    const { options, code } = this.props;
+    // const { code } = this.state;
     return (
       /*<CodeMirror className="editor" ref={ editor => { this.editor = editor; }} value={ code } options={ options } onChange={ this.updateCode }/>*/
       <CodeMirror className="editor" ref="editor" value={ code } options={ options } onChange={ this.updateCode }/>

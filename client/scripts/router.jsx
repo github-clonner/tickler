@@ -28,8 +28,8 @@ clipBoardData.events.on('data', data => {
   console.log('data: ', data.list, data.v, history, browserHistory);
   history.push({
     pathname: '/new-list',
-    query: { 
-      modal: true 
+    query: {
+      modal: true
     },
     state: {
       list: data.list,
@@ -45,15 +45,15 @@ clipBoardData.events.on('data', data => {
 injectTapEventPlugin();
 
 render((
-  <Provider store={store}>
-    <Router history={browserHistory}>
-      <Route path="/" component={Main} name="Main">
-        <IndexRoute component={Home} name='Home'/>
-        <Route path="/about" component={About} />
-        <Route path="/new-list" component={NewList} />
+  <Provider store={ store }>
+    <Router history={ browserHistory }>
+      <Route path="/" component={ Main } name="Main">
+        <IndexRoute component={ Home } name="Home" />
+        <Route path="/about" component={ About } />
+        <Route path="/new-list" component={ NewList } />
       </Route>
       <Redirect from="/*" to="/" />
-      <Route path="*" component={NotFound} />
+      <Route path="*" component={ NotFound } />
     </Router>
   </Provider>
 ), document.getElementById('app'))

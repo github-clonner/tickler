@@ -38,65 +38,56 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 import schema from '../../schemas/playlist.json';
+import { DialogOptions } from '../types/PlayList';
 import getObjectProperty from 'lodash/get';
 import jsonata from 'jsonata';
 import { Youtube, Time, parseDuration, SettingsStore, PlayListStore, getPath } from '../lib';
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
+import { shell, remote } from 'electron';
 
+const settings = new SettingsStore();
+const plugins = settings.get('plugins');
 const youtube = new Youtube({
-  apiKey: 'AIzaSyAPBCwcnohnbPXScEiVMRM4jYWc43p_CZU',
+  apiKey: plugins.youtube.apiKey,
   options: {
     saveTo: os.tmpdir()
   }
 });
-const options = {
-  preload: {
-    active: false,
-    items: 1
-  }
-};
 
-export const addItem = ({id, title, duration, file, stars}) => {
-  return {
-    type: 'ADD_ITEM',
-    payload: {
-      id,
-      title,
-      duration,
-      file,
-      stars
-    }
-  };
-};
-
-export const deleteItem = id => ({ type: 'DELETE_ITEM', id });
-export const editItem = (id, payload) => ({ type: 'EDIT_ITEM', id, payload });
-export const selectItems = payload => ({ type: 'SELECT_ITEMS', payload });
+export const deleteItem = (id: string) => ({ type: 'DELETE_ITEM', id });
+export const editItem = (id: string, payload) => ({ type: 'EDIT_ITEM', id, payload });
+export const selectItems = (payload: any) => ({ type: 'SELECT_ITEMS', payload });
 export const createFrom = payload => ({type: 'CREATEFROM', payload});
-export const playPauseItem = (id, payload) => ({ type: 'PLAYPAUSE_ITEM', id, payload });
-export const pauseItem = (id) => ({ type: 'PAUSE_ITEM', id });
-export const playNext = (id) => ({ type: 'PLAY_NEXT_ITEM', id });
-export const playPrevious = (id) => ({ type: 'PLAY_PREVIOUS_ITEM', id });
+export const playPauseItem = (id: string, payload) => ({ type: 'PLAYPAUSE_ITEM', id, payload });
+export const pauseItem = (id: string) => ({ type: 'PAUSE_ITEM', id });
+export const playNext = (id: string) => ({ type: 'PLAY_NEXT_ITEM', id });
+export const playPrevious = (id: string) => ({ type: 'PLAY_PREVIOUS_ITEM', id });
 export const stop = id => ({ type: 'STOP', id });
 export const receivePlayListItems = payload => ({type: 'RECEIVE_LIST_ITEMS', payload});
 export const orderPlayList = (from, to) => ({ type: 'ORDER_LIST', from, to });
 export const downloadProgress = payload => ({type: 'DOWNLOAD_PROGRESS', payload});
 
 
-/* Async Operations */
+/**
+ * fetch youtube video
+ * Downloads the item if no local file
+ * @param  {Object} video descriptor
+ * @param  {boolean} autoplay flag
+ * @return {null}
+ */
 export function fetchItem (item, autoPlay = false) {
   return async function (dispatch, getState) {
     const onProgress = ({video, progress}) => {
-      dispatch(editItem(video.id, {
+      return dispatch(editItem(video.id, {
         isLoading: true,
         progress: progress
       }));
     };
 
     const onInfo = ({video, info}) => {
-      console.debug(video, info)
+      return console.debug(video, info)
     };
 
     const onError = ({vide, error}) => {
@@ -131,6 +122,7 @@ export function fetchItem (item, autoPlay = false) {
         isLoading: false,
         progress: 0
       }));
+      dispatch({type: 'ERROR', error: error});
     } finally {
       removeAllListeners();
       dispatch(editItem(item.id, {
@@ -143,15 +135,64 @@ export function fetchItem (item, autoPlay = false) {
   }
 }
 
-export function playNextItem (id) {
+/**
+ * Open PlayList.
+ * Allows user to pick a playlist file from disk
+ * @return {null}
+ */
+export function openPlayList (options: Object = DialogOptions.open) {
   return async function (dispatch, getState) {
-    let { PlayListItems } = getState();
-    let index = PlayListItems.findIndex(item => (item.get('id') === id));
-    let nextIndex = ((index + 1) === PlayListItems.size) ? 0 : index + 1;
-    console.log(id, PlayListItems.get(index).toJS(), index, nextIndex, PlayListItems.size)
+    const { PlayListItems } = getState();
+    remote.dialog.showOpenDialog(options, function (files) {
+      if (!Array.isArray(files) || files.length < 1) {
+        return;
+      }
+      // files is an array that contains all the selected
+      const file = files.slice(0).pop();
+      try {
+        const playListStore = new PlayListStore(file);
+        return dispatch(receivePlayListItems(playListStore.playlist.tracks));
+      } catch (error) {
+        console.error(error);
+        return dispatch({type: 'ERROR', error: error});
+      }
+    });
+  }
+}
+
+/**
+ * Save PlayList.
+ * Allows user to save a playlist file to disk
+ * @return {null}
+ */
+export function saveAsPlayList (playlist, options: Object = DialogOptions.save) {
+  return async function (dispatch, getState) {
+    const { PlayListItems } = getState();
+    remote.dialog.showSaveDialog(options, function (files) {
+      if (!Array.isArray(files) || files.length < 1) {
+        return;
+      }
+      // files is an array that contains all the selected
+      const file = files.slice(0).pop();
+      try {
+        // const playListStore = new PlayListStore(file);
+        // return dispatch(receivePlayListItems(playListStore.playlist.tracks));
+      } catch (error) {
+        // console.error(error);
+        // return dispatch({type: 'ERROR', error: err});
+      }
+    });
+  }
+}
+
+export function playNextItem (id: string) {
+  return async function (dispatch, getState) {
+    const { PlayListItems } = getState();
+    const index = PlayListItems.findIndex(item => (item.get('id') === id));
+    const nextIndex = ((index + 1) === PlayListItems.size) ? 0 : index + 1;
     let nextItem = PlayListItems.get(nextIndex);
 
-    if(!nextItem.get('file') && !nextItem.get('isLoading')) {
+    if (!nextItem.get('file') && !nextItem.get('isLoading')) {
       dispatch(fetchItem(nextItem, true));
     } else {
       dispatch(playPauseItem(nextItem.get('id'), true));
@@ -165,12 +206,13 @@ export function playNextItem (id) {
  * @param  {String} id of the youtube video
  * @return {null}
  */
-export function playItem (id) {
+export function playItem (id: string) {
   return function (dispatch, getState) {
-    let { PlayListItems } = getState();
-    let item = PlayListItems.find(item => (item.get('id') === id));
-    if(!item.get('file') && !item.get('isLoading')) {
-      dispatch(fetchItem(item, true));
+    const player = settings.get('player');
+    const { PlayListItems } = getState();
+    const item = PlayListItems.find(item => (item.get('id') === id));
+    if (!item.get('file') && !item.get('isLoading')) {
+      dispatch(fetchItem(item, player.autoplay));
     } else {
       dispatch(playPauseItem(item.get('id'), true));
     }
@@ -184,44 +226,45 @@ export function playItem (id) {
  * @param  {String} id of the youtube video
  * @return {null}
  */
-export function receiveItem (id) {
+export function receiveItem (id: string) {
   return async function (dispatch, getState) {
-    if(!options.preload.active) {
+    const player = settings.get('player');
+    const { preload } = player;
+    if(!preload.active) {
       return false;
     }
     const { PlayListItems } = getState();
     const index = PlayListItems.findIndex(item => (item.get('id') === id));
-    for(let i = (index + 1); i <= (index + options.preload.items); i++) {
-      let item = PlayListItems.get(i);
+    for(let i = (index + 1); i < ((index + 1) + (preload.concurrency - 1)); i++) {
+      const item = PlayListItems.get(i);
       if(!item.get('file') && !item.get('isLoading')) {
-        console.log('preload: ', item.get('title'))
-        return dispatch(fetchItem(item, false));
-        dispatch(editItem(item.get('id'), {
-          isLoading: true,
-        }));
+        dispatch(fetchItem(item, false));
       }
     }
   }
 }
 
-const playlistQuery = jsonata(`
-  $.(
-    $AccName := function() { $.contentDetails.duration };
-    $.{
-      'id': id,
-      'title': snippet.title,
-      'name': snippet.title,
-      'artists': [{
-        'id': 'sfasdf',
-        'name': 'nook'
-      }],
-      'description': snippet.description,
-      'thumbnails': snippet.thumbnails,
-      'duration': $parseDuration(contentDetails.duration)
-    }
-  )
-`);
-playlistQuery.registerFunction('parseDuration', (duration) => parseDuration(duration), '<s:n>');
+/*
+
+youtube playlist formatter
+
+$.(
+  $AccName := function() { $.contentDetails.duration };
+  $.{
+    'id': id,
+    'title': snippet.title,
+    'name': snippet.title,
+    'artists': [{
+      'id': 'sfasdf',
+      'name': 'nook'
+    }],
+    'description': snippet.description,
+    'thumbnails': snippet.thumbnails,
+    'duration': $parseDuration(contentDetails.duration)
+  }
+)
+*/
+// $.($AccName := function() { $.contentDetails.duration };$.{'id': id,'title': snippet.title,'name': snippet.title,'artists': [{'id': 'sfasdf','name': 'nook'}],'description': snippet.description,'thumbnails': snippet.thumbnails,'duration': $parseDuration(contentDetails.duration)})
 
 export function getCurrent () {
   return async function (dispatch, getState) {
@@ -230,7 +273,7 @@ export function getCurrent () {
   };
 };
 
-export function fetchListItems (id) {
+export function fetchListItems (id: string) {
   return async function (dispatch, getState) {
     const playList = await youtube.getPlayListItems(id);
     const ids = playList.map(item => item.snippet.resourceId.videoId);
@@ -238,19 +281,21 @@ export function fetchListItems (id) {
     console.info('ids', ids, 'disabled', disabled)
     const items = await youtube.getVideos(ids);
     try {
-      const payload = playlistQuery.evaluate(items);
-      console.log('payload', payload);
+      const plugins = settings.get('plugins');
+      const formatter = jsonata(plugins.youtube.playlist.formatter);
+      formatter.registerFunction('parseDuration', (duration) => parseDuration(duration), '<s:n>');
+      const payload = formatter.evaluate(items);
       return dispatch(receivePlayListItems(payload));
     } catch (error) {
       console.error(error);
-      return error;
+      return dispatch({type: 'ERROR', error: error});
     }
   };
 }
 
 export const receivePlayList = payload => ({ type: 'RECEIVE_LIST', payload });
 
-export function fetchList (id) {
+export function fetchList (id: string) {
   return async function (dispatch, getState) {
     const state = getState();
     try {
@@ -267,6 +312,7 @@ export function fetchList (id) {
       console.debug(playList);
     } catch (error) {
       console.error(error);
+      return dispatch({type: 'ERROR', error: error});
     }
   }
 }
