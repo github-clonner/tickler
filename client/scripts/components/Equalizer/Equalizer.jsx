@@ -87,18 +87,18 @@ export default class Equalizer extends Component {
     this.gradient.addColorStop(0, '#81254a');
   }
 
-  componentWillReceiveProps (nextProps) {
-    if (!nextProps.audio.analyser) {
-      return;
-    }
-    this.setState({
-      analyser: nextProps.audio.analyser
-    });
-    if (nextProps.audio.analyser) {
-      this.analyser = nextProps.audio.analyser;
-      this.renderFrame(this.analyser);
-    }
-  }
+  // componentWillReceiveProps (nextProps) {
+  //   if (!nextProps.audio.analyser) {
+  //     return;
+  //   }
+  //   this.setState({
+  //     analyser: nextProps.audio.analyser
+  //   });
+  //   if (nextProps.audio.analyser) {
+  //     this.analyser = nextProps.audio.analyser;
+  //     this.renderFrame(this.analyser);
+  //   }
+  // }
 
   renderFrame = () => {
     let analyser = this.analyser;
