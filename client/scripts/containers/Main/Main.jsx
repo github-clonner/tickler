@@ -47,7 +47,7 @@ import 'styles/main.css';
 import './Main.css';
 
 function mapStateToProps (state, ownProps) {
-  console.log('main ownProps', ownProps);
+  // console.log('main ownProps', ownProps);
   const options = decodeURIComponent(ownProps.match.params.options);
   const { query, pathname } = URL.parse(options, true);
   // Extract params, apply transform, remove undefined

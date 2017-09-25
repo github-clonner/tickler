@@ -14,7 +14,7 @@ const env = {
 export default {
   context: path.resolve(__dirname, './client/scripts'),
   entry: {
-    bundle: ['./index.jsx'],
+    bundle: ['babel-polyfill', './index.jsx'],
     vendor: ['react', 'redux', 'axios', 'ytdl-core', 'immutable']
   },
   output: {
@@ -78,13 +78,13 @@ export default {
     })
     //new ExtractTextPlugin('style.css', { allChunks: true })
   ],
-  resolveLoader: {
-    modules: [
-      path.resolve(__dirname, 'node_modules'),
-      path.resolve(__dirname, 'loaders')
-    ],
-    extensions: ['.js', '.jsx', '.json']
-  },
+  // resolveLoader: {
+  //   modules: [
+  //     path.resolve(__dirname, 'node_modules'),
+  //     path.resolve(__dirname, 'loaders')
+  //   ],
+  //   extensions: ['.js', '.jsx', '.json']
+  // },
   resolve: {
     extensions: [ '*', '.js', '.jsx' ],
     modules: [
@@ -134,25 +134,25 @@ export default {
       //     }
       //   ]
       // },
-      {
-        test: /\.txt$/,
-        exclude: /node_modules/,
-        use: { loader: 'raw-loader' }
-      },
-      {
-        test: /\.(types)$/i,
-        include: /node_modules\/mimer/,
-        use: [
-          { loader: 'file-loader', options: { name: '[name].[ext]', context: 'data', outputPath(filename) {
-              const { name, context } = this;
-              const outputpath = path.join(context, filename);
-              console.log(context, filename, outputpath);
-              return outputpath;
-            }
-          }
-        }
-        ]
-      },
+      // {
+      //   test: /\.txt$/,
+      //   exclude: /node_modules/,
+      //   use: { loader: 'raw-loader' }
+      // },
+      // {
+      //   test: /\.(types)$/i,
+      //   include: /node_modules\/mimer/,
+      //   use: [
+      //     { loader: 'file-loader', options: { name: '[name].[ext]', context: 'data', outputPath(filename) {
+      //         const { name, context } = this;
+      //         const outputpath = path.join(context, filename);
+      //         console.log(context, filename, outputpath);
+      //         return outputpath;
+      //       }
+      //     }
+      //   }
+      //   ]
+      // },
       {
         test: /\.jsx?$/,
         exclude: /node_modules/,

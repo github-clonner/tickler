@@ -36,15 +36,15 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 import React, { Component } from 'react';
-import mimeTypes from 'mimer/lib/data/mime.types';
-import txt from './types.txt';
-import * as DataURI from 'datauri-build';
+// import mimeTypes from 'mimer/lib/data/mime.types';
+// import txt from './types.txt';
+// import * as DataURI from 'datauri-build';
 // const Datauri = require('datauri').promise;
 import { WebView } from '../../components';
 import '../../../styles/main.css';
 import './About.css';
 
-console.log('mimeTypes', mimeTypes);
+// console.log('mimeTypes', mimeTypes);
 // console.log('txt', txt);
 
 // console.log(DataURI('/Users/bmaggi/tickler/hello.html'));

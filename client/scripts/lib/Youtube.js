@@ -35,7 +35,6 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-import async from 'async';
 import axios from 'axios';
 import ytdl from 'ytdl-core';
 import Stream from 'stream';
@@ -43,6 +42,7 @@ import fs from 'fs';
 import path from 'path';
 import sanitize from 'sanitize-filename';
 import { EventEmitter } from 'events';
+import { ApiClient } from '@maggiben/google-apis';
 
 ///////////////////////////////////////////////////////////////////////////////
 // create single EventEmitter instance                                       //
@@ -58,6 +58,10 @@ const youtubeEvents = new YoutubeEvents();
 export default class Youtube {
   constructor({apiKey, options = {}}) {
     this.apiKey = apiKey;
+    this.apiClient = new ApiClient({
+      api: 'youtube',
+      key: 'AIzaSyAPBCwcnohnbPXScEiVMRM4jYWc43p_CZU'
+    });
     this.axios = axios.create({
       baseURL: 'https://www.googleapis.com/youtube/v3',
       paramsSerializer: this.serializer,
@@ -68,7 +72,6 @@ export default class Youtube {
         pageToken: null
       }
     });
-
     this.axios.interceptors.response.use(function (response) {
       const { params } = response.config;
       const { pageInfo, items } = response.data;
@@ -84,36 +87,21 @@ export default class Youtube {
     });
 
     this.options = options;
-    this.events = youtubeEvents;//new YoutubeEvents();
-  }
-
-  serializer (params) {
-    params = Object.assign({}, params);
-    const { id } = params;
-    if (Array.isArray(id) && id.length) {
-      params.id = id.join(',');
-      params.maxResults = id.length;
-    } else if (id && id.length) {
-      params.maxResults = id.split(',').length;
-    }
-    // clean null undefined
-    const entries = Object.entries(params).filter(param => param.slice(-1).pop() != null);
-    const searchParams = new URLSearchParams(entries);
-    return searchParams.toString();
+    this.events = new EventEmitter();
   }
 
   async getVideos (id) {
-    const { maxResults } = this.axios.defaults.params;
-    const params = {};
-    const fetch = (value, index) => {
-      params.id = id.slice(index * maxResults, index * maxResults + maxResults);
-      return this.axios.get('/videos', { params })
-      .then(response => response.data.items)
-      .catch(error => {
-        console.error(error);
-        return error;
-      });
+    const maxResults = 50;
+    const params = {
+      part: 'id,snippet,contentDetails,status'
     };
+
+    const fetch = async (value, index) => {
+      params.id = id.slice(index * maxResults, index * maxResults + maxResults);
+      const { items } = await this.apiClient.$resource.videos.list(params);
+      return items;
+    };
+
     const length = Math.ceil(id.length / maxResults);
     const items = Array.from({ length }, fetch);
     const videos = await Promise.all(items);
@@ -121,25 +109,33 @@ export default class Youtube {
   }
 
   async getPlayList (id) {
-    const params = { id };
-    return await this.axios.get('/playlists', { params }).then(response => response.data);
+    const params = {
+      id,
+      part: 'id,snippet,contentDetails,status',
+    };
+    const { items } = await this.apiClient.$resource.playlists.list(params);
+    return (items.length === 1) ? items.slice(-1).pop() : items;
   }
 
   async getPlayListItems (playlistId) {
-    // const schema = ApiProperties.schemas.PlaylistItemListResponse;
-    const params = { playlistId };
+    const params = {
+      playlistId,
+      part: 'id,snippet,contentDetails,status',
+      maxResults: 50
+    };
+    const { contentDetails, snippet }  = await this.getPlayList(playlistId);
+    console.log('playlist', snippet.title, 'items: ', contentDetails.itemCount);
     const playlistItems = [];
     do {
       try {
-        const result = await this.axios.get('/playlistItems', { params }).then(response => response.data);
-        const { items, nextPageToken } = result;
+        const { items, nextPageToken } = await this.apiClient.$resource.playlistItems.list(params);
         playlistItems.push(...items);
         params.pageToken = nextPageToken;
       } catch (error) {
         console.error(error);
-        break;
+        return error;
       }
-    } while(params.pageToken);
+    } while (params.pageToken);
     return playlistItems;
   }
 

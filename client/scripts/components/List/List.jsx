@@ -291,8 +291,8 @@ export default class List extends Component {
 
   componentDidMount () {
     const { actions, options, settings } = this.props;
-    actions.getCurrent();
-    // actions.fetchListItems('PLA0CA9B8A2D82264B');
+    // actions.getCurrent();
+    actions.fetchListItems('PLA0CA9B8A2D82264B');
 
     // actions.fetchListItems('PLkHvEl7zu06o70dpsiVrRbYFLWreD9Jcw'); //PL7XlqX4npddfrdpMCxBnNZXg2GFll7t5y
 
