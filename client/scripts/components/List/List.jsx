@@ -215,14 +215,22 @@ export default class List extends Component {
   };
 
   buildListItemMenu (song) {
-    const { actions, inspect } = this.props;
+    const { actions, inspect, list } = this.props;
+    const { playPause } = this;
 
     return buildContextMenu([{
-      label: song.file ? (song.isPlaying ? 'Pause': 'Play:') : 'download',
-      click () {
+      label: song.file ? (song.isPlaying ? 'Pause': 'Play:') : (song.isLoading ? 'cancel' : 'download'),
+      click: (menuItem, browserWindow, event) => {
         const { id, file, isLoading, isPlaying } = song;
+        console.log(menuItem);
         if (file && !isLoading) {
           return isPlaying ? actions.pauseItem(id) : actions.playItem(id, true);
+          // return playPause(song);
+        } else if (!file && !isLoading) {
+          return this.playPause(song);
+        } else if (!file && isLoading) {
+          console.log('ABORT');
+          actions.cancel(id, true);
         }
       }
     }, {
@@ -235,7 +243,12 @@ export default class List extends Component {
       type: 'separator'
     }, {
       label: 'Select All',
-      click () {}
+      click: () => {
+        const items = list.toJS().reduce((items, { id }) => {
+          return { ...items, ...{ [id]: { selected: true} } };
+        }, {});
+        actions.editItems(items);
+      }
     }, {
       type: 'separator'
     }, {
@@ -292,13 +305,13 @@ export default class List extends Component {
   componentDidMount () {
     const { actions, options, settings } = this.props;
     // actions.getCurrent();
-    // actions.fetchListItems('PLA0CA9B8A2D82264B');
+    actions.fetchListItems('PLA0CA9B8A2D82264B');
 
     // actions.fetchListItems('PL1GZkw2FUKCiZSI636mf54HEr2CtDxvW_') // short sound effects
 
     // actions.fetchListItems('PLkHvEl7zu06o70dpsiVrRbYFLWreD9Jcw'); //PL7XlqX4npddfrdpMCxBnNZXg2GFll7t5y
 
-    actions.fetchListItems('PL7XlqX4npddfrdpMCxBnNZXg2GFll7t5y'); // Pageable
+    // actions.fetchListItems('PL7XlqX4npddfrdpMCxBnNZXg2GFll7t5y'); // Pageable
 
     // actions.fetchListItems('PLsPUh22kYmNBl4h0i4mI5zDflExXJMo_x');
     this.props.placeholder.className = 'row placeholder';

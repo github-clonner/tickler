@@ -58,6 +58,7 @@ const youtube = new Youtube({
 
 export const deleteItem = (id: string) => ({ type: 'DELETE_ITEM', id });
 export const editItem = (id: string, payload) => ({ type: 'EDIT_ITEM', id, payload });
+export const editItems = (payload: Object) => ({ type: 'EDIT_ITEMS', payload });
 export const selectItems = (payload: any) => ({ type: 'SELECT_ITEMS', payload });
 export const createFrom = payload => ({type: 'CREATEFROM', payload});
 export const playPauseItem = (id: string, payload) => ({ type: 'PLAYPAUSE_ITEM', id, payload });
@@ -272,6 +273,34 @@ export function getCurrent () {
     return dispatch(receivePlayListItems(playListStore.playlist.tracks));
   };
 };
+
+/**
+ * Cancel item download.
+ * Downloads the item if no local file
+ * @param  {id} id of the youtube video
+ * @return {null}
+ */
+
+export function cancel (ids: string | Array<string>, reason?: boolean, options?: Object) {
+  return async function (dispatch, getState) {
+    if (Array.isArray(ids) && ids.length) {
+      ids.forEach(id => {
+        youtube.events.emit('cancel', { ids, reason, options });
+        return dispatch(editItem(id, {
+          isLoading: false,
+          progress: 0
+        }));
+      })
+    } else {
+      const id = String(ids);
+      youtube.events.emit('cancel', { id, reason, options });
+      return dispatch(editItem(id, {
+        isLoading: false,
+        progress: 0
+      }));
+    }
+  }
+}
 
 export function fetchListItems (id: string) {
   return async function (dispatch, getState) {

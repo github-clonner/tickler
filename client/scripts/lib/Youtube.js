@@ -60,8 +60,18 @@ export default class Youtube {
     this.apiClient = new ApiClient('youtube', {
       params: { key: apiKey }
     });
+    this.streams = new Map();
     this.options = options;
     this.events = new EventEmitter();
+    this.events.on('cancel', ({ id, reason, options }) => {
+      if (this.streams.has(id)) {
+        console.log('cancel download %s', id);
+        const downloader = this.streams.get(id);
+        downloader.destroy();
+      } else {
+        console.error('stream %s not found', id);
+      }
+    });
   }
 
   findMissing (ids, { pageInfo, items }) {
@@ -131,19 +141,23 @@ export default class Youtube {
   }
 
   async downloadVideo(video) {
-
     console.debug('downloadVideo: ', video.id);
+    const { streams } = this;
+    this.streams.set(video.id, null);
     return new Promise((resolve, reject) => {
       try {
         const title = path.resolve(this.options.saveTo, sanitize(video.title));
         const stream = fs.createWriteStream(title);
         const downloader = ytdl(`http://www.youtube.com/watch?v=${video.id}`, 'audioonly');
+        this.streams.set(video.id, downloader);
+
         const listener = {
           progress: throttle((chunkLength, downloaded, total) => {
             return this.events.emit('progress', { video, downloaded, total, progress: (downloaded / total) });
           }, 100, { trailing: true }),
           error: (error) => {
-            removeListeners(downloader);
+            console.log('download error', error);
+            cleanup(downloader);
             this.events.emit('error', { video, error });
             return reject(error);
           },
@@ -154,13 +168,21 @@ export default class Youtube {
             downloader.pipe(stream);
           },
           end: () => {
-            removeListeners(downloader);
+            console.log('download of %s ended', video.id);
+            cleanup(downloader);
             this.events.emit('finish', { video, title });
             return resolve(title);
+          },
+          abort: () => {
+            console.log('download of %s aborted', video.id);
+            cleanup(downloader);
+            this.events.emit('abort', { video, title });
+            return reject(title);
           }
         };
 
-        const removeListeners = (...emitters) => {
+        const cleanup = (...emitters) => {
+          // .delete(key);
           return emitters.map(emitter => {
             return Object.entries(listener).map(function ([name, handler]) {
               return emitter.removeListener(name, handler);
@@ -171,6 +193,7 @@ export default class Youtube {
         downloader
           .on('response', listener.response)
           .on('progress', listener.progress)
+          .on('abort', listener.abort)
           .once('end', listener.end)
           .once('error', listener.error)
           .once('info', listener.info);
@@ -178,16 +201,6 @@ export default class Youtube {
         console.error(error);
         return listener.error(error);
       }
-
-      this.events.once('abort', reason => {
-        console.log('abort download', reason);
-        downloader.end();
-        downloader.destroy();
-        stream.end();
-        removeListeners(downloader);
-        return reject(reason);
-      });
-
     });
   }
 }

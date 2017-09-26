@@ -177,6 +177,13 @@ export default function PlayListItems (state = List([]), action) {
       }
     }
 
+    case 'EDIT_ITEMS': {
+      return state.map(item => {
+        const id = item.get('id');
+        return action.payload.hasOwnProperty(id) ? item.merge(action.payload[id]) : item;
+      });
+    }
+
     case 'PLAYPAUSE_ITEM': {
       const index = getIndex(action.id);
       if (index > -1) {
