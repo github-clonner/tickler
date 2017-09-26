@@ -93,11 +93,13 @@ export default class Header extends Component<Props, void> {
     //const { location } = this.props.state;
     return (
       <nav className="navbar dark">
+      {/*
         <ul className="buttons">
           <li className="exit" onClick={this.exit}></li>
           <li className="minimize" onClick={this.minimize}></li>
           <li className="maximize" onClick={this.maximize}></li>
         </ul>
+      */}
       </nav>
     );
   }

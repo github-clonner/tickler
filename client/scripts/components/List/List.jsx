@@ -218,7 +218,7 @@ export default class List extends Component {
     const { actions, inspect } = this.props;
 
     return buildContextMenu([{
-      label: song.isPlaying ? 'Pause': 'Play',
+      label: song.file ? (song.isPlaying ? 'Pause': 'Play:') : 'download',
       click () {
         const { id, file, isLoading, isPlaying } = song;
         if (file && !isLoading) {
@@ -292,11 +292,13 @@ export default class List extends Component {
   componentDidMount () {
     const { actions, options, settings } = this.props;
     // actions.getCurrent();
-    actions.fetchListItems('PLA0CA9B8A2D82264B');
+    // actions.fetchListItems('PLA0CA9B8A2D82264B');
+
+    // actions.fetchListItems('PL1GZkw2FUKCiZSI636mf54HEr2CtDxvW_') // short sound effects
 
     // actions.fetchListItems('PLkHvEl7zu06o70dpsiVrRbYFLWreD9Jcw'); //PL7XlqX4npddfrdpMCxBnNZXg2GFll7t5y
 
-    // actions.fetchListItems('PL7XlqX4npddfrdpMCxBnNZXg2GFll7t5y'); // Pageable
+    actions.fetchListItems('PL7XlqX4npddfrdpMCxBnNZXg2GFll7t5y'); // Pageable
 
     // actions.fetchListItems('PLsPUh22kYmNBl4h0i4mI5zDflExXJMo_x');
     this.props.placeholder.className = 'row placeholder';

@@ -34,12 +34,12 @@
 // SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                    //
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
-
-import axios from 'axios';
 import ytdl from 'ytdl-core';
 import Stream from 'stream';
 import fs from 'fs';
 import path from 'path';
+import debounce from 'lodash/debounce';
+import throttle from 'lodash/throttle';
 import sanitize from 'sanitize-filename';
 import { EventEmitter } from 'events';
 import { ApiClient } from '@maggiben/google-apis';
@@ -57,49 +57,40 @@ const youtubeEvents = new YoutubeEvents();
 
 export default class Youtube {
   constructor({apiKey, options = {}}) {
-    this.apiKey = apiKey;
-    this.apiClient = new ApiClient({
-      api: 'youtube',
-      key: 'AIzaSyAPBCwcnohnbPXScEiVMRM4jYWc43p_CZU'
+    this.apiClient = new ApiClient('youtube', {
+      params: { key: apiKey }
     });
-    this.axios = axios.create({
-      baseURL: 'https://www.googleapis.com/youtube/v3',
-      paramsSerializer: this.serializer,
-      params: {
-        key: this.apiKey,
-        part: 'id,snippet,contentDetails,status',
-        maxResults: 50,
-        pageToken: null
-      }
-    });
-    this.axios.interceptors.response.use(function (response) {
-      const { params } = response.config;
-      const { pageInfo, items } = response.data;
-      if (Array.isArray(params.id) && pageInfo.resultsPerPage !== params.id.length) {
-        const itemIds = items.map(item => item.id);
-        const missing = params.id.filter(id => !itemIds.includes(id));
-        console.error('id skipped', missing);
-      }
-      return response;
-    }, function (error) {
-      // Do something with response error
-      return Promise.reject(error);
-    });
-
     this.options = options;
     this.events = new EventEmitter();
   }
 
+  findMissing (ids, { pageInfo, items }) {
+    if (Array.isArray(ids) && pageInfo.resultsPerPage !== ids.length) {
+      const missing = items.map(item => item.id).filter(id => !ids.includes(id));
+      console.error('id skipped', missing);
+      return missing;
+    }
+  }
+
   async getVideos (id) {
+    id = id.slice(0, 100);
     const maxResults = 50;
     const params = {
+      id,
+      maxResults,
       part: 'id,snippet,contentDetails,status'
     };
 
     const fetch = async (value, index) => {
-      params.id = id.slice(index * maxResults, index * maxResults + maxResults);
-      const { items } = await this.apiClient.$resource.videos.list(params);
-      return items;
+      try {
+        const query = Object.assign({}, params);
+        query.id = id.slice(index * maxResults, index * maxResults + maxResults);
+        const { items } = await this.apiClient.$resource.videos.list(query);
+        return items;
+      } catch (error) {
+        console.error(error);
+        return error;
+      }
     };
 
     const length = Math.ceil(id.length / maxResults);
@@ -118,13 +109,13 @@ export default class Youtube {
   }
 
   async getPlayListItems (playlistId) {
+    const maxResults = 50;
     const params = {
       playlistId,
+      maxResults,
       part: 'id,snippet,contentDetails,status',
-      maxResults: 50
     };
     const { contentDetails, snippet }  = await this.getPlayList(playlistId);
-    console.log('playlist', snippet.title, 'items: ', contentDetails.itemCount);
     const playlistItems = [];
     do {
       try {
@@ -139,51 +130,64 @@ export default class Youtube {
     return playlistItems;
   }
 
-  trackProgress = (video, size) => {
-    let dataRead = 0;
-    return data => {
-      dataRead += data.length;
-      let progress = dataRead / size;
-      return this.events.emit('progress', { video, progress });
-    };
-  }
-
   async downloadVideo(video) {
-    if(!this.options.saveTo) {
-      return Promise.reject(false);
-    }
+
     console.debug('downloadVideo: ', video.id);
-    let uri = `http://www.youtube.com/watch?v=${video.id}`;
-    let fileName = path.resolve(this.options.saveTo, sanitize(video.title));
-    let fileStream = fs.createWriteStream(fileName);
     return new Promise((resolve, reject) => {
-      let yt = ytdl(uri, 'audioonly');
-      yt.on('error', error => {
-        this.events.emit('error', {video, error});
-        return reject(error);
+      try {
+        const title = path.resolve(this.options.saveTo, sanitize(video.title));
+        const stream = fs.createWriteStream(title);
+        const downloader = ytdl(`http://www.youtube.com/watch?v=${video.id}`, 'audioonly');
+        const listener = {
+          progress: throttle((chunkLength, downloaded, total) => {
+            return this.events.emit('progress', { video, downloaded, total, progress: (downloaded / total) });
+          }, 100, { trailing: true }),
+          error: (error) => {
+            removeListeners(downloader);
+            this.events.emit('error', { video, error });
+            return reject(error);
+          },
+          info: (info) => {
+            this.events.emit('info', { video, info });
+          },
+          response(response) {
+            downloader.pipe(stream);
+          },
+          end: () => {
+            removeListeners(downloader);
+            this.events.emit('finish', { video, title });
+            return resolve(title);
+          }
+        };
+
+        const removeListeners = (...emitters) => {
+          return emitters.map(emitter => {
+            return Object.entries(listener).map(function ([name, handler]) {
+              return emitter.removeListener(name, handler);
+            });
+          });
+        };
+
+        downloader
+          .on('response', listener.response)
+          .on('progress', listener.progress)
+          .once('end', listener.end)
+          .once('error', listener.error)
+          .once('info', listener.info);
+      } catch (error) {
+        console.error(error);
+        return listener.error(error);
+      }
+
+      this.events.once('abort', reason => {
+        console.log('abort download', reason);
+        downloader.end();
+        downloader.destroy();
+        stream.end();
+        removeListeners(downloader);
+        return reject(reason);
       });
 
-      yt.on('info', info => {
-        this.events.emit('info', {video, info});
-      });
-
-      yt.on('response', response => {
-        let size = response.headers['content-length'];
-        yt.pipe(fileStream);
-        // Keep track of progress.
-        yt.on('data', this.trackProgress(video, size));
-
-        yt.on('end', () => {
-          this.events.emit('finish', {video, fileName});
-          return resolve(fileName);
-        });
-      });
-      this.events.once('abort', () => {
-        console.log('abort download');
-        yt.end();
-        fileStream.end();
-        return reject();
-      });
     });
   }
 }

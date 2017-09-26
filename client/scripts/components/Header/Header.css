@@ -27,7 +27,7 @@
 nav, .navbar {
     flex: 0 0 auto;
     width: 100%;
-    padding: 16px;
+    height: 38px; /* vertically center OS menu buttons (OS X) */
     background-color: #dcdcdc;
     -webkit-app-region: drag;
     -webkit-user-select: none;
