@@ -42,7 +42,8 @@ import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import * as Actions from '../../actions/Player';
-import './Header.css';
+import classNames from 'classnames';
+import Style from './Header.css';
 
 type Props = {
   router: any,
@@ -90,9 +91,10 @@ export default class Header extends Component<Props, void> {
 
 
   render() {
+    const { navbar, dark } = Style;
     //const { location } = this.props.state;
     return (
-      <nav className="navbar dark">
+      <nav className={ classNames(navbar, dark) } >
       {/*
         <ul className="buttons">
           <li className="exit" onClick={this.exit}></li>

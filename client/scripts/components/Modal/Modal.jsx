@@ -1,14 +1,14 @@
 // @flow
 
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : Stars.jsx                                                 //
-// @summary      : Stars component                                           //
+// @file         : Modal.jsx                                                 //
+// @summary      : Modal component                                           //
 // @version      : 0.0.1                                                     //
 // @project      : tickelr                                                   //
 // @description  :                                                           //
 // @author       : Benjamin Maggi                                            //
 // @email        : benjaminmaggi@gmail.com                                   //
-// @date         : 13 Feb 2017                                               //
+// @date         : 26 Sep 2017                                               //
 // @license:     : MIT                                                       //
 // ------------------------------------------------------------------------- //
 //                                                                           //
@@ -40,36 +40,86 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-// Import styles
-import Style from './Stars.css';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import * as Actions from 'actions/PlayList';
+import * as Settings from 'actions/Settings';
+import { shell, remote } from 'electron';
+import fs from 'fs';
+import path from 'path';
+import URL, { URL as URI} from 'url';
+import { DialogOptions } from '../../types/PlayList';
 
-type Props = {
-  stars: number,
-  maxStars: number
-};
 
-export default class Stars extends Component<Props, void> {
+/*
+{
+  x: this.mainWindowState.x,
+  y: this.mainWindowState.y,
+  width: this.mainWindowState.width,
+  height: this.mainWindowState.height,
+  backgroundThrottling: false, // do not throttle animations/timers when page is background
+  minWidth: 800,
+  minHeight: 400,
+  darkTheme: true, // Forces dark theme (GTK+3)
+  titleBarStyle: 'hidden-inset', // Hide title bar (Mac)
+  useContentSize: true, // Specify web page size without OS chrome
+  center: true,
+  frame: false,
+  icon: makeIcon('icon.png')
+}
+*/
+const loadView = ({title,scriptUrl}) => {
+  return (`
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <title>${title}</title>
+        <meta charset="UTF-8">
+      </head>
+      <body>
+        <div id="view"></div>
+        <script src="${scriptUrl}"></script>
+      </body>
+    </html>
+  `)
+}
 
-  static defaultProps = {
-    stars: 0,
-    maxStars: 5
-  };
+const viewData = 'data:text/html;charset=UTF-8,' + encodeURIComponent(loadView({
+  title: "Account",
+  scriptUrl: "./account.view.js"
+}));
 
-  static propTypes = {
-    stars: PropTypes.number,
-    maxStars: PropTypes.number
-  }
-
-  makeStars (stars: number) {
-    const { maxStars } = this.props;
-    return Array.from({length: maxStars}, (value, index) => {
-      const star = (index < stars) ? ['full', '★'] : ['empty', '☆'];
-      return (<span className={ Style[star[0]]} key={ index }>{ star[1] }</span>);
-    });
-  }
-
-  render () {
-    const { stars } = this.props;
-    return (<span className={ Style.stars } >{ this.makeStars(stars) }</span>);
-  }
+console.log('viewData', viewData)
+export const openModal = function (route) {
+  const basePath = path.join(process.cwd(), 'dist', 'index.html');
+  const parent = remote.getCurrentWindow();
+  const base = URL.format({
+    protocol: 'file',
+    slashes: true,
+    pathname: basePath
+  });
+  // const location = path.parse(decodeURIComponent(base));
+  const target = new URI(base);
+  target.search = 'readOnly=true&mode=javascript&index=about';
+  const modal = new remote.BrowserWindow({
+    webviewTag: true,
+    parent: parent,
+    modal: true,
+    show: false
+  });
+  console.log('Modal URL', 'target', target, URL.format(target))
+  modal.loadURL(URL.format(target));
+  modal.once('closed', event => {
+    console.log('modal closed', __dirname, process.cwd());
+  });
+  modal.webContents.on('before-input-event', (event, input) => {
+    if (input.key === 'Escape') {
+      modal.close();
+    }
+  });
+  modal.once('ready-to-show', () => {
+    modal.show();
+    modal.focus();
+  });
+  window.modal = modal;
 }

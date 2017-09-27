@@ -45,14 +45,15 @@ import thunk from 'redux-thunk';
 import { createStore, combineReducers, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
 
-import createBrowserHistory from 'history/createBrowserHistory'
-import createHashHistory from 'history/createHashHistory'
+import createBrowserHistory from 'history/createBrowserHistory';
+import createHashHistory from 'history/createHashHistory';
 import { Router, Route, Switch, Link } from 'react-router-dom';
 import { ConnectedRouter, routerReducer, routerMiddleware, push } from 'react-router-redux';
 import * as reducers from './reducers';
 /* routes */
 import routes from './routes';
 
+import Style from './layout.css';
 // Create a history of your choosing (we're using a browser history in this case)
 // const history = createHashHistory();
 const history = createBrowserHistory({
@@ -137,14 +138,16 @@ window.goUrl =  (url) => {
   store.dispatch(push({
     pathname: url || '/about',
     state: { some: 'state' }
-  }))
-}
+  }));
+};
 
 
-const domElement = document.getElementById('app')
 
 // Now you can dispatch navigation actions from anywhere!
 // store.dispatch(push('/foo'))
+
+const domContainerNode = document.getElementById('app');
+domContainerNode.className = Style.application;
 
 render(
   <Provider store={ store }>
@@ -153,8 +156,8 @@ render(
       { routes }
     </ConnectedRouter>
   </Provider>,
-  document.getElementById('app')
-)
+  domContainerNode
+);
 
 
 

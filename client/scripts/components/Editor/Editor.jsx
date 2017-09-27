@@ -44,6 +44,8 @@ import CodeMirror, { getCodeMirror } from 'react-codemirror';
 import { js_beautify } from 'js-beautify';
 import { SettingsStore } from '../../lib';
 
+import * as JSXX from 'codemirror/mode/javascript/javascript';
+
 import 'codemirror/mode/javascript/javascript';
 // keymap
 import 'codemirror/keymap/sublime';
@@ -61,10 +63,12 @@ import 'codemirror/addon/edit/closebrackets';
 import 'codemirror/addon/search/match-highlighter';
 
 /* stryles */
-import 'codemirror/lib/codemirror.css';
-import 'codemirror/theme/material.css';
-import 'codemirror/theme/monokai.css';
-import './Editor.css';
+import '!style-loader!css-loader!codemirror/lib/codemirror.css';
+import '!style-loader!css-loader!codemirror/theme/material.css';
+import '!style-loader!css-loader!codemirror/theme/monokai.css';
+import Style from './Editor.css';
+
+console.log('JSXX', JSXX)
 
 const settings = new SettingsStore();
 
@@ -100,7 +104,7 @@ type DefaultProps = {
 };
 
 
-export default class Editor extends React.Component<Props, void> {
+export default class Editor extends Component<Props, void> {
 
   options: Options;
   codeMirror: Object;
@@ -156,6 +160,7 @@ export default class Editor extends React.Component<Props, void> {
     this.codeMirror = this.refs.editor.getCodeMirror();
     this.codeMirror.on('focus', this.focusChanged.bind(this, true));
     this.codeMirror.on('blur', this.focusChanged.bind(this, false));
+    console.log('Editor', this)
   }
 
   componentWillUnmount () : any {
@@ -172,16 +177,19 @@ export default class Editor extends React.Component<Props, void> {
 
   componentWillReceiveProps (nextProps: Object) {
     if (this.codeMirror && nextProps.code !== undefined && this.code != nextProps.code.toString()) {
-      this.codeMirror.setValue(nextProps.code);
+      console.log('componentWillReceiveProps', nextProps);
+      return this.codeMirror.setValue(nextProps.code);
     }
   }
 
   render () {
     const { options, code } = this.props;
+    options.className = Style.fullSize;
     // const { code } = this.state;
+    console.log('Style', Style, this.props);
     return (
       /*<CodeMirror className="editor" ref={ editor => { this.editor = editor; }} value={ code } options={ options } onChange={ this.updateCode }/>*/
-      <CodeMirror className="editor" ref="editor" value={ code } options={ options } onChange={ this.updateCode }/>
+      <CodeMirror className={ Style.fullSize } ref="editor" value={ code } options={ options } onChange={ this.updateCode }/>
     );
   }
 }

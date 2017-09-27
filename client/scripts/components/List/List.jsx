@@ -1,3 +1,5 @@
+// @flow
+
 ///////////////////////////////////////////////////////////////////////////////
 // @file         : List.jsx                                                  //
 // @summary      : List component                                            //
@@ -39,137 +41,23 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux'
+import { connect } from 'react-redux';
 import * as Actions from 'actions/PlayList';
 import * as Settings from 'actions/Settings';
 import Stars from '../Stars/Stars';
-import Spinner from '../Spinner/Spinner';
 import { TrackDuration } from '../TimeCode/TimeCode';
-import { ContextMenu, buildContextMenu } from '../../lib';
-import { shell, remote } from 'electron';
-import fs from 'fs';
-import path from 'path';
-import URL, { URL as URI} from 'url';
 import { push } from 'react-router-redux';
-import { DialogOptions } from '../../types/PlayList';
+import * as RowField from '../List/RowField';
+import { buildListItemMenu } from '../Menu/Menu';
 // Import styles
-import './List.css';
+import Style from './List.css';
 
-/*
-{
-      x: this.mainWindowState.x,
-      y: this.mainWindowState.y,
-      width: this.mainWindowState.width,
-      height: this.mainWindowState.height,
-      backgroundThrottling: false, // do not throttle animations/timers when page is background
-      minWidth: 800,
-      minHeight: 400,
-      darkTheme: true, // Forces dark theme (GTK+3)
-      titleBarStyle: 'hidden-inset', // Hide title bar (Mac)
-      useContentSize: true, // Specify web page size without OS chrome
-      center: true,
-      frame: false,
-      icon: makeIcon('icon.png')
-    }
-*/
-// const openModal = function () {
-//   const url = URL.format({
-//     protocol: 'file',
-//     slashes: true,
-//     pathname: path.join(process.cwd(), 'dist', 'index.html'),
-//     hash: '#/about',
-//     search: 'readOnly=true&mode=javascript'
-//   });
+console.log('Style', Style);
 
-//   const parent = remote.getCurrentWindow();
-
-//   const main = URL.parse(parent.getURL());
-//   main.hash = 'about';
-//   main.search = 'readOnly=true&mode=javascript';
-//   console.log('OPEN', url, main, main.toString(), URL.format(main));
-
-//   const modal = new remote.BrowserWindow({
-//     parent: parent,
-//     modal: true,
-//     show: false
-//   });
-//   modal.loadURL(URL.format(main));
-//   modal.on('closed', event => {
-//     console.log('modal closed', __dirname, process.cwd());
-//   });
-//   modal.on('app-command', (event, command) => {
-//     console.log('modal app-command', event, command);
-//   });
-//   modal.webContents.on('before-input-event', (event, input) => {
-//     if (input.key === 'Escape') {
-//       modal.close();
-//     }
-//   });
-//   modal.once('ready-to-show', () => {
-//     modal.show();
-//     modal.focus();
-//   });
-// }
-
-const loadView = ({title,scriptUrl}) => {
-  return (`
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <title>${title}</title>
-        <meta charset="UTF-8">
-      </head>
-      <body>
-        <div id="view"></div>
-        <script src="${scriptUrl}"></script>
-      </body>
-    </html>
-  `)
-}
-
-const viewData = 'data:text/html;charset=UTF-8,' + encodeURIComponent(loadView({
-  title: "Account",
-  scriptUrl: "./account.view.js"
-}));
-
-console.log('viewData', viewData)
-const openModal = function (route) {
-  const basePath = path.join(process.cwd(), 'dist', 'index.html');
-  const parent = remote.getCurrentWindow();
-  const base = URL.format({
-    protocol: 'file',
-    slashes: true,
-    pathname: basePath
-  });
-  // const location = path.parse(decodeURIComponent(base));
-  const target = new URI(base);
-  target.search = 'readOnly=true&mode=javascript&index=about';
-  const modal = new remote.BrowserWindow({
-    webviewTag: true,
-    parent: parent,
-    modal: true,
-    show: false
-  });
-  console.log('Modal URL', 'target', target, URL.format(target))
-  modal.loadURL(URL.format(target));
-  modal.once('closed', event => {
-    console.log('modal closed', __dirname, process.cwd());
-  });
-  modal.webContents.on('before-input-event', (event, input) => {
-    if (input.key === 'Escape') {
-      modal.close();
-    }
-  });
-  modal.once('ready-to-show', () => {
-    modal.show();
-    modal.focus();
-  });
-  window.modal = modal;
-}
 
 const mapStateToProps = function (state) {
   return {
-    list: state.PlayListItems,
+    list: state.PlayListItems.toJS(),
     options: {
       playlist: state.Settings.get('playlist')
     }
@@ -214,89 +102,9 @@ export default class List extends Component {
     placeholder: document.createElement('li')
   };
 
-  buildListItemMenu (song) {
-    const { actions, inspect, list } = this.props;
-    const { playPause } = this;
-
-    return buildContextMenu([{
-      label: song.file ? (song.isPlaying ? 'Pause': 'Play:') : (song.isLoading ? 'cancel' : 'download'),
-      click: (menuItem, browserWindow, event) => {
-        const { id, file, isLoading, isPlaying } = song;
-        console.log(menuItem);
-        if (file && !isLoading) {
-          return isPlaying ? actions.pauseItem(id) : actions.playItem(id, true);
-          // return playPause(song);
-        } else if (!file && !isLoading) {
-          return this.playPause(song);
-        } else if (!file && isLoading) {
-          console.log('ABORT');
-          actions.cancel(id, true);
-        }
-      }
-    }, {
-      label: 'Media Information...',
-      click () {
-        console.log(song);
-        return openModal('/about');
-      }
-    }, {
-      type: 'separator'
-    }, {
-      label: 'Select All',
-      click: () => {
-        const items = list.toJS().reduce((items, { id }) => {
-          return { ...items, ...{ [id]: { selected: true} } };
-        }, {});
-        actions.editItems(items);
-      }
-    }, {
-      type: 'separator'
-    }, {
-      label: 'Explore item folder',
-      enabled: fs.existsSync(song.file),
-      click () {
-        return shell.showItemInFolder(song.file);
-      }
-    }, {
-      type: 'separator'
-    }, {
-      label: 'Remove from PlayList',
-      click () {}
-    }, {
-      label: 'Delete from Library',
-      click () {}
-    }, {
-      type: 'separator'
-    }, {
-      label: 'Open...',
-      click () {
-        return actions.openPlayList();
-      }
-    }, {
-      label: 'View Source',
-      click () {
-        const { dialog } = remote;
-        dialog.showOpenDialog(DialogOptions.open, files => {
-          if (!Array.isArray(files) || files.length < 1) {
-            return;
-          }
-          // files is an array that contains all the selected
-          const file = files.slice(0).pop();
-          if (file && fs.existsSync(file)) {
-            const stats = fs.statSync(file);
-            console.log('selected files: ', files, stats)
-            return inspect(encodeURIComponent(file), 'readOnly=true&mode=javascript');
-          } else {
-            console.log('No file selected');
-            return;
-          }
-        });
-      }
-    }]);
-  }
-
   handleContextMenu (event, song) {
     event.preventDefault();
+    event.stopPropagation();
     const menu = this.buildListItemMenu(song);
     const { clientX, clientY } = event;
     menu.popup();
@@ -315,6 +123,7 @@ export default class List extends Component {
 
     // actions.fetchListItems('PLsPUh22kYmNBl4h0i4mI5zDflExXJMo_x');
     this.props.placeholder.className = 'row placeholder';
+    this.buildListItemMenu = buildListItemMenu.bind(this);
   }
 
   makeProgressBar (song) {
@@ -354,10 +163,10 @@ export default class List extends Component {
     this.setState({
       isDragDrop: false
     });
-  };
+  }
 
   drop = event => {
-    console.log('drop:', event.dataTransfer.getData('text/html'))
+    console.log('drop:', event.dataTransfer.getData('text/html'));
   }
 
   dragOver = event => {
@@ -396,7 +205,7 @@ export default class List extends Component {
       this.nodePlacement = 'before';
       parent.insertBefore(this.props.placeholder, event.target);
     }
-  };
+  }
 
   dragLeave = event => {
     event.stopPropagation();
@@ -404,10 +213,12 @@ export default class List extends Component {
     if (event.target.className == 'placeholder') {
       return;
     }
-  };
+  }
 
 
-  handleDoubleClick = song => {
+  handleDoubleClick = (event, song) => {
+    event.preventDefault();
+    event.stopPropagation();
     this.playPause(song);
   }
 
@@ -420,7 +231,7 @@ export default class List extends Component {
       icon: song.thumbnails.default.url,
       image:  song.thumbnails.default.url,
       silent: true
-    }
+    };
     new Notification(song.title, options);
     // Select this item
     actions.selectItems([song.id]);
@@ -436,53 +247,37 @@ export default class List extends Component {
     event.stopPropagation();
     event.nativeEvent.stopImmediatePropagation();
     let selected = [];
+    const { list, actions } = this.props;
 
     // console.log('event', song.id, event.shiftKey, event.ctrlKey, event.metaKey, event.altKey)
 
     if (event.shiftKey) {
-      let lastIndex = this.props.list.findLastIndex(item => item.get('selected'));
-      let selectedIndex = this.props.list.findIndex(item => ( item.get('id') === song.id) );
-      let selected = [];
+      const lastIndex = list.map(({ selected }) => (selected)).indexOf(true);
+      const selectedIndex = list.findIndex(({ id }) => (id === song.id));
       if (lastIndex < selectedIndex) {
-        selected = this.props.list.slice(lastIndex, selectedIndex + 1).map(item => (item.get('id'))).toJS();
+        const selected = list.slice(lastIndex, selectedIndex + 1).map(({ id }) => id);
+        return actions.selectItems(selected);
       } else if (lastIndex > selectedIndex) {
-        selected = this.props.list.slice(selectedIndex, lastIndex + 1).map(item => (item.get('id'))).toJS();
+        const selected = list.slice(selectedIndex, lastIndex + 1).map(({ id }) => id);
+        return actions.selectItems(selected);
       }
-      return this.props.actions.selectItems(selected);
     } else if (event.metaKey) {
-      let items = this.props.list.filter(item => item.get('selected')).map(item => (item.get('id')));
-      let selectedIndex = this.props.list.findIndex(item => ( item.get('id') === song.id) );
-      let selected = [...items.toJS(), this.props.list.get(selectedIndex).get('id')];
-      return this.props.actions.selectItems(selected);
+      const items = list.filter(({ selected }) => (selected)).map(({ id }) => id);
+      const selectedIndex = list.findIndex(({ id }) => (id === song.id) );
+      const selected = [...items, list[selectedIndex].id];
+      return actions.selectItems(selected);
     }
-    return this.props.actions.selectItems([song.id])
-  }
+    return actions.selectItems([song.id]);
+  };
 
   renderItem () {
     const { actions, list } = this.props;
-
-    return list.map((item, index) => {
-      const song = item.toJS();
-      const style = classNames('row', {
-        active: song.isPlaying,
-        selected: song.selected,
-        loading: song.isLoading
-      });
-      const exists = classNames('dot', {
-        local: song.file,
-        'is-iconic': !song.isLoading
-      });
-
-      const isPlayingIcon = song => {
-        if (!song.file && !song.isLoading) {
-          return 'wifi';
-        } else if (song.isLoading) {
-          return <Spinner />;
-        } else {
-          return (song.isPlaying) ? 'play_arrow' : 'stop';
-        }
-      }
-
+    return list.map((song, index) => {
+        const style = classNames(Style.row, {
+          [Style.active]: song.isPlaying,
+          [Style.selected]: song.selected,
+          [Style.loading]: song.isLoading
+        });
       // Scroll to element if it's playing
       // TODO: will constantly trigger scrollIntoView()
       /*
@@ -497,40 +292,41 @@ export default class List extends Component {
 
       return (
         <li
-          data-id={index}
+          data-id={ index }
+          key={ index }
+          className={ style }
           draggable="true"
-          onDragEnd={this.dragEnd}
-          onDragStart={this.dragStart}
-          onDragLeave={this.dragLeave}
-          onDrop={this.drop}
-          className={style}
-          key={index}
-          onClick={(event) => this.handleClick(event, song) }
-          onDoubleClick={() => this.handleDoubleClick(song) }
-          onContextMenu={(event) => this.handleContextMenu(event, song) }
+          onDragEnd={ this.dragEnd }
+          onDragStart={ this.dragStart }
+          onDragLeave={ this.dragLeave }
+          onDrop={ this.drop }
+          onClick={ (event) => this.handleClick(event, song) }
+          onDoubleClick={ (event) => this.handleDoubleClick(event, song) }
+          onContextMenu={ event=> this.handleContextMenu(event, song) }
           style={this.makeProgressBar(song)}
-          >
-          <span>{ index + 1 }</span>
-          <span className={exists}>{ isPlayingIcon(song) }</span>
-          <span>
-            <p>{ song.title }</p>
-          </span>
+        >
+          <RowField.Index index={ index } />
+          <RowField.Status song={ song } />
+          <RowField.Title  title={ song.title } />
           <Stars stars={ song.stars }/>
           <TrackDuration duration={ song.duration } format="#{2H}:#{2M}:#{2S}" />
-          <span onClick={ e => this.handleContextMenu(event, song) }>•••</span>
+          <RowField.DropDown onClick={ event => this.handleContextMenu(event, song) } />
+          { /* <span className="dropdown" onClick={ e => this.handleContextMenu(event, song) }>•••</span>
+          <button className={ classNames(Style.roundButton, Style.dropdown) } onClick={ event => this.handleContextMenu(event, song) } title="dropdown">•••</button>
+          */ }
         </li>
       );
     });
   }
 
   render () {
-    const dragList = classNames('list', {
-      'is-drag-drop': this.state.isDragDrop
+    const dragList = classNames(Style.list, {
+      [Style.isDragDrop]: this.state.isDragDrop
     });
 
     return (
       <div className={ dragList }>
-        <ul className="container" ref="list" onDragOver={ this.dragOver }>
+        <ul className={ Style.container } ref="list" onDragOver={ this.dragOver }>
           { this.renderItem() }
         </ul>
       </div>

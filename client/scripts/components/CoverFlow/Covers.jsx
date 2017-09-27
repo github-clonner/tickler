@@ -68,7 +68,7 @@ const getDefaultCoverImage = function (thumbnails: Thumbnails) {
   }
 };
 
-const Cover = (props: Props) => {
+const Cover = function (props: Props) {
   const { list, setTitle } = props;
   return (<ul className="covers">{
     list.map((cover, index) => {

@@ -1,14 +1,14 @@
 // @flow
 
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : Stars.jsx                                                 //
-// @summary      : Stars component                                           //
+// @file         : Track.js                                                  //
+// @summary      : Track type definition                                     //
 // @version      : 0.0.1                                                     //
 // @project      : tickelr                                                   //
 // @description  :                                                           //
 // @author       : Benjamin Maggi                                            //
 // @email        : benjaminmaggi@gmail.com                                   //
-// @date         : 13 Feb 2017                                               //
+// @date         : 26 Sep 2017                                               //
 // @license:     : MIT                                                       //
 // ------------------------------------------------------------------------- //
 //                                                                           //
@@ -37,39 +37,53 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import classNames from 'classnames';
-// Import styles
-import Style from './Stars.css';
-
-type Props = {
-  stars: number,
-  maxStars: number
+export type Artist = {
+  id: string;
+  name: string;
+  genres?: Array<string>;
+  uri?: string;
 };
 
-export default class Stars extends Component<Props, void> {
+export type Thumbnail = {
+  height?: number;
+  url: string;
+  width?: number;
+};
 
-  static defaultProps = {
-    stars: 0,
-    maxStars: 5
-  };
+export type Thumbnails = {
+  default: Thumbnail;
+  high?: Thumbnail;
+  maxres?: Thumbnail;
+  medium?: Thumbnail;
+  standard?: Thumbnail;
+};
 
-  static propTypes = {
-    stars: PropTypes.number,
-    maxStars: PropTypes.number
-  }
+export type Album = {
+  id: string;
+  type?: "album" | "single" | "compilation";
+  name: string;
+  artists?: Array<Artist>;
+  genres: Array<string>;
+  copyrights?: Array<{
+    text?: string;
+    type?: string;
+  }>;
+};
 
-  makeStars (stars: number) {
-    const { maxStars } = this.props;
-    return Array.from({length: maxStars}, (value, index) => {
-      const star = (index < stars) ? ['full', '★'] : ['empty', '☆'];
-      return (<span className={ Style[star[0]]} key={ index }>{ star[1] }</span>);
-    });
-  }
-
-  render () {
-    const { stars } = this.props;
-    return (<span className={ Style.stars } >{ this.makeStars(stars) }</span>);
-  }
-}
+export type Track = {
+  id: string;
+  artists: Array<Artist>;
+  name: string;
+  album?: Album;
+  year?: string;
+  comment?: string;
+  thumbnails: Thumbnails;
+  genre?: string;
+  lyrics?: string;
+  duration?: number | string;
+  file?: string;
+  playing?: boolean;
+  progress?: number;
+  status?: string;
+  stars?: number;
+};

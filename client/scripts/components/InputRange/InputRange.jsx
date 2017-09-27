@@ -40,7 +40,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 // Import styles
-import './InputRange.css';
+import Style from './InputRange.css';
 
 type Props = {
   disabled: bool,
@@ -117,7 +117,7 @@ export default class InputRange extends Component<Props, State> {
     const { min, max, step, disabled } = this.props;
     return <input
       ref="range"
-      className="range"
+      className={ Style.range }
       type="range"
       min={min}
       max={max}

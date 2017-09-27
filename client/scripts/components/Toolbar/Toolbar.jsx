@@ -46,7 +46,7 @@ import type { ToolBar } from '../../types';
 // Import images
 import * as images from './images';
 // Import styles
-import './Toolbar.css';
+import Style from './Toolbar.css';
 
 type Props = {
   toolbar: ToolBar,
@@ -87,7 +87,7 @@ const Toolbar = (props: Props) => {
 
   function makeButtons (button: string, index: number) : any {
     return (
-      <li className="radio-button" key={ index } >
+      <li className={ Style.radioButton } key={ index } >
         <input
           type="radio"
           name="toolbar"
@@ -96,14 +96,14 @@ const Toolbar = (props: Props) => {
           checked={ props.toolbar[button] }
           onChange={ handleChange }
         />
-        <label className="radio-button" htmlFor={ button } >
+        <label className={ Style.radioButton } htmlFor={ button } >
           <img src={ images[button] }></img>
         </label>
       </li>
     );
   }
 
-  return ( <ul className="toolbar">{ buttons.map(makeButtons) }</ul> );
+  return ( <ul className={ Style.toolbar }>{ buttons.map(makeButtons) }</ul> );
 
 };
 

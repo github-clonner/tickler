@@ -43,7 +43,7 @@ import classNames from 'classnames';
 import Time, { parseDuration } from '../../lib/Time';
 import durationFormat from '@maggiben/duration-format';
 // Import styles
-import './TimeCode.css';
+import Style from './TimeCode.css';
 
 type Props = {
   time: number,
@@ -91,7 +91,7 @@ export default class TimeCode extends Component<Props, State> {
   }
 
   render () {
-    return (<span className="time-code" onClick={ this.toggleFormat }>{ this.stringify() }</span>);
+    return (<span className={ Style.timeCode } onClick={ this.toggleFormat }>{ this.stringify() }</span>);
   }
 }
 

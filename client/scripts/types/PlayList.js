@@ -37,56 +37,7 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-export type Artist = {
-  id: string;
-  name: string;
-  genres?: Array<string>;
-  uri?: string;
-};
-
-export type Thumbnail = {
-  height?: number;
-  url: string;
-  width?: number;
-};
-
-export type Thumbnails = {
-  default: Thumbnail;
-  high?: Thumbnail;
-  maxres?: Thumbnail;
-  medium?: Thumbnail;
-  standard?: Thumbnail;
-};
-
-export type Album = {
-  id: string;
-  type?: "album" | "single" | "compilation";
-  name: string;
-  artists?: Array<Artist>;
-  genres: Array<string>;
-  copyrights?: Array<{
-    text?: string;
-    type?: string;
-  }>;
-};
-
-export type Track = {
-  id: string;
-  artists: Array<Artist>;
-  name: string;
-  album?: Album;
-  year?: string;
-  comment?: string;
-  thumbnails: Thumbnails;
-  genre?: string;
-  lyrics?: string;
-  duration?: number | string;
-  file?: string;
-  playing?: boolean;
-  progress?: number;
-  status?: string;
-  stars?: number;
-};
+import { Track } from './Track';
 
 export type PlayList = {
   id: string;
@@ -95,14 +46,3 @@ export type PlayList = {
   href?: string;
   tracks: Array<Track>;
 };
-
-export const DialogOptions = {
-  open: {
-    title: 'Open playlist',
-    defaultPath: '/Users/bmaggi/Music'
-  },
-  save: {
-    title: 'Open playlist',
-    defaultPath: '/Users/bmaggi/Music'
-  }
-}

@@ -43,8 +43,11 @@ import { connect } from 'react-redux';
 import URL from 'url';
 import * as Actions from '../../actions/PlayList';
 import { Header, Toolbar, Player, List, CoverFlow, Equalizer, DragDrop } from '../../components';
-import 'styles/main.css';
-import './Main.css';
+import Style from './Main.css';
+
+// import '!style-loader!css-loader!../../../styles/main.css!';
+// This imported styles globally without running through CSS Modules
+// import 'style-loader!../../../styles/main.css!';
 
 function mapStateToProps (state, ownProps) {
   // console.log('main ownProps', ownProps);
@@ -90,20 +93,24 @@ export default class Main extends Component {
       this.setState(prevState => ({
         config: config,
       }));
-      // console.info('app config:', config);
     });
   }
 
   render () {
     const { list, children } = this.props;
+    console.log('Style', Style)
     return (
-      <div className="page">
+      <div className={ Style.frame }>
         <Header />
         <Toolbar />
+        {
+        /*
         <CoverFlow />
         <Equalizer />
-        <div className="page-content">
-          <List className="list" list={ list } >
+        */
+        }
+        <div className={ Style.content } >
+          <List className={ Style.list } list={ list } >
             { children }
           </List>
         </div>

@@ -1,4 +1,5 @@
 @import "styles/variables.css";
+@import "styles/buttons.css";
 
 :root {
   /*--activeRowBackground: #f6f6f6;*/
@@ -16,7 +17,6 @@
   font-family: var(--mainFont);
   font-weight: lighter;
   color: var(--color);
-  cursor: pointer;
   box-sizing: border-box;
   user-select: none;
   height: 100%;
@@ -34,34 +34,83 @@
     padding: 0px;
     margin: 0px;
   }
+
+/*   & .dropdownXX {
+    cursor: pointer;
+    min-width: 1.5em;
+    min-height: 1.5em;
+    border-radius: 50%;
+    margin: 4px;
+    transition: all .15s ease-in-out;
+    &:hover {
+      background-color: #ccc;
+      color: #000;
+    }
+    &.active {
+      font-weight: bold;
+    }
+  } */
+
   & .row {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    padding: 10px;
     box-sizing: border-box;
-    cursor: pointer;
+    align-items: center;
+    /* cursor: pointer; */
     &.active {
       /* background: var(--activeRowBackground); */
       /* color: var(--activeRowColor); */
       font-weight: bolder;
     }
+
     &.selected.active:not(.loading) {
       background: var(--activeRowBackground);
       color: var(--activeRowColor);
     }
+
     &.selected:not(.active):not(.loading) {
       background: var(--activeRowBackground);
       color: var(--activeRowColor);
     }
+
+    & .dropdown {
+      margin: 4px;
+      transition: none;
+    }
+
+    & .field {
+      &[role*="status"] {
+        font-family: var(--iconFont);
+      }
+    }
   }
+
   &:not(.is-drag-drop) {
     & .row:not(.placeholder) {
       &:hover:not(.selected) {
         background-color: var(--hoverRowColor);
       }
+      &.selected .dropdown {
+        color: white;
+        &:hover {
+          color: #666666;
+          &:after {
+            background-color: rgba(255, 255, 255, .85);
+            border: 1px solid white;
+          }
+        }
+      }
     }
   }
+
+/*   & .dropdown {
+    &:hover {
+      background-color: #ccc;
+      color: #000;
+    }
+  } */
+
   & ul > li > span {
     min-width: 0;
     &:nth-child(1) {
@@ -77,14 +126,11 @@
       text-align: center;
       font-weight: bold;
       color: #ed1e24;
-      &.is-iconic {
-          font-family: var(--iconFont);
-      }
       &.local {
           color: #31dd31;
       }
     }
-    &:nth-child(3) {
+    &:nth-child(3), &[role="title"] {
       flex-grow: 1;
       flex-basis: 50%;
     }

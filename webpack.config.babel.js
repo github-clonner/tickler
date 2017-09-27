@@ -1,15 +1,13 @@
 import path from 'path';
-import fs from 'fs';
 import webpack from 'webpack';
 import HtmlwebpackPlugin from 'html-webpack-plugin';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import ElectronConnectWebpackPlugin from 'electron-connect-webpack-plugin';
 import ElectronPlugin from 'electron-webpack-plugin';
-import WebpackCleanupPlugin from 'webpack-cleanup-plugin'
+import WebpackCleanupPlugin from 'webpack-cleanup-plugin';
+import WebpackNotifierPlugin from 'webpack-notifier';
 
-const env = {
-  NODE_ENV: process.env.NODE_ENV || 'development',
-};
+console.log('root:', path.resolve(__dirname, 'node_modules'));
 
 export default {
   context: path.resolve(__dirname, './client/scripts'),
@@ -41,14 +39,26 @@ export default {
     new webpack.NamedModulesPlugin(),
     new webpack.NoEmitOnErrorsPlugin(),
     new webpack.EnvironmentPlugin({
-      NODE_ENV: 'development'
+      NODE_ENV: 'development',
+      BABEL_ENV: 'development'
     }),
     new HtmlwebpackPlugin({
-      //template: 'index.js',
+      inject: false,
       template: require('html-webpack-template'),
-      title: 'App',
+      title: 'Tickler',
       appMountId: 'app',
-      inject: false
+      // links: [
+      //   'https://unpkg.com/codemirror@5.30.0/lib/codemirror.css',
+      //   'https://unpkg.com/codemirror@5.30.0/theme/material.css',
+      //   'https://unpkg.com/codemirror@5.30.0/theme/monokai.css'
+      // ],
+      window: {
+        env: {
+          build: new Date(),
+          NODE_ENV: 'development',
+          BABEL_ENV: 'development'
+        }
+      }
     }),
     new ElectronConnectWebpackPlugin({
       path: path.resolve('dist'),
@@ -69,13 +79,18 @@ export default {
       // optional
       options: {
         env: {
-          NODE_ENV: 'development'
+          NODE_ENV: 'development',
+          BABEL_ENV: 'development'
         }
       }
     }),
     new WebpackCleanupPlugin({
       exclude: ['package.json', 'main.js', 'index.html', 'bootstrapper.js', 'window.js'],
-    })
+    }),
+    new WebpackNotifierPlugin({
+      title: 'Webpack',
+      skipFirstNotification: true
+    }),
     //new ExtractTextPlugin('style.css', { allChunks: true })
   ],
   // resolveLoader: {
@@ -112,12 +127,54 @@ export default {
           }
         }]
       },
+      // {
+      //   test: /codemirror\/.*\.css$/,
+      //   use: [
+      //     {
+      //       loader: 'style-loader'
+      //     },
+      //     {
+      //       loader: 'css-loader',
+      //       options: {
+      //         modules: false,
+      //         importLoaders: 0
+      //       }
+      //     }
+      //   ]
+      // },
       {
         test: /\.css$/,
         use: [
-          'style-loader',
-          'css-loader',
-          'postcss-loader'
+          {
+            loader: 'style-loader',
+            options: { sourceMap: true }
+          },
+          {
+            loader: 'css-loader',
+            options: {
+              url: false,
+              import: false,
+              modules: true,
+              importLoaders: 1,
+              camelCase: 'dashesOnly',
+              sourceMap: true
+            }
+          },
+          {
+            loader: 'postcss-loader',
+            options: {
+              sourceMap: true,
+              plugins: (loader) => [
+                require('postcss-import')({
+                  root: path.resolve(__dirname, 'node_modules'),
+                  path: [ path.resolve(__dirname, './client'), path.resolve(__dirname, 'node_modules')],
+                }),
+                require('postcss-url')(),
+                require('postcss-cssnext')(),
+                require('postcss-reporter')()
+              ]
+            }
+          }
         ]
       },
       // {
@@ -163,4 +220,4 @@ export default {
       }
     ]
   }
-}
+};

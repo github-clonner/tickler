@@ -51,8 +51,7 @@ import * as Actions from '../../actions/PlayList';
 import * as Settings from '../../actions/Settings';
 import { Header, Toolbar, Editor, Player } from '../../components';
 import { read, write, remove } from '../../lib/FileSystem';
-import '../../../styles/main.css';
-import './Inspector.css';
+import Style from './Inspector.css';
 
 type Props = {
   file: string,
@@ -154,7 +153,7 @@ export default class Inspector extends Component<Props, void>  {
       if (stats.isFile()) {
         try {
           const data = read(file);
-          return js_beautify(JSON.stringify(data), { indent_size: 2 })
+          return js_beautify(JSON.stringify(data), { indent_size: 2 });
         } catch (error) {
           console.error(error);
           throw error;
@@ -170,12 +169,11 @@ export default class Inspector extends Component<Props, void>  {
   render () {
     const { file, options } = this.props;
     const code = this.load(file);
+    console.log('file, options', Style, file, options);
     return (
-      <div className="page">
+      <div className={ Style.frame }>
         <Header />
-        <div className="page-content">
-          <Editor file={ file } options={ options } code={ code } />
-        </div>
+        <Editor className={ Style.content } file={ file } options={ options } code={ code } />
         <Player />
       </div>
     );

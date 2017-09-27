@@ -1,14 +1,14 @@
 // @flow
 
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : Stars.jsx                                                 //
-// @summary      : Stars component                                           //
+// @file         : RowField.jsx                                              //
+// @summary      : Augmented Row fields                                      //
 // @version      : 0.0.1                                                     //
 // @project      : tickelr                                                   //
 // @description  :                                                           //
 // @author       : Benjamin Maggi                                            //
 // @email        : benjaminmaggi@gmail.com                                   //
-// @date         : 13 Feb 2017                                               //
+// @date         : 26 Sep 2017                                               //
 // @license:     : MIT                                                       //
 // ------------------------------------------------------------------------- //
 //                                                                           //
@@ -37,39 +37,51 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React from 'react';
 import classNames from 'classnames';
-// Import styles
-import Style from './Stars.css';
+import Spinner from '../Spinner/Spinner';
+import type  { Track } from '../../types';
+// Styles
+import Style from './List.css';
 
 type Props = {
-  stars: number,
-  maxStars: number
+  song: Object
 };
 
-export default class Stars extends Component<Props, void> {
+const getItemStatus = (song) => classNames(Style.field, Style.dot, {
+  [Style.local]: song.file
+});
 
-  static defaultProps = {
-    stars: 0,
-    maxStars: 5
-  };
-
-  static propTypes = {
-    stars: PropTypes.number,
-    maxStars: PropTypes.number
+const getItemIcon = song => {
+  if (!song.file && !song.isLoading) {
+    return 'wifi';
+  } else if (song.isLoading) {
+    return <Spinner />;
+  } else {
+    return (song.isPlaying) ? 'play_arrow' : 'stop';
   }
+};
 
-  makeStars (stars: number) {
-    const { maxStars } = this.props;
-    return Array.from({length: maxStars}, (value, index) => {
-      const star = (index < stars) ? ['full', '★'] : ['empty', '☆'];
-      return (<span className={ Style[star[0]]} key={ index }>{ star[1] }</span>);
-    });
-  }
+export const Status = function ({ song }: Track, ...args) {
+  return (
+    <span className={ getItemStatus(song) } role="status" > { getItemIcon(song) }</span>
+  );
+};
 
-  render () {
-    const { stars } = this.props;
-    return (<span className={ Style.stars } >{ this.makeStars(stars) }</span>);
-  }
-}
+export const Title = function ({ title }: string, ...args) {
+  return (
+    <span className={ Style.field } role="title" >{ title }</span>
+  );
+};
+
+export const Index = function ({ index }: number, ...args) {
+  return (
+    <span className={ Style.field } role="index" >{ ( index + 1 ) }</span>
+  );
+};
+
+export const DropDown = function ({ onClick }: Function, ...args) {
+  return (
+    <button className={ classNames(Style.field, Style.roundButton, Style.dropdown) } role="dropdown" onClick={ onClick } >•••</button>
+  );
+};

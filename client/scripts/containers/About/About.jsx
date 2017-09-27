@@ -41,7 +41,6 @@ import React, { Component } from 'react';
 // import * as DataURI from 'datauri-build';
 // const Datauri = require('datauri').promise;
 import { WebView } from '../../components';
-import '../../../styles/main.css';
 import './About.css';
 
 // console.log('mimeTypes', mimeTypes);

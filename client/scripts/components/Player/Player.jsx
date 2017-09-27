@@ -46,15 +46,15 @@ import * as Settings from 'actions/Settings';
 /* Redux stuff */
 import Immutable, { List, Map } from 'immutable';
 import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux'
+import { connect } from 'react-redux';
 import * as PlayList from 'actions/PlayList';
 import * as Audio from 'actions/Player';
 
 import { Progress, InputRange, TimeCode } from '../index';
 
+import classNames from 'classnames';
 // Import styles
-import './Player.css';
-import 'styles/buttons.css';
+import Style from './Player.css';
 
 function mapStateToProps(state) {
   return {
@@ -317,24 +317,24 @@ export default class Player extends Component {
   render () {
     const { options } = this.props;
     return (
-      <div className="player">
-        <div className="controls">
-          <div className="btn-group">
-            <button className="round-button" onClick={() => this.playTo(-1)} title="backward">skip_previous</button>
-            <button className="round-button" disabled={!this.state.seek} onClick={this.stop} title="stop">stop</button>
-            <button className="round-button" onClick={() => this.playTo(1)} title="forward">skip_next</button>
-            <button className="round-button" onClick={this.play} title="play">{ this.state.isPlaying ? 'pause' : 'play_arrow' }</button>
+      <div className={ Style.player }>
+        <div className={ Style.controls }>
+          <div className={ Style.btnGroup }>
+            <button className={ Style.roundButton } onClick={() => this.playTo(-1)} title="backward">skip_previous</button>
+            <button className={ Style.roundButton } disabled={!this.state.seek} onClick={this.stop} title="stop">stop</button>
+            <button className={ Style.roundButton } onClick={() => this.playTo(1)} title="forward">skip_next</button>
+            <button className={ Style.roundButton } onClick={this.play} title="play">{ this.state.isPlaying ? 'pause' : 'play_arrow' }</button>
           </div>
-          <div className="button-group checkbox-buttons">
+          <div className={ classNames( Style.buttonGroup, Style.checkboxButtons) } >
             <input id="loop" type="checkbox"/>
             <label htmlFor="loop">loop</label>
             <input id="shuffle" type="checkbox" />
             <label htmlFor="shuffle">shuffle</label>
           </div>
-          <div className="volume checkbox-buttons">
+          <div className={ classNames( Style.volume, Style.checkboxButtons) } >
             <input id="volume" type="checkbox" checked={this.state.isMuted} onChange={this.mute}/>
             <label htmlFor="volume">volume_up</label>
-            <div className="slider">
+            <div className={ Style.slider } >
               <InputRange value={this.state.volume} min={0} max={1} step={0.001} onChange={this.handleVolume}/>
             </div>
           </div>

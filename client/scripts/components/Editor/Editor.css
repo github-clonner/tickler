@@ -13,7 +13,13 @@
   box-sizing: border-box;
   position: relative;
   flex: 1 1 auto;
-  & .CodeMirror {
+}
+
+.full-size {
+  flex: 1 1 auto;
+  height: 100%;
+  &:first-child {
+    flex: 1 1 auto;
     height: 100%;
   }
 }
