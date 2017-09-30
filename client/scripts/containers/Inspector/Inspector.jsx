@@ -55,7 +55,8 @@ import Style from './Inspector.css';
 
 type Props = {
   file: string,
-  options: Object
+  options: Object,
+  code: Object
 };
 
 const optionsQuery = jsonata(`
@@ -115,6 +116,25 @@ const optionsQuery = jsonata(`
   )
 `);
 
+const loadCode = function(file: string) {
+  if (fs.existsSync(file)) {
+    const stats = fs.statSync(file);
+    if (stats.isFile()) {
+      try {
+        const data = read(file);
+        return js_beautify(JSON.stringify(data), { indent_size: 2 });
+      } catch (error) {
+        console.error(error);
+        throw error;
+      }
+    } else {
+      throw new Error('Invalid file format');
+    }
+  } else {
+    throw new Error('File not found');
+  }
+};
+
 function mapStateToProps (state, ownProps) {
   console.log('ownProps', ownProps);
   const file = decodeURIComponent(ownProps.match.params.file);
@@ -128,7 +148,8 @@ function mapStateToProps (state, ownProps) {
 
   return {
     file: pathname,
-    options: options
+    options: options,
+    code: loadCode(file)
   };
 }
 
@@ -144,36 +165,18 @@ export default class Inspector extends Component<Props, void>  {
 
   static propTypes = {
     file: PropTypes.string,
-    options: PropTypes.object
+    options: PropTypes.object,
+    code: PropTypes.string
   };
 
-  load (file: string) {
-    if (fs.existsSync(file)) {
-      const stats = fs.statSync(file);
-      if (stats.isFile()) {
-        try {
-          const data = read(file);
-          return js_beautify(JSON.stringify(data), { indent_size: 2 });
-        } catch (error) {
-          console.error(error);
-          throw error;
-        }
-      } else {
-        throw new Error('Invalid file format');
-      }
-    } else {
-      throw new Error('File not found');
-    }
-  }
-
   render () {
-    const { file, options } = this.props;
-    const code = this.load(file);
-    console.log('file, options', Style, file, options);
+    const { file, options, code } = this.props;
     return (
       <div className={ Style.frame }>
         <Header />
-        <Editor className={ Style.content } file={ file } options={ options } code={ code } />
+        <div className={ Style.content } >
+          <Editor file={ file } options={ options } code={ code } />
+        </div>
         <Player />
       </div>
     );

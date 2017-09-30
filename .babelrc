@@ -1,7 +1,8 @@
 {
   "presets": [
     ["env", {
-      "targets": "electron", "useBuiltIns": true
+      "targets": { "electron": "1.7.8" },
+      "useBuiltIns": true
     }],
     "react",
     "stage-0"
@@ -9,6 +10,13 @@
   "env": {
     "test": {
       "plugins": [ "istanbul" ]
+    },
+    "renderer": {
+      "plugins": [
+        "react-hot-loader/babel"
+      ]
+    },
+    "main": {
     }
   },
   "sourceMaps": true,
@@ -16,6 +24,14 @@
   "plugins": [
     "transform-decorators-legacy",
     "transform-class-properties",
-    "transform-flow-strip-types"
+    "transform-flow-strip-types",
+    [
+      "transform-runtime", {
+        "helpers": false,
+        "polyfill": false,
+        "regenerator": false
+      }
+    ]
   ]
 }
+

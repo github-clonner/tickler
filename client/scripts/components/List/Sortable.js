@@ -1,12 +1,14 @@
+// @flow
+
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : Main.jsx                                                  //
-// @summary      : UI Main container                                         //
-// @version      : 0.0.2                                                     //
+// @file         : Sortable.js                                               //
+// @summary      : Sortable component                                        //
+// @version      : 0.0.1                                                     //
 // @project      : tickelr                                                   //
 // @description  :                                                           //
 // @author       : Benjamin Maggi                                            //
 // @email        : benjaminmaggi@gmail.com                                   //
-// @date         : 13 Feb 2017                                               //
+// @date         : 30 Sep 2017                                               //
 // @license:     : MIT                                                       //
 // ------------------------------------------------------------------------- //
 //                                                                           //
@@ -35,78 +37,80 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-import { remote, ipcRenderer } from 'electron';
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
-import URL from 'url';
-import * as Actions from '../../actions/PlayList';
-import { Header, Toolbar, Player, List, CoverFlow, Equalizer, DragDrop } from '../../components';
-import Style from './Main.css';
 
-// import '!style-loader!css-loader!../../../styles/main.css!';
-// This imported styles globally without running through CSS Modules
-// import 'style-loader!../../../styles/main.css!';
-
-function mapStateToProps (state, ownProps) {
-  // console.log('main ownProps', ownProps);
-  const options = decodeURIComponent(ownProps.match.params.options);
-  const { query, pathname } = URL.parse(options, true);
-  // Extract params, apply transform, remove undefined
-  // const options = Object.entries(optionsQuery.evaluate(query)).reduce((acc, [option, value]) => {
-  //   return value ? Object.assign({}, acc, {
-  //     [option]: value
-  //   }) : acc;
-  // }, state.Settings.get('inspector'));
-
-  return {
-    options: options
-  };
+const Item = ({title}) => {
+  return (
+    <span>{ title }</span>
+  );
 }
 
-function mapDispatchToProps(dispatch: Dispatch) {
-  return {
-    actions: bindActionCreators(Actions, dispatch)
-  };
-}
+export default class Sortable extends Component {
 
-// $FlowIssue
-@connect(mapStateToProps, mapDispatchToProps)
-export default class Main extends Component {
-  state = {
-    config: {
-      dependencies: {}
-    }
-  };
-
-  static propTypes = {
-    list: PropTypes.string
-  };
+  dragged: HTMLElement;
 
   static defaultProps = {
-    list: 'PLsPUh22kYmNBl4h0i4mI5zDflExXJMo_x'
+    items: ['Red','Green','Blue','Yellow','Black','White','Orange']
   };
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      items: props.items
+    };
+    this.placeholder = document.createElement('li');
+    this.placeholder.className = 'placeholder';
+    this.placeholder.style.backgroundColor = '#00f';
+    this.placeholder.style.minHeight = '12px';
+  }
+
+  dragStart = event => {
+    this.dragged = event.currentTarget;
+    event.dataTransfer.effectAllowed = 'move';
+    // Firefox requires dataTransfer data to be set
+    event.dataTransfer.setData('text/html', event.currentTarget);
+  }
+
+  dragEnd = event => {
+    const { placeholder } = this;
+    this.dragged.style.display = 'block';
+    this.dragged.parentNode.removeChild(placeholder);
+    // Update data
+    var items = this.state.items;
+    var from = Number(this.dragged.dataset.id);
+    var to = Number(this.over.dataset.id);
+    if(from < to) to--;
+    if(this.nodePlacement == 'after') to++;
+    items.splice(to, 0, items.splice(from, 1)[0]);
+    this.setState({ items });
+  }
+
+  dragOver = event => {
+    event.preventDefault();
+    const { placeholder } = this;
+    this.dragged.style.display = 'none';
+    if(event.target.className == 'placeholder') return;
+    this.over = event.target;
+    // Inside the dragOver method
+    var relY = event.clientY - this.over.offsetTop;
+    var height = this.over.offsetHeight / 2;
+    var parent = event.target.parentNode;
+
+    if(relY > height) {
+      this.nodePlacement = 'after';
+      parent.insertBefore(placeholder, event.target.nextElementSibling);
+    }
+    else if(relY < height) {
+      this.nodePlacement = 'before';
+      parent.insertBefore(placeholder, event.target);
+    }
+  }
+
   render () {
-    const { list, children } = this.props;
     return (
-      <div className={ Style.frame }>
-        <Header />
-        <Toolbar />
-        {
-        /*
-        <CoverFlow />
-        <Equalizer />
-        */
-        }
-        <div className={ Style.content } >
-          <List className={ Style.list } list={ list } >
-            { children }
-          </List>
-        </div>
-        <Player />
-      </div>
+      <ul onDragOver={this.dragOver}>
+      { this.state.items.map((item, i) => (<li item-id={i} key={i} draggable="true" onDragEnd={this.dragEnd} onDragStart={this.dragStart} ><Item { ...{ title: item } } /></li>))}
+      </ul>
     );
   }
-};
+}

@@ -122,7 +122,7 @@ export default class Player extends Component {
   async load (item, autoplay) {
     const file = item.get('file');
     if(!file || !fileSystem.statSync(file)) {
-      console.log('file not found', file, song.get('id'))
+      console.log('file not found', file, song.get('id'));
       return false;
     }
     fileSystem.readFile(file, (error, buffer) => {
@@ -318,8 +318,8 @@ export default class Player extends Component {
     const { options } = this.props;
     return (
       <div className={ Style.player }>
-        <div className={ Style.controls }>
-          <div className={ Style.btnGroup }>
+        <div className={ Style.controls } >
+          <div className={ Style.btnGroup } >
             <button className={ Style.roundButton } onClick={() => this.playTo(-1)} title="backward">skip_previous</button>
             <button className={ Style.roundButton } disabled={!this.state.seek} onClick={this.stop} title="stop">stop</button>
             <button className={ Style.roundButton } onClick={() => this.playTo(1)} title="forward">skip_next</button>

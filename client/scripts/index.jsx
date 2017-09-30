@@ -55,28 +55,13 @@ import routes from './routes';
 
 import Style from './layout.css';
 // Create a history of your choosing (we're using a browser history in this case)
-// const history = createHashHistory();
 const history = createBrowserHistory({
   basename: window.location.pathname
 });
 
-// history.push({
-//   pathname: '/new-list',
-//   query: {
-//     modal: true
-//   },
-//   state: {
-//     list: data.list,
-//     video: data.v
-//   }
-// });
-
 // Build the middleware for intercepting and dispatching navigation actions
-const middleware = routerMiddleware(history);
-
-const win = remote.getCurrentWindow();
-
 const { query } = url.parse(window.location.href, true, true);
+console.log('query', query);
 
 if (query.index) {
   history.push({
@@ -89,12 +74,7 @@ if (query.index) {
       video: '/Users'
     }
   });
-}
-
-
-console.log('history', history, window.location)
-console.log('query', query);
-console.log('webContents', win.webContents)
+};
 
 /* clipboard manager */
 // import ClipBoardData from 'lib/ClipBoardData';
@@ -104,6 +84,7 @@ const reducer = combineReducers({
   routing: routerReducer
 });
 
+const middleware = routerMiddleware(history);
 const store = createStore(
   reducer,
   applyMiddleware(thunk),
@@ -128,13 +109,10 @@ const store = createStore(
 
 //console.log(history)
 // Needed for onTouchTap
-// Can go away when react 1.0 release
-// Check this repo:
 // https://github.com/zilverline/react-tap-event-plugin
-//injectTapEventPlugin();
+injectTapEventPlugin();
 
 window.goUrl =  (url) => {
-  console.log('goto !')
   store.dispatch(push({
     pathname: url || '/about',
     state: { some: 'state' }

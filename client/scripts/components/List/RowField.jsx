@@ -44,10 +44,6 @@ import type  { Track } from '../../types';
 // Styles
 import Style from './List.css';
 
-type Props = {
-  song: Object
-};
-
 const getItemStatus = (song) => classNames(Style.field, Style.dot, {
   [Style.local]: song.file
 });

@@ -1,25 +1,12 @@
 @import "styles/variables.css";
 
-:root {
-  --hoverRowColor: #f6f6f6;
-  --activeRowBackground: repeating-linear-gradient(-55deg, #222, #222 10px, #333 10px, #333 20px);
-  --activeRowColor: #fafafa;
-  --color: #484848;
-  --outlineColor: #CCC;
-}
-
 .editor {
+  position: absolute;
   height: 100%;
-  box-sizing: border-box;
-  position: relative;
-  flex: 1 1 auto;
+  width: 100%;
+  transform: translate3d(0, 0, 0);
 }
 
-.full-size {
-  flex: 1 1 auto;
+:global(.CodeMirror) {
   height: 100%;
-  &:first-child {
-    flex: 1 1 auto;
-    height: 100%;
-  }
 }

@@ -6,14 +6,43 @@ import ElectronConnectWebpackPlugin from 'electron-connect-webpack-plugin';
 import ElectronPlugin from 'electron-webpack-plugin';
 import WebpackCleanupPlugin from 'webpack-cleanup-plugin';
 import WebpackNotifierPlugin from 'webpack-notifier';
+import { dependencies } from './package.json';
 
-console.log('root:', path.resolve(__dirname, 'node_modules'));
+const configMain = {
+  context: path.resolve(__dirname, './client/backend'),
+  entry: {
+    main: ['./main.js']
+  },
+  output: {
+    path: path.resolve('dist'),
+    filename: '[name].js'
+  },
+  devtool: 'sourcemap',
+  target: 'electron',
+  node: {
+    __dirname: false,
+    __filename: false
+  },
+  plugins: [
+    new webpack.EnvironmentPlugin({
+      NODE_ENV: 'development',
+      BABEL_ENV: 'main'
+    })
+  ],
+  module: {
+    rules: [{
+      test: /\.jsx?$/,
+      exclude: /node_modules/,
+      loader: 'babel-loader'
+    }]
+  }
+};
 
-export default {
+const configRenderer = {
   context: path.resolve(__dirname, './client/scripts'),
   entry: {
-    bundle: ['babel-polyfill', './index.jsx'],
-    vendor: ['react', 'redux', 'axios', 'ytdl-core', 'immutable']
+    bundle: ['./index.jsx'],
+    vendor: Object.keys(dependencies)
   },
   output: {
     path: path.resolve('dist'),
@@ -40,23 +69,18 @@ export default {
     new webpack.NoEmitOnErrorsPlugin(),
     new webpack.EnvironmentPlugin({
       NODE_ENV: 'development',
-      BABEL_ENV: 'development'
+      BABEL_ENV: 'renderer'
     }),
     new HtmlwebpackPlugin({
       inject: false,
       template: require('html-webpack-template'),
       title: 'Tickler',
       appMountId: 'app',
-      // links: [
-      //   'https://unpkg.com/codemirror@5.30.0/lib/codemirror.css',
-      //   'https://unpkg.com/codemirror@5.30.0/theme/material.css',
-      //   'https://unpkg.com/codemirror@5.30.0/theme/monokai.css'
-      // ],
       window: {
         env: {
           build: new Date(),
           NODE_ENV: 'development',
-          BABEL_ENV: 'development'
+          BABEL_ENV: 'renderer'
         }
       }
     }),
@@ -214,10 +238,11 @@ export default {
         test: /\.jsx?$/,
         exclude: /node_modules/,
         use: [
-          { loader: 'react-hot-loader' },
           { loader: 'babel-loader' }
         ],
       }
     ]
   }
 };
+
+export default (process.env.TARGET === 'main') ? configMain : configRenderer;
