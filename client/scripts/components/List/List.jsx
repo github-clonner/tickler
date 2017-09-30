@@ -39,21 +39,15 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import * as Actions from 'actions/PlayList';
-import * as Settings from 'actions/Settings';
-import Stars from '../Stars/Stars';
-import { TrackDuration } from '../TimeCode/TimeCode';
+import { PlayList, Settings } from '../../actions'; //
 import { push } from 'react-router-redux';
-import * as RowField from '../List/RowField';
+import Sortable from './Sortable';
+import { compose, branch, renderNothing, renderComponent, withPropsOnChange, withState, withReducer, withHandlers, withProps, mapProps, renameProp, defaultProps, setPropTypes } from 'recompose';
 import { buildListItemMenu } from '../Menu/Menu';
 // Import styles
 import Style from './List.css';
-
-console.log('Style', Style);
-
 
 const mapStateToProps = function (state) {
   return {
@@ -66,7 +60,7 @@ const mapStateToProps = function (state) {
 
 const mapDispatchToProps = function (dispatch) {
   return {
-    actions: bindActionCreators(Actions, dispatch),
+    playlist: bindActionCreators(PlayList, dispatch),
     settings: bindActionCreators(Settings, dispatch),
     inspect: (file: string, options: Object, state?: any) => dispatch(push({
       pathname: `/inspector/${file}`,
@@ -76,19 +70,51 @@ const mapDispatchToProps = function (dispatch) {
   };
 };
 
-const placeholder = document.createElement('li');
-placeholder.className = 'placeholder';
+const handleClick = function(event, items, item) {
+  event.preventDefault();
+  event.stopPropagation();
 
-@connect(mapStateToProps, mapDispatchToProps)
-export default class List extends Component {
+  if (event.shiftKey) {
+    console.log('shift');
+    const last = items.map(({ selected }) => (selected)).indexOf(true);
+    const index = items.findIndex(({ id }) => (id === item.id));
+    if (last < index) {
+      return items.slice(last, index + 1).map(({ id }) => id);
+    } else if (last > index) {
+      return items.slice(index, last + 1).map(({ id }) => id);
+    }
+  } else if (event.metaKey) {
+    const selected = items.filter(({ selected }) => (selected)).map(({ id }) => id);
+    const index = items.findIndex(({ id }) => (id === item.id) );
+    return [...selected, items[index].id];
+  } else {
+    return [item.id];
+  }
+};
 
-  state = {
-    isDragDrop: false,
-    song: new Object()
+const playPause = function (item) {
+  const options = {
+    title: 'Now Playing',
+    body: item.title,
+    sound: false,
+    icon: item.thumbnails.default.url,
+    image:  item.thumbnails.default.url,
+    silent: true
   };
+  new Notification(item.title, options);
+};
 
-  static propTypes = {
-    placeholder: PropTypes.instanceOf(Element).isRequired,
+const handleContextMenu = function(event, item) {
+  event.preventDefault();
+  event.stopPropagation();
+  const menu = buildListItemMenu(item);
+  const { clientX, clientY } = event;
+  menu.popup();
+};
+
+export default compose(
+  connect(mapStateToProps, mapDispatchToProps),
+  setPropTypes({
     options: PropTypes.shape({
       playlist: PropTypes.shape({
         folders: PropTypes.array.isRequired,
@@ -96,240 +122,76 @@ export default class List extends Component {
         current: PropTypes.string.isRequired
       })
     })
-  };
-
-  static defaultProps = {
-    placeholder: document.createElement('li')
-  };
-
-  handleContextMenu (event, song) {
-    event.preventDefault();
-    event.stopPropagation();
-    const menu = this.buildListItemMenu(song);
-    const { clientX, clientY } = event;
-    menu.popup();
-  }
-
-  componentDidMount () {
-    const { actions, options, settings } = this.props;
-    // actions.getCurrent();
-    actions.fetchListItems('PLA0CA9B8A2D82264B');
-
-    // actions.fetchListItems('PL1GZkw2FUKCiZSI636mf54HEr2CtDxvW_') // short sound effects
-
-    // actions.fetchListItems('PLkHvEl7zu06o70dpsiVrRbYFLWreD9Jcw'); //PL7XlqX4npddfrdpMCxBnNZXg2GFll7t5y
-
-    // actions.fetchListItems('PL7XlqX4npddfrdpMCxBnNZXg2GFll7t5y'); // Pageable
-
-    // actions.fetchListItems('PLsPUh22kYmNBl4h0i4mI5zDflExXJMo_x');
-    this.props.placeholder.className = 'row placeholder';
-    this.buildListItemMenu = buildListItemMenu.bind(this);
-  }
-
-  makeProgressBar (song) {
-    if(!song.isLoading && !song.isPlaying) {
-      return {};
-    } else if (song.isLoading) {
-      let { progress } = song;
-      return {
-        'background': `linear-gradient(to right, #eee 0%, #eee ${progress * 100}%,#f6f6f6 ${progress * 100}%,#f6f6f6 100%)`
-      };
+  }),
+  mapProps(({ list: items, settings, playlist }) => ({ items, settings, playlist })),
+  /*
+  withReducer('toggledOn', 'dispatch', (state, action) => {
+    console.log('REDUCER', action)
+    switch(action.type) {
+      case 'SHOW':
+        return true;
+      case 'HIDE':
+        return false;
+      case 'TOGGLE':
+        return !state;
+      default:
+        return state;
     }
-  }
-
-  dragStart = event => {
-    //console.log('dragStart: target', event.target.className, ' currentTarget: ', event.currentTarget.className, '!', event.target, event.target.dataset)
-    this.dragged = event.currentTarget;
-    event.dataTransfer.effectAllowed = 'move';
-    // Firefox requires dataTransfer data to be set
-    event.dataTransfer.setData('text/html', event.currentTarget);
-    this.setState({
-      isDragDrop: true
-    });
-  }
-
-  dragEnd = event => {
-    this.dragged.style.display = 'flex';
-    this.dragged.parentNode.removeChild(this.props.placeholder);
-
-    let from = Number(this.dragged.dataset.id);
-    let to = Number(this.over.dataset.id);
-
-    if (from < to) to--;
-    if (this.nodePlacement == 'after') to++;
-
-    let { actions } = this.props;
-    actions.orderPlayList(from, to);
-    this.setState({
-      isDragDrop: false
-    });
-  }
-
-  drop = event => {
-    console.log('drop:', event.dataTransfer.getData('text/html'));
-  }
-
-  dragOver = event => {
-
-    event.preventDefault();
-
-    try {
-      this.dragged.style.display = 'none';
-    } catch (error) {
-      //console.log(this.dragged, error, event.dataTransfer.getData('text/html'))
-    }
-
-    if (event.target.className == 'placeholder') {
-      return;
-    }
-
-    if(!event.target.dataset.id) {
-      return;
-    }
-
-    this.over = event.target;
-    let rect = this.over.getBoundingClientRect();
-    // Inside the dragOver method
-    let relY = event.clientY - this.over.offsetTop;
-    let height = this.over.offsetHeight / 2;
-    let parent = event.target.parentNode;
-
-    // Over the top ?
-    if (event.clientY < (rect.top + height)) {
-      this.nodePlacement = 'before';
-      parent.insertBefore(this.props.placeholder, event.target);
-    } else if (relY > height) {
-      this.nodePlacement = 'after';
-      parent.insertBefore(this.props.placeholder, event.target.nextElementSibling);
-    } else if (relY < height) {
-      this.nodePlacement = 'before';
-      parent.insertBefore(this.props.placeholder, event.target);
-    }
-  }
-
-  dragLeave = event => {
-    event.stopPropagation();
-    event.preventDefault();
-    if (event.target.className == 'placeholder') {
-      return;
-    }
-  }
-
-
-  handleDoubleClick = (event, song) => {
-    event.preventDefault();
-    event.stopPropagation();
-    this.playPause(song);
-  }
-
-  playPause (song) {
-    const { actions } = this.props;
-    const options = {
-      title: 'Now Playing',
-      body: song.title,
-      sound: false,
-      icon: song.thumbnails.default.url,
-      image:  song.thumbnails.default.url,
-      silent: true
-    };
-    new Notification(song.title, options);
-    // Select this item
-    actions.selectItems([song.id]);
-    if (song.file && !song.isLoading) {
-      return actions.playPauseItem(song.id, true);
-    } else {
-      return actions.playItem(song.id);
-    }
-  }
-
-  handleClick = (event, song) => {
-    event.preventDefault();
-    event.stopPropagation();
-    event.nativeEvent.stopImmediatePropagation();
-    let selected = [];
-    const { list, actions } = this.props;
-
-    // console.log('event', song.id, event.shiftKey, event.ctrlKey, event.metaKey, event.altKey)
-
-    if (event.shiftKey) {
-      const lastIndex = list.map(({ selected }) => (selected)).indexOf(true);
-      const selectedIndex = list.findIndex(({ id }) => (id === song.id));
-      if (lastIndex < selectedIndex) {
-        const selected = list.slice(lastIndex, selectedIndex + 1).map(({ id }) => id);
-        return actions.selectItems(selected);
-      } else if (lastIndex > selectedIndex) {
-        const selected = list.slice(selectedIndex, lastIndex + 1).map(({ id }) => id);
-        return actions.selectItems(selected);
+  }, false),
+  withHandlers({
+    onClick: ({ dispatch }) => (e) => dispatch({ type: 'SHOW' }),
+    onDoubleClick: ({ dispatch }) => (e) => dispatch({ type: 'HIDE' }),
+    onContextMenu: ({ dispatch }) => (e) => dispatch({ type: 'TOGGLE' })
+  }),
+  */
+  withState('selected', 'select', []),
+  withHandlers({
+    onClick: props => (event, item) => {
+      const { settings, playlist, items } = props;
+      const selected = handleClick(event, items, item);
+      return playlist.selectItems(selected);
+    },
+    onDoubleClick: props => (event, item) => {
+      const { playlist } = props;
+      playPause(item);
+      playlist.selectItems([item.id]);
+      if (item.file && !item.isLoading) {
+        return playlist.playPauseItem(item.id, true);
+      } else {
+        return playlist.playItem(item.id);
       }
-    } else if (event.metaKey) {
-      const items = list.filter(({ selected }) => (selected)).map(({ id }) => id);
-      const selectedIndex = list.findIndex(({ id }) => (id === song.id) );
-      const selected = [...items, list[selectedIndex].id];
-      return actions.selectItems(selected);
+    },
+    onContextMenu: props => (event, item) => {
+      console.log('props', props);
+      event.preventDefault();
+      event.stopPropagation();
+      const menu = buildListItemMenu.bind({ props })(item);
+      const { clientX, clientY } = event;
+      menu.popup();
+      // return handleContextMenu(event, item);
     }
-    return actions.selectItems([song.id]);
-  };
+    // onContextMenu: ({ dispatch }) => (e) => dispatch({ type: 'TOGGLE' })
+  }),
+  // renameProp('list', 'tracks'),
+  // withProps(props => {
+  //   console.log('withProps', props);
+  //   return {
+  //     name: '123'
+  //   }
+  // }),
+  // defaultProps({ items: elements }),
 
-  renderItem () {
-    const { actions, list } = this.props;
-    return list.map((song, index) => {
-        const style = classNames(Style.row, {
-          [Style.active]: song.isPlaying,
-          [Style.selected]: song.selected,
-          [Style.loading]: song.isLoading
-        });
-      // Scroll to element if it's playing
-      // TODO: will constantly trigger scrollIntoView()
-      /*
-      if(song.isPlaying) {
-        let item = this.refs.list.querySelector(`[data-id="${index}"]`);
-        item.scrollIntoView({
-          block: 'end',
-          behavior: 'smooth'
-        });
-      }
-      */
-
-      return (
-        <li
-          data-id={ index }
-          key={ index }
-          className={ style }
-          draggable="true"
-          onDragEnd={ this.dragEnd }
-          onDragStart={ this.dragStart }
-          onDragLeave={ this.dragLeave }
-          onDrop={ this.drop }
-          onClick={ (event) => this.handleClick(event, song) }
-          onDoubleClick={ (event) => this.handleDoubleClick(event, song) }
-          onContextMenu={ event=> this.handleContextMenu(event, song) }
-          style={this.makeProgressBar(song)}
-        >
-          <RowField.Index index={ index } />
-          <RowField.Status song={ song } />
-          <RowField.Title  title={ song.title } />
-          <Stars stars={ song.stars }/>
-          <TrackDuration duration={ song.duration } format="#{2H}:#{2M}:#{2S}" />
-          <RowField.DropDown onClick={ event => this.handleContextMenu(event, song) } />
-          { /* <span className="dropdown" onClick={ e => this.handleContextMenu(event, song) }>•••</span>
-          <button className={ classNames(Style.roundButton, Style.dropdown) } onClick={ event => this.handleContextMenu(event, song) } title="dropdown">•••</button>
-          */ }
-        </li>
-      );
-    });
-  }
-
-  render () {
-    const dragList = classNames(Style.list, {
-      [Style.isDragDrop]: this.state.isDragDrop
-    });
-
-    return (
-      <div className={ dragList }>
-        <ul className={ Style.container } ref="list" onDragOver={ this.dragOver }>
-          { this.renderItem() }
-        </ul>
-      </div>
-    );
-  }
-}
+  // branch(
+  //   props => {
+  //     const { items } = props;
+  //     return (items && items.length);
+  //   },
+  //   renderComponent(Sortable),
+  //   renderNothing,
+  // )
+  // connect((state, props)=>{
+  //   return {
+  //     ...state.PlayListItems.toJS(),
+  //   };
+  // })
+)(Sortable);

@@ -40,11 +40,13 @@
 import React from 'react';
 import classNames from 'classnames';
 import Spinner from '../Spinner/Spinner';
-import type  { Track } from '../../types';
+import Stars from '../Stars/Stars';
+import { TrackDuration } from '../TimeCode/TimeCode';
+import type { Track } from '../../types';
 // Styles
 import Style from './List.css';
 
-const getItemStatus = (song) => classNames(Style.field, Style.dot, {
+const getItemStatus = (song) => classNames(Style.field, {
   [Style.local]: song.file
 });
 
@@ -58,26 +60,47 @@ const getItemIcon = song => {
   }
 };
 
-export const Status = function ({ song }: Track, ...args) {
+
+export const Index = function ({ index }: number, ...args) {
   return (
-    <span className={ getItemStatus(song) } role="status" > { getItemIcon(song) }</span>
+    <span className={ Style.field } role="index">{ ( index + 1 ) }</span>
+  );
+};
+
+export const Status = function ({ song }: Track, ...args) {
+  const status = getItemStatus(song);
+  const icon = getItemIcon(song)
+  return (
+    <span className={ status } role="status">{ icon }</span>
   );
 };
 
 export const Title = function ({ title }: string, ...args) {
   return (
-    <span className={ Style.field } role="title" >{ title }</span>
+    <span className={ Style.field } role="title">{ title }</span>
   );
 };
 
-export const Index = function ({ index }: number, ...args) {
+export const Rating = function ({ stars }: number) {
   return (
-    <span className={ Style.field } role="index" >{ ( index + 1 ) }</span>
+    <span className={ Style.field } role="stars">
+      <Stars stars={ stars }/>
+    </span>
+  );
+};
+
+export const Duration = function ({ duration }: number) {
+  return (
+    <span className={ Style.field } role="duration">
+      <TrackDuration duration={ duration } format="#{2H}:#{2M}:#{2S}"/>
+    </span>
   );
 };
 
 export const DropDown = function ({ onClick }: Function, ...args) {
   return (
-    <button className={ classNames(Style.field, Style.roundButton, Style.dropdown) } role="dropdown" onClick={ onClick } >•••</button>
+    <button className={ classNames(Style.field, Style.roundButton, Style.dropdown) } role="dropdown" onClick={ onClick }>•••</button>
   );
 };
+
+
