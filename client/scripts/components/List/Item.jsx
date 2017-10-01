@@ -1,12 +1,14 @@
+// @flow
+
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : Main.jsx                                                  //
-// @summary      : UI Main container                                         //
-// @version      : 0.0.2                                                     //
+// @file         : Item.js                                                   //
+// @summary      : List item component                                       //
+// @version      : 0.0.1                                                     //
 // @project      : tickelr                                                   //
 // @description  :                                                           //
 // @author       : Benjamin Maggi                                            //
 // @email        : benjaminmaggi@gmail.com                                   //
-// @date         : 13 Feb 2017                                               //
+// @date         : 30 Sep 2017                                               //
 // @license:     : MIT                                                       //
 // ------------------------------------------------------------------------- //
 //                                                                           //
@@ -35,66 +37,47 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-import { Header, Toolbar, Player, List, CoverFlow, Equalizer, DragDrop } from '../../components';
-import { remote, ipcRenderer } from 'electron';
-import * as Settings from 'actions/Settings';
-import * as PlayList from 'actions/PlayList';
-import { bindActionCreators } from 'redux';
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-import Style from './Main.css';
-import URL from 'url';
+import classNames from 'classnames';
+import * as RowField from './RowField';
+import Style from './List.css';
 
-// import '!style-loader!css-loader!../../../styles/main.css!';
-// This imported styles globally without running through CSS Modules
-// import 'style-loader!../../../styles/main.css!';
-
-function mapStateToProps (state, ownProps) {
-  const options = decodeURIComponent(ownProps.match.params.options);
-  const { query, pathname } = URL.parse(options, true);
-  return {
-    list: state.PlayListItems.toJS(),
-    options: options
-  };
-}
-
-function mapDispatchToProps(dispatch: Dispatch) {
-  return {
-    settings: bindActionCreators(Settings, dispatch),
-    playlist: bindActionCreators(PlayList, dispatch),
-  };
-}
-
-// $FlowIssue
-@connect(mapStateToProps, mapDispatchToProps)
-export default class Main extends Component {
-
-  componentDidMount () {
-    const { settings, playlist } = this.props;
-    playlist.getCurrent();
-    // playlist.fetchListItems('PL7XlqX4npddfrdpMCxBnNZXg2GFll7t5y');
+const drawProgress = function (item) {
+  if(!item.isLoading && !item.isPlaying) {
+    return {};
+  } else if (item.isLoading) {
+    const { progress } = item;
+    return {
+      'background': `linear-gradient(to right, #eee 0%, #eee ${progress * 100}%,#f6f6f6 ${progress * 100}%,#f6f6f6 100%)`
+    };
   }
+};
 
-  render () {
-    const { list, children } = this.props;
-    return (
-      <div className={ Style.frame }>
-        <Header />
-        <Toolbar />
-        {
-        /*
-        <CoverFlow />
-        <Equalizer />
-        */
-        }
-        <div className={ Style.content } >
-          <List className={ Style.list } list={ list } >
-            { children }
-          </List>
-        </div>
-        <Player />
-      </div>
-    );
-  }
+export default ({ item, index, handlers }) => {
+  const style = classNames(Style.row, {
+    [Style.active]: item.isPlaying,
+    [Style.selected]: item.selected,
+    [Style.loading]: item.isLoading
+  });
+  const { onClick, onDoubleClick, onContextMenu, dragEnd, dragStart } = handlers;
+  return (
+    <li
+      draggable="true"
+      item-id={ index }
+      className={ style }
+      style={ drawProgress(item) }
+      onClick={ event => onClick(event, item) }
+      onDoubleClick={ event => onDoubleClick(event, item) }
+      onContextMenu={ event => onContextMenu(event, item) }
+      onDragEnd={ event => dragEnd(event) }
+      onDragStart={ event => dragStart(event) }
+    >
+      <RowField.Index index={ index } />
+      <RowField.Status song={ item } />
+      <RowField.Title title={ item.title } />
+      <RowField.Rating stars={ item.stars } />
+      <RowField.Duration duration={ item.duration } format="#{2H}:#{2M}:#{2S}" />
+      <RowField.DropDown onClick={ event => onContextMenu(event, item) }/>
+    </li>
+  );
 };

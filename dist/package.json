@@ -13,6 +13,6 @@
     }
   },
   "license": "MIT",
-  "main": "window.js",
+  "main": "main.js",
   "js-flags": "--harmony"
 }

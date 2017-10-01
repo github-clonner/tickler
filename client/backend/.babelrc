@@ -1,0 +1,28 @@
+{
+  "presets": [
+    ["env", {
+      "targets": "electron", "useBuiltIns": false
+    }],
+    "stage-0"
+  ],
+  "env": {
+    "test": {
+      "plugins": [ "istanbul" ]
+    }
+  },
+  "sourceMaps": true,
+  "compact": false,
+  "plugins": [
+    "transform-decorators-legacy",
+    "transform-class-properties",
+    "transform-flow-strip-types",
+    [
+      "transform-runtime", {
+        "helpers": false,
+        "polyfill": false,
+        "regenerator": false
+      }
+    ]
+  ]
+}
+

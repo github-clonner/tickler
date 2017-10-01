@@ -71,7 +71,7 @@ export default class TimeCode extends Component<Props, State> {
 
   format (time: number) : string {
     const { format } = this.state;
-    return durationFormat(time * 1000, `${(format ? '-' : '')}#{2H}:#{2M}:#{2S}`);
+    return durationFormat(time * 1000, `${(format ? '-' : '\u00A0')}#{2H}:#{2M}:#{2S}`);
   }
 
   stringify () : string {
@@ -96,6 +96,6 @@ export default class TimeCode extends Component<Props, State> {
 }
 
 export const TrackDuration = (props: Props) => {
-  const { duration } = props;
+  const { duration = 0 } = props;
   return (<span>{ durationFormat(Number.isInteger(duration) ? duration : parseDuration(duration), '#{2H}:#{2M}:#{2S}') }</span>);
 };

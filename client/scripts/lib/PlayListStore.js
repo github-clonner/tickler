@@ -99,6 +99,7 @@ export default class PlayListStore {
           if (this.validate(this.playlist)) {
             return this.playlist;
           } else {
+            console.error(ajv.errorsText());
             throw new Error('Invalid playlist format');
           }
         } catch (error) {

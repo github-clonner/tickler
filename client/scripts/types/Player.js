@@ -39,12 +39,36 @@ import type { Action } from './Action';
 
 export const PlayerActionKeys = {
   SET_CONTEXT: 'SET_CONTEXT',
-  SET_ANALYSER: 'SET_ANALYSER',
-  SET_WAVESURFER: 'SET_WAVESURFER'
+  SET_ANALYZER: 'SET_ANALYZER',
+  SET_WAVESURFER: 'SET_WAVESURFER',
+  SET_DURATION: 'SET_DURATION',
+  SET_CURRENT_TIME: 'SET_CURRENT_TIME',
+  SET_SEEK: 'SET_SEEK',
+  SET_VOLUME: 'SET_VOLUME',
+  SET_MUTE: 'SET_MUTE',
+  SET_LOADING: 'SET_LOADING',
+  SET_FINISHED: 'SET_FINISHED',
+  SET_PLAYING: 'SET_PLAYING',
+  SET_STOP: 'SET_STOP',
+  SET_PAUSE: 'SET_PAUSE',
+  SET_READY: 'SET_READY',
+  ERROR: 'ERROR'
 };
 
 export type PlayerActions =
   | Action<typeof PlayerActionKeys.SET_CONTEXT, any>
-  | Action<typeof PlayerActionKeys.SET_ANALYSER, any>
+  | Action<typeof PlayerActionKeys.SET_ANALYZER, any>
   | Action<typeof PlayerActionKeys.SET_WAVESURFER, any>
+  | Action<typeof PlayerActionKeys.SET_DURATION, number>
+  | Action<typeof PlayerActionKeys.SET_CURRENT_TIME, number>
+  | Action<typeof PlayerActionKeys.SET_SEEK, number>
+  | Action<typeof PlayerActionKeys.SET_VOLUME, number>
+  | Action<typeof PlayerActionKeys.SET_MUTE, boolean>
+  | Action<typeof PlayerActionKeys.SET_LOADING, number>
+  | Action<typeof PlayerActionKeys.SET_FINISHED, boolean>
+  | Action<typeof PlayerActionKeys.SET_PLAYING, boolean>
+  | Action<typeof PlayerActionKeys.SET_STOP, boolean>
+  | Action<typeof PlayerActionKeys.SET_PAUSE, boolean>
+  | Action<typeof PlayerActionKeys.SET_READY, boolean>
+  | Action<typeof PlayerActionKeys.ERROR, string>
   ;

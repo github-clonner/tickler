@@ -27,12 +27,12 @@
       "description": "Playlist tracks.",
       "default": [],
       "items": {
-        "$ref": "#/definitions/TrackDetails"
+        "$ref": "#/definitions/Track"
       }
     }
   },
   "definitions": {
-    "ArtistDetails": {
+    "Artist": {
       "type": "object",
       "description": "Artist object.",
       "required": ["id", "name"],
@@ -79,7 +79,7 @@
         }
       }
     },
-    "ThumbnailDetails": {
+    "Thumbnails": {
       "type": "object",
       "description": "Internal representation of thumbnails for a resource.",
       "required": ["default"],
@@ -106,7 +106,7 @@
         }
       }
     },
-    "AlbumDetails": {
+    "Album": {
       "type": "object",
       "description": "Album details",
       "required": ["id", "name", "genres"],
@@ -129,7 +129,7 @@
           "minItems": 1,
           "description": "The artists of the album. Each artist object includes a link in href to more detailed information about the artist.",
           "items": {
-            "$ref": "#/definitions/ArtistDetails"
+            "$ref": "#/definitions/Artist"
           }
         },
         "genres": {
@@ -159,7 +159,7 @@
         }
       }
     },
-    "TrackDetails": {
+    "Track": {
       "type": "object",
       "description": "Playlist track item.",
       "required": ["id", "name", "artists", "thumbnails"],
@@ -171,7 +171,7 @@
         "artists": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/ArtistDetails"
+            "$ref": "#/definitions/Artist"
           },
           "description": "The artists who performed the track. Each artist object includes a link in href to more detailed information about the artist."
         },
@@ -180,7 +180,7 @@
           "description": "The name of the track."
         },
         "album": {
-          "$ref": "#/definitions/AlbumDetails",
+          "$ref": "#/definitions/Album",
           "description": "The album details."
         },
         "year": {
@@ -193,7 +193,7 @@
           "description": "Track comments."
         },
         "thumbnails": {
-          "$ref": "#/definitions/ThumbnailDetails",
+          "$ref": "#/definitions/Thumbnails",
           "description": "The cover art for the album in various sizes, widest first."
         },
         "genre": {
@@ -219,6 +219,10 @@
         "file": {
           "type": "string",
           "description": "A file path."
+        },
+        "url": {
+          "type": "string",
+          "description": "The url of the audio file."
         },
         "playing": {
           "type": "boolean",

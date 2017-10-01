@@ -38,19 +38,25 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 import React, { Component } from 'react';
-
-const Item = ({title}) => {
-  return (
-    <span>{ title }</span>
-  );
-}
+import { TrackDuration } from '../TimeCode/TimeCode';
+import classNames from 'classnames';
+import Stars from '../Stars/Stars';
+import * as RowField from './RowField';
+import Style from './List.css';
+import Item from './Item';
+import { branch, renderNothing, compose } from 'recompose';
 
 export default class Sortable extends Component {
 
   dragged: HTMLElement;
 
+  state = {
+    items: [],
+    isDragDrop: false
+  }
+
   static defaultProps = {
-    items: ['Red','Green','Blue','Yellow','Black','White','Orange']
+    items: []
   };
 
   constructor(props) {
@@ -66,6 +72,7 @@ export default class Sortable extends Component {
 
   dragStart = event => {
     this.dragged = event.currentTarget;
+    console.log('dragStart', this.dragged);
     event.dataTransfer.effectAllowed = 'move';
     // Firefox requires dataTransfer data to be set
     event.dataTransfer.setData('text/html', event.currentTarget);
@@ -106,11 +113,31 @@ export default class Sortable extends Component {
     }
   }
 
-  render () {
+  componentWillReceiveProps (nextProps) {
+    const { items } = nextProps;
+    if(!items && !items.length) {
+      return;
+    }
+    return this.setState({ items });
+  }
+
+  renderItem = (item, index) => {
+    const { onClick, onDoubleClick, onContextMenu } = this.props;
+    const { dragEnd, dragStart } = this;
     return (
-      <ul onDragOver={this.dragOver}>
-      { this.state.items.map((item, i) => (<li item-id={i} key={i} draggable="true" onDragEnd={this.dragEnd} onDragStart={this.dragStart} ><Item { ...{ title: item } } /></li>))}
-      </ul>
+      <Item { ...{ item, index, handlers: { onClick, onDoubleClick, onContextMenu, dragEnd, dragStart } } } key={ index } />
+    );
+  }
+
+  render () {
+    const dragList = classNames(Style.list, {
+      [Style.isDragDrop]: this.state.isDragDrop
+    });
+
+    return (
+      <div className={ dragList }>
+        <ul className={ Style.container } onDragOver={ this.dragOver }>{ this.state.items.map(this.renderItem) }</ul>
+      </div>
     );
   }
 }

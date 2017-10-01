@@ -35,98 +35,24 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-import { List, Map, Record } from 'immutable';
-
-/*const Item = Record({
-  id: null,
-  kind: null,
-  title: null,
-  artist: null,
-  album: null,
-  year: 0,
-  comment: null,
-  track: 0,
-  genre: null,
-  thumbnails: null,
-  lyrics: null,
-  duration: 0,
-  file: null,
-  stars: 0,
-  isLoading: false,
-  isPlaying: false,
-  isReady: false,
-  selected: false,
-  progress: 0
-});*/
-
-const ItemTemplate = Object.freeze({
-  id: null,
-  kind: null,
-  title: null,
-  artist: null,
-  album: null,
-  year: 0,
-  comment: null,
-  track: 0,
-  genre: null,
-  thumbnails: null,
-  lyrics: null,
-  duration: 0,
-  file: null,
-  stars: 0,
-  isLoading: false,
-  isPlaying: false,
-  isReady: false,
-  selected: false,
-  progress: 0,
-  status: null
-});
-
-class Item extends Record(ItemTemplate) {
-  constructor(values, name) {
-    const props = new Set(Object.keys(ItemTemplate));
-    const newValues = {};
-    for (let prop of props) {
-      newValues[prop] = values[prop] || ItemTemplate[prop];
-    }
-    super(newValues);
-  }
-}
-
-const PlayListInfo = Record({
-  id: null,
-  title: null,
-  description: null,
-  publishedAt: null,
-  uri: null,
-  tracks: null
-});
-
-export function PlayList (state = {}, action) {
-  switch (action.type) {
-    case 'RECEIVE_LIST': {
-      console.log('RECEIVE_LIST');
-      // return new PlayListInfo(action.payload);
-    }
-    default:
-      return state;
-  }
-}
+import { PlayListActionKeys as Action } from '../types';
+import { List } from 'immutable';
+import MapEx from '../lib/MapEx';
 
 export default function PlayListItems (state = List([]), action) {
 
+  // Get item by id
   const getIndex = function (id) {
-    // Get item by id
     return state.findIndex(item => ( item.get('id') === id) );
   };
 
+  // Is any item currently playing ?
   const isPlaying = function () {
-    // Is any item currently playing ?
     return state.some(item => (item.get('isPlaying') === true));
   };
 
+  // Find item that's playing
   const pause = function () {
-    // Find item that's playing
     const index = state.findIndex(item => (item.get('isPlaying') === true));
     if (index > -1) {
       return state.update(index, item => (item.set('isPlaying', false).set('selected', false) ));
@@ -135,31 +61,29 @@ export default function PlayListItems (state = List([]), action) {
     }
   };
 
+  const unselect = () => state.map(item => item.get('selected') ? item.set('selected', false) : item);
+
   switch (action.type) {
 
-    case 'RECEIVE_LIST_ITEMS': {
-      const playlist = action.payload.map(item => {
-        // let item = new Item();
-        // return item.merge(item);
-        return new Item(item);
-      });
+    case Action.RECEIVE_LIST_ITEMS: {
+      const playlist = action.payload.map(item => new MapEx(item));
       return List(playlist);
     }
 
-    case 'CREATEFROM': {
+    case Action.CREATEFROM: {
       const playlist = action.payload.map(element => {
-        const item = new Item();
+        const item = new MapEx();
         return item.merge(element);
       });
       return List(playlist);
     }
 
-    case 'ADD_ITEM': {
-      const item = new Item();
+    case Action.ADD_ITEM: {
+      const item = new MapEx();
       return state.push(item.merge(action.payload));
     }
 
-    case 'DELETE_ITEM': {
+    case Action.DELETE_ITEM: {
       const index = getIndex(action.id);
       if (index > -1) {
         return state.delete(index);
@@ -168,23 +92,23 @@ export default function PlayListItems (state = List([]), action) {
       }
     }
 
-    case 'EDIT_ITEM': {
+    case Action.EDIT_ITEM: {
       const index = getIndex(action.id);
       if (index > -1) {
-        return state.update(index, item => ( item.merge(Map(action.payload)) ));
+        return state.update(index, item => ( item.merge(action.payload) ));
       } else {
         return state;
       }
     }
 
-    case 'EDIT_ITEMS': {
+    case Action.EDIT_ITEMS: {
       return state.map(item => {
         const id = item.get('id');
         return action.payload.hasOwnProperty(id) ? item.merge(action.payload[id]) : item;
       });
     }
 
-    case 'PLAYPAUSE_ITEM': {
+    case Action.PLAYPAUSE_ITEM: {
       const index = getIndex(action.id);
       if (index > -1) {
         const isPlaying = action.payload;
@@ -194,7 +118,7 @@ export default function PlayListItems (state = List([]), action) {
       }
     }
 
-    case 'PAUSE_ITEM': {
+    case Action.PAUSE_ITEM: {
       const index = getIndex(action.id);
       if (index > -1) {
         return state.update(index, item => item.set('isPlaying', false));
@@ -203,8 +127,7 @@ export default function PlayListItems (state = List([]), action) {
       }
     }
 
-    case 'PLAY_NEXT_ITEM': {
-      console.log('PLAY_NEXT_ITEM', action.id)
+    case Action.PLAY_NEXT_ITEM: {
       const index = getIndex(action.id);
       if (index > -1 && index + 1 < state.size) {
         return pause().update(index + 1, item => ( item.set('isPlaying', true).set('selected', true) ));
@@ -213,7 +136,7 @@ export default function PlayListItems (state = List([]), action) {
       }
     }
 
-    case 'PLAY_PREVIOUS_ITEM': {
+    case Action.PLAY_PREVIOUS_ITEM: {
       const index = getIndex(action.id);
       if (index > -1 && index - 1 >= 0) {
         return pause().update(index - 1, item => ( item.set('isPlaying', true) ));
@@ -223,11 +146,11 @@ export default function PlayListItems (state = List([]), action) {
       }
     }
 
-    case 'STOP': {
+    case Action.STOP: {
       return pause();
     }
 
-    case 'ORDER_LIST': {
+    case Action.ORDER_LIST: {
       const from = state.get(action.from);
       const to = state.get(action.to);
       state = state.delete(action.from).insert(action.to, from);
@@ -235,16 +158,14 @@ export default function PlayListItems (state = List([]), action) {
       return state;
     }
 
-    case 'SELECT_ITEMS': {
-      return state.map(item => {
-        const selected = (action.payload.indexOf(item.get('id')) > -1);
-        return item.merge({
-          selected: selected
-        });
-      });
-      // return state
-      //   .update(selectedIndex, item => ( item.set('selected', false) )).map(item => )
-        //.update(index, item => ( item.set('selected', true) ));
+    case Action.SELECT_ITEMS: {
+      const selected = List(action.payload.map(item => new MapEx(item)));
+      return state.map(item => selected.includes(item) ? item.set('selected', true) : item.set('selected', false));
+    }
+
+    case Action.SELECT_ITEM: {
+      const index = state.indexOf(new MapEx(action.payload));
+      return unselect().update(index, item => item.set('selected', true));
     }
 
     default:

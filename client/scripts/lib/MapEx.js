@@ -1,12 +1,12 @@
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : Main.jsx                                                  //
-// @summary      : UI Main container                                         //
-// @version      : 0.0.2                                                     //
+// @file         : MapEx.js                                                  //
+// @summary      : Enhaced Inmutable Map with schema validation              //
+// @version      : 0.0.1                                                     //
 // @project      : tickelr                                                   //
 // @description  :                                                           //
 // @author       : Benjamin Maggi                                            //
 // @email        : benjaminmaggi@gmail.com                                   //
-// @date         : 13 Feb 2017                                               //
+// @date         : 01 Oct 2017                                               //
 // @license:     : MIT                                                       //
 // ------------------------------------------------------------------------- //
 //                                                                           //
@@ -35,66 +35,42 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-import { Header, Toolbar, Player, List, CoverFlow, Equalizer, DragDrop } from '../../components';
-import { remote, ipcRenderer } from 'electron';
-import * as Settings from 'actions/Settings';
-import * as PlayList from 'actions/PlayList';
-import { bindActionCreators } from 'redux';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-import Style from './Main.css';
-import URL from 'url';
+import Immutable from 'immutable';
+import Ajv from 'ajv';
+import schema from '../../schemas/playlist.json';
 
-// import '!style-loader!css-loader!../../../styles/main.css!';
-// This imported styles globally without running through CSS Modules
-// import 'style-loader!../../../styles/main.css!';
+const MapValidator = new Proxy(Immutable.Map, {
+  construct: function(target, [ validator, dictionary ], newTarget) {
+    if (validator.validate('playlist#/definitions/Track', dictionary)) {
+      return Reflect.construct(target, [ dictionary ], newTarget);
+    } else {
+      console.error(validator.errorsText(), validator.errors);
+      throw new Error(validator.errorsText());
+    }
+  },
+  has: function (taget, property) {
+    return Reflect.has(target, property);
+  },
+  get: function (target, property, receiver) {
+    return Reflect.get(target, property, receiver);
+  },
+  apply: function(target, thisArg, argumentsList) {
+    return Reflect.apply(target, thisArg, argumentsList);
+  }
+});
 
-function mapStateToProps (state, ownProps) {
-  const options = decodeURIComponent(ownProps.match.params.options);
-  const { query, pathname } = URL.parse(options, true);
-  return {
-    list: state.PlayListItems.toJS(),
-    options: options
-  };
-}
-
-function mapDispatchToProps(dispatch: Dispatch) {
-  return {
-    settings: bindActionCreators(Settings, dispatch),
-    playlist: bindActionCreators(PlayList, dispatch),
-  };
-}
-
-// $FlowIssue
-@connect(mapStateToProps, mapDispatchToProps)
-export default class Main extends Component {
-
-  componentDidMount () {
-    const { settings, playlist } = this.props;
-    playlist.getCurrent();
-    // playlist.fetchListItems('PL7XlqX4npddfrdpMCxBnNZXg2GFll7t5y');
+export default class MapEx extends MapValidator {
+  constructor (args) {
+    const validator = new Ajv({
+      allErrors: true,
+      useDefaults: true,
+      removeAdditional: true
+    });
+    validator.addSchema(schema, 'playlist');
+    super(validator, args);
   }
 
-  render () {
-    const { list, children } = this.props;
-    return (
-      <div className={ Style.frame }>
-        <Header />
-        <Toolbar />
-        {
-        /*
-        <CoverFlow />
-        <Equalizer />
-        */
-        }
-        <div className={ Style.content } >
-          <List className={ Style.list } list={ list } >
-            { children }
-          </List>
-        </div>
-        <Player />
-      </div>
-    );
+  toString() {
+    return this.toJS().toString();
   }
-};
+}

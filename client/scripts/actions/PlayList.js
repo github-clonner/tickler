@@ -37,6 +37,7 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
+import { PlayListActionKeys as Action } from '../types';
 import schema from '../../schemas/playlist.json';
 import { DialogOptions } from '../types/PlayList';
 import getObjectProperty from 'lodash/get';
@@ -56,19 +57,20 @@ const youtube = new Youtube({
   }
 });
 
-export const deleteItem = (id: string) => ({ type: 'DELETE_ITEM', id });
-export const editItem = (id: string, payload) => ({ type: 'EDIT_ITEM', id, payload });
-export const editItems = (payload: Object) => ({ type: 'EDIT_ITEMS', payload });
-export const selectItems = (payload: any) => ({ type: 'SELECT_ITEMS', payload });
+export const deleteItem = (id: string) => ({ type: Action.DELETE_ITEM, id });
+export const editItem = (id: string, payload) => ({ type: Action.EDIT_ITEM, id, payload });
+export const editItems = (payload: Object) => ({ type: Action.EDIT_ITEMS, payload });
+export const selectItems = (payload: any) => ({ type: Action.SELECT_ITEMS, payload });
+export const selectItem = (payload: any) => ({ type: Action.SELECT_ITEM, payload });
 export const createFrom = payload => ({type: 'CREATEFROM', payload});
-export const playPauseItem = (id: string, payload) => ({ type: 'PLAYPAUSE_ITEM', id, payload });
-export const pauseItem = (id: string) => ({ type: 'PAUSE_ITEM', id });
-export const playNext = (id: string) => ({ type: 'PLAY_NEXT_ITEM', id });
-export const playPrevious = (id: string) => ({ type: 'PLAY_PREVIOUS_ITEM', id });
+export const playPauseItem = (id: string, payload) => ({ type: Action.PLAYPAUSE_ITEM, id, payload });
+export const pauseItem = (id: string) => ({ type: Action.PAUSE_ITEM, id });
+export const playNext = (id: string) => ({ type: Action.PLAY_NEXT_ITEM, id });
+export const playPrevious = (id: string) => ({ type: Action.PLAY_PREVIOUS_ITEM, id });
 export const stop = id => ({ type: 'STOP', id });
-export const receivePlayListItems = payload => ({type: 'RECEIVE_LIST_ITEMS', payload});
-export const orderPlayList = (from, to) => ({ type: 'ORDER_LIST', from, to });
-export const downloadProgress = payload => ({type: 'DOWNLOAD_PROGRESS', payload});
+export const receivePlayListItems = payload => ({type: Action.RECEIVE_LIST_ITEMS, payload});
+export const orderPlayList = (from, to) => ({ type: Action.ORDER_LIST, from, to });
+export const downloadProgress = payload => ({type: Action.DOWNLOAD_PROGRESS, payload});
 
 
 /**
@@ -91,14 +93,15 @@ export function fetchItem (item, autoPlay = false) {
       return console.debug(video, info)
     };
 
-    const onError = ({vide, error}) => {
-      dispatch(playNextItem(item.id));
+    const onError = ({video, error}) => {
+      console.error(video, error);
+      return dispatch(playNextItem(item.id));
     };
 
-    const removeAllListeners = () => {
-      youtube.events.removeListener('progress', onProgress);
-      youtube.events.removeListener('info', onInfo);
-    };
+    const removeAllListeners = () => (
+      youtube.events.removeListener('progress', onProgress),
+      youtube.events.removeListener('info', onInfo)
+    );
 
     let fileName = null;
 
@@ -207,15 +210,14 @@ export function playNextItem (id: string) {
  * @param  {String} id of the youtube video
  * @return {null}
  */
-export function playItem (id: string) {
+export function playItem (item: Object) {
   return function (dispatch, getState) {
     const player = settings.get('player');
     const { PlayListItems } = getState();
-    const item = PlayListItems.find(item => (item.get('id') === id));
-    if (!item.get('file') && !item.get('isLoading')) {
+    if (!item.file && !item.isLoading) {
       dispatch(fetchItem(item, player.autoplay));
     } else {
-      dispatch(playPauseItem(item.get('id'), true));
+      dispatch(playPauseItem(item.id, true));
     }
     return dispatch(receiveItem(item.id));
   }

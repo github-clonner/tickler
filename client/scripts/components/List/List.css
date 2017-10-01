@@ -5,7 +5,8 @@
   /*--activeRowBackground: #f6f6f6;*/
   /*--activeRowColor: #000;*/
   --hoverRowColor: #f6f6f6;
-  --activeRowBackground: repeating-linear-gradient(-55deg, #222, #222 10px, #333 10px, #333 20px);
+  /* --activeRowBackground: repeating-linear-gradient(-55deg, #222, #222 10px, #333 10px, #333 20px); */
+  --activeRowBackground: #888;
   --activeRowColor: #fafafa;
   --color: #484848;
   --outlineColor: #CCC;
@@ -21,35 +22,21 @@
   user-select: none;
   height: 100%;
   position: relative;
+
   &.is-drag-drop {
     & .row {
       pointer-events: none;
       outline: 0px solid;
     }
   }
-  & ul.container {
+
+  & .container {
     height: 100%;
     width: 100%;
     list-style: none;
     padding: 0px;
     margin: 0px;
   }
-
-/*   & .dropdownXX {
-    cursor: pointer;
-    min-width: 1.5em;
-    min-height: 1.5em;
-    border-radius: 50%;
-    margin: 4px;
-    transition: all .15s ease-in-out;
-    &:hover {
-      background-color: #ccc;
-      color: #000;
-    }
-    &.active {
-      font-weight: bold;
-    }
-  } */
 
   & .row {
     display: flex;
@@ -79,11 +66,11 @@
       transition: none;
     }
 
-    & .field {
+/*     & .field {
       &[role*="status"] {
         font-family: var(--iconFont);
       }
-    }
+    } */
   }
 
   &:not(.is-drag-drop) {
@@ -104,14 +91,7 @@
     }
   }
 
-/*   & .dropdown {
-    &:hover {
-      background-color: #ccc;
-      color: #000;
-    }
-  } */
-
-  & ul > li > span {
+  & ul > li > span, .fields {
     min-width: 0;
     &:nth-child(1) {
       text-align: right;
@@ -127,7 +107,7 @@
       font-weight: bold;
       color: #ed1e24;
       &.local {
-          color: #31dd31;
+        color: #31dd31;
       }
     }
     &:nth-child(3), &[role="title"] {
@@ -152,6 +132,39 @@
       white-space: nowrap;
       margin: 0px;
     }
+  }
+}
+
+.field {
+  &[role="index"] {
+    text-align: right;
+    font-weight: bold;
+    flex-basis: 5%;
+    font-family: var(--monoFont);
+    font-weight: lighter;
+  }
+  &[role*="status"] {
+    font-family: var(--iconFont);
+    flex-basis: content;
+    margin: 0px 6px;
+    text-align: center;
+    font-weight: bold;
+    color: #ed1e24;
+    &.local {
+      color: #31dd31;
+    }
+  }
+  &[role="title"]  {
+    flex-grow: 1;
+    flex-basis: 50%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  &[role="duration"] {
+    margin-left: 10px;
+    flex-grow: 0.1;
+    font-family: var(--monoFont);
   }
 }
 

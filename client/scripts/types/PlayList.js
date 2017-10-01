@@ -37,6 +37,7 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
+import type { Action } from './Action';
 import { Track } from './Track';
 
 export type PlayList = {
@@ -46,3 +47,37 @@ export type PlayList = {
   href?: string;
   tracks: Array<Track>;
 };
+
+export const PlayListActionKeys = {
+  RECEIVE_LIST_ITEMS: 'RECEIVE_LIST_ITEMS',
+  CREATEFROM: 'CREATEFROM',
+  ADD_ITEM: 'ADD_ITEM',
+  DELETE_ITEM: 'DELETE_ITEM',
+  EDIT_ITEM: 'EDIT_ITEM',
+  EDIT_ITEMS: 'EDIT_ITEMS',
+  PLAYPAUSE_ITEM: 'PLAYPAUSE_ITEM',
+  PAUSE_ITEM: 'PAUSE_ITEM',
+  PLAY_NEXT_ITEM: 'PLAY_NEXT_ITEM',
+  PLAY_PREVIOUS_ITEM: 'PLAY_PREVIOUS_ITEM',
+  STOP: 'STOP',
+  ORDER_LIST: 'ORDER_LIST',
+  SELECT_ITEMS: 'SELECT_ITEMS',
+  SELECT_ITEM: 'SELECT_ITEM'
+};
+
+export type PlayListActions =
+  | Action<typeof PlayListActionKeys.RECEIVE_LIST_ITEMS, any>
+  | Action<typeof PlayListActionKeys.CREATEFROM, any>
+  | Action<typeof PlayListActionKeys.ADD_ITEM, any>
+  | Action<typeof PlayListActionKeys.DELETE_ITEM, any>
+  | Action<typeof PlayListActionKeys.EDIT_ITEM, any>
+  | Action<typeof PlayListActionKeys.EDIT_ITEMS, any>
+  | Action<typeof PlayListActionKeys.PLAYPAUSE_ITEM, any>
+  | Action<typeof PlayListActionKeys.PAUSE_ITEM, any>
+  | Action<typeof PlayListActionKeys.PLAY_NEXT_ITEM, any>
+  | Action<typeof PlayListActionKeys.PLAY_PREVIOUS_ITEM, any>
+  | Action<typeof PlayListActionKeys.STOP, any>
+  | Action<typeof PlayListActionKeys.ORDER_LIST, any>
+  | Action<typeof PlayListActionKeys.SELECT_ITEMS, number>
+  | Action<typeof PlayListActionKeys.SELECT_ITEM, number>
+  ;

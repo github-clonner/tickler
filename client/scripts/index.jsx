@@ -121,8 +121,12 @@ window.goUrl =  (url) => {
 
 
 
-// Now you can dispatch navigation actions from anywhere!
-// store.dispatch(push('/foo'))
+// // Now you can dispatch navigation actions from anywhere!
+// store.dispatch(push({
+//   pathname: '/',
+//   search: '?playlist=current',
+//   state: { some: 'state' }
+// }));
 
 const domContainerNode = document.getElementById('app');
 domContainerNode.className = Style.application;

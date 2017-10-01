@@ -60,29 +60,28 @@ const DialogOptions = {
   }
 };
 
-export const buildListItemMenu = function (song) {
-  const { actions, inspect, list } = this.props;
-  const { playPause } = this;
+export const buildListItemMenu = (props) => (event, item) => {
+  event.preventDefault();
+  event.stopPropagation();
+  const { clientX, clientY } = event;
+  const { player, playlist, inspect, items } = props;
+  console.log(props);
 
-  return buildContextMenu([{
-    label: song.file ? (song.isPlaying ? 'Pause': 'Play:') : (song.isLoading ? 'cancel' : 'download'),
-    click: (menuItem, browserWindow, event) => {
-      const { id, file, isLoading, isPlaying } = song;
-      console.log(menuItem);
-      if (file && !isLoading) {
-        return isPlaying ? actions.pauseItem(id) : actions.playItem(id, true);
-        // return playPause(song);
-      } else if (!file && !isLoading) {
-        return this.playPause(song);
-      } else if (!file && isLoading) {
-        console.log('ABORT');
-        actions.cancel(id, true);
+  const menu = buildContextMenu([{
+    label: item.file ? (item.isPlaying ? 'Pause' : 'Play') : (item.isLoading ? 'cancel' : 'download'),
+    click: () => {
+      if (item.file && !item.isLoading) {
+        return item.isPlaying ? player.playPause(item) : player.play(item);
+      } else if (!item.file && !item.isLoading) {
+        return playlist.playItem(item);
+      } else if (!item.file && item.isLoading) {
+        playlist.cancel(item, true);
       }
     }
   }, {
     label: 'Media Information...',
     click () {
-      console.log(song);
+      console.log(item);
       return openModal('/about');
     }
   }, {
@@ -97,9 +96,9 @@ export const buildListItemMenu = function (song) {
     type: 'separator'
   }, {
     label: 'Explore item folder',
-    enabled: fs.existsSync(song.file),
+    enabled: fs.existsSync(item.file),
     click () {
-      return shell.showItemInFolder(song.file);
+      return shell.showItemInFolder(item.file);
     }
   }, {
     type: 'separator'
@@ -113,7 +112,7 @@ export const buildListItemMenu = function (song) {
     type: 'separator'
   }, {
     label: 'Open...',
-    click () {
+    click (menuItem, browserWindow, event) {
       return actions.openPlayList();
     }
   }, {
@@ -137,4 +136,6 @@ export const buildListItemMenu = function (song) {
       });
     }
   }]);
+
+  return menu.popup();
 };

@@ -35,30 +35,37 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-import fileSystem from 'fs';
-import path from 'path';
-import { remote } from 'electron';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import WaveSurfer from 'wavesurfer.js';
-import debounce from 'lodash/debounce';
-import * as Settings from 'actions/Settings';
-/* Redux stuff */
-import Immutable, { List, Map } from 'immutable';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import * as PlayList from 'actions/PlayList';
-import * as Audio from 'actions/Player';
-
-import { Progress, InputRange, TimeCode } from '../index';
-
+import { PlayList, Player, Settings } from '../../actions';
+import { compose, branch, pure, renderNothing, renderComponent, withPropsOnChange, withState, withReducer, withHandlers, withProps, mapProps, renameProp, defaultProps, setPropTypes } from 'recompose';
 import classNames from 'classnames';
 // Import styles
 import Style from './Player.css';
+import { Progress, InputRange, TimeCode } from '../index';
+import * as Controls from './Controls';
 
 function mapStateToProps(state) {
+  const items = state.PlayListItems.toJS();
+  const index = items.findIndex(({selected}) => (selected))
   return {
-    list: state.PlayListItems,
+    items,
+    item: items[index],
+    index,
+    audio: state.Audio,
+    currentTime: state.Audio.currentTime,
+    options: {
+      player: state.Settings.get('player'),
+      audio: state.Settings.get('audio')
+    }
+  };
+}
+
+function mapStateToProps2(state) {
+  return {
+    item: state.PlayListItems.toJS().find(({selected}) => (selected)),
     audio: state.Audio,
     options: {
       player: state.Settings.get('player'),
@@ -69,280 +76,91 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    actions: bindActionCreators(PlayList, dispatch),
-    audio: bindActionCreators(Audio, dispatch),
+    playlist: bindActionCreators(PlayList, dispatch),
+    player: bindActionCreators(Player, dispatch),
     settings: bindActionCreators(Settings, dispatch)
   };
 }
 
-@connect(mapStateToProps, mapDispatchToProps)
-export default class Player extends Component {
-  state = {
-    item: Map(),
-    isPlaying: false,
-    volume: 0.5,
-    duration: 0,
-    seek: 0,
-    isMuted: false
-  };
-
-  static propTypes = {
-    list: PropTypes.instanceOf(List).isRequired,
-    options: PropTypes.shape({
-      audio: PropTypes.shape({
-        volume: PropTypes.number.isRequired
-      }),
-      player: PropTypes.shape({
-        autoplay: PropTypes.bool.isRequired
-      })
-    })
-  };
-
-  static defaultProps = {
-    list: Immutable.List([]),
-    autoplay: false,
-    audioContext: new AudioContext()
-  };
-
-  constructor (...args) {
-    super(...args);
-    this.wavesurfer = Object.create(WaveSurfer);
-  }
-
-  resize = debounce(event => {
-    event.preventDefault();
-    const orgWidth = this.wavesurfer.drawer.containerWidth;
-    const newWidth = this.wavesurfer.drawer.container.clientWidth;
-    if (orgWidth != newWidth) {
-      this.wavesurfer.drawer.containerWidth = newWidth;
-      this.wavesurfer.drawBuffer();
-    }
-  }, 500);
-
-  async load (item, autoplay) {
-    const file = item.get('file');
-    if(!file || !fileSystem.statSync(file)) {
-      console.log('file not found', file, song.get('id'));
-      return false;
-    }
-    fileSystem.readFile(file, (error, buffer) => {
-      const blob = new window.Blob([new Uint8Array(buffer)]);
-      this.wavesurfer.loadBlob(blob);
-    });
-  }
-
-  handleVolume = volume => {
-    const { wavesurfer } = this;
-    const { settings } = this.props;
-    this.setState({ volume });
-    settings.set('audio', { volume });
-    wavesurfer.setVolume(volume);
-  }
-
-  handleChange = value => {
-    return this.wavesurfer.seekTo(value / 100);
-  }
-  // wavesurfer event handlers
-  loading = progress => {
-    //this.props.audio.analyser(null);
-    if (progress === 100) {
-      window.addEventListener('resize', this.resize);
-    }
-  }
-
-  ready = () => {
-    this.setState({
-      seek: 0,
-      duration: this.wavesurfer.getDuration()
-    });
-    if (this.wavesurfer.isPlaying()) {
-      this.stop();
-    }
-    if (this.props.autoplay || this.state.isPlaying) {
-      this.play();
-    }
-  }
-
-  audioprocess = () => {
-    this.setState({
-      isPlaying: this.wavesurfer.isPlaying(),
-      seek: this.wavesurfer.getCurrentTime()
-    });
-  }
-
-  seek = progress => {
-    this.setState({
-      seek: this.wavesurfer.getCurrentTime()
-    });
-  }
-
-  mute = event => {
-    this.wavesurfer.toggleMute();
-    this.setState({
-      isMuted: event.target.checked
-    });
-  }
-
-  finish = () => {
-    this.stop();
-    return this.playTo(1);
-  }
-
-  // react component lifecycle events
-  componentWillReceiveProps (nextProps) {
-    if(!nextProps.list.size) {
-      return;
-    }
-    const item = nextProps.list.find(item => (item.get('isPlaying') === true));
-    // already playing
-    if (this.state.isPlaying && (item && item.get('id') === this.state.item.get('id'))) {
-      return;
-    } else if (!item && this.state.isPlaying) {
-      const currentId = this.state.item.get('id');
-      const nextItem = nextProps.list.find(item => (item.get('id') === currentId));
-      if (nextItem && !nextItem.get('isPlaying')) {
-        this.stop();
+/* Playback */
+const Playback = compose(
+  pure,
+  connect(mapStateToProps, mapDispatchToProps),
+  // mapProps(({ playlist, player, options, settings, items, item, audio }) => {
+  //   return {
+  //     playlist,
+  //     player,
+  //     options,
+  //     settings,
+  //     items,
+  //     item,
+  //     index,
+  //     audio
+  //   }
+  // }),
+  // mapProps(props => ({ playlist, player, options, settings, items, item, index, audio })),
+  withHandlers({
+    playPause: ({ item, index, player, audio }) => (event) => {
+      console.log(item, (item.file || item.url || item.stream), index)
+      if (audio.isPlaying || audio.isPaused) {
+        return player.playPause();
+      } else {
+        return player.play(item);
       }
+    },
+    pause: ({ player }) => (event) => player.pause(),
+    stop: ({ player }) => (event) => player.stop(),
+    jump: ({ item, items, player }) => (direction) => (event) => {
+      const index = items.findIndex(({ id }) => (id === item.id));
+      if (Math.sign(direction) > 0) {
+        const nextIndex = ((index + 1) === items.length) ? 0 : index + 1;
+        return player.play(items[nextIndex].file);
+      } else {
+        const prevIndex = (index === 0) ? (items.length - 1) : index - 1;
+        return player.play(items[prevIndex].file);
+      }
+    },
+    seek: props => (event, item) => {
+      console.log('seek', props, event, item);
+    },
+    mute: props => (event, item) => {
+      console.log('mute', props, event, item);
     }
+  })
+)(Controls.Playback);
 
-    if(item && item.get('file') && !item.get('isLoading')) {
-      this.setState({
-        item: item,
-        isPlaying: true
-      });
-      this.load(item, false);
-    }
-  }
-
-  componentWillUnmount () {
-    window.removeEventListener('resize', this.resize);
-    this.stop();
-    this.wavesurfer.destroy();
-  }
+@connect(mapStateToProps, mapDispatchToProps)
+export default class Play extends Component {
 
   componentDidMount () {
-    const { list, audio, options, audioContext } = this.props;
-    const { wavesurfer } = this;
-
-    wavesurfer.init({
+    const { player } = this.props;
+    const waves = this.refs;
+    return player.init({
       container: this.refs.waves,
       barWidth: 2,
-      height: 60,
-      audioContext
+      height: 60
     });
-
-    audio.context(this.props.audioContext);
-    audio.wavesurfer(wavesurfer);
-    audio.analyser(wavesurfer.backend.analyser);
-
-    wavesurfer.on('loading', this.loading);
-    wavesurfer.on('ready', this.ready);
-    wavesurfer.on('audioprocess', this.audioprocess);
-    wavesurfer.on('seek', this.seek);
-    wavesurfer.on('finish', this.finish);
-
-    const item = list.find(item => (item.get('isPlaying') === true));
-    if (item) {
-      this.setState({
-        item,
-        isPlaying: options.player.autoplay
-      });
-      this.load(item.get('file'));
-    }
   }
-
-  // Player controls
-  play = () => {
-    const { playItem } = this.props.actions;
-    let item = this.props.list.find(item => (item.get('isPlaying') === true));
-    if (!item) {
-      item = this.props.list.findLast(item => item.get('selected'));
-    }
-
-    // Play the first song if none selected
-    // else play the last song that was selected and stopped
-    if (!item && !this.state.item.has('id')) {
-      return playItem(this.props.list.get(0).get('id'));
-    } else if (!item && this.state.item) {
-      return playItem(this.state.item.get('id'));
-    } else if (item.has('id') && !item.get('file')) {
-      return playItem(item.get('id'));
-    } else if (item.has('id') && item.get('file')) {
-      playItem(item.get('id'));
-      this.wavesurfer.playPause();
-      return this.setState({
-        isPlaying: this.wavesurfer.isPlaying()
-      });
-    }
-  }
-
-  stop = () => {
-    const { actions } = this.props;
-    const { getCurrentTime, getDuration } = this.wavesurfer;
-    const item = this.props.list.find(item => (item.get('isPlaying') === true));
-
-    this.wavesurfer.stop();
-    this.setState({
-      isPlaying: false,
-      seek: this.wavesurfer.getCurrentTime(),
-      duration: this.wavesurfer.getDuration()
-    });
-    actions.stop(item);
-  }
-
-  /*
-    TODO: when skipping into an unloaded track and while the track is being loaded if the user moves into another track
-    once the track finished it'll still play the song after being selected
-  */
-  playTo = direction => {
-    if (!this.state.item.has('id')) {
-      return false;
-    }
-
-    const id = this.state.item.get('id');
-    const { playItem } = this.props.actions;
-    const index = this.props.list.findIndex(item => (item.get('id') === id));
-    let item = null;
-
-    if (Math.sign(direction) > 0) {
-      const nextIndex = ((index + 1) === this.props.list.size) ? 0 : index + 1;
-      item = this.props.list.get(nextIndex);
-    } else {
-      const prevIndex = (index === 0) ? (this.props.list.size - 1) : index - 1;
-      item = this.props.list.get(prevIndex);
-    }
-    return playItem(item.get('id'));
-  }
-
   render () {
-    const { options } = this.props;
+    const { audio } = this.props;
     return (
       <div className={ Style.player }>
         <div className={ Style.controls } >
-          <div className={ Style.btnGroup } >
-            <button className={ Style.roundButton } onClick={() => this.playTo(-1)} title="backward">skip_previous</button>
-            <button className={ Style.roundButton } disabled={!this.state.seek} onClick={this.stop} title="stop">stop</button>
-            <button className={ Style.roundButton } onClick={() => this.playTo(1)} title="forward">skip_next</button>
-            <button className={ Style.roundButton } onClick={this.play} title="play">{ this.state.isPlaying ? 'pause' : 'play_arrow' }</button>
-          </div>
-          <div className={ classNames( Style.buttonGroup, Style.checkboxButtons) } >
-            <input id="loop" type="checkbox"/>
-            <label htmlFor="loop">loop</label>
-            <input id="shuffle" type="checkbox" />
-            <label htmlFor="shuffle">shuffle</label>
-          </div>
+          <Playback />
+          <Controls.Order { ...this.props } />
           <div className={ classNames( Style.volume, Style.checkboxButtons) } >
-            <input id="volume" type="checkbox" checked={this.state.isMuted} onChange={this.mute}/>
+            <input id="volume" type="checkbox" checked={false}/>
             <label htmlFor="volume">volume_up</label>
             <div className={ Style.slider } >
-              <InputRange value={this.state.volume} min={0} max={1} step={0.001} onChange={this.handleVolume}/>
+              <InputRange value={0.5} min={0} max={1} step={0.001}/>
             </div>
           </div>
-          <InputRange value={this.state.seek / this.state.duration * 100} min={0} max={100} step={0.1} onChange={this.handleChange} disabled={!this.state.isPlaying && !this.state.seek} />
-          <TimeCode time={this.state.seek} duration={this.state.duration} />
+          <InputRange value={ audio.currentTime / audio.duration * 100 } min={ 0 } max={ 100 } step={ 0.1 } />
+          <TimeCode time={ audio.currentTime } duration={ audio.duration } />
         </div>
         <div ref="waves" style={{display: 'none'}}></div>
       </div>
     );
   }
 }
+

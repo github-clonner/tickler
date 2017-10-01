@@ -1,12 +1,14 @@
+// @flow
+
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : Main.jsx                                                  //
-// @summary      : UI Main container                                         //
-// @version      : 0.0.2                                                     //
+// @file         : Order.jsx                                                 //
+// @summary      : Playback order controls component                         //
+// @version      : 0.0.1                                                     //
 // @project      : tickelr                                                   //
 // @description  :                                                           //
 // @author       : Benjamin Maggi                                            //
 // @email        : benjaminmaggi@gmail.com                                   //
-// @date         : 13 Feb 2017                                               //
+// @date         : 30 Sep 2017                                               //
 // @license:     : MIT                                                       //
 // ------------------------------------------------------------------------- //
 //                                                                           //
@@ -35,66 +37,18 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-import { Header, Toolbar, Player, List, CoverFlow, Equalizer, DragDrop } from '../../components';
-import { remote, ipcRenderer } from 'electron';
-import * as Settings from 'actions/Settings';
-import * as PlayList from 'actions/PlayList';
-import { bindActionCreators } from 'redux';
 import React, { Component } from 'react';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-import Style from './Main.css';
-import URL from 'url';
+import classNames from 'classnames';
+// Import styles
+import Style from '../Player.css';
 
-// import '!style-loader!css-loader!../../../styles/main.css!';
-// This imported styles globally without running through CSS Modules
-// import 'style-loader!../../../styles/main.css!';
-
-function mapStateToProps (state, ownProps) {
-  const options = decodeURIComponent(ownProps.match.params.options);
-  const { query, pathname } = URL.parse(options, true);
-  return {
-    list: state.PlayListItems.toJS(),
-    options: options
-  };
-}
-
-function mapDispatchToProps(dispatch: Dispatch) {
-  return {
-    settings: bindActionCreators(Settings, dispatch),
-    playlist: bindActionCreators(PlayList, dispatch),
-  };
-}
-
-// $FlowIssue
-@connect(mapStateToProps, mapDispatchToProps)
-export default class Main extends Component {
-
-  componentDidMount () {
-    const { settings, playlist } = this.props;
-    playlist.getCurrent();
-    // playlist.fetchListItems('PL7XlqX4npddfrdpMCxBnNZXg2GFll7t5y');
-  }
-
-  render () {
-    const { list, children } = this.props;
-    return (
-      <div className={ Style.frame }>
-        <Header />
-        <Toolbar />
-        {
-        /*
-        <CoverFlow />
-        <Equalizer />
-        */
-        }
-        <div className={ Style.content } >
-          <List className={ Style.list } list={ list } >
-            { children }
-          </List>
-        </div>
-        <Player />
-      </div>
-    );
-  }
+export default (props) => {
+  return <div className={ classNames( Style.buttonGroup, Style.checkboxButtons) } >
+    <input id="loop" type="checkbox"/>
+    <label htmlFor="loop">loop</label>
+    <input id="shuffle" type="checkbox" />
+    <label htmlFor="shuffle">shuffle</label>
+  </div>;
 };

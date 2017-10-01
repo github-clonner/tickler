@@ -43,27 +43,82 @@ import WaveSurfer from 'wavesurfer.js';
 
 const audio = {
   context: new AudioContext(),
-  analyser: null,
+  analyzer: null,
+  currentTime: 0,
+  seek: 0,
+  duration: 0,
+  volume: 0,
+  mute: false,
+  progress: 0,
+  finish: false,
+  isPlaying: false,
+  isPaused: false,
+  isReady: false,
   wavesurfer: Object.create(WaveSurfer)
 };
 
 export function Audio (state: Object = audio, action: PlayerActions) {
-  
+
+  if (action.type !== Action.SET_CURRENT_TIME && action.type !== Action.SET_PLAYING) {
+    console.log("AUDIO", action.type, action.payload);
+  }
+
   switch (action.type) {
 
     case Action.SET_CONTEXT: {
-      state.context = action.payload;
-      return state;
+      return Object.assign({}, state, { context: action.payload });
     }
 
-    case Action.SET_ANALYSER: {
-      state.analyser = action.payload;
-      return state;
+    case Action.SET_ANALYZER: {
+      return Object.assign({}, state, { analyzer: action.payload });
     }
 
     case Action.SET_WAVESURFER: {
-      state.wavesurfer = action.payload;
-      return state;
+      return Object.assign({}, state, { wavesurfer: action.payload });
+    }
+
+    case Action.SET_CURRENT_TIME: {
+      return Object.assign({}, state, { currentTime: action.payload });
+    }
+
+    case Action.SET_SEEK: {
+      return Object.assign({}, state, { seek: action.payload, currentTime: action.payload });
+    }
+
+    case Action.SET_DURATION: {
+      return Object.assign({}, state, { duration: action.payload });
+    }
+
+    case Action.SET_VOLUME: {
+      return Object.assign({}, state, { volume: action.payload });
+    }
+
+    case Action.SET_MUTE: {
+      return Object.assign({}, state, { mute: action.payload });
+    }
+
+    case Action.SET_LOADING: {
+      return Object.assign({}, state, { progress: action.payload });
+    }
+
+    case Action.SET_FINISHED: {
+      return Object.assign({}, state, { finish: action.payload });
+    }
+
+    case Action.SET_PLAYING: {
+      return Object.assign({}, state, { isPlaying: true, isPaused: false });
+    }
+
+    case Action.SET_STOP: {
+      return Object.assign({}, state, { isPlaying: false, currentTime: 0 });
+    }
+
+    case Action.SET_PAUSE: {
+      return Object.assign({}, state, { isPaused: true, isPlaying: false });
+    }
+
+    case Action.SET_READY: {
+      return Object.assign({}, state, { isReady: action.payload });
     }
 
     default:

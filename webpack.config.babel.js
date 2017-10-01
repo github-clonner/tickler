@@ -181,7 +181,8 @@ const configRenderer = {
               modules: true,
               importLoaders: 1,
               camelCase: 'dashesOnly',
-              sourceMap: true
+              sourceMap: true,
+              localIdentName: '[name].[local]-[hash:base64:5]'
             }
           },
           {

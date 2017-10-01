@@ -4,3 +4,4 @@ export SettingsStore from './SettingsStore';
 export PlayListStore from './PlayListStore';
 export Youtube from './Youtube';
 export { ContextMenu, buildContextMenu } from './ContextMenu';
+export MapEx from './MapEx';

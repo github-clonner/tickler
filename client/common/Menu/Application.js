@@ -1,12 +1,14 @@
+// @flow
+
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : Main.jsx                                                  //
-// @summary      : UI Main container                                         //
-// @version      : 0.0.2                                                     //
+// @file         : Main.js                                                   //
+// @summary      : Electron main process manager                             //
+// @version      : 0.2.0                                                     //
 // @project      : tickelr                                                   //
 // @description  :                                                           //
 // @author       : Benjamin Maggi                                            //
 // @email        : benjaminmaggi@gmail.com                                   //
-// @date         : 13 Feb 2017                                               //
+// @date         : 12 Sep 2017                                               //
 // @license:     : MIT                                                       //
 // ------------------------------------------------------------------------- //
 //                                                                           //
@@ -35,66 +37,55 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-import { Header, Toolbar, Player, List, CoverFlow, Equalizer, DragDrop } from '../../components';
-import { remote, ipcRenderer } from 'electron';
-import * as Settings from 'actions/Settings';
-import * as PlayList from 'actions/PlayList';
-import { bindActionCreators } from 'redux';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-import Style from './Main.css';
-import URL from 'url';
+import {
+  app,
+  nativeImage,
+  BrowserWindow,
+  ipcMain,
+  globalShortcut,
+  Menu,
+  shell,
+  dialog,
+  systemPreferences
+} from 'electron';
+import path from 'path';
 
-// import '!style-loader!css-loader!../../../styles/main.css!';
-// This imported styles globally without running through CSS Modules
-// import 'style-loader!../../../styles/main.css!';
+const appName = app.getName();
+const appVersion = app.getVersion();
 
-function mapStateToProps (state, ownProps) {
-  const options = decodeURIComponent(ownProps.match.params.options);
-  const { query, pathname } = URL.parse(options, true);
-  return {
-    list: state.PlayListItems.toJS(),
-    options: options
-  };
-}
+export const makeIcon = function (name) {
+  const file = path.join(__dirname, '../' , 'media', name);
+  return nativeImage.createFromPath(file);
+};
 
-function mapDispatchToProps(dispatch: Dispatch) {
-  return {
-    settings: bindActionCreators(Settings, dispatch),
-    playlist: bindActionCreators(PlayList, dispatch),
-  };
-}
+export const showAbout = function () {
+  dialog.showMessageBox({
+    title: `About ${appName}`,
+    message: `${appName} ${appVersion}`,
+    detail: `Created by Benjamin Maggi \nCopyright © 2017.`,
+    buttons: [],
+    icon: makeIcon('icon.png')
+  });
+};
 
-// $FlowIssue
-@connect(mapStateToProps, mapDispatchToProps)
-export default class Main extends Component {
-
-  componentDidMount () {
-    const { settings, playlist } = this.props;
-    playlist.getCurrent();
-    // playlist.fetchListItems('PL7XlqX4npddfrdpMCxBnNZXg2GFll7t5y');
-  }
-
-  render () {
-    const { list, children } = this.props;
-    return (
-      <div className={ Style.frame }>
-        <Header />
-        <Toolbar />
-        {
-        /*
-        <CoverFlow />
-        <Equalizer />
-        */
-        }
-        <div className={ Style.content } >
-          <List className={ Style.list } list={ list } >
-            { children }
-          </List>
-        </div>
-        <Player />
-      </div>
-    );
-  }
+export const Application = function() {
+  const submenu = [{
+    label: `${appName}`,
+    submenu: [{
+      label: `About ${appName}`,
+      click() {
+        showAbout();
+      }
+    }, {
+      type: "separator"
+    }, {
+      label: "Quit",
+      accelerator: "Command+Q",
+      click() {
+        app.quit();
+      }
+    }]
+  }];
+  const menu = Menu.buildFromTemplate(submenu);
+  Menu.setApplicationMenu(menu);
 };

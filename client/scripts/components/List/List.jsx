@@ -41,10 +41,10 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { PlayList, Settings } from '../../actions'; //
+import { PlayList, Player, Settings } from '../../actions';
 import { push } from 'react-router-redux';
 import Sortable from './Sortable';
-import { compose, branch, renderNothing, renderComponent, withPropsOnChange, withState, withReducer, withHandlers, withProps, mapProps, renameProp, defaultProps, setPropTypes } from 'recompose';
+import { compose, branch, pure, renderNothing, renderComponent, withPropsOnChange, withState, withReducer, withHandlers, withProps, mapProps, renameProp, defaultProps, setPropTypes } from 'recompose';
 import { buildListItemMenu } from '../Menu/Menu';
 // Import styles
 import Style from './List.css';
@@ -52,6 +52,7 @@ import Style from './List.css';
 const mapStateToProps = function (state) {
   return {
     list: state.PlayListItems.toJS(),
+    audio: state.Audio,
     options: {
       playlist: state.Settings.get('playlist')
     }
@@ -61,6 +62,7 @@ const mapStateToProps = function (state) {
 const mapDispatchToProps = function (dispatch) {
   return {
     playlist: bindActionCreators(PlayList, dispatch),
+    player: bindActionCreators(Player, dispatch),
     settings: bindActionCreators(Settings, dispatch),
     inspect: (file: string, options: Object, state?: any) => dispatch(push({
       pathname: `/inspector/${file}`,
@@ -75,20 +77,19 @@ const handleClick = function(event, items, item) {
   event.stopPropagation();
 
   if (event.shiftKey) {
-    console.log('shift');
     const last = items.map(({ selected }) => (selected)).indexOf(true);
-    const index = items.findIndex(({ id }) => (id === item.id));
+    const index = items.indexOf(item);
     if (last < index) {
-      return items.slice(last, index + 1).map(({ id }) => id);
+      return items.slice(last, index + 1);
     } else if (last > index) {
-      return items.slice(index, last + 1).map(({ id }) => id);
+      return items.slice(index, last + 1);
     }
   } else if (event.metaKey) {
-    const selected = items.filter(({ selected }) => (selected)).map(({ id }) => id);
-    const index = items.findIndex(({ id }) => (id === item.id) );
-    return [...selected, items[index].id];
+    const selected = items.filter(({ selected }) => (selected));
+    const index = items.indexOf(item);
+    return [...selected, items[index]];
   } else {
-    return [item.id];
+    return [ item ];
   }
 };
 
@@ -104,15 +105,8 @@ const playPause = function (item) {
   new Notification(item.title, options);
 };
 
-const handleContextMenu = function(event, item) {
-  event.preventDefault();
-  event.stopPropagation();
-  const menu = buildListItemMenu(item);
-  const { clientX, clientY } = event;
-  menu.popup();
-};
-
 export default compose(
+  pure,
   connect(mapStateToProps, mapDispatchToProps),
   setPropTypes({
     options: PropTypes.shape({
@@ -123,75 +117,33 @@ export default compose(
       })
     })
   }),
-  mapProps(({ list: items, settings, playlist }) => ({ items, settings, playlist })),
-  /*
-  withReducer('toggledOn', 'dispatch', (state, action) => {
-    console.log('REDUCER', action)
-    switch(action.type) {
-      case 'SHOW':
-        return true;
-      case 'HIDE':
-        return false;
-      case 'TOGGLE':
-        return !state;
-      default:
-        return state;
-    }
-  }, false),
+  mapProps(({ list: items, settings, player, playlist, inspect }) => ({ items, settings, player, playlist, inspect })),
   withHandlers({
-    onClick: ({ dispatch }) => (e) => dispatch({ type: 'SHOW' }),
-    onDoubleClick: ({ dispatch }) => (e) => dispatch({ type: 'HIDE' }),
-    onContextMenu: ({ dispatch }) => (e) => dispatch({ type: 'TOGGLE' })
-  }),
-  */
-  withState('selected', 'select', []),
-  withHandlers({
-    onClick: props => (event, item) => {
-      const { settings, playlist, items } = props;
+    onClick: ({ settings, playlist, items }) => (event, item) => {
       const selected = handleClick(event, items, item);
       return playlist.selectItems(selected);
     },
-    onDoubleClick: props => (event, item) => {
-      const { playlist } = props;
+    onDoubleClick: ({ playlist }) => (event, item) => {
       playPause(item);
-      playlist.selectItems([item.id]);
+      playlist.selectItem(item);
       if (item.file && !item.isLoading) {
-        return playlist.playPauseItem(item.id, true);
+        return playlist.playPauseItem(item, true);
       } else {
-        return playlist.playItem(item.id);
+        return playlist.playItem(item);
       }
     },
-    onContextMenu: props => (event, item) => {
-      console.log('props', props);
+    onContextMenu: props => buildListItemMenu(props)
+    /*onContextMenu: props => (event, item) => {
       event.preventDefault();
       event.stopPropagation();
       const menu = buildListItemMenu.bind({ props })(item);
       const { clientX, clientY } = event;
       menu.popup();
-      // return handleContextMenu(event, item);
-    }
-    // onContextMenu: ({ dispatch }) => (e) => dispatch({ type: 'TOGGLE' })
+    }*/
   }),
-  // renameProp('list', 'tracks'),
-  // withProps(props => {
-  //   console.log('withProps', props);
-  //   return {
-  //     name: '123'
-  //   }
-  // }),
-  // defaultProps({ items: elements }),
-
-  // branch(
-  //   props => {
-  //     const { items } = props;
-  //     return (items && items.length);
-  //   },
-  //   renderComponent(Sortable),
-  //   renderNothing,
-  // )
-  // connect((state, props)=>{
-  //   return {
-  //     ...state.PlayListItems.toJS(),
-  //   };
-  // })
+  branch(
+    ({ items }) => (items && items.length),
+    renderComponent(Sortable),
+    renderNothing,
+  )
 )(Sortable);

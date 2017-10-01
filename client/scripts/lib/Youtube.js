@@ -63,8 +63,8 @@ export default class Youtube {
     this.streams = new Map();
     this.options = options;
     this.events = new EventEmitter();
-    this.events.on('cancel', ({ id, reason, options }) => {
-      if (this.streams.has(id)) {
+    this.events.on('cancel', ({ item, reason, options }) => {
+      if (this.streams.has(item.id)) {
         console.log('cancel download %s', id);
         const downloader = this.streams.get(id);
         downloader.destroy();
@@ -141,7 +141,7 @@ export default class Youtube {
   }
 
   async downloadVideo(video) {
-    console.debug('downloadVideo: ', video.id);
+    console.debug('downloadVideo: ', video);
     const { streams } = this;
     this.streams.set(video.id, null);
     return new Promise((resolve, reject) => {
