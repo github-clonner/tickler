@@ -41,15 +41,13 @@ import React, { Component } from 'react';
 import classNames from 'classnames';
 import Style from '../Player.css';
 
-export default (props) => {
-  const { audio, options, source, playPause, stop, jump, seek, mute } = props;
-  const { isPlaying = false, currentTime = 0 } = audio;
+export default ({ isPlaying, jump, stop, playPause }) => {
   return (
     <div className={ Style.btnGroup } >
-      <button className={ Style.roundButton } onClick={ jump(-1) } title="backward" data-direction={-1} >skip_previous</button>
-      <button className={ Style.roundButton } onClick={ stop } title="stop" disabled={ !currentTime }>stop</button>
-      <button className={ Style.roundButton } onClick={ jump(+1) } title="forward" data-direction={1} >skip_next</button>
-      <button className={ Style.roundButton } onClick={ playPause } title="play">{ isPlaying ? 'pause' : 'play_arrow' }</button>
+      <button className={ Style.roundButton } onClick={ jump(-1) }  title="backward" disabled={ false }>skip_previous</button>
+      <button className={ Style.roundButton } onClick={ stop }      title="stop"     disabled={ !isPlaying }>stop</button>
+      <button className={ Style.roundButton } onClick={ jump(+1) }  title="forward"  disabled={ false }>skip_next</button>
+      <button className={ Style.roundButton } onClick={ playPause } title="play"     disabled={ false }>{ isPlaying ? 'pause' : 'play_arrow' }</button>
     </div>
   );
 };

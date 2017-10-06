@@ -204,6 +204,27 @@ export function playNextItem (id: string) {
   }
 }
 
+export function jumpTo (diraction: number, amount: number = 1) {
+  return async function (dispatch, getState) {
+    const { PlayListItems: items } = getState();
+    if (Math.sign(direction) > 0) {
+
+    } else {
+
+    }
+  };
+  // jump: ({ item, items, player }) => (direction) => (event) => {
+  //   const index = items.findIndex(({ id }) => (id === item.id));
+  //   if (Math.sign(direction) > 0) {
+  //     const nextIndex = ((index + 1) === items.length) ? 0 : index + 1;
+  //     return player.play(items[nextIndex].file);
+  //   } else {
+  //     const prevIndex = (index === 0) ? (items.length - 1) : index - 1;
+  //     return player.play(items[prevIndex].file);
+  //   }
+  // }
+}
+
 /**
  * Play Item.
  * Downloads the item if no local file

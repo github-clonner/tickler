@@ -52,7 +52,9 @@ export const PlayerActionKeys = {
   SET_STOP: 'SET_STOP',
   SET_PAUSE: 'SET_PAUSE',
   SET_READY: 'SET_READY',
-  ERROR: 'ERROR'
+  SET_PLAYPAUSE: 'SET_PLAYPAUSE',
+  TOGGLE_MUTE: 'TOGGLE_MUTE',
+  ERROR: 'ERROR',
 };
 
 export type PlayerActions =
@@ -69,6 +71,8 @@ export type PlayerActions =
   | Action<typeof PlayerActionKeys.SET_PLAYING, boolean>
   | Action<typeof PlayerActionKeys.SET_STOP, boolean>
   | Action<typeof PlayerActionKeys.SET_PAUSE, boolean>
+  | Action<typeof PlayerActionKeys.SET_PLAYPAUSE, any>
   | Action<typeof PlayerActionKeys.SET_READY, boolean>
+  | Action<typeof PlayerActionKeys.TOGGLE_MUTE, void>
   | Action<typeof PlayerActionKeys.ERROR, string>
   ;

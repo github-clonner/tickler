@@ -1,14 +1,12 @@
-// @flow
-
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : Player.js                                                //
-// @summary      : Player reducer                                            //
-// @version      : 0.2.0                                                     //
+// @file         : Volume.jsx                                                //
+// @summary      : Volume control component                                  //
+// @version      : 0.0.1                                                     //
 // @project      : tickelr                                                   //
 // @description  :                                                           //
 // @author       : Benjamin Maggi                                            //
 // @email        : benjaminmaggi@gmail.com                                   //
-// @date         : 12 Sep 2017                                               //
+// @date         : 01 Oct 2017                                               //
 // @license:     : MIT                                                       //
 // ------------------------------------------------------------------------- //
 //                                                                           //
@@ -37,48 +35,24 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-import type { PlayerActions } from '../types';
-import { PlayerActionKeys as Action } from '../types';
 
-const audio = {
-  context: null,
-  analyzer: null,
-  currentTime: 0,
-  seek: 0,
-  duration: 0,
-  volume: 0.5,
-  mute: false,
-  progress: 0,
-  finish: false,
-  isPlaying: false,
-  isPaused: false,
-  isReady: false,
-  wavesurfer: null
+import React, { Component } from 'react';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import classNames from 'classnames';
+import { Progress, InputRange, TimeCode } from '../../index';
+// Import styles
+import Style from '../Player.css';
+
+export default ({ isMuted, volume, setVolume, toggleMute }) => {
+  return (
+    <div className={ classNames( Style.volume, Style.checkboxButtons) } >
+      <input id="volume" type="checkbox" checked={ isMuted } onChange={ toggleMute } />
+      <label htmlFor="volume">volume_up</label>
+      <div className={ Style.slider } >
+        <InputRange value={ volume } min={ 0 } max={ 1 } step={ 0.001 } onChange={ setVolume } />
+      </div>
+    </div>
+  );
 };
-
-export function Audio (state = audio, action: PlayerActions) {
-
-  switch (action.type.replace(/(^START.)/,'')) {
-    case Action.SET_CONTEXT: return { ...state, context: action.payload };
-    case Action.SET_ANALYZER: return { ...state, analyzer: action.payload };
-    case Action.SET_WAVESURFER: return { ...state, wavesurfer: action.payload };
-    case Action.SET_CURRENT_TIME: return { ...state, currentTime: action.payload };
-    case Action.SET_SEEK: return { ...state, seek: action.payload };
-    case Action.SET_DURATION: return { ...state, duration: action.payload };
-    case Action.SET_VOLUME: return { ...state, volume: action.payload };
-    // case Action.SET_MUTE: return { ...state, mute: action.payload };
-    // case Action.SET_LOADING: return { ...state, progress: action.payload };
-    // case Action.SET_FINISHED: return { ...state, finish: action.payload };
-    case Action.SET_PLAYING: return { ...state, isPlaying: true, isPaused: false };
-    // case Action.SET_STOP: return { ...state, isPlaying: false, currentTime: 0 };
-    case Action.SET_STOP: {
-      console.log(Action.SET_STOP, action.payload);
-      return { ...state, isPlaying: false, currentTime: 0 };
-    }
-    // case Action.SET_PAUSE: return { ...state, isPaused: true, isPlaying: false };
-    case Action.SET_READY: return { ...state, isReady: action.payload };
-    default:
-      return state;
-  }
-}
 

@@ -55,18 +55,6 @@ function mapStateToProps(state) {
     item: items[index],
     index,
     audio: state.Audio,
-    currentTime: state.Audio.currentTime,
-    options: {
-      player: state.Settings.get('player'),
-      audio: state.Settings.get('audio')
-    }
-  };
-}
-
-function mapStateToProps2(state) {
-  return {
-    item: state.PlayListItems.toJS().find(({selected}) => (selected)),
-    audio: state.Audio,
     options: {
       player: state.Settings.get('player'),
       audio: state.Settings.get('audio')
@@ -86,30 +74,37 @@ function mapDispatchToProps(dispatch) {
 const Playback = compose(
   pure,
   connect(mapStateToProps, mapDispatchToProps),
-  // mapProps(({ playlist, player, options, settings, items, item, audio }) => {
-  //   return {
-  //     playlist,
-  //     player,
-  //     options,
-  //     settings,
-  //     items,
-  //     item,
-  //     index,
-  //     audio
-  //   }
-  // }),
-  // mapProps(props => ({ playlist, player, options, settings, items, item, index, audio })),
+  mapProps(({ playlist, player, options, settings, items, item, index, audio }) => {
+    // return {
+    //   playlist,
+    //   player,
+    //   options,
+    //   settings,
+    //   items,
+    //   item,
+    //   index,
+    //   audio
+    // }
+    // isPlaying, jump, stop, playPause
+    return {
+      item,
+      isPlaying: audio.isPlaying,
+      stop: player.stop,
+      playPause: player.playPause
+    }
+  }),
   withHandlers({
-    playPause: ({ item, index, player, audio }) => (event) => {
-      console.log(item, (item.file || item.url || item.stream), index)
-      if (audio.isPlaying || audio.isPaused) {
-        return player.playPause();
-      } else {
-        return player.play(item);
-      }
-    },
-    pause: ({ player }) => (event) => player.pause(),
-    stop: ({ player }) => (event) => player.stop(),
+    playPause: ({ item, playPause }) => (event) => playPause(item),
+    // playPause: ({ item, index, player, audio }) => (event) => {
+    //   console.log(item, (item.file || item.url || item.stream), index)
+    //   if (audio.isPlaying || audio.isPaused) {
+    //     return player.playPause();
+    //   } else {
+    //     return player.play(item);
+    //   }
+    // },
+    // pause: ({ player }) => player.pause,
+    // stop: ({ player }) => player.stop,
     jump: ({ item, items, player }) => (direction) => (event) => {
       const index = items.findIndex(({ id }) => (id === item.id));
       if (Math.sign(direction) > 0) {
@@ -119,15 +114,26 @@ const Playback = compose(
         const prevIndex = (index === 0) ? (items.length - 1) : index - 1;
         return player.play(items[prevIndex].file);
       }
-    },
-    seek: props => (event, item) => {
-      console.log('seek', props, event, item);
-    },
-    mute: props => (event, item) => {
-      console.log('mute', props, event, item);
     }
   })
 )(Controls.Playback);
+
+/* Volume */
+const Volume = compose(
+  pure,
+  connect(mapStateToProps, mapDispatchToProps),
+  mapProps(({ player, options, settings, audio }) => {
+    return {
+      setVolume: player.setVolume,
+      isMuted: audio.isMuted,
+      volume: audio.volume
+    }
+  }),
+  withHandlers({
+    toggleMute: ({ player }) => player.toggleMute
+  })
+)(Controls.Volume);
+
 
 @connect(mapStateToProps, mapDispatchToProps)
 export default class Play extends Component {
@@ -141,20 +147,15 @@ export default class Play extends Component {
       height: 60
     });
   }
+
   render () {
     const { audio } = this.props;
     return (
       <div className={ Style.player }>
         <div className={ Style.controls } >
           <Playback />
-          <Controls.Order { ...this.props } />
-          <div className={ classNames( Style.volume, Style.checkboxButtons) } >
-            <input id="volume" type="checkbox" checked={false}/>
-            <label htmlFor="volume">volume_up</label>
-            <div className={ Style.slider } >
-              <InputRange value={0.5} min={0} max={1} step={0.001}/>
-            </div>
-          </div>
+          <Controls.Order />
+          <Volume />
           <InputRange value={ audio.currentTime / audio.duration * 100 } min={ 0 } max={ 100 } step={ 0.1 } />
           <TimeCode time={ audio.currentTime } duration={ audio.duration } />
         </div>

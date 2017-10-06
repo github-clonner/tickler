@@ -1,7 +1,7 @@
 {
   "name": "Tickler",
   "productName": "Tickler",
-  "version": "1.2.2",
+  "version": "2.2.3",
   "description": "Audio player",
   "author": {
     "name": "Benjamin Maggi",
@@ -95,7 +95,9 @@
     "react-tap-event-plugin": "^3.0.0",
     "recompose": "^0.25.1",
     "redux": "^3.7.2",
+    "redux-actions": "^2.2.1",
     "redux-thunk": "^2.2.0",
+    "reselect": "^3.0.1",
     "sanitize-filename": "^1.6.1",
     "skeemas": "^1.2.4",
     "urijs": "^1.18.10",
