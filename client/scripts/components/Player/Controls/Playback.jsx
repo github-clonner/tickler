@@ -37,17 +37,34 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-import React, { Component } from 'react';
+import React from 'react';
 import classNames from 'classnames';
 import Style from '../Player.css';
+import { compose, onlyUpdateForPropTypes, setPropTypes } from 'recompose';
+import PropTypes from 'prop-types';
 
-export default ({ isPlaying, jump, stop, playPause }) => {
+/* component enhacer */
+const enhance = compose(
+  onlyUpdateForPropTypes,
+  setPropTypes({
+    isPlaying: PropTypes.bool,
+    canJump: PropTypes.func.isRequired,
+    jump: PropTypes.func.isRequired,
+    stop: PropTypes.func.isRequired,
+    playPause: PropTypes.func.isRequired
+  })
+)
+
+///////////////////////////////////////////////////////////////////////////////
+// playback component                                                        //
+///////////////////////////////////////////////////////////////////////////////
+export default enhance(({ isPlaying, canJump, jump, stop, playPause }) => {
   return (
     <div className={ Style.btnGroup } >
-      <button className={ Style.roundButton } onClick={ jump(-1) }  title="backward" disabled={ false }>skip_previous</button>
+      <button className={ Style.roundButton } onClick={ jump(-1) }  title="backward" disabled={ canJump(-1) }>skip_previous</button>
       <button className={ Style.roundButton } onClick={ stop }      title="stop"     disabled={ !isPlaying }>stop</button>
-      <button className={ Style.roundButton } onClick={ jump(+1) }  title="forward"  disabled={ false }>skip_next</button>
+      <button className={ Style.roundButton } onClick={ jump(+1) }  title="forward"  disabled={ canJump(+1) }>skip_next</button>
       <button className={ Style.roundButton } onClick={ playPause } title="play"     disabled={ false }>{ isPlaying ? 'pause' : 'play_arrow' }</button>
     </div>
   );
-};
+});

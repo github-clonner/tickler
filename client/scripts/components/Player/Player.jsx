@@ -40,7 +40,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { PlayList, Player, Settings } from '../../actions';
-import { compose, branch, pure, renderNothing, renderComponent, withPropsOnChange, withState, withReducer, withHandlers, withProps, mapProps, renameProp, defaultProps, setPropTypes } from 'recompose';
+import { compose, onlyUpdateForPropTypes, branch, pure, renderNothing, renderComponent, withPropsOnChange, withState, withReducer, withHandlers, withProps, mapProps, renameProp, defaultProps, setPropTypes } from 'recompose';
 import classNames from 'classnames';
 // Import styles
 import Style from './Player.css';
@@ -51,7 +51,7 @@ function mapStateToProps(state) {
   const items = state.PlayListItems.toJS();
   const index = items.findIndex(({selected}) => (selected))
   return {
-    items,
+    // items,
     item: items[index],
     index,
     audio: state.Audio,
@@ -64,9 +64,9 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    playlist: bindActionCreators(PlayList, dispatch),
+    // playlist: bindActionCreators(PlayList, dispatch),
     player: bindActionCreators(Player, dispatch),
-    settings: bindActionCreators(Settings, dispatch)
+    // settings: bindActionCreators(Settings, dispatch)
   };
 }
 
@@ -94,7 +94,7 @@ const Playback = compose(
     }
   }),
   withHandlers({
-    playPause: ({ item, playPause }) => (event) => playPause(item),
+    playPause: ({ item, playPause }) => event => playPause(item),
     // playPause: ({ item, index, player, audio }) => (event) => {
     //   console.log(item, (item.file || item.url || item.stream), index)
     //   if (audio.isPlaying || audio.isPaused) {
@@ -105,7 +105,11 @@ const Playback = compose(
     // },
     // pause: ({ player }) => player.pause,
     // stop: ({ player }) => player.stop,
-    jump: ({ item, items, player }) => (direction) => (event) => {
+    canJump: ({ item }) => direction => {
+      console.log('canJump', direction)
+      return true;
+    },
+    jump: ({ item, items, player }) => direction => event => {
       const index = items.findIndex(({ id }) => (id === item.id));
       if (Math.sign(direction) > 0) {
         const nextIndex = ((index + 1) === items.length) ? 0 : index + 1;
@@ -115,6 +119,13 @@ const Playback = compose(
         return player.play(items[prevIndex].file);
       }
     }
+  }),
+  onlyUpdateForPropTypes,
+  setPropTypes({
+    item: PropTypes.object,
+    isPlaying: PropTypes.bool.isRequired,
+    stop: PropTypes.func.isRequired,
+    playPause: PropTypes.func.isRequired
   })
 )(Controls.Playback);
 

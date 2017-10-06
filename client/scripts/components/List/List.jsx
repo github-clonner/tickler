@@ -121,7 +121,11 @@ export default compose(
   withHandlers({
     onClick: ({ settings, playlist, items }) => (event, item) => {
       const selected = handleClick(event, items, item);
-      return playlist.selectItems(selected);
+      if (Array.isArray(selected) && selected.length > 1) {
+        return playlist.selectItems(selected);
+      } else if (Array.isArray(selected)) {
+        return playlist.selectItem(selected.pop());
+      }
     },
     onDoubleClick: ({ playlist }) => (event, item) => {
       playPause(item);
