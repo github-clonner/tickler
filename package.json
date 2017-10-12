@@ -1,7 +1,7 @@
 {
   "name": "Tickler",
   "productName": "Tickler",
-  "version": "2.2.3",
+  "version": "2.2.5",
   "description": "Audio player",
   "author": {
     "name": "Benjamin Maggi",
@@ -103,7 +103,7 @@
     "urijs": "^1.18.10",
     "uuid": "^3.1.0",
     "wavesurfer.js": "^2.0.0-beta02",
-    "ytdl-core": "^0.17.1"
+    "ytdl-core": "^0.18.1"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",

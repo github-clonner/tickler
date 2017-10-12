@@ -1,6 +1,8 @@
+// @flow
+
 ///////////////////////////////////////////////////////////////////////////////
 // @file         : Player.jsx                                                //
-// @summary      : Player component                                          //
+// @summary      : HOC Player component                                      //
 // @version      : 0.0.1                                                     //
 // @project      : tickelr                                                   //
 // @description  :                                                           //
@@ -40,22 +42,12 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { PlayList, Player, Settings } from '../../actions';
-import { compose, onlyUpdateForPropTypes, branch, pure, renderNothing, renderComponent, withPropsOnChange, withState, withReducer, withHandlers, withProps, mapProps, renameProp, defaultProps, setPropTypes } from 'recompose';
-import classNames from 'classnames';
+import * as Controls from './Controls';
 // Import styles
 import Style from './Player.css';
-import { Progress, InputRange, TimeCode } from '../index';
-import * as Controls from './Controls';
 
 function mapStateToProps(state) {
-  const items = state.PlayListItems.toJS();
-  const index = items.findIndex(({selected}) => (selected))
   return {
-    // items,
-    item: items[index],
-    index,
-    audio: state.Audio,
-    // player: state.Player,
     options: {
       player: state.Settings.get('player'),
       audio: state.Settings.get('audio')
@@ -65,9 +57,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    // playlist: bindActionCreators(PlayList, dispatch),
     player: bindActionCreators(Player, dispatch)
-    // settings: bindActionCreators(Settings, dispatch)
   };
 }
 
@@ -76,7 +66,6 @@ export default class Play extends Component {
 
   componentDidMount () {
     const { player } = this.props;
-    const waves = this.refs;
     return player.init({
       container: this.refs.waves,
       barWidth: 2,
@@ -85,10 +74,9 @@ export default class Play extends Component {
   }
 
   render () {
-    const { audio } = this.props;
     return (
       <div className={ Style.player }>
-        <div className={ Style.controls } >
+        <div className={ Style.controls }>
           <Controls.Playback />
           <Controls.Order />
           <Controls.Volume />
@@ -100,8 +88,3 @@ export default class Play extends Component {
   }
 }
 
-
-/*
-<InputRange value={ audio.currentTime / audio.duration * 100 } min={ 0 } max={ 100 } step={ 0.1 } />
-<TimeCode time={ audio.currentTime } duration={ audio.duration } />
-*/

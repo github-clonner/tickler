@@ -38,25 +38,31 @@
 import type { Action } from './Action';
 
 export const PlayerActionKeys = {
+  /* HTML5 Audio */
   SET_CONTEXT: 'SET_CONTEXT',
   SET_ANALYZER: 'SET_ANALYZER',
   SET_WAVESURFER: 'SET_WAVESURFER',
+  /* Media Properties */
   SET_DURATION: 'SET_DURATION',
+  /* Playback Status */
   SET_CURRENT_TIME: 'SET_CURRENT_TIME',
+  /* Events */
   SET_SEEK: 'SET_SEEK',
-  SET_VOLUME: 'SET_VOLUME',
-  SET_MUTE: 'SET_MUTE',
   SET_LOADING: 'SET_LOADING',
   SET_FINISHED: 'SET_FINISHED',
   SET_PLAYING: 'SET_PLAYING',
+  SET_READY: 'SET_READY',
+  /* Methods */
+  SET_VOLUME: 'SET_VOLUME',
+  SET_MUTE: 'SET_MUTE',
   SET_STOP: 'SET_STOP',
   SET_PAUSE: 'SET_PAUSE',
-  SET_READY: 'SET_READY',
   SET_PLAYPAUSE: 'SET_PLAYPAUSE',
   TOGGLE_MUTE: 'TOGGLE_MUTE',
   SEEK_TO: 'SEEK_TO',
   ERROR: 'ERROR',
 };
+
 
 export type PlayerActions =
   | Action<typeof PlayerActionKeys.SET_CONTEXT, any>

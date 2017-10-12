@@ -41,7 +41,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { compose, onlyUpdateForPropTypes, branch, pure, renderNothing, renderComponent, withPropsOnChange, withState, withReducer, withHandlers, withProps, mapProps, renameProp, defaultProps, setPropTypes } from 'recompose';
+import { compose, withStateHandlers, onlyUpdateForPropTypes, branch, pure, renderNothing, renderComponent, withPropsOnChange, withState, withReducer, withHandlers, withProps, mapProps, renameProp, defaultProps, setPropTypes } from 'recompose';
 /* owner libs */
 import { Player, Settings } from '../../../actions';
 import { InputRange } from '../../index';
@@ -88,18 +88,32 @@ const enhance = compose(
       isMuted: audio.isMuted,
       volume: audio.volume
     }
-  })
+  }),
+  withStateHandlers(
+    ({ initialState = false }) => ({ isChanging: initialState }),
+    {
+      onMouseDown: ({ isChanging }) => (event) => ({
+        isChanging: true,
+      }),
+      onMouseUp: ({ isChanging }) => (event) => ({
+        isChanging: false,
+      })
+    }
+  )
 );
 
 /*
  * Volume component renderer
  */
-export default enhance(({ isMuted, volume, setVolume, toggleMute }) => {
+export default enhance(({ isChanging, onMouseDown, onMouseUp, isMuted, volume, setVolume, toggleMute }) => {
+  const style = classNames( Style.volume, Style.checkboxButtons, {
+    [Style.isChanging]: isChanging
+  });
   return (
-    <div className={ classNames( Style.volume, Style.checkboxButtons) } >
+    <div className={ style } >
       <input id="volume" type="checkbox" checked={ isMuted } onChange={ toggleMute } />
       <label htmlFor="volume">volume_up</label>
-      <div className={ Style.slider } >
+      <div className={ Style.slider } onMouseDown={ onMouseDown } onMouseUp={ onMouseUp }>
         <InputRange value={ volume } min={ 0 } max={ 1 } step={ 0.001 } onChange={ setVolume } />
       </div>
     </div>
