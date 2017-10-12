@@ -168,6 +168,15 @@ export default function PlayListItems (state = List([]), action) {
       return unselect().update(index, item => item.set('selected', true));
     }
 
+    case Action.SELECT_INDEX: {
+      const index = parseInt(action.payload, 10);
+      if (Number.isInteger(index) && Math.sign(index) >= 0) {
+        return unselect().update(action.payload, item => item.set('selected', true));
+      } else {
+        return state;
+      }
+    }
+
     default:
       return state;
   }

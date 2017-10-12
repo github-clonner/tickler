@@ -35,20 +35,22 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
+import fs from 'fs';
+import path from 'path';
+import URL, { URL as URI} from 'url';
+import { shell, remote } from 'electron';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+
+/* Private Modules */
 import * as Actions from 'actions/PlayList';
 import * as Settings from 'actions/Settings';
 import { ContextMenu, buildContextMenu } from '../../lib';
-import { shell, remote } from 'electron';
-import fs from 'fs';
-import path from 'path';
 import { openModal } from '../Modal/Modal';
-import URL, { URL as URI} from 'url';
 
-
+/* Private variables */
 const DialogOptions = {
   open: {
     title: 'Open playlist',
@@ -60,64 +62,64 @@ const DialogOptions = {
   }
 };
 
+/* Public Methods */
 export const buildListItemMenu = (props) => (event, item) => {
   event.preventDefault();
   event.stopPropagation();
   const { clientX, clientY } = event;
   const { player, playlist, inspect, items } = props;
-  console.log(props);
 
   const menu = buildContextMenu([{
     label: item.file ? (item.isPlaying ? 'Pause' : 'Play') : (item.isLoading ? 'cancel' : 'download'),
-    click: () => {
+    click() {
       if (item.file && !item.isLoading) {
         return item.isPlaying ? player.playPause(item) : player.play(item);
       } else if (!item.file && !item.isLoading) {
         return playlist.playItem(item);
       } else if (!item.file && item.isLoading) {
-        playlist.cancel(item, true);
+        playlist.cancel(item.id, true);
       }
     }
   }, {
     label: 'Media Information...',
-    click () {
+    click() {
       console.log(item);
       return openModal('/about');
     }
-  }, {
-    type: 'separator'
-  }, {
+  },
+  { type: 'separator' },
+  {
     label: 'Select All',
-    click: () => {
+    click() {
       const items = list.reduce((items, { id }) => ({ ...items, ...{ [id]: { selected: true} } }), {});
       actions.editItems(items);
     }
-  }, {
-    type: 'separator'
-  }, {
+  },
+  { type: 'separator' },
+  {
     label: 'Explore item folder',
     enabled: fs.existsSync(item.file),
-    click () {
+    click() {
       return shell.showItemInFolder(item.file);
     }
-  }, {
-    type: 'separator'
-  }, {
+  },
+  { type: 'separator' },
+  {
     label: 'Remove from PlayList',
-    click () {}
+    click() {}
   }, {
     label: 'Delete from Library',
-    click () {}
-  }, {
-    type: 'separator'
-  }, {
+    click() {}
+  },
+  { type: 'separator' },
+  {
     label: 'Open...',
-    click (menuItem, browserWindow, event) {
+    click(menuItem, browserWindow, event) {
       return actions.openPlayList();
     }
   }, {
     label: 'View Source',
-    click () {
+    click() {
       const { dialog } = remote;
       dialog.showOpenDialog(DialogOptions.open, files => {
         if (!Array.isArray(files) || files.length < 1) {
@@ -136,6 +138,5 @@ export const buildListItemMenu = (props) => (event, item) => {
       });
     }
   }]);
-
   return menu.popup();
 };

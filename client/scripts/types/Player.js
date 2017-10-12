@@ -54,6 +54,7 @@ export const PlayerActionKeys = {
   SET_READY: 'SET_READY',
   SET_PLAYPAUSE: 'SET_PLAYPAUSE',
   TOGGLE_MUTE: 'TOGGLE_MUTE',
+  SEEK_TO: 'SEEK_TO',
   ERROR: 'ERROR',
 };
 
@@ -68,11 +69,12 @@ export type PlayerActions =
   | Action<typeof PlayerActionKeys.SET_MUTE, boolean>
   | Action<typeof PlayerActionKeys.SET_LOADING, number>
   | Action<typeof PlayerActionKeys.SET_FINISHED, boolean>
-  | Action<typeof PlayerActionKeys.SET_PLAYING, boolean>
+  | Action<typeof PlayerActionKeys.SET_PLAYING, any>
   | Action<typeof PlayerActionKeys.SET_STOP, boolean>
   | Action<typeof PlayerActionKeys.SET_PAUSE, boolean>
   | Action<typeof PlayerActionKeys.SET_PLAYPAUSE, any>
   | Action<typeof PlayerActionKeys.SET_READY, boolean>
   | Action<typeof PlayerActionKeys.TOGGLE_MUTE, void>
+  | Action<typeof PlayerActionKeys.SEEK_TO, number>
   | Action<typeof PlayerActionKeys.ERROR, string>
   ;

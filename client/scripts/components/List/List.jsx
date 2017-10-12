@@ -137,13 +137,6 @@ export default compose(
       }
     },
     onContextMenu: props => buildListItemMenu(props)
-    /*onContextMenu: props => (event, item) => {
-      event.preventDefault();
-      event.stopPropagation();
-      const menu = buildListItemMenu.bind({ props })(item);
-      const { clientX, clientY } = event;
-      menu.popup();
-    }*/
   }),
   branch(
     ({ items }) => (items && items.length),

@@ -38,32 +38,106 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 import React from 'react';
+import PropTypes from 'prop-types';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import { compose, onlyUpdateForPropTypes, branch, pure, renderNothing, renderComponent, withPropsOnChange, withState, withReducer, withHandlers, withProps, mapProps, renameProp, defaultProps, setPropTypes } from 'recompose';
+/* owner libs */
+import { Player, Settings } from '../../../actions';
+// Import styles
 import classNames from 'classnames';
 import Style from '../Player.css';
-import { compose, onlyUpdateForPropTypes, setPropTypes } from 'recompose';
-import PropTypes from 'prop-types';
 
-/* component enhacer */
+/*
+ * Subbscribe to redux store and merge these props
+ * reference: https://github.com/reactjs/react-redux/blob/master/docs/api.md
+ */
+function mapStateToProps(state) {
+  const items = state.PlayListItems.toJS();
+  const index = items.findIndex(({selected}) => (selected))
+  return {
+    // items,
+    item: items[index],
+    index,
+    audio: state.Audio,
+    // player: state.Player,
+    options: {
+      player: state.Settings.get('player'),
+      audio: state.Settings.get('audio')
+    }
+  };
+}
+
+/*
+ * Redux Action Creators
+ * Each key inside this object is assumed to be a Redux action creator
+ * reference: https://github.com/reactjs/react-redux/blob/master/docs/api.md
+ */
+function mapDispatchToProps(dispatch) {
+  return {
+    player: bindActionCreators(Player, dispatch)
+  };
+}
+
+/*
+ * Component wrapper
+ */
 const enhance = compose(
+  pure,
+  connect(mapStateToProps, mapDispatchToProps),
+  mapProps(({ playlist, player, options, settings, items, item, index, audio }) => {
+    return {
+      item,
+      player,
+      isPlaying: audio.isPlaying,
+      currentTime: audio.currentTime,
+      stop: player.stop,
+      playPause: audio.playPause,
+      skip: {
+        forward: false,
+        backward: true
+      }
+    }
+  }),
+  withHandlers({
+    playPause: ({ item, player, isPlaying }) => event => {
+      console.log('playPause: ', item, player, isPlaying);
+      return player.playPause(item);
+    },
+    // pause: ({ player }) => player.pause,
+    // stop: ({ player }) => player.stop,
+    // canJump: ({ item }) => direction => {
+    //   console.log('canJump', direction)
+    //   return true;
+    // },
+    jump: ({ item, items, player }) => direction => event => {
+      const index = items.findIndex(({ id }) => (id === item.id));
+      if (Math.sign(direction) > 0) {
+        const nextIndex = ((index + 1) === items.length) ? 0 : index + 1;
+        return player.play(items[nextIndex].file);
+      } else {
+        const prevIndex = (index === 0) ? (items.length - 1) : index - 1;
+        return player.play(items[prevIndex].file);
+      }
+    }
+  }),
   onlyUpdateForPropTypes,
   setPropTypes({
-    isPlaying: PropTypes.bool,
-    canJump: PropTypes.func.isRequired,
-    jump: PropTypes.func.isRequired,
-    stop: PropTypes.func.isRequired,
-    playPause: PropTypes.func.isRequired
+    isPlaying: PropTypes.bool.isRequired,
+    currentTime: PropTypes.number.isRequired,
+    skip: PropTypes.object
   })
-)
+);
 
-///////////////////////////////////////////////////////////////////////////////
-// playback component                                                        //
-///////////////////////////////////////////////////////////////////////////////
-export default enhance(({ isPlaying, canJump, jump, stop, playPause }) => {
+/*
+ * Playback component renderer
+ */
+export default enhance(({ isPlaying, currentTime, skip, jump, stop, playPause }) => {
   return (
     <div className={ Style.btnGroup } >
-      <button className={ Style.roundButton } onClick={ jump(-1) }  title="backward" disabled={ canJump(-1) }>skip_previous</button>
-      <button className={ Style.roundButton } onClick={ stop }      title="stop"     disabled={ !isPlaying }>stop</button>
-      <button className={ Style.roundButton } onClick={ jump(+1) }  title="forward"  disabled={ canJump(+1) }>skip_next</button>
+      <button className={ Style.roundButton } onClick={ jump(-1) }  title="backward" disabled={ skip.backward }>skip_previous</button>
+      <button className={ Style.roundButton } onClick={ stop }      title="stop"     disabled={ !(currentTime > 0) }>stop</button>
+      <button className={ Style.roundButton } onClick={ jump(+1) }  title="forward"  disabled={ skip.forward }>skip_next</button>
       <button className={ Style.roundButton } onClick={ playPause } title="play"     disabled={ false }>{ isPlaying ? 'pause' : 'play_arrow' }</button>
     </div>
   );

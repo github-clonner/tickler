@@ -38,55 +38,9 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 import { PlayerActionKeys as Action } from '../types';
-import { createAction } from 'redux-actions';
+import { createAsyncAction } from '../lib/ActionHelpers';
 import WaveSurfer from 'wavesurfer.js';
 import throttle from 'lodash/throttle';
-
-function isPromise(promise) {
-  return promise && promise.then && promise.catch;
-}
-
-export const createAsyncAction = function (type, fn) {
-  const events = [ 'START', 'SUCCEEDED', 'FAILED', 'ENDED' ];
-  const actionCreators = events
-    .map(prefix => [ prefix, `${prefix}_${type}` ])
-    .reduce((actions, [ prefix, name ]) => ({ ...actions, ...{ [prefix]: createAction(name) }}), {});
-
-  const factory = (...args) => (dispatch, getState, extra) => {
-    let result;
-    const startedAt = (new Date()).getTime();
-    dispatch(actionCreators['START'](args));
-    const succeeded = (data) => {
-      dispatch(actionCreators['SUCCEEDED'](data));
-      dispatch(actionCreators['ENDED']({ elapsed: (new Date()).getTime() - startedAt }));
-      return data;
-    };
-    const failed = (error) => {
-      dispatch(actionCreators['FAILED'](error));
-      dispatch(actionCreators['ENDED']({ elapsed: (new Date()).getTime() - startedAt }));
-      throw error;
-    };
-    try {
-      console.log('run:', args, args.length);
-      result = fn(...args, { dispatch, getState, extra });
-    } catch (error) {
-      failed(error);
-    }
-    // in case of async (promise), use success and fail callbacks.
-    if (isPromise(result)) {
-      return result.then(succeeded, failed);
-    }
-    return succeeded(result);
-  };
-
-  factory.NAME = type;
-  factory.START = actionCreators['START'].toString();
-  factory.SUCCEEDED = actionCreators['SUCCEEDED'].toString();
-  factory.FAILED = actionCreators['FAILED'].toString();
-  factory.ENDED = actionCreators['ENDED'].toString();
-  return factory;
-};
-
 
 export const setAnalyzer = (payload: any) => ({ type: Action.SET_ANALYZER, payload });
 export const setContext = (payload: any) => ({ type: Action.SET_CONTEXT, payload });
@@ -104,27 +58,67 @@ export const setPlaying = (payload: boolean) => ({ type: Action.SET_PLAYING, pay
 export const setPause = (payload: boolean) => ({ type: Action.SET_PAUSE, payload });
 export const ERROR = (error: string) => ({ type: Action.ERROR, error });
 
-export function init (options: Object) {
+/*
+ * Initialise the wave
+ */
+export const init = function(options: Object) {
   return async function (dispatch, getState) {
-    const { Audio } = getState();
     const wavesurfer = window.WS = new WaveSurfer(options);
+    const getPlayBackStatus = () => ({
+      isPlaying: wavesurfer.isPlaying(),
+      isPaused: wavesurfer.backend.isPaused()
+    })
+
+    /*
+     * Fires continuously when loading via XHR or drag'n'drop.
+     * Listener will receive (integer) loading progress in percents [0..100] and (object) event target.
+     */
     const onLoading = (progress: number) => dispatch(setLoading(progress));
+
+    /*
+     * Fires on seeking.
+     * Listener will receive (float) progress [0..1].
+     */
     const onSeek = (progress: number) => dispatch(setSeek(progress));
-    const onFinish = () => dispatch(setFinished(true));
-    const onError = (error: string) => dispatch(ERROR(error));
-    const onPause = () => (
-      dispatch(setPlaying(false)),
-      dispatch(setPause(true))
-    );
+
+    /*
+     * Fires when it finishes playing.
+     */
+    const onFinish = () => {
+      wavesurfer.stop();
+      return dispatch(setStop(true));
+    };
+
+    /*
+     * Fires When audio is paused
+     */
+    const onPause = () => dispatch(setPause(getPlayBackStatus()));
+
+    /*
+     * Fires when play starts.
+     */
+    const onPlay = () => dispatch(setPlaying(getPlayBackStatus()));
+
+    /*
+     * Fires when audio is loaded, decoded and the waveform drawn.
+     */
     const onReady = () => (
-      dispatch(setReady(true)),
+      dispatch(setReady(wavesurfer.isReady)),
       dispatch(setDuration(wavesurfer.getDuration()))
     );
 
+    /*
+     * Fires continuously as the audio plays. Also fires on seeking.
+     */
     const onAudioprocess = throttle(() => (
-      dispatch(setPlaying(true)),
       dispatch(setCurrentTime(wavesurfer.getCurrentTime()))
     ), 100, { trailing: true });
+
+    /*
+     * Fires on error.
+     * Listener will receive (string) error message.
+     */
+    const onError = (error: string) => dispatch(ERROR(error));
 
     wavesurfer.init();
 
@@ -133,6 +127,7 @@ export function init (options: Object) {
     wavesurfer.on('audioprocess', onAudioprocess);
     wavesurfer.on('seek', onSeek);
     wavesurfer.on('pause', onPause);
+    wavesurfer.on('play', onPlay);
     wavesurfer.on('finish', onFinish);
     wavesurfer.on('error', onError);
 
@@ -140,12 +135,14 @@ export function init (options: Object) {
   }
 };
 
-export function load (item: Object) {
+/*
+ * Loads audio and re-renders the waveform.
+ */
+export const load = function(item: Object) {
   return async function (dispatch, getState) {
     const { Audio } = getState();
     const media = item.file || item.url || item.stream;
     try {
-      console.log('media', media);
       Audio.wavesurfer.load(media);
       return dispatch(setLoading(0));
     } catch (error) {
@@ -155,85 +152,53 @@ export function load (item: Object) {
   };
 };
 
-export function play (item: Object) {
-  return async function (dispatch, getState) {
-    const { Audio } = getState();
-    Audio.wavesurfer.once('ready', Audio.wavesurfer.play);
-    return dispatch(load(item));
-  }
-}
-
-// export function playPause () {
-//   return async function (dispatch, getState) {
-//     const { Audio } = getState();
-//     Audio.wavesurfer.playPause();
-//     const isPlaying = Audio.wavesurfer.isPlaying();
-//     return (
-//       dispatch(setPlaying(isPlaying)),
-//       dispatch(setPause(!isPlaying))
-//     );
-//   };
-// }
-
-
+/*
+ * Toggle playback
+ */
 export const playPause = createAsyncAction(Action.SET_PLAYPAUSE, (item: any, { dispatch, getState }) => {
   const { Audio } = getState();
-  console.log('playPause', Audio.wavesurfer.isPlaying())
   if (Audio.wavesurfer.isPlaying() || Audio.wavesurfer.getCurrentTime()) {
-    console.log('toggle playPause');
     return Audio.wavesurfer.playPause();
   } else {
+    /* wait until media is loaded and decoded */
     Audio.wavesurfer.once('ready', (...args) => {
-      console.log('isReady', args);
       return Audio.wavesurfer.play();
     });
+    /* load media */
     return dispatch(load(item));
   }
 });
 
+/*
+ * Stops and goes to the beginning
+ */
 export const stop = createAsyncAction(Action.SET_STOP, (item: any, { dispatch, getState }) => {
   const { Audio } = getState();
   Audio.wavesurfer.once('seek', progress => {
     console.log('stop', progress);
-    // return dispatch(setStop(progress))
   });
   return Audio.wavesurfer.stop();
-  // if (Audio.wavesurfer.isPlaying()) {
-  //   return Audio.wavesurfer.playPause();
-  // } else {
-  //   Audio.wavesurfer.once('ready', (...args) => {
-  //     console.log('isReady', args);
-  //     return Audio.wavesurfer.play();
-  //   });
-  //   return dispatch(load(item));
-  // }
 });
 
+/*
+ * Seeks to a position
+ */
+export const seekTo = createAsyncAction(Action.SEEK_TO, (progress: number, { dispatch, getState }) => {
+  const { Audio } = getState();
+  return Audio.wavesurfer.seekTo(progress);
+});
 
-// export function pause () {
-//   return async function (dispatch, getState) {
-//     const { Audio } = getState();
-//     Audio.wavesurfer.pause();
-//     return dispatch(setPause(true));
-//   };
-// }
-
-// export function stop () {
-//   return async function (dispatch, getState) {
-//     const { Audio } = getState();
-//     Audio.wavesurfer.stop();
-//     Audio.wavesurfer.once('seek', progress => {
-//       console.log('seek', progress);
-//       return dispatch(setStop(progress))
-//     });
-//   };
-// }
-
+/*
+ * Set the playback volume
+ */
 export const setVolume = createAsyncAction(Action.SET_VOLUME, (volume: number, { dispatch, getState }) => {
   const { Audio } = getState();
   return Audio.wavesurfer.setVolume(volume);
 });
 
+/*
+ * Toggle the volume on and off
+ */
 export const toggleMute = createAsyncAction(Action.TOGGLE_MUTE, (mute: boolean, { getState }) => {
   const { Audio } = getState();
   Audio.wavesurfer.toggleMute();

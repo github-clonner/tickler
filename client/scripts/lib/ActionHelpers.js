@@ -1,14 +1,14 @@
 // @flow
 
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : Item.js                                                   //
-// @summary      : List item component                                       //
+// @file         : ActionHelpers.js                                          //
+// @summary      : Collection of Redux helpers                               //
 // @version      : 0.0.1                                                     //
 // @project      : tickelr                                                   //
 // @description  :                                                           //
 // @author       : Benjamin Maggi                                            //
 // @email        : benjaminmaggi@gmail.com                                   //
-// @date         : 30 Sep 2017                                               //
+// @date         : 13 Oct 2017                                               //
 // @license:     : MIT                                                       //
 // ------------------------------------------------------------------------- //
 //                                                                           //
@@ -37,49 +37,53 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-// http://jsfiddle.net/bmaggi/ypxa8nvd/6/
+import { createAction } from 'redux-actions';
 
-import React, { Component } from 'react';
-import classNames from 'classnames';
-import * as RowField from './RowField';
-import Style from './List.css';
+function isPromise(promise) {
+  return promise && promise.then && promise.catch;
+}
 
-const drawProgress = function (item) {
-  if(!item.isLoading && !item.isPlaying) {
-    return {};
-  } else if (item.isLoading) {
-    const { progress } = item;
-    return {
-      'background': `linear-gradient(to right, #eee 0%, #eee ${progress * 100}%,#f6f6f6 ${progress * 100}%,#f6f6f6 100%)`
+/*
+ * Asynchronous action creator
+ * Use this helper to call a methods that returns a Promise
+ */
+export const createAsyncAction = function (type, fn) {
+  const events = [ 'START', 'SUCCEEDED', 'FAILED', 'ENDED' ];
+  const actionCreators = events
+    .map(prefix => [ prefix, `${prefix}_${type}` ])
+    .reduce((actions, [ prefix, name ]) => ({ ...actions, ...{ [prefix]: createAction(name) }}), {});
+
+  const factory = (...args) => (dispatch, getState, extra) => {
+    let result;
+    const startedAt = (new Date()).getTime();
+    dispatch(actionCreators['START'](args));
+    const succeeded = (data) => {
+      dispatch(actionCreators['SUCCEEDED'](data));
+      dispatch(actionCreators['ENDED']({ elapsed: (new Date()).getTime() - startedAt }));
+      return data;
     };
-  }
-};
+    const failed = (error) => {
+      dispatch(actionCreators['FAILED'](error));
+      dispatch(actionCreators['ENDED']({ elapsed: (new Date()).getTime() - startedAt }));
+      throw error;
+    };
+    try {
+      console.log('run:', args, args.length);
+      result = fn(...args, { dispatch, getState, extra });
+    } catch (error) {
+      failed(error);
+    }
+    // in case of async (promise), use success and fail callbacks.
+    if (isPromise(result)) {
+      return result.then(succeeded, failed);
+    }
+    return succeeded(result);
+  };
 
-export default ({ item, index, handlers }) => {
-  const style = classNames(Style.row, {
-    [Style.active]: item.isPlaying,
-    [Style.selected]: item.selected,
-    [Style.loading]: item.isLoading
-  });
-  const { onClick, onDoubleClick, onContextMenu, dragEnd, dragStart } = handlers;
-  return (
-    <li
-      draggable="true"
-      item-id={ index }
-      className={ style }
-      style={ drawProgress(item) }
-      onClick={ event => onClick(event, item) }
-      onDoubleClick={ event => onDoubleClick(event, item) }
-      onContextMenu={ event => onContextMenu(event, item) }
-      onDragEnd={ event => dragEnd(event) }
-      onDragStart={ event => dragStart(event) }
-    >
-      <RowField.Index index={ index } />
-      <RowField.Status song={ item } />
-      <RowField.Title title={ item.title } />
-      <RowField.Rating stars={ item.stars } />
-      <RowField.Duration duration={ item.duration } format="#{2H}:#{2M}:#{2S}" />
-      <RowField.DropDown onClick={ event => onContextMenu(event, item) }/>
-    </li>
-  );
+  factory.NAME = type;
+  factory.START = actionCreators['START'].toString();
+  factory.SUCCEEDED = actionCreators['SUCCEEDED'].toString();
+  factory.FAILED = actionCreators['FAILED'].toString();
+  factory.ENDED = actionCreators['ENDED'].toString();
+  return factory;
 };

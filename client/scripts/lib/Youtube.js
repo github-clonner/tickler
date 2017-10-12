@@ -41,75 +41,97 @@ import path from 'path';
 import debounce from 'lodash/debounce';
 import throttle from 'lodash/throttle';
 import sanitize from 'sanitize-filename';
-import { EventEmitter } from 'events';
+import EventEmitterEx from './EventEmitterEx';
 import { ApiClient } from '@maggiben/google-apis';
 
-///////////////////////////////////////////////////////////////////////////////
-// create single EventEmitter instance                                       //
-///////////////////////////////////////////////////////////////////////////////
-class YoutubeEvents extends EventEmitter {
-  constructor(...args) {
-    super(...args);
+const defaults = {
+  params: {
+    maxResults: 50,
+    part: 'id,snippet,contentDetails,status'
   }
-}
-
-const youtubeEvents = new YoutubeEvents();
+};
 
 export default class Youtube {
-  constructor({apiKey, options = {}}) {
+
+  constructor({ apiKey, options }) {
     this.apiClient = new ApiClient('youtube', {
       params: { key: apiKey }
     });
     this.streams = new Map();
-    this.options = options;
-    this.events = new EventEmitter();
-    this.events.on('cancel', ({ item, reason, options }) => {
-      if (this.streams.has(item.id)) {
+    this.options = { ...defaults, ...options };
+    this.events = new EventEmitterEx();
+    this.events.on('cancel', ({ id, reason, options }) => {
+      if (this.streams.has(id)) {
         console.log('cancel download %s', id);
         const downloader = this.streams.get(id);
-        downloader.destroy();
+        return downloader.destroy();
       } else {
         console.error('stream %s not found', id);
+        return false;
       }
     });
   }
 
-  findMissing (ids, { pageInfo, items }) {
-    if (Array.isArray(ids) && pageInfo.resultsPerPage !== ids.length) {
-      const missing = items.map(item => item.id).filter(id => !ids.includes(id));
-      console.error('id skipped', missing);
-      return missing;
+  /*
+   * Find all missing values from array
+   * @param {Array} array to inspect.
+   * @param {...Array} The values to search for.
+   */
+  findMissing(items, ...values) {
+    const removeByIndex = (list, index) => [ ...list.slice(0, Math.max(0, index)), ...list.slice(index + 1) ];
+    try {
+      return items.reduce((missing, { id }) => removeByIndex(missing, missing.indexOf(id)), Array.prototype.concat(...values));
+    } catch (error) {
+      console.error(error);
+      throw error;
     }
   }
 
-  async getVideos (id) {
-    id = id.slice(0, 100);
-    const maxResults = 50;
-    const params = {
-      id,
-      maxResults,
-      part: 'id,snippet,contentDetails,status'
-    };
-
-    const fetch = async (value, index) => {
-      try {
-        const query = Object.assign({}, params);
-        query.id = id.slice(index * maxResults, index * maxResults + maxResults);
-        const { items } = await this.apiClient.$resource.videos.list(query);
-        return items;
-      } catch (error) {
-        console.error(error);
-        return error;
-      }
-    };
-
-    const length = Math.ceil(id.length / maxResults);
-    const items = Array.from({ length }, fetch);
-    const videos = await Promise.all(items);
-    return videos.reduce((videos, items) => videos.concat(items), []);
+  /*
+   * Find all private videos
+   * @param {Array} list of items to inspect.
+   */
+  findPrivate(items) {
+    try {
+      return items.filter(({ status: { privacyStatus: privacy } }) => privacy != 'public');
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   }
 
-  async getPlayList (id) {
+  /*
+   * Returns a list of videos
+   * @param {...Array} list of the YouTube video ID(s)
+   */
+  async getVideos(id, options) {
+    // id = id.slice(0, 100);
+    const params = { ...this.options.params, ...options, ...{ id }};
+    const fetch = async (value, index) => {
+      try {
+        const offset = index * params.maxResults;
+        const id = params.id.slice(offset, offset + params.maxResults);
+        const result = await this.apiClient.$resource.videos.list({ ...params, ...{ id } });
+        return result.items;
+      } catch (error) {
+        console.error(error);
+        throw error;
+      }
+    };
+    /*
+     * Create request buckets by slicing the ids array into chunks of of size <= maxResults
+     * then create an array of promises
+     */
+    const promises = Array.from({ length: Math.ceil(id.length / params.maxResults) }, fetch);
+    /* Finally flatten result buckets into a single array */
+    return Array.prototype.concat(...(await Promise.all(promises)));
+  }
+
+  /*
+   * Returns a collection of playlists
+   * @param {...Array} A list of the YouTube playlist ID(s)
+   */
+  async getPlayList(id: Array<string>) {
     const params = {
       id,
       part: 'id,snippet,contentDetails,status',
@@ -118,7 +140,11 @@ export default class Youtube {
     return (items.length === 1) ? items.slice(-1).pop() : items;
   }
 
-  async getPlayListItems (playlistId) {
+  /*
+   * Returns a collection of playlist items
+   * @param {String} ID of the playlist for which you want to retrieve playlist items.
+   */
+  async getPlayListItems(playlistId: string) {
     const maxResults = 50;
     const params = {
       playlistId,
@@ -140,17 +166,20 @@ export default class Youtube {
     return playlistItems;
   }
 
+  /*
+   * Download video
+   * @param {Object} Video to download.
+   * @return {Promise|Stream} Promise | Readable stream
+   */
   async downloadVideo(video) {
     console.debug('downloadVideo: ', video);
     const { streams } = this;
     this.streams.set(video.id, null);
+
     return new Promise((resolve, reject) => {
       try {
         const title = path.resolve(this.options.saveTo, sanitize(video.title));
         const stream = fs.createWriteStream(title);
-        const downloader = ytdl(`http://www.youtube.com/watch?v=${video.id}`, 'audioonly');
-        this.streams.set(video.id, downloader);
-
         const listener = {
           progress: throttle((chunkLength, downloaded, total) => {
             return this.events.emit('progress', { video, downloaded, total, progress: (downloaded / total) });
@@ -181,8 +210,8 @@ export default class Youtube {
           }
         };
 
+        /* Graceful exit */
         const cleanup = (...emitters) => {
-          // .delete(key);
           return emitters.map(emitter => {
             return Object.entries(listener).map(function ([name, handler]) {
               return emitter.removeListener(name, handler);
@@ -190,6 +219,10 @@ export default class Youtube {
           });
         };
 
+        /* Start download */
+        const downloader = ytdl(`http://www.youtube.com/watch?v=${video.id}`, 'audioonly');
+
+        /* Add private listeners */
         downloader
           .on('response', listener.response)
           .on('progress', listener.progress)
@@ -197,6 +230,10 @@ export default class Youtube {
           .once('end', listener.end)
           .once('error', listener.error)
           .once('info', listener.info);
+
+        /* Memorize operation */
+        this.streams.set(video.id, downloader);
+
       } catch (error) {
         console.error(error);
         return listener.error(error);

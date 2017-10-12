@@ -1,14 +1,14 @@
 // @flow
 
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : Item.js                                                   //
-// @summary      : List item component                                       //
+// @file         : Seek.jsx                                                  //
+// @summary      : Seek control component                                    //
 // @version      : 0.0.1                                                     //
 // @project      : tickelr                                                   //
 // @description  :                                                           //
 // @author       : Benjamin Maggi                                            //
 // @email        : benjaminmaggi@gmail.com                                   //
-// @date         : 30 Sep 2017                                               //
+// @date         : 01 Oct 2017                                               //
 // @license:     : MIT                                                       //
 // ------------------------------------------------------------------------- //
 //                                                                           //
@@ -37,49 +37,68 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-// http://jsfiddle.net/bmaggi/ypxa8nvd/6/
-
 import React, { Component } from 'react';
+import PropTypes from 'prop-types'
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import { compose, onlyUpdateForPropTypes, branch, pure, renderNothing, renderComponent, withPropsOnChange, withState, withReducer, withHandlers, withProps, mapProps, renameProp, defaultProps, setPropTypes } from 'recompose';
+/* owner libs */
+import { Player, Settings } from '../../../actions';
+import { Progress, InputRange, TimeCode } from '../../index';
+// Import styles
 import classNames from 'classnames';
-import * as RowField from './RowField';
-import Style from './List.css';
+import Style from '../Player.css';
 
-const drawProgress = function (item) {
-  if(!item.isLoading && !item.isPlaying) {
-    return {};
-  } else if (item.isLoading) {
-    const { progress } = item;
+
+/*
+ * Subbscribe to redux store and merge these props
+ * reference: https://github.com/reactjs/react-redux/blob/master/docs/api.md
+ */
+function mapStateToProps(state) {
+  return {
+    audio: state.Audio,
+    options: {
+      player: state.Settings.get('player'),
+      audio: state.Settings.get('audio')
+    }
+  };
+}
+
+/*
+ * Redux Action Creators
+ * Each key inside this object is assumed to be a Redux action creator
+ * reference: https://github.com/reactjs/react-redux/blob/master/docs/api.md
+ */
+function mapDispatchToProps(dispatch) {
+  return {
+    player: bindActionCreators(Player, dispatch)
+  };
+}
+
+/*
+ * Component wrapper
+ */
+const enhance = compose(
+  pure,
+  connect(mapStateToProps, mapDispatchToProps),
+  mapProps(({ player, audio }) => {
     return {
-      'background': `linear-gradient(to right, #eee 0%, #eee ${progress * 100}%,#f6f6f6 ${progress * 100}%,#f6f6f6 100%)`
-    };
-  }
-};
+      isPlaying: audio.isPlaying,
+      currentTime: audio.currentTime,
+      duration: audio.duration,
+      seekTo: player.seekTo
+    }
+  })
+);
 
-export default ({ item, index, handlers }) => {
-  const style = classNames(Style.row, {
-    [Style.active]: item.isPlaying,
-    [Style.selected]: item.selected,
-    [Style.loading]: item.isLoading
-  });
-  const { onClick, onDoubleClick, onContextMenu, dragEnd, dragStart } = handlers;
+/*
+ * Seek component renderer
+ */
+export default enhance(({ isPlaying, currentTime, duration, seekTo }) => {
   return (
-    <li
-      draggable="true"
-      item-id={ index }
-      className={ style }
-      style={ drawProgress(item) }
-      onClick={ event => onClick(event, item) }
-      onDoubleClick={ event => onDoubleClick(event, item) }
-      onContextMenu={ event => onContextMenu(event, item) }
-      onDragEnd={ event => dragEnd(event) }
-      onDragStart={ event => dragStart(event) }
-    >
-      <RowField.Index index={ index } />
-      <RowField.Status song={ item } />
-      <RowField.Title title={ item.title } />
-      <RowField.Rating stars={ item.stars } />
-      <RowField.Duration duration={ item.duration } format="#{2H}:#{2M}:#{2S}" />
-      <RowField.DropDown onClick={ event => onContextMenu(event, item) }/>
-    </li>
+    <div className={ Style.seek } >
+      <InputRange value={ currentTime / duration } min={ 0 } max={ 1 } step={ 0.001 } onChange={ seekTo } disabled={ !isPlaying } />
+      <TimeCode time={ currentTime } duration={ duration } />
+    </div>
   );
-};
+});

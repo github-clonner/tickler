@@ -62,7 +62,8 @@ export const PlayListActionKeys = {
   STOP: 'STOP',
   ORDER_LIST: 'ORDER_LIST',
   SELECT_ITEMS: 'SELECT_ITEMS',
-  SELECT_ITEM: 'SELECT_ITEM'
+  SELECT_ITEM: 'SELECT_ITEM',
+  SELECT_INDEX: 'SELECT_INDEX'
 };
 
 export type PlayListActions =
@@ -80,4 +81,5 @@ export type PlayListActions =
   | Action<typeof PlayListActionKeys.ORDER_LIST, any>
   | Action<typeof PlayListActionKeys.SELECT_ITEMS, number>
   | Action<typeof PlayListActionKeys.SELECT_ITEM, number>
+  | Action<typeof PlayListActionKeys.SELECT_INDEX, number>
   ;

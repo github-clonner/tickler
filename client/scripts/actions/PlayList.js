@@ -62,6 +62,7 @@ export const editItem = (id: string, payload) => ({ type: Action.EDIT_ITEM, id, 
 export const editItems = (payload: Object) => ({ type: Action.EDIT_ITEMS, payload });
 export const selectItems = (payload: any) => ({ type: Action.SELECT_ITEMS, payload });
 export const selectItem = (payload: any) => ({ type: Action.SELECT_ITEM, payload });
+export const selectIndex = (payload: number) => ({ type: Action.SELECT_INDEX, payload });
 export const createFrom = payload => ({type: 'CREATEFROM', payload});
 export const playPauseItem = (id: string, payload) => ({ type: Action.PLAYPAUSE_ITEM, id, payload });
 export const pauseItem = (id: string) => ({ type: Action.PAUSE_ITEM, id });
@@ -98,9 +99,10 @@ export function fetchItem (item, autoPlay = false) {
       return dispatch(playNextItem(item.id));
     };
 
-    const removeAllListeners = () => (
+    const cleanListeners = () => (
       youtube.events.removeListener('progress', onProgress),
-      youtube.events.removeListener('info', onInfo)
+      youtube.events.removeListener('info', onInfo),
+      youtube.events.removeListener('error', onError)
     );
 
     let fileName = null;
@@ -128,7 +130,7 @@ export function fetchItem (item, autoPlay = false) {
       }));
       dispatch({type: 'ERROR', error: error});
     } finally {
-      removeAllListeners();
+      cleanListeners();
       dispatch(editItem(item.id, {
         isLoading: false
       }));
@@ -155,7 +157,10 @@ export function openPlayList (options: Object = DialogOptions.open) {
       const file = files.slice(0).pop();
       try {
         const playListStore = new PlayListStore(file);
-        return dispatch(receivePlayListItems(playListStore.playlist.tracks));
+        return (
+          dispatch(receivePlayListItems(playListStore.playlist.tracks)),
+          dispatch(selectIndex(0))
+        );
       } catch (error) {
         console.error(error);
         return dispatch({type: 'ERROR', error: error});
@@ -293,7 +298,10 @@ $.(
 export function getCurrent () {
   return async function (dispatch, getState) {
     const playListStore = new PlayListStore();
-    return dispatch(receivePlayListItems(playListStore.playlist.tracks));
+    return (
+      dispatch(receivePlayListItems(playListStore.playlist.tracks)),
+      dispatch(selectIndex(0))
+    );
   };
 };
 
@@ -303,7 +311,6 @@ export function getCurrent () {
  * @param  {id} id of the youtube video
  * @return {null}
  */
-
 export function cancel (ids: string | Array<string>, reason?: boolean, options?: Object) {
   return async function (dispatch, getState) {
     if (Array.isArray(ids) && ids.length) {
@@ -329,9 +336,10 @@ export function fetchListItems (id: string) {
   return async function (dispatch, getState) {
     const playList = await youtube.getPlayListItems(id);
     const ids = playList.map(item => item.snippet.resourceId.videoId);
-    const disabled = playList.filter(item => item.status.privacyStatus != 'public').map(item => item.snippet.resourceId.videoId);
-    console.info('ids', ids, 'disabled', disabled)
+    const restricted = youtube.findPrivate(playList).map(item => item.snippet.resourceId.videoId);
     const items = await youtube.getVideos(ids);
+    const missing = youtube.findMissing(items, ids);
+    console.log('ids', ids, 'private', restricted, 'missing', missing);
     try {
       const plugins = settings.get('plugins');
       const formatter = jsonata(plugins.youtube.playlist.formatter);

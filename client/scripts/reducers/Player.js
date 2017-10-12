@@ -40,6 +40,28 @@
 import type { PlayerActions } from '../types';
 import { PlayerActionKeys as Action } from '../types';
 
+/* List of Actions used for debug */
+const isValidType = (type: string) => ([
+  Action.SET_CONTEXT,
+  Action.SET_ANALYZER,
+  Action.SET_WAVESURFER,
+  Action.SET_DURATION,
+  Action.SET_CURRENT_TIME,
+  Action.SET_SEEK,
+  Action.SET_VOLUME,
+  Action.SET_MUTE,
+  Action.SET_LOADING,
+  Action.SET_FINISHED,
+  Action.SET_PLAYING,
+  Action.SET_STOP,
+  Action.SET_PAUSE,
+  Action.SET_PLAYPAUSE,
+  Action.SET_READY,
+  Action.TOGGLE_MUTE,
+  Action.SEEK_TO,
+  Action.ERROR
+].includes(type));
+
 const audio = {
   context: null,
   analyzer: null,
@@ -47,9 +69,9 @@ const audio = {
   seek: 0,
   duration: 0,
   volume: 0.5,
+  isMuted: false,
   mute: false,
   progress: 0,
-  finish: false,
   isPlaying: false,
   isPaused: false,
   isReady: false,
@@ -57,6 +79,10 @@ const audio = {
 };
 
 export function Audio (state = audio, action: PlayerActions) {
+
+  if (isValidType(action.type)) {
+    console.log(action.type, action);
+  }
 
   switch (action.type.replace(/(^START.)/,'')) {
     case Action.SET_CONTEXT: return { ...state, context: action.payload };
@@ -66,16 +92,13 @@ export function Audio (state = audio, action: PlayerActions) {
     case Action.SET_SEEK: return { ...state, seek: action.payload };
     case Action.SET_DURATION: return { ...state, duration: action.payload };
     case Action.SET_VOLUME: return { ...state, volume: action.payload };
-    // case Action.SET_MUTE: return { ...state, mute: action.payload };
-    // case Action.SET_LOADING: return { ...state, progress: action.payload };
-    // case Action.SET_FINISHED: return { ...state, finish: action.payload };
+    case Action.SET_MUTE: return { ...state, mute: action.payload };
+    case Action.SET_LOADING: return { ...state, progress: action.payload };
+    case Action.SET_FINISHED: return { ...state, isPlaying: false, isPaused: true, currentTime: 0 };
     case Action.SET_PLAYING: return { ...state, isPlaying: true, isPaused: false };
-    // case Action.SET_STOP: return { ...state, isPlaying: false, currentTime: 0 };
-    case Action.SET_STOP: {
-      console.log(Action.SET_STOP, action.payload);
-      return { ...state, isPlaying: false, currentTime: 0 };
-    }
-    // case Action.SET_PAUSE: return { ...state, isPaused: true, isPlaying: false };
+    /* case Action.SET_PLAYPAUSE: return state; */
+    case Action.SET_STOP: return { ...state, isPlaying: false, currentTime: 0 };
+    case Action.SET_PAUSE: return { ...state, isPaused: true, isPlaying: false };
     case Action.SET_READY: return { ...state, isReady: action.payload };
     default:
       return state;

@@ -74,6 +74,8 @@ export default class Main extends Component {
     const { settings, playlist } = this.props;
     playlist.getCurrent();
     // playlist.fetchListItems('PL7XlqX4npddfrdpMCxBnNZXg2GFll7t5y');
+    // playlist.fetchListItems('PL7XlqX4npddfrdpMCxBnNZXg2GFll7t5y'); // Long Pageable list
+    // actions.fetchListItems('PL1GZkw2FUKCiZSI636mf54HEr2CtDxvW_') // long list w/short sound effects
   }
 
   render () {

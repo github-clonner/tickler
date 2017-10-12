@@ -1,3 +1,5 @@
+// @flow
+
 ///////////////////////////////////////////////////////////////////////////////
 // @file         : Volume.jsx                                                //
 // @summary      : Volume control component                                  //
@@ -35,16 +37,64 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-
 import React, { Component } from 'react';
+import PropTypes from 'prop-types'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import classNames from 'classnames';
-import { Progress, InputRange, TimeCode } from '../../index';
+import { compose, onlyUpdateForPropTypes, branch, pure, renderNothing, renderComponent, withPropsOnChange, withState, withReducer, withHandlers, withProps, mapProps, renameProp, defaultProps, setPropTypes } from 'recompose';
+/* owner libs */
+import { Player, Settings } from '../../../actions';
+import { InputRange } from '../../index';
 // Import styles
+import classNames from 'classnames';
 import Style from '../Player.css';
 
-export default ({ isMuted, volume, setVolume, toggleMute }) => {
+
+/*
+ * Subbscribe to redux store and merge these props
+ * reference: https://github.com/reactjs/react-redux/blob/master/docs/api.md
+ */
+function mapStateToProps(state) {
+  return {
+    audio: state.Audio,
+    options: {
+      player: state.Settings.get('player'),
+      audio: state.Settings.get('audio')
+    }
+  };
+}
+
+/*
+ * Redux Action Creators
+ * Each key inside this object is assumed to be a Redux action creator
+ * reference: https://github.com/reactjs/react-redux/blob/master/docs/api.md
+ */
+function mapDispatchToProps(dispatch) {
+  return {
+    player: bindActionCreators(Player, dispatch)
+  };
+}
+
+/*
+ * Component wrapper
+ */
+const enhance = compose(
+  pure,
+  connect(mapStateToProps, mapDispatchToProps),
+  mapProps(({ player, audio }) => {
+    return {
+      setVolume: player.setVolume,
+      toggleMute: player.toggleMute,
+      isMuted: audio.isMuted,
+      volume: audio.volume
+    }
+  })
+);
+
+/*
+ * Volume component renderer
+ */
+export default enhance(({ isMuted, volume, setVolume, toggleMute }) => {
   return (
     <div className={ classNames( Style.volume, Style.checkboxButtons) } >
       <input id="volume" type="checkbox" checked={ isMuted } onChange={ toggleMute } />
@@ -54,5 +104,4 @@ export default ({ isMuted, volume, setVolume, toggleMute }) => {
       </div>
     </div>
   );
-};
-
+});

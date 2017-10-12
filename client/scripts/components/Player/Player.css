@@ -45,3 +45,12 @@
     border-top-right-radius: 4px;
   }
 }
+
+.seek {
+  flex-grow: 1;
+  display: inline-flex;
+  align-items: center;
+  & input[type="range"], & .slider {
+    flex-grow: 1;
+  }
+}

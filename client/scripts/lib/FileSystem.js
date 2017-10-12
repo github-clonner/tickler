@@ -2,8 +2,8 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 // @file         : FileSystem.js                                             //
-// @summary      : Save and load JSON data                                   //
-// @version      : 0.0.1                                                     //
+// @summary      : Platform independent file manipulation helpers            //
+// @version      : 0.0.2                                                     //
 // @project      : tickelr                                                   //
 // @description  :                                                           //
 // @author       : Benjamin Maggi                                            //
@@ -74,6 +74,12 @@ export const read = function (path: string, options?: string | Object = 'utf8') 
   }
 };
 
+/**
+ * Synchronus POJO to JSON file write
+ * @param {string} file path
+ * @param {object} POJO to be converted to JSON
+ * @returns {undefined|Error}
+ */
 export const write = function (path: string, content: Object, options?: string | Object) : void | Error {
   try {
     const data: string = JSON.stringify(content, null, 2);
@@ -84,6 +90,11 @@ export const write = function (path: string, content: Object, options?: string |
   }
 };
 
+/**
+ * Synchronus file remove
+ * @param {string} file path to be removed
+ * @returns {undefined|Error}
+ */
 export const remove = function (path: string) : void | Error {
   try {
     return fs.unlinkSync(path);
