@@ -48,14 +48,14 @@ import os from 'os';
 import path from 'path';
 import { shell, remote } from 'electron';
 
-const settings = new SettingsStore();
+const settings = window.settings = new SettingsStore();
 const plugins = settings.get('plugins');
 const download = settings.get('download');
 const youtube = new Youtube({
   apiKey: plugins.youtube.apiKey,
   options: {
     saveTo: os.tmpdir(),
-    download
+    download: settings.get('download')
   }
 });
 

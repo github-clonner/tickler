@@ -102,11 +102,30 @@ export default class Youtube {
   }
 
   /*
+  youtube playlist formatter
+
+  $.(
+    $AccName := function() { $.contentDetails.duration };
+    $.{
+      'id': id,
+      'title': snippet.title,
+      'name': snippet.title,
+      'artists': [{
+        'id': 'sfasdf',
+        'name': 'nook'
+      }],
+      'description': snippet.description,
+      'thumbnails': snippet.thumbnails,
+      'duration': $parseDuration(contentDetails.duration)
+    }
+  )
+  */
+
+  /*
    * Returns a list of videos
    * @param {...Array} list of the YouTube video ID(s)
    */
   async getVideos(id, options) {
-    // id = id.slice(0, 100);
     const params = { ...this.options.params, ...options, ...{ id }};
     const fetch = async (value, index) => {
       try {
@@ -119,12 +138,16 @@ export default class Youtube {
         throw error;
       }
     };
+
     /*
      * Create request buckets by slicing the ids array into chunks of of size <= maxResults
      * then create an array of promises
      */
     const promises = Array.from({ length: Math.ceil(id.length / params.maxResults) }, fetch);
-    /* Finally flatten result buckets into a single array */
+
+    /*
+     * Flatten result buckets into a single array
+     */
     return Array.prototype.concat(...(await Promise.all(promises)));
   }
 
@@ -173,13 +196,13 @@ export default class Youtube {
    * @return {Promise|Stream} Promise | Readable stream
    */
   async downloadVideo(video) {
-    console.debug('downloadVideo: ', video);
-    const { streams } = this;
+    const { streams, options: { download: { savePath, tempPath }}} = this;
+    console.debug('downloadVideo: ', video, savePath, tempPath);
     this.streams.set(video.id, null);
 
     return new Promise((resolve, reject) => {
       try {
-        const file = path.resolve(this.options.saveTo, sanitize(video.title));
+        const file = path.resolve(tempPath, sanitize(video.title));
         const stream = fs.createWriteStream(file);
         const listener = {
           progress: throttle((chunkLength, downloaded, total) => {

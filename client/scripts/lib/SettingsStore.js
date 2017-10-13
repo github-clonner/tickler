@@ -117,9 +117,32 @@ export default class SettingsStore {
     }
   }
 
-  get (key: string, defaultValue?: any = null) : any {
+  /*
+   * Get settings
+   * @public
+   * @param {string} path The path of the property to get.
+   * @param {*} default value to return if undefined
+   * @returns {*} Returns the resolved value.
+   */
+  get (path: string, defaultValue?: any) : any {
     const { file, settings } = this;
-    return (key && settings.has(key)) ? settings.get(key) : defaultValue;
+    /** Used to match property names within property paths. */
+    const reIsDeepProp = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\\]|\\.)*?\1)\]/;
+    const reIsPlainProp = /^\w*$/;
+
+    const hasSetting = property => (reIsPlainProp.test(property) && settings.has(property));
+    const getSetting = property => (hasSetting(property) ? settings.get(property) : defaultValue);
+
+    if (reIsDeepProp.test(path)) {
+      const [ property, properties ] = path.split(/\.(.+)/).filter(Boolean);
+      return properties
+        .replace(/\[(\w+)\]/g, '.$1') // Convert indexes to properties
+        .replace(/^\./, '') // strip leading dot
+        .split('.') // Split (.) into array of properties
+        .reduce((o = {}, key) => o[key], getSetting(property)) || defaultValue;
+    } else {
+      return getSetting(path);
+    }
   }
 
   load () : Object | Error {
