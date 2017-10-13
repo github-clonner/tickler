@@ -38,6 +38,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 import { createAction } from 'redux-actions';
+import throttle from 'lodash/throttle';
 
 function isPromise(promise) {
   return promise && promise.then && promise.catch;
@@ -48,6 +49,9 @@ function isPromise(promise) {
  * Use this helper to call a methods that returns a Promise
  */
 export const createAsyncAction = function (type, fn) {
+  /* throttle action dispatch */
+  const throttled = throttle((...args) => fn(...args), 100, { trailing: true });
+  /* event lifecycle signature/prefix */
   const events = [ 'START', 'SUCCEEDED', 'FAILED', 'ENDED' ];
   const actionCreators = events
     .map(prefix => [ prefix, `${prefix}_${type}` ])
@@ -68,8 +72,8 @@ export const createAsyncAction = function (type, fn) {
       throw error;
     };
     try {
-      console.log('run:', args, args.length);
-      result = fn(...args, { dispatch, getState, extra });
+      // result = fn(...args, { dispatch, getState, extra });
+      result = throttled(...args, { dispatch, getState, extra });
     } catch (error) {
       failed(error);
     }

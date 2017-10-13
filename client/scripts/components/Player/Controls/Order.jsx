@@ -38,8 +38,15 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 import React, { Component } from 'react';
+import PropTypes from 'prop-types'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import {
+  compose,
+  withStateHandlers,
+  pure,
+  mapProps
+} from 'recompose';
 import classNames from 'classnames';
 // Import styles
 import Style from '../Player.css';

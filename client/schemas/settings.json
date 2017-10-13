@@ -40,6 +40,11 @@
       "default": null,
       "format": "date-time",
       "description": "File modification date"
+    },
+    "download": {
+      "$ref": "#/definitions/Download",
+      "default": {},
+      "description": "Download manager options"
     }
   },
   "definitions": {
@@ -125,8 +130,8 @@
             "concurrency": {
               "type": "number",
               "default": 1,
-              "minimum": 10,
-              "maximum": 1,
+              "maximum": 10,
+              "minimum": 1,
               "description": "Number of parallel operations"
             }
           }
@@ -165,7 +170,7 @@
         }
       }
     },
-    "FileFormatFilter": {
+    "FileFormat": {
       "type": "object",
       "description": "File format filter",
       "properties": {
@@ -210,7 +215,7 @@
           "description": "File type filter",
           "default": [],
           "items": {
-            "$ref": "#/definitions/FileFormatFilter"
+            "$ref": "#/definitions/FileFormat"
           }
         },
         "formats": {
@@ -229,6 +234,62 @@
           "description": "Current loaded playlist"
         }
       }
+    },
+    "Path": {
+      "description": "Default download save path",
+      "oneOf": [{
+        "type": "string",
+        "enum": [ "home", "temp", "desktop", "documents", "downloads", "music", "pictures", "videos" ],
+        "resolve": true
+      }, {
+        "type": "string",
+        "format": "path",
+        "exists": {
+          "root": "/",
+          "type": "isDirectory"
+        }
+      }]
+    },
+    "Download": {
+      "type": "object",
+      "description": "Download manager options",
+      "required": [ "savePath", "tempPath" ],
+      "properties": {
+        "savePath": {
+          "oneOf": [{
+            "type": "string",
+            "enum": [ "home", "temp", "desktop", "documents", "downloads", "music", "pictures", "videos" ],
+            "resolve": true
+          }, {
+            "type": "string",
+            "pattern": "^(/[^/]+)+$",
+            "exists": {
+              "root": "/",
+              "type": "isDirectory"
+            }
+          }],
+          "default": "downloads",
+          "description": "Default download save path"
+        },
+        "tempPath": {
+          "$ref": "#/definitions/Path",
+          "default": "temp",
+          "description": "Temporary directory path"
+        },
+        "concurrency": {
+          "type": "number",
+          "default": 1,
+          "maximum": 10,
+          "minimum": 1,
+          "description": "Limits the number of concurrent operations."
+        },
+        "notify": {
+          "type": "boolean",
+          "default": true,
+          "description": "Display notifications."
+        }
+      },
+      "additionalProperties": false
     }
   }
 }

@@ -44,9 +44,60 @@ import schema from '../../schemas/settings.json';
 import { read, write, remove, getPath } from './FileSystem';
 import { tickler } from '../../../package.json';
 
+const get = (o, path) => path.split('.').reduce((o = {}, key) => o[key], o);
 const ajv = new Ajv({
+  formats: {
+    path: {
+      type: 'string',
+      validate(data) {
+        return path.isAbsolute(data);
+      }
+    }
+  },
   allErrors: true,
-  useDefaults: true
+  useDefaults: true,
+});
+
+ajv.addKeyword('resolve', {
+  type: 'string',
+  modifying: true,
+  validate: function (
+    schemaParameterValue,
+    validatedParameterValue,
+    validationSchemaObject,
+    currentDataPath,
+    validatedParameterObject,
+    validatedParameter,
+    rootData
+  ) {
+    try {
+      return (schemaParameterValue) ? validatedParameterObject[validatedParameter] = getPath(validatedParameterValue) : true;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+});
+
+ajv.addKeyword('exists', {
+  type: 'string',
+  modifying: true,
+  validate: function (
+    schemaParameterValue,
+    validatedParameterValue,
+    validationSchemaObject,
+    currentDataPath,
+    validatedParameterObject,
+    validatedParameter,
+    rootData
+  ) {
+    try {
+      return fs.statSync(validatedParameterValue)[schemaParameterValue.type]();
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
 });
 
 const DEFAULT_SETTINGS_FILENAME = 'settings.json';
@@ -57,7 +108,6 @@ export default class SettingsStore {
   validate: Function;
 
   constructor () {
-    this.settings = new Map();
     this.validate = ajv.compile(schema);
     this.file = path.join(getPath('userData'), DEFAULT_SETTINGS_FILENAME);
     if (!fs.existsSync(this.file)) {
@@ -73,13 +123,19 @@ export default class SettingsStore {
   }
 
   load () : Object | Error {
-    const { file } = this;
+    const { file, settings } = this;
     try {
       const data = read(file);
-      this.settings = new Map(Object.entries(data));
-      return this.settings;
+      if (ajv.validate(schema, data)) {
+        console.log('settings', data);
+        return this.settings = new Map(Object.entries(data));
+      } else {
+        console.error(ajv.errorsText(), ajv.errors);
+        throw new Error('Invalid settings format');
+      }
     } catch (error) {
-      return error;
+      console.error(error);
+      throw error;
     }
   }
 

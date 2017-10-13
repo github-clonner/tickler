@@ -34,6 +34,7 @@
 // SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                    //
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
+
 import ytdl from 'ytdl-core';
 import Stream from 'stream';
 import fs from 'fs';
@@ -178,14 +179,14 @@ export default class Youtube {
 
     return new Promise((resolve, reject) => {
       try {
-        const title = path.resolve(this.options.saveTo, sanitize(video.title));
-        const stream = fs.createWriteStream(title);
+        const file = path.resolve(this.options.saveTo, sanitize(video.title));
+        const stream = fs.createWriteStream(file);
         const listener = {
           progress: throttle((chunkLength, downloaded, total) => {
             return this.events.emit('progress', { video, downloaded, total, progress: (downloaded / total) });
           }, 100, { trailing: true }),
           error: (error) => {
-            console.log('download error', error);
+            console.error('download error', error);
             cleanup(downloader);
             this.events.emit('error', { video, error });
             return reject(error);
@@ -199,14 +200,14 @@ export default class Youtube {
           end: () => {
             console.log('download of %s ended', video.id);
             cleanup(downloader);
-            this.events.emit('finish', { video, title });
-            return resolve(title);
+            this.events.emit('finish', { video, file });
+            return resolve(file);
           },
           abort: () => {
             console.log('download of %s aborted', video.id);
             cleanup(downloader);
-            this.events.emit('abort', { video, title });
-            return reject(title);
+            this.events.emit('abort', { video, file });
+            return reject(file);
           }
         };
 

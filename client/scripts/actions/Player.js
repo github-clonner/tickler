@@ -193,6 +193,7 @@ export const seekTo = createAsyncAction(Action.SEEK_TO, (progress: number, { dis
  */
 export const setVolume = createAsyncAction(Action.SET_VOLUME, (volume: number, { dispatch, getState }) => {
   const { Audio } = getState();
+  console.log('setVolume', volume)
   return Audio.wavesurfer.setVolume(volume);
 });
 

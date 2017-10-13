@@ -41,7 +41,12 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { compose, withStateHandlers, onlyUpdateForPropTypes, branch, pure, renderNothing, renderComponent, withPropsOnChange, withState, withReducer, withHandlers, withProps, mapProps, renameProp, defaultProps, setPropTypes } from 'recompose';
+import {
+  compose,
+  withStateHandlers,
+  pure,
+  mapProps
+} from 'recompose';
 /* owner libs */
 import { Player, Settings } from '../../../actions';
 import { InputRange } from '../../index';

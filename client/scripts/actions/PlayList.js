@@ -50,10 +50,12 @@ import { shell, remote } from 'electron';
 
 const settings = new SettingsStore();
 const plugins = settings.get('plugins');
+const download = settings.get('download');
 const youtube = new Youtube({
   apiKey: plugins.youtube.apiKey,
   options: {
-    saveTo: os.tmpdir()
+    saveTo: os.tmpdir(),
+    download
   }
 });
 
