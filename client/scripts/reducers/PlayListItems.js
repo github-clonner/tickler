@@ -48,12 +48,12 @@ export default function PlayListItems (state = List([]), action) {
 
   // Is any item currently playing ?
   const isPlaying = function () {
-    return state.some(item => (item.get('isPlaying') === true));
+    return state.some(item => item.get('isPlaying'));
   };
 
   // Find item that's playing
   const pause = function () {
-    const index = state.findIndex(item => (item.get('isPlaying') === true));
+    const index = state.findIndex(item => item.get('isPlaying'));
     if (index > -1) {
       return state.update(index, item => (item.set('isPlaying', false).set('selected', false) ));
     } else {

@@ -56,22 +56,22 @@ export default class EventEmitterEx extends EventEmitter {
   }
 
   on(eventName, listener) {
-    console.log(`on ${eventName}`);
+    //console.log(`on ${eventName}`);
     return super.on(eventName, listener);
   }
 
   addListener(eventName, listener) {
-    console.log(`addListener ${eventName}`);
+    //console.log(`addListener ${eventName}`);
     return super.addListener(eventName, listener);
   }
 
   removeListener(eventName, listener) {
-    console.log(`removeListener ${eventName}`);
+    //console.log(`removeListener ${eventName}`);
     return super.removeListener(eventName, listener);
   }
 
   off(eventName, listener) {
-    console.log(`off ${eventName}`);
+    //console.log(`off ${eventName}`);
     return super.removeListener(eventName, listener);
   }
 }

@@ -1,8 +1,8 @@
 // @flow
 
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : ActionHelpers.js                                          //
-// @summary      : Collection of Redux helpers                               //
+// @file         : items.js                                                //
+// @summary      : items selector                                            //
 // @version      : 0.0.1                                                     //
 // @project      : tickelr                                                   //
 // @description  :                                                           //
@@ -37,60 +37,61 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-import { createAction } from 'redux-actions';
-import throttle from 'lodash/throttle';
+import { createSelector } from 'reselect'
 
-function isPromise(promise) {
-  return promise && promise.then && promise.catch;
-}
+/* Get all items */
+export const getItems = state => state;
+
+/* Get selected item*/
+export const getSelected = items => items
+  .filter(item => item.get('file'))
+  .filter(item => item.get('selected'))
+  .first();
+
+/* Get next item*/
+export const getNext = items => items
+  .skip(items.indexOf(getSelected(items)) + 1)
+  .filter(item => item.get('file'))
+  .first();
+
+/* Get previous item */
+export const getPrev = items => items
+  .skipLast(items.indexOf(getSelected(items)) -1)
+  .filter(item => item.get('file'))
+  .first();
 
 /*
- * Asynchronous action creator
- * Use this helper to call a methods that returns a Promise
+ * Redux Action Creators
+ * Each key inside this object is assumed to be a Redux action creator
+ * reference: https://github.com/reactjs/react-redux/blob/master/docs/api.md
  */
-export const createAsyncAction = function (type: string, fn: Function, throttleable?: boolean = false, wait?: number = 1000) {
-  /* throttle action dispatch */
-  const throttled = throttle((...args) => fn(...args), wait, { trailing: true });
-  /*
-   * Lifecycle prefixes
-   */
-  const events = [ 'START', 'SUCCEEDED', 'FAILED', 'ENDED' ];
-  const actionCreators = events
-    .map(prefix => [ prefix, `${prefix}_${type}` ])
-    .reduce((actions, [ prefix, name ]) => ({ ...actions, ...{ [prefix]: createAction(name) }}), {});
-
-  const factory = (...args) => (dispatch, getState, extra) => {
-    const startedAt = (new Date()).getTime();
-
-    dispatch(actionCreators['START'](args));
-
-    const succeeded = (data) => {
-      dispatch(actionCreators['SUCCEEDED'](data));
-      dispatch(actionCreators['ENDED']({ elapsed: (new Date()).getTime() - startedAt }));
-      return data;
-    };
-
-    const failed = (error) => {
-      dispatch(actionCreators['FAILED'](error));
-      dispatch(actionCreators['ENDED']({ elapsed: (new Date()).getTime() - startedAt }));
-      throw error;
-    };
-
-    try {
-      const context = { dispatch, getState, extra };
-      const result = throttleable ? throttled(...args, context) : fn(...args, context);
-      /* in case of async (promise), use success and fail callbacks. */
-      return isPromise(result) ? result.then(succeeded, failed) : succeeded(result);
-    } catch (error) {
-      console.error(error);
-      return failed(error);
-    }
-  };
-
-  factory.NAME = type;
-  factory.START = actionCreators['START'].toString();
-  factory.SUCCEEDED = actionCreators['SUCCEEDED'].toString();
-  factory.FAILED = actionCreators['FAILED'].toString();
-  factory.ENDED = actionCreators['ENDED'].toString();
-  return factory;
+export const getItemsBy = (state, props) => {
+  return state.filter(item => item.get('file'));
 };
+
+export const getShuffledItems = state => state
+  .map(item => ({ sort: Math.random(), value: item }))
+  .sort((a, b) => a.sort > b.sort ? 1 : -1)
+  .map((a) => a.value)
+
+/*
+ * Redux Action Creators
+ * Each key inside this object is assumed to be a Redux action creator
+ * reference: https://github.com/reactjs/react-redux/blob/master/docs/api.md
+ */
+export const getFilteredItems = createSelector(
+  [ getItemsBy, getItems ], function(filter, items) {
+    console.log('getFilteredItems', filter.size, items.size);
+    switch (filter) {
+      case 'SHOW_LOCAL': return items.filter(({ file }) => (file));
+      case 'SHOW_REMOTE': return items.filter(({ file }) => !(file));
+      case 'SHOW_SELECTED': return items.filter(({ selected }) => (selected))
+      case 'SHOW_LOADING': return items.filter(({ isLoading }) => (isLoading))
+      default:
+        return items
+    }
+  }
+);
+
+
+

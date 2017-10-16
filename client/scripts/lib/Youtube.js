@@ -39,7 +39,6 @@ import ytdl from 'ytdl-core';
 import Stream from 'stream';
 import fs from 'fs';
 import path from 'path';
-import debounce from 'lodash/debounce';
 import throttle from 'lodash/throttle';
 import sanitize from 'sanitize-filename';
 import EventEmitterEx from './EventEmitterEx';
@@ -61,6 +60,7 @@ export default class Youtube {
     this.streams = new Map();
     this.options = { ...defaults, ...options };
     this.events = new EventEmitterEx();
+
     this.events.on('cancel', ({ id, reason, options }) => {
       if (this.streams.has(id)) {
         console.log('cancel download %s', id);
@@ -71,6 +71,7 @@ export default class Youtube {
         return false;
       }
     });
+    this.events.on('get:stream', id => (this.streams.has(id) ? this.streams.get(id) : undefined));
   }
 
   /*

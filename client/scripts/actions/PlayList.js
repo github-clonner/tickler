@@ -52,9 +52,8 @@ const settings = window.settings = new SettingsStore();
 const plugins = settings.get('plugins');
 const download = settings.get('download');
 const youtube = new Youtube({
-  apiKey: plugins.youtube.apiKey,
+  apiKey: settings.get('plugins.youtube.apiKey'),
   options: {
-    saveTo: os.tmpdir(),
     download: settings.get('download')
   }
 });
@@ -240,33 +239,33 @@ export function jumpTo (diraction: number, amount: number = 1) {
  */
 export function playItem (item: Object) {
   return function (dispatch, getState) {
+    const { Audio } = getState();
     const player = settings.get('player');
-    const { PlayListItems } = getState();
+    console.log('Audio', Audio, player);
     if (!item.file && !item.isLoading) {
       dispatch(fetchItem(item, player.autoplay));
     } else {
       dispatch(playPauseItem(item.id, true));
     }
-    return dispatch(receiveItem(item.id));
+    return dispatch(preloadItems(item.id));
   }
 }
 
 /**
- * Receive Item.
- * Downloads the item if no local file
- * @param  {String} id of the youtube video
+ * Preload Items.
+ * Downloads n items ahead
+ * @param  {String} head item
  * @return {null}
  */
-export function receiveItem (id: string) {
+export function preloadItems (id: string) {
   return async function (dispatch, getState) {
-    const player = settings.get('player');
-    const { preload } = player;
-    if(!preload.active) {
+    const concurrency = settings.get('download.concurrency');
+    if(concurrency > 2) {
       return false;
     }
     const { PlayListItems } = getState();
     const index = PlayListItems.findIndex(item => (item.get('id') === id));
-    for(let i = (index + 1); i < ((index + 1) + (preload.concurrency - 1)); i++) {
+    for(let i = (index + 1); i < ((index + 1) + (concurrency - 1)); i++) {
       const item = PlayListItems.get(i);
       if(!item.get('file') && !item.get('isLoading')) {
         dispatch(fetchItem(item, false));

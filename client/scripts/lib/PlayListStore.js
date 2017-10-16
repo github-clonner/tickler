@@ -58,33 +58,26 @@ export default class PlayListStore {
   playlist: PlayList;
   validate: Function;
 
-  constructor (file?: string) {
+  constructor (file?: string, create?: boolean = true) {
     this.validate = ajv.compile(schema);
-    const { current, folders } = settings.get('playlist');
-    if (file && fs.existsSync(file)) {
+    const { scanDirs, current } = settings.get('playlist');
+    if (file) {
       this.playlist = this.load(file);
-    } else {
-      const match = this.find(folders, current);
-      if (match) {
-        this.playlist = this.load(match);
-      } else {
-        this.playlist = this.create();
-      }
+    } else if (current) {
+      this.playlist = this.load(current);
+    } else if (scanDirs) {
+      const lists = this.find(scanDirs);
+      this.playlist = this.load(lists);
+    } else if (create) {
+      this.playlist = this.create();
     }
   }
 
   /*
    * Find a playlist
    */
-  find (folders: Array<string>, glob: string) : void | string {
-    const { current } = settings.get('playlist');
-    return folders
-    .map(folder => {
-      return path.isAbsolute(folder) ? path.join(folder, current) : path.join(getPath(folder), current);
-    })
-    .find(file => {
-      return fs.existsSync(file);
-    });
+  find (folders: Array<string>) : void | string {
+    return folders.find(file => fs.existsSync(file));
   }
 
   /*
@@ -103,13 +96,14 @@ export default class PlayListStore {
             throw new Error('Invalid playlist format');
           }
         } catch (error) {
+          console.error(error);
           throw error;
         }
       } else {
-        throw new Error('Invalid playlist format');
+        throw new Error(`Playlist ${file} cant be read`);
       }
     } else {
-      throw new Error('Playlist not found');
+      throw new Error(`Playlist ${file} not found`);
     }
   }
 
@@ -124,20 +118,21 @@ export default class PlayListStore {
   /*
    * Create empty playlist usually inside the user’s music directory
    */
-  create () : void | Error {
+  create() : void | Error {
     const { username } = os.userInfo();
-    const { current, folder } = settings.get('playlist');
-    // Default playlist file location+name
-    const file = path.join(getPath(folder), current);
-
-    this.playlist = {
-      name: `${username} playlist`,
+    const { savePath, formats } = settings.get('playlist');
+    const file = path.format({
+      dir: getPath(savePath),
+      base: `${username}-playlist`,
+      ext: `.${formats.pop()}`
+    });
+    const { playlist } = this.playlist = {
+      name: `${username}-playlist`,
       id: uuid.v1()
     };
-
-    this.validate(this.playlist);
-    this.save(file, this.playlist);
-    return this.playlist;
+    this.validate(playlist);
+    this.save(file, playlist);
+    return playlist;
   }
 
   /*

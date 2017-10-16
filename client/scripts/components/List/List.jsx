@@ -72,6 +72,21 @@ const mapDispatchToProps = function (dispatch) {
   };
 };
 
+
+const notify = function (item) {
+  const {
+    thumbnails: { default: { url: icon = undefined } = {}} = {},
+    title: body
+  } = item;
+  const options = {
+    ...{ body, icon },
+    title: 'Now Playing',
+    sound: false,
+    silent: true
+  };
+  return new Notification(item.title, options);
+};
+
 const handleClick = function(event, items, item) {
   event.preventDefault();
   event.stopPropagation();
@@ -93,27 +108,17 @@ const handleClick = function(event, items, item) {
   }
 };
 
-const playPause = function (item) {
-  const options = {
-    title: 'Now Playing',
-    body: item.title,
-    sound: false,
-    icon: item.thumbnails.default.url,
-    image:  item.thumbnails.default.url,
-    silent: true
-  };
-  new Notification(item.title, options);
-};
-
 export default compose(
   pure,
   connect(mapStateToProps, mapDispatchToProps),
   setPropTypes({
     options: PropTypes.shape({
       playlist: PropTypes.shape({
-        folders: PropTypes.array.isRequired,
-        formats: PropTypes.array.isRequired,
-        current: PropTypes.string.isRequired
+        scanDirs: PropTypes.array,
+        savePath: PropTypes.string,
+        formats: PropTypes.array,
+        current: PropTypes.string,
+        recent: PropTypes.array
       })
     })
   }),
@@ -127,11 +132,11 @@ export default compose(
         return playlist.selectItem(selected.pop());
       }
     },
-    onDoubleClick: ({ playlist }) => (event, item) => {
-      playPause(item);
+    onDoubleClick: ({ playlist, player }) => (event, item) => {
+      notify(item);
       playlist.selectItem(item);
       if (item.file && !item.isLoading) {
-        return playlist.playPauseItem(item, true);
+        return player.playPause(item);
       } else {
         return playlist.playItem(item);
       }

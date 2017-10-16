@@ -39,8 +39,11 @@
 
 import { PlayerActionKeys as Action } from '../types';
 import { createAsyncAction } from '../lib/ActionHelpers';
+import SettingsStore from '../lib/SettingsStore';
 import WaveSurfer from 'wavesurfer.js';
 import throttle from 'lodash/throttle';
+
+const settings = new SettingsStore();
 
 export const setAnalyzer = (payload: any) => ({ type: Action.SET_ANALYZER, payload });
 export const setContext = (payload: any) => ({ type: Action.SET_CONTEXT, payload });
@@ -68,12 +71,6 @@ export const init = function(options: Object) {
       isPlaying: wavesurfer.isPlaying(),
       isPaused: wavesurfer.backend.isPaused()
     })
-
-    /*
-     * Fires continuously when loading via XHR or drag'n'drop.
-     * Listener will receive (integer) loading progress in percents [0..100] and (object) event target.
-     */
-    const onLoading = (progress: number) => dispatch(setLoading(progress));
 
     /*
      * Fires on seeking.
@@ -108,6 +105,14 @@ export const init = function(options: Object) {
     );
 
     /*
+     * Fires continuously when loading via XHR or drag'n'drop.
+     * Listener will receive (integer) loading progress in percents [0..100] and (object) event target.
+     */
+    const onLoading = throttle((progress: number) => (
+      dispatch(setLoading(progress))
+    ), 100, { trailing: true });
+
+    /*
      * Fires continuously as the audio plays. Also fires on seeking.
      */
     const onAudioprocess = throttle(() => (
@@ -122,8 +127,8 @@ export const init = function(options: Object) {
 
     wavesurfer.init();
 
-    wavesurfer.on('loading', onLoading);
     wavesurfer.on('ready', onReady);
+    wavesurfer.on('loading', onLoading);
     wavesurfer.on('audioprocess', onAudioprocess);
     wavesurfer.on('seek', onSeek);
     wavesurfer.on('pause', onPause);
@@ -143,7 +148,7 @@ export const load = function(item: Object) {
     const { Audio } = getState();
     const media = item.file || item.url || item.stream;
     try {
-      Audio.wavesurfer.load(media);
+      Audio.wavesurfer.load(media, null, false);
       return dispatch(setLoading(0));
     } catch (error) {
       console.error(error);
@@ -195,7 +200,7 @@ export const setVolume = createAsyncAction(Action.SET_VOLUME, (volume: number, {
   const { Audio } = getState();
   console.log('setVolume', volume)
   return Audio.wavesurfer.setVolume(volume);
-});
+}, true, 100);
 
 /*
  * Toggle the volume on and off

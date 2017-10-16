@@ -48,6 +48,22 @@
     }
   },
   "definitions": {
+    "Path": {
+      "description": "Default download save path",
+      "oneOf": [{
+        "type": "string",
+        "enum": [ "home", "temp", "desktop", "documents", "downloads", "music", "pictures", "videos" ],
+        "uniqueItems": true,
+        "resolve": true
+      }, {
+        "type": "string",
+        "format": "path",
+        "exists": {
+          "root": "/",
+          "type": "isDirectory"
+        }
+      }]
+    },
     "Inspector": {
       "type": "object",
       "description": "Inspector options",
@@ -102,10 +118,9 @@
           "default": ["mp3", "mp4", "m4a", "aac", "flac", "wav", "ogg", "3gpp"],
           "items": {
             "type": "string",
-            "enum": ["mp3", "mp4", "m4a", "aac", "flac", "wav", "ogg", "3gpp"],
-            "uniqueItems": true,
-            "description": "Supported audio formats"
-          }
+            "uniqueItems": true
+          },
+          "description": "Supported audio formats"
         }
       }
     },
@@ -185,9 +200,9 @@
           "description": "Valid file extensions",
           "items": {
             "type": "string",
-            "uniqueItems": true,
-            "description": "File extension without wildcards or dots"
-          }
+            "uniqueItems": true
+          },
+          "description": "File extension without wildcards or dots"
         }
       }
     },
@@ -195,60 +210,45 @@
       "type": "object",
       "description": "PlayList options",
       "properties": {
-        "folders": {
+        "scanDirs": {
           "type": "array",
-          "default": ["music", "videos", "userData"],
+          "default": ["music", "videos"],
           "items": {
-            "type": "string",
-            "enum": ["music", "videos", "userData"],
-            "uniqueItems": true,
-            "description": "Default folders to search for audio and playlist files"
-          }
+            "$ref": "#/definitions/Path"
+          },
+          "description": "Default folders to search for and playlist files"
         },
-        "folder": {
-          "type": "string",
+        "savePath": {
+          "$ref": "#/definitions/Path",
           "default": "music",
-          "description": "Music library folder"
-        },
-        "formats": {
-          "type": "array",
-          "description": "File type filter",
-          "default": [],
-          "items": {
-            "$ref": "#/definitions/FileFormat"
-          }
+          "description": "Default path for music libraries"
         },
         "formats": {
           "type": "array",
           "default": ["json"],
           "items": {
             "type": "string",
-            "enum": ["json"],
-            "uniqueItems": true,
-            "description": "Supported playlist formats"
-          }
+            "uniqueItems": true
+          },
+          "description": "Supported playlist formats"
         },
         "current": {
-          "type": ["string", "null"],
-          "default": "playlist.json",
-          "description": "Current loaded playlist"
+          "type": "string",
+          "format": "path",
+          "exists": {
+            "root": "/",
+            "type": "isFile"
+          },
+          "description": "Current playlist file"
+        },
+        "recent": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Path"
+          },
+          "description": "Recently playlists"
         }
       }
-    },
-    "Path": {
-      "description": "Default download save path",
-      "oneOf": [{
-        "type": "string",
-        "enum": [ "home", "temp", "desktop", "documents", "downloads", "music", "pictures", "videos" ],
-        "resolve": true
-      }, {
-        "type": "string",
-        "format": "path",
-        "exists": {
-          "root": "/",
-          "type": "isDirectory"
-        }
-      }]
     },
     "Download": {
       "type": "object",
@@ -256,18 +256,7 @@
       "required": [ "savePath", "tempPath" ],
       "properties": {
         "savePath": {
-          "oneOf": [{
-            "type": "string",
-            "enum": [ "home", "temp", "desktop", "documents", "downloads", "music", "pictures", "videos" ],
-            "resolve": true
-          }, {
-            "type": "string",
-            "pattern": "^(/[^/]+)+$",
-            "exists": {
-              "root": "/",
-              "type": "isDirectory"
-            }
-          }],
+          "$ref": "#/definitions/Path",
           "default": "downloads",
           "description": "Default download save path"
         },

@@ -29,6 +29,23 @@
       "items": {
         "$ref": "#/definitions/Track"
       }
+    },
+    "playback": {
+      "type": "object",
+      "description": "Playlist playback settings",
+      "properties": {
+        "qa": {
+          "type": "array",
+          "description": "Frequency adjustments",
+          "items": {
+            "type": "number",
+            "maximum": 1,
+            "minimum": 0,
+            "default": 0,
+            "description": "Frequency band adjustment"
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -162,7 +179,7 @@
     "Track": {
       "type": "object",
       "description": "Playlist track item.",
-      "required": ["id", "name", "artists", "thumbnails"],
+      "required": ["id", "name"],
       "properties": {
         "id": {
           "type": "string",

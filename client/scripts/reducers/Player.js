@@ -39,6 +39,7 @@
 
 import type { PlayerActions } from '../types';
 import { PlayerActionKeys as Action } from '../types';
+import SettingsStore from '../lib/SettingsStore';
 
 /* List of Actions used for debug */
 const isValidType = (type: string) => ([
@@ -62,20 +63,20 @@ const isValidType = (type: string) => ([
   Action.ERROR
 ].includes(type));
 
+const settings = new SettingsStore();
 const audio = {
+  wavesurfer: null,
   context: null,
   analyzer: null,
-  currentTime: 0,
   seek: 0,
   duration: 0,
-  volume: 0.5,
-  isMuted: false,
-  mute: false,
+  currentTime: 0,
+  volume: settings.get('audio.volume', 0.5),
   progress: 0,
+  isMuted: settings.get('audio.isMuted', false),
   isPlaying: false,
   isPaused: false,
-  isReady: false,
-  wavesurfer: null
+  isReady: false
 };
 
 export function Audio (state = audio, action: PlayerActions) {
@@ -100,6 +101,7 @@ export function Audio (state = audio, action: PlayerActions) {
     case Action.SET_STOP: return { ...state, isPlaying: false, currentTime: 0 };
     case Action.SET_PAUSE: return { ...state, isPaused: true, isPlaying: false };
     case Action.SET_READY: return { ...state, isReady: action.payload };
+    case Action.TOGGLE_MUTE: return { ...state, isMuted: action.payload };
     default:
       return state;
   }

@@ -44,6 +44,7 @@ import { connect } from 'react-redux';
 import { compose, onlyUpdateForPropTypes, branch, pure, renderNothing, renderComponent, withPropsOnChange, withState, withHandlers, withProps, mapProps, setPropTypes } from 'recompose';
 /* owner libs */
 import { Player, Settings } from '../../../actions';
+import { getSelectedItems, getFilteredItems, getNext, getPrev, getSelected } from '../../../selectors';
 // Import styles
 import classNames from 'classnames';
 import Style from '../Player.css';
@@ -52,15 +53,20 @@ import Style from '../Player.css';
  * Subbscribe to redux store and merge these props
  * reference: https://github.com/reactjs/react-redux/blob/master/docs/api.md
  */
-function mapStateToProps(state) {
-  const items = state.PlayListItems.toJS();
-  const index = items.findIndex(({selected}) => (selected))
+function mapStateToProps(state, props) {
+  const items = state.PlayListItems;
+  const handlers = {
+    next: getNext(items),
+    prev: getPrev(items),
+    selected: getSelected(items),
+  };
   return {
-    // items,
-    item: items[index],
-    index,
+    ...handlers,
     audio: state.Audio,
-    // player: state.Player,
+    skip: {
+      forward: false,
+      backward: true
+    },
     options: {
       player: state.Settings.get('player'),
       audio: state.Settings.get('audio')
@@ -68,11 +74,6 @@ function mapStateToProps(state) {
   };
 }
 
-/*
- * Redux Action Creators
- * Each key inside this object is assumed to be a Redux action creator
- * reference: https://github.com/reactjs/react-redux/blob/master/docs/api.md
- */
 function mapDispatchToProps(dispatch) {
   return {
     player: bindActionCreators(Player, dispatch)
@@ -85,60 +86,55 @@ function mapDispatchToProps(dispatch) {
 const enhance = compose(
   pure,
   connect(mapStateToProps, mapDispatchToProps),
-  mapProps(({ playlist, player, options, settings, items, item, index, audio }) => {
+  withProps(({ playlist, player, options, settings, selected, audio }) => {
     return {
-      item,
       player,
+      selected: selected ? selected.toJS() : undefined,
       isPlaying: audio.isPlaying,
       currentTime: audio.currentTime,
       stop: player.stop,
-      playPause: audio.playPause,
-      skip: {
-        forward: false,
-        backward: true
-      }
+      canSkip: true,
+      canPlay: true,
+      canStop: (audio.isPlaying || audio.currentTime > 0)
     }
   }),
   withHandlers({
-    playPause: ({ item, player, isPlaying }) => event => {
-      console.log('playPause: ', item, player, isPlaying);
-      return player.playPause(item);
+    play: props => event => {
+      const { player, selected } = props;
+      console.log('selected: ', selected);
+      return player.playPause(selected);
     },
-    // pause: ({ player }) => player.pause,
-    // stop: ({ player }) => player.stop,
-    // canJump: ({ item }) => direction => {
-    //   console.log('canJump', direction)
-    //   return true;
-    // },
-    jump: ({ item, items, player }) => direction => event => {
-      const index = items.findIndex(({ id }) => (id === item.id));
-      if (Math.sign(direction) > 0) {
-        const nextIndex = ((index + 1) === items.length) ? 0 : index + 1;
-        return player.play(items[nextIndex].file);
-      } else {
-        const prevIndex = (index === 0) ? (items.length - 1) : index - 1;
-        return player.play(items[prevIndex].file);
-      }
+    skip: props => event => {
+      console.log('skip', props, event.target)
+      // const index = items.findIndex(({ id }) => (id === item.id));
+      // if (Math.sign(direction) > 0) {
+      //   const nextIndex = ((index + 1) === items.length) ? 0 : index + 1;
+      //   return player.play(items[nextIndex].file);
+      // } else {
+      //   const prevIndex = (index === 0) ? (items.length - 1) : index - 1;
+      //   return player.play(items[prevIndex].file);
+      // }
     }
   }),
   onlyUpdateForPropTypes,
   setPropTypes({
-    isPlaying: PropTypes.bool.isRequired,
-    currentTime: PropTypes.number.isRequired,
-    skip: PropTypes.object
+    canSkip: PropTypes.bool.isRequired,
+    canPlay: PropTypes.bool.isRequired,
+    canStop: PropTypes.bool.isRequired
   })
 );
+
 
 /*
  * Playback component renderer
  */
-export default enhance(({ isPlaying, currentTime, skip, jump, stop, playPause }) => {
+export default enhance(({ isPlaying, currentTime, canStop, canPlay, canSkip, skip, stop, play }) => {
   return (
     <div className={ Style.btnGroup } >
-      <button className={ Style.roundButton } onClick={ jump(-1) }  title="backward" disabled={ skip.backward }>skip_previous</button>
-      <button className={ Style.roundButton } onClick={ stop }      title="stop"     disabled={ !(currentTime > 0) }>stop</button>
-      <button className={ Style.roundButton } onClick={ jump(+1) }  title="forward"  disabled={ skip.forward }>skip_next</button>
-      <button className={ Style.roundButton } onClick={ playPause } title="play"     disabled={ false }>{ isPlaying ? 'pause' : 'play_arrow' }</button>
+      <button className={ Style.roundButton } disabled={ !canSkip } onClick={ skip } title="backward" >skip_previous</button>
+      <button className={ Style.roundButton } disabled={ !canStop } onClick={ stop } title="stop">stop</button>
+      <button className={ Style.roundButton } disabled={ !canSkip } onClick={ skip } title="forward" >skip_next</button>
+      <button className={ Style.roundButton } disabled={ !canPlay } onClick={ play } title="play">{ isPlaying ? 'pause' : 'play_arrow' }</button>
     </div>
   );
 });
