@@ -43,6 +43,7 @@ import throttle from 'lodash/throttle';
 import sanitize from 'sanitize-filename';
 import EventEmitterEx from './EventEmitterEx';
 import Transcoder, { encode } from './Transcoder';
+import Metadata from './Metadata';
 import { ApiClient } from '@maggiben/google-apis';
 
 const defaults = {
@@ -216,11 +217,24 @@ export default class Youtube {
             this.events.emit('error', { video, error });
             return reject(error);
           },
-          info: (info) => {
-            this.events.emit('info', { video, info });
-            transcoder.encode({
-              preset: 'mp3',
-              output: path.resolve(__dirname, 'encoded.mp3')
+          info: (info, format) => {
+            this.events.emit('info', { video, info, format });
+
+            const file = {
+              dir: path.resolve(tempPath),
+              name: sanitize(video.title),
+              ext: format.audioEncoding
+            };
+
+            const output = transcoder.encode({
+              video,
+              info,
+              input: {
+                format
+              },
+              output: {
+                file: path.format(file)
+              }
             });
           },
           response(response) {
@@ -254,7 +268,17 @@ export default class Youtube {
         };
 
         /* Start download */
-        const downloader = ytdl(`http://www.youtube.com/watch?v=${video.id}`, 'audioonly');
+        const downloader = ytdl(`http://www.youtube.com/watch?v=${video.id}`, {
+          quality: 'highest',
+          filter: (format) => {
+            const { bitrate, audioBitrate, audioEncoding, type } = format;
+            const isTypeSupported = MediaSource.isTypeSupported(type);
+            if(!bitrate && audioBitrate && isTypeSupported) {
+              console.log('format', audioEncoding, 'type', type, 'audioBitrate', audioBitrate , 'isTypeSupported', isTypeSupported);
+              return format;
+            }
+          }
+        });
         /* Instanciate media transcoder */
         const transcoder = new Transcoder(downloader);
         /* Add private listeners */

@@ -37,20 +37,17 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-import fs from 'fs';
-import path from 'path';
-import Stream from 'stream';
-import { EchoStream } from './StreamEx';
-import MediaElementWrapper from './mediasource';
-
 /*
  * Inspiration:
- * https://github.com/feross/mediasource/blob/master/index.js
+ * https://github.com/feross/mediasource
  * https://developer.mozilla.org/es/docs/Web/API/MediaSource
  * https://axel.isouard.fr/blog/2016/05/24/streaming-webm-video-over-html5-with-media-source
  * https://developers.google.com/web/fundamentals/media/mse/basics
  * https://developers.google.com/web/updates/2015/06/Media-Source-Extensions-for-Audio
  */
+
+import Stream from 'stream';
+import { MediaSourceStream } from './StreamEx';
 
 /*
  * Media error code constants
@@ -62,50 +59,39 @@ const MediaErrorType = {
   MEDIA_ERR_DECODE: [ 3, 'An error occurred while trying to decode the media resource'],
   MEDIA_ERR_SRC_NOT_SUPPORTED: [ 4, 'Unsupported resource or media format']
 };
-
 const DEFAULT_BUFFER_DURATION = 60; // seconds
 
-export class MediaSourceStream extends Stream.Writable {
-  constructor(wrapper, ...args) {
-    super(...args);
-  }
-}
-
-export class MediaSourceEx extends MediaSource {
-  constructor(element, stream, mimeType, ...args) {
-    super(...args);
+export class MediaElementWrapper extends MediaSource {
+  constructor(element, options = {}) {
+    super();
+    this.mediaSource = this;
+    this.bufferDuration = options.bufferDuration || DEFAULT_BUFFER_DURATION
+    this.streams = [];
     this.element = element;
-    this.stream = stream;
-    this.mimeType = mimeType;
+    this.element.src = URL.createObjectURL(this);
+    this.element.addEventListener('error', this.onError, {once: true});
   }
 
-  onUpdateEnd(event) {
-    const { sourceBuffer } = this;
-    if (!sourceBuffer.updating && this.readyState === 'open') {
-      this.endOfStream();
-    }
+  /*
+   * `obj` can be a previous value returned by this function
+   * or a string
+   */
+  createWriteStream(object) {
+    return new MediaSourceStream(this, object);
   }
 
-  onSourceOpen(event) { }
+  onError = (error) => {
+    return this.streams.slice().map(stream => stream.destroy(this.element.error));
+  }
 
-  onError(error) {
-    console.error(error);
+  /*
+   * Use to trigger an error on the underlying media element
+   */
+  error(error) {
     try {
-      this.endOfStream('decode');
-    } catch (ignored) { }
-  }
-
-  createWriteStream(mimeType) {
-    if (!MediaSource.isTypeSupported(mimeType)) {
-      console.error('Unsupported MIME type or codec: ' + mimeType);
-      throw new Error('Unsupported MIME type or codec: ' + mimeType);
-    }
-    const { element, sourceBuffer = null } = this;
-    sourceBuffer = this.addSourceBuffer(mimeType);
-    sourceBuffer.addEventListener('error', this.onError);
-    sourceBuffer.addEventListener('updateend', this.onUpdateEnd);
-    sourceBuffer.addEventListener('sourceopen', this.onUpdateEnd);
-    element.src = URL.createObjectURL(this);
+      console.error(error);
+      return this.endOfStream('decode');
+    } catch (ignored) {}
   }
 }
 
@@ -124,11 +110,13 @@ export class MediaElementEx extends MediaElementWrapper {
     /* listeners */
     this.element.addEventListener('error', (error) => {
       console.error('audio error', this.error);
-    });
+    }, {once: true});
     this.writable.on('error', (error) => {
       console.error('writable error', error);
-    });
+    }, {once: true});
 
     this.readable.pipe(this.writable);
   }
 }
+
+
