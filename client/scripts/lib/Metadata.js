@@ -50,14 +50,16 @@ function promisify(func) {
 
 function verifyFile(file) {
   try {
-    console.log('verifyFile: ', file);
-    const stats = fs.statSync(file);
-    return stats.isFile();
-  } catch (ignored) {
+    return fs.statSync(file).isFile();
+  } catch (error) {
     return false;
   }
 }
 
+/*
+ * Access nested object property by string path
+ * inspiration: https://stackoverflow.com/questions/6491463/accessing-nested-javascript-objects-with-string-key
+ */
 const get = (object: Object, path: string, defaultValue?: any) => path
   .replace(/\[(\w+)\]/g, '.$1') // Convert indexes to properties
   .replace(/^\./, '')           // strip leading dot

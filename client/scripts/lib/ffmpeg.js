@@ -54,6 +54,7 @@ const fs = require('fs');
 const path = require('path');
 const platform = os.platform();
 const arch = os.arch();
+const ffbinaries = require('ffbinaries');
 
 const installer = {
   ffmpeg: {

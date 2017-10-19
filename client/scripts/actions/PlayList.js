@@ -97,7 +97,7 @@ export function fetchItem (item, autoPlay = false) {
     };
 
     const onResponse = ({ video, response, downloader, stream }) => {
-      console.log('onResponse', { video, response, downloader, stream });
+      // console.log('onResponse', { video, response, downloader, stream });
       // const blob = new window.Blob([new Uint8Array(stream)]);
       // Audio.wavesurfer.loadBlob(blob);
       // const sound = window.howl = new Howl({
@@ -108,8 +108,8 @@ export function fetchItem (item, autoPlay = false) {
       // sound.play();
     }
 
-    const onInfo = ({ video, info }) => {
-      return console.log('onInfo', video, info)
+    const onInfo = ({ video, info, format}) => {
+      return console.log('onInfo', video, info, format)
     };
 
     const onError = ({ video, error }) => {
