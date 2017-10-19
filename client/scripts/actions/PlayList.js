@@ -47,6 +47,7 @@ import fs from 'fs';
 import os from 'os';
 import path from 'path';
 import { shell, remote } from 'electron';
+import { Howl } from 'howler';
 
 const settings = window.settings = new SettingsStore();
 const plugins = settings.get('plugins');
@@ -84,6 +85,10 @@ export const downloadProgress = payload => ({type: Action.DOWNLOAD_PROGRESS, pay
  */
 export function fetchItem (item, autoPlay = false) {
   return async function (dispatch, getState) {
+
+    const { Audio, Settings } = getState();
+    // autoPlay = autoPlay || Settings.get('player.autoPlay');
+
     const onProgress = ({video, progress}) => {
       return dispatch(editItem(video.id, {
         isLoading: true,
@@ -91,26 +96,41 @@ export function fetchItem (item, autoPlay = false) {
       }));
     };
 
-    const onInfo = ({video, info}) => {
-      return console.debug(video, info)
+    const onResponse = ({ video, response, downloader, stream }) => {
+      console.log('onResponse', { video, response, downloader, stream });
+      // const blob = new window.Blob([new Uint8Array(stream)]);
+      // Audio.wavesurfer.loadBlob(blob);
+      // const sound = window.howl = new Howl({
+      //   src: ['http://ice1.somafm.com/groovesalad-128-mp3', 'http://ice1.somafm.com/groovesalad-128-aac'],
+      //   html5: true, // A live stream can only be played through HTML5 Audio.
+      //   format: ['mp3', 'aac']
+      // });
+      // sound.play();
+    }
+
+    const onInfo = ({ video, info }) => {
+      return console.log('onInfo', video, info)
     };
 
-    const onError = ({video, error}) => {
+    const onError = ({ video, error }) => {
       console.error(video, error);
       return dispatch(playNextItem(item.id));
     };
 
+    const onAbort = ({ video, reason }) => {
+      console.log('onAbort', video, video);
+      return dispatch(playNextItem(item.id));
+    };
+
     const cleanListeners = () => (
-      youtube.events.removeListener('progress', onProgress),
-      youtube.events.removeListener('info', onInfo),
-      youtube.events.removeListener('error', onError)
+      youtube.events.off('progress', onProgress)
     );
 
-    let fileName = null;
-
     youtube.events.on('progress', onProgress);
-    youtube.events.on('info', onInfo);
-    youtube.events.on('error', onError);
+    youtube.events.once('response', onResponse);
+    youtube.events.once('info', onInfo);
+    youtube.events.once('error', onError);
+    youtube.events.once('abort', onAbort);
 
     dispatch(editItem(item.id, {
       isLoading: true,
@@ -118,7 +138,7 @@ export function fetchItem (item, autoPlay = false) {
     }));
 
     try {
-      fileName = await youtube.downloadVideo(item);
+      const fileName = await youtube.downloadVideo(item);
       dispatch(editItem(item.id, {
         file: fileName,
         isLoading: false,
@@ -132,12 +152,12 @@ export function fetchItem (item, autoPlay = false) {
       dispatch({type: 'ERROR', error: error});
     } finally {
       cleanListeners();
-      dispatch(editItem(item.id, {
-        isLoading: false
-      }));
-      if (fileName && autoPlay) {
-        dispatch(playPauseItem(item.id, true));
-      }
+      // dispatch(editItem(item.id, {
+      //   isLoading: false
+      // }));
+      // if (fileName && autoPlay) {
+      //   dispatch(playPauseItem(item.id, true));
+      // }
     }
   }
 }

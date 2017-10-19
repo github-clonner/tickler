@@ -75,3 +75,8 @@ export default class EventEmitterEx extends EventEmitter {
     return super.removeListener(eventName, listener);
   }
 }
+
+
+export class YoutubeEvents extends EventEmitterEx {
+
+}

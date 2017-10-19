@@ -1,14 +1,14 @@
 // @flow
 
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : items.js                                                //
-// @summary      : items selector                                            //
-// @version      : 0.0.1                                                     //
+// @file         : StreamEx.js                                               //
+// @summary      : Enhaced Stream library                                    //
+// @version      : 0.1.0                                                     //
 // @project      : tickelr                                                   //
 // @description  :                                                           //
 // @author       : Benjamin Maggi                                            //
 // @email        : benjaminmaggi@gmail.com                                   //
-// @date         : 13 Oct 2017                                               //
+// @date         : 15 Oct 2017                                               //
 // @license:     : MIT                                                       //
 // ------------------------------------------------------------------------- //
 //                                                                           //
@@ -37,61 +37,47 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-import { createSelector } from 'reselect'
+import fs from 'fs';
+import path from 'path';
+import Stream from 'stream';
 
-/* Get all items */
-export const getItems = state => state;
+export class EchoStream extends Stream.Writable {
 
-/* Get selected item*/
-export const getSelected = items => items
-  .filter(item => (item.get('file') || item.get('url')))
-  .filter(item => item.get('selected'))
-  .first();
-
-/* Get next item*/
-export const getNext = items => items
-  .skip(items.indexOf(getSelected(items)) + 1)
-  .filter(item => item.get('file'))
-  .first();
-
-/* Get previous item */
-export const getPrev = items => items
-  .skipLast(items.indexOf(getSelected(items)) -1)
-  .filter(item => item.get('file'))
-  .first();
-
-/*
- * Redux Action Creators
- * Each key inside this object is assumed to be a Redux action creator
- * reference: https://github.com/reactjs/react-redux/blob/master/docs/api.md
- */
-export const getItemsBy = (state, props) => {
-  return state.filter(item => item.get('file'));
-};
-
-export const getShuffledItems = state => state
-  .map(item => ({ sort: Math.random(), value: item }))
-  .sort((a, b) => a.sort > b.sort ? 1 : -1)
-  .map((a) => a.value)
-
-/*
- * Redux Action Creators
- * Each key inside this object is assumed to be a Redux action creator
- * reference: https://github.com/reactjs/react-redux/blob/master/docs/api.md
- */
-export const getFilteredItems = createSelector(
-  [ getItemsBy, getItems ], function(filter, items) {
-    console.log('getFilteredItems', filter.size, items.size);
-    switch (filter) {
-      case 'SHOW_LOCAL': return items.filter(({ file }) => (file));
-      case 'SHOW_REMOTE': return items.filter(({ file }) => !(file));
-      case 'SHOW_SELECTED': return items.filter(({ selected }) => (selected))
-      case 'SHOW_LOADING': return items.filter(({ isLoading }) => (isLoading))
-      default:
-        return items
-    }
+  constructor(...args) {
+    super(...args);
+    this.body = new Array();
   }
-);
+  _write(chunk, encoding, callback) {
+    if (!(chunk instanceof Buffer)) {
+        return this.emit('error', new Error('Invalid data'));
+    }
+    this.body.push(chunk);
+    return callback();
+  }
 
+  toBuffer () {
+    return Buffer.concat(this.body);
+  }
 
+  toBufferX () {
+    let buffers = [];
+    this._writableState.getBuffer().forEach(function(data) {
+      buffers.push(data.chunk);
+    });
+    return Buffer.concat(buffers);
+  }
 
+  toArray () {
+    let buffer = this.toBuffer();
+    return new Uint8Array(buffer);
+  }
+
+  toString () {
+    return String.fromCharCode.apply(null, this.toArray());
+  }
+
+  end (chunk, encoding, callback) {
+    let ret = Stream.Writable.prototype.end.apply(this, arguments);
+    if (!ret) this.emit('finish');
+  }
+}

@@ -42,6 +42,7 @@ import path from 'path';
 import throttle from 'lodash/throttle';
 import sanitize from 'sanitize-filename';
 import EventEmitterEx from './EventEmitterEx';
+import Transcoder, { encode } from './Transcoder';
 import { ApiClient } from '@maggiben/google-apis';
 
 const defaults = {
@@ -197,14 +198,14 @@ export default class Youtube {
    * @return {Promise|Stream} Promise | Readable stream
    */
   async downloadVideo(video) {
-    const { streams, options: { download: { savePath, tempPath }}} = this;
+    const { events, streams, options: { download: { savePath, tempPath }}} = this;
     console.debug('downloadVideo: ', video, savePath, tempPath);
+    const file = path.resolve(tempPath, sanitize(video.title));
+    const stream = fs.createWriteStream(file);
     this.streams.set(video.id, null);
 
     return new Promise((resolve, reject) => {
       try {
-        const file = path.resolve(tempPath, sanitize(video.title));
-        const stream = fs.createWriteStream(file);
         const listener = {
           progress: throttle((chunkLength, downloaded, total) => {
             return this.events.emit('progress', { video, downloaded, total, progress: (downloaded / total) });
@@ -217,9 +218,14 @@ export default class Youtube {
           },
           info: (info) => {
             this.events.emit('info', { video, info });
+            transcoder.encode({
+              preset: 'mp3',
+              output: path.resolve(__dirname, 'encoded.mp3')
+            });
           },
           response(response) {
             downloader.pipe(stream);
+            events.emit('response', { video, response, downloader, stream });
           },
           end: () => {
             console.log('download of %s ended', video.id);
@@ -231,27 +237,31 @@ export default class Youtube {
             console.log('download of %s aborted', video.id);
             cleanup(downloader);
             this.events.emit('abort', { video, file });
-            return reject(file);
+            return reject('abort');
           }
         };
 
         /* Graceful exit */
         const cleanup = (...emitters) => {
-          return emitters.map(emitter => {
-            return Object.entries(listener).map(function ([name, handler]) {
-              return emitter.removeListener(name, handler);
-            });
-          });
+          stream.end();
+          downloader.end();
+          downloader.removeAllListeners();
+          // return emitters.map(emitter => {
+          //   return Object.entries(listener).map(function ([ name, handler ]) {
+          //     return emitter.removeListener(name, handler);
+          //   });
+          // });
         };
 
         /* Start download */
         const downloader = ytdl(`http://www.youtube.com/watch?v=${video.id}`, 'audioonly');
-
+        /* Instanciate media transcoder */
+        const transcoder = new Transcoder(downloader);
         /* Add private listeners */
         downloader
           .on('response', listener.response)
           .on('progress', listener.progress)
-          .on('abort', listener.abort)
+          .once('abort', listener.abort)
           .once('end', listener.end)
           .once('error', listener.error)
           .once('info', listener.info);

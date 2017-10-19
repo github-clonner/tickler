@@ -8,6 +8,8 @@ import WebpackCleanupPlugin from 'webpack-cleanup-plugin';
 import WebpackNotifierPlugin from 'webpack-notifier';
 import { dependencies } from './package.json';
 
+const excludeDeps = [];
+
 const configMain = {
   context: path.resolve(__dirname, './client/backend'),
   entry: {
@@ -42,12 +44,19 @@ const configRenderer = {
   context: path.resolve(__dirname, './client/scripts'),
   entry: {
     bundle: ['./index.jsx'],
-    vendor: Object.keys(dependencies)
+    vendor: Object.keys(dependencies).filter(dependency => !excludeDeps.includes(dependency))
   },
   output: {
     path: path.resolve('dist'),
-    filename: '[name].js'
+    filename: '[name].js',
+    libraryTarget: 'commonjs2'
   },
+  // externals: {
+  //   'fluent-ffmpeg': {
+  //     commonjs: 'fluent-ffmpeg',
+  //     commonjs2: 'fluent-ffmpeg'
+  //   }
+  // },
   node: {
     console: true,
     process: true,
@@ -69,7 +78,8 @@ const configRenderer = {
     new webpack.NoEmitOnErrorsPlugin(),
     new webpack.EnvironmentPlugin({
       NODE_ENV: 'development',
-      BABEL_ENV: 'renderer'
+      BABEL_ENV: 'renderer',
+      FLUENTFFMPEG_COV: false
     }),
     new HtmlwebpackPlugin({
       inject: false,
@@ -115,6 +125,10 @@ const configRenderer = {
       title: 'Webpack',
       skipFirstNotification: true
     }),
+    new webpack.ContextReplacementPlugin(
+      /fluent-ffmpeg/,
+      /fluent-ffmpeg/
+    )
     //new ExtractTextPlugin('style.css', { allChunks: true })
   ],
   // resolveLoader: {

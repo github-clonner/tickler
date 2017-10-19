@@ -128,7 +128,7 @@
       "type": "object",
       "description": "Player options",
       "properties": {
-        "autoplay": {
+        "autoPlay": {
           "type": "boolean",
           "default": false,
           "description": "If true will automatically start playing"
