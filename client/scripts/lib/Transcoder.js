@@ -40,10 +40,13 @@
 import fs from 'fs';
 import path from 'path';
 import Stream from 'stream';
-import { EchoStream } from './StreamEx';
 import FFmpeg from 'fluent-ffmpeg';
 import camelCase from 'lodash/camelCase';
+import { Howl } from 'howler';
+import MediaElementWrapper from 'mediasource';
 
+import { MediaElementEx } from './MediaSourceEx';
+import { EchoStream } from './StreamEx';
 /*
  * Inspiration:
  * https://github.com/jameskyburz/youtube-audio-stream
@@ -117,6 +120,14 @@ const presets = {
   }
 };
 
+window.qaq = function(
+  element = document.getElementById('audioElement'),
+  stream = fs.createReadStream(path.resolve(process.cwd(), 'audio.mp3')),
+  format = 'audio/mpeg'
+) {
+  const mediaElementEx = new MediaElementEx(element, stream, format);
+}
+
 export default class Transcoder {
 
   constructor(stream) {
@@ -135,33 +146,83 @@ export default class Transcoder {
 
   encode(options) {
     const { stream } = this;
-    const { preset, output } = options;
-    console.log('encode options', options);
+    const { input, output } = options;
+    console.log('encode options', options, typeof stream, stream instanceof Stream.Readable);
     if (!(stream instanceof Stream.Readable)) {
       throw new Error('Invalid input stream');
     }
-    return new FFmpeg(stream)
-    .audioCodec('libmp3lame')
-    .audioBitrate(128)
-    .audioChannels(2)
-    .format('mp3')
-    .save('out.mp3')
-    .on('start', function(commandLine) {
-      console.log('Spawned Ffmpeg with command: ' + commandLine);
-    })
-    .on('codecData', function(data) {
-      console.log('Input is ', data.audio, ' audio ', 'with ', data.video, ' video');
-    })
-    .on('error', function(error) {
-      console.error(error.message);
-    })
-    .on('progress', function(progress) {
-      console.log('progress', progress);
-    })
-    .on('end', function() {
-      console.log('end conversion!');
-    });
+
+    const command = new FFmpeg(stream);
+
+    command
+      .audioCodec('libmp3lame')
+      .audioBitrate(128)
+      .audioChannels(2)
+      .format('mp3')
+      .output(`out-${new Date().getMinutes()}.mp3`)
+      .on('start', cmd => console.log('Spawned Ffmpeg with command: ' + cmd))
+      .on('codecData', data => console.log('Input is ', data.audio, ' audio ', 'with ', data.video, ' video'))
+      .on('error', error => console.error(error))
+      .on('progress', progress => console.log('progress', progress))
+      .on('end', () => console.log('end conversion!'));
+
+    // const ffstream = command.pipe();
+    // console.log('ffstream', ffstream);
+
+    command.run();
+    this.play(
+      document.getElementById('audioElement'),
+      stream,
+      options.input.format.type
+    );
+    return command;
   }
+
+  encodeXXX() {
+    this.play();
+  }
+
+  play(
+    element = document.getElementById('audioElement'),
+    stream = fs.createReadStream(path.resolve(process.cwd(), 'audio.mp3')),
+    format = 'audio/mpeg'
+  ) {
+    const mediaElementEx = new MediaElementEx(element, stream, format);
+  }
+
+  /*
+  playOld () {
+    // const file = path.resolve(process.cwd(), 'audio.mp3');
+    const file = path.resolve(process.cwd(), 'audio.mp3');
+    const audio = document.getElementById('audioElement') // Get audio element
+    const readable = fs.createReadStream(file);
+    const wrapper = new MediaElementWrapper(audio);
+    // const writable = wrapper.createWriteStream('audio/mp3; type="audio/mpeg;"');
+    const writable = wrapper.createWriteStream('audio/mpeg');
+
+    audio.addEventListener('error', function () {
+      // listen for errors on the video/audio element directly
+      const errorCode = audio.error
+      const detailedError = wrapper.detailedError
+      console.error('audio error', errorCode, detailedError);
+    })
+
+    writable.on('error', function (err) {
+      // listening to the stream 'error' event is optional
+    })
+
+    readable.pipe(writable);
+
+    return;
+
+    const sound = window.howl = new Howl({
+      src: ['http://ice1.somafm.com/groovesalad-128-mp3', 'http://ice1.somafm.com/groovesalad-128-aac'],
+      html5: true, // A live stream can only be played through HTML5 Audio.
+      format: ['mp3', 'aac']
+    });
+    sound.play();
+  }
+  */
 
   listeners(command) {
     return command
