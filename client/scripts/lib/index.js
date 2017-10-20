@@ -1,8 +1,13 @@
 export Time, { parseDuration } from './Time';
-export FileSystem, { getPath, read, write, remove, OS_DIRECTORIES } from './FileSystem';
+export FileSystem, { getPath, read, write, remove, rename, OS_DIRECTORIES } from './FileSystem';
 export SettingsStore from './SettingsStore';
 export PlayListStore from './PlayListStore';
 export EventEmitterEx from './EventEmitterEx';
 export Youtube from './Youtube';
 export { ContextMenu, buildContextMenu } from './ContextMenu';
 export MapEx from './MapEx';
+export Transcoder from './Transcoder';
+export { MediaElementEx, MediaElementWrapper } from './MediaSourceEx';
+export Metadata from './Metadata';
+export { MediaSourceStream, EchoStream, toArrayBuffer } from './StreamEx';
+export { createAsyncAction } from './ActionHelpers';

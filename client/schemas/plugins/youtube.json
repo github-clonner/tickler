@@ -1,0 +1,88 @@
+{
+  "$schema": "http://json-schema.org/draft-06/schema#",
+  "type": "object",
+  "title": "Youtube Plugin",
+  "description": "Youtube Plugin schema",
+  "required": ["id", "manifest"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "The ID of the plugin."
+    },
+    "manifest": {
+      "$ref": "#/definitions/Manifest",
+      "description": "Plugin manifest"
+    },
+    "key": {
+      "type": "string",
+      "description": "API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token."
+    },
+    "oauth_token": {
+     "type": "string",
+     "description": "OAuth 2.0 token for the current user.",
+    },
+    "icons": {
+      "type": "object",
+      "description": "The URL of the 16x16 icon.",
+      "properties": {
+        "x16": {
+          "type": "string",
+          "default": "https://www.google.com/images/icons/product/youtube-16.png",
+          "description": "The URL of the 16x16 icon."
+        },
+        "x32": {
+          "type": "string",
+          "default": "https://www.google.com/images/icons/product/youtube-32.png",
+          "description": "The URL of the 32x32 icon."
+        }
+      }
+    },
+    "rootUrl": {
+     "type": "string",
+     "default": "https://www.googleapis.com/",
+     "description": "The root URL under which all API services live."
+    },
+    "servicePath": {
+     "type": "string",
+     "default": "youtube/v3/",
+     "description": "The base path for all REST requests."
+    }
+  },
+  "definitions": {
+    "Manifest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the plugin."
+        },
+        "description": {
+          "type": ["string", "null"],
+          "description": "The plugin description."
+        },
+        "homepage": {
+          "type": "string",
+          "format": "uri",
+          "description": "A Web link to the plugin homepage."
+        },
+        "version": {
+          "type": "string",
+          "default": "v3",
+          "description": "The version of the API."
+        }
+      }
+    }
+  },
+  "formatters": {
+    "PlaylistItem": {
+      "type": "string",
+      "default": "$.($AccName:=function(){$.contentDetails.duration};$.{'id':id,'title':snippet.title,'name':snippet.title,'artists':[{'id':'sfasdf','name':'nook'}],'description':snippet.description,'thumbnails':snippet.thumbnails,'duration':$parseDuration(contentDetails.duration)})",
+      "description": "PlaylistItem formatter"
+    },
+    "MetaInfo": {
+      "type": "string",
+      "default": "$.($.{'status':status,'id':video_id,'filename':$toFilename(title),'title':title,'description':description,'related_videos':related_videos,'keywords':keywords,'rating':avg_rating,'views':view_count,'author':author})",
+      "description": "ytdl-core MetaInfo formatter"
+    }
+  }
+}

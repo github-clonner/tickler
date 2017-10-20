@@ -37,46 +37,81 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-/*
- * Inspiration:
- * https://github.com/jameskyburz/youtube-audio-stream
- *
- */
-
 import fs from 'fs';
 import path from 'path';
+import os from 'os';
 import Stream from 'stream';
+import EventEmitterEx from './EventEmitterEx';
 import FFmpeg from 'fluent-ffmpeg';
 import camelCase from 'lodash/camelCase';
+import sanitize from 'sanitize-filename';
 import { MediaElementEx } from './MediaSourceEx';
 
 const presets = {
-  mp3: ({ bitrate = 128, frequency = 44100, channels = 2 } = {}) => command => {
+  mp3: output => command => {
+    const { file, bitrate = 128, frequency = 44100, channels = 2 } = output;
     return command
       .format('mp3')
       .audioCodec('libmp3lame')
       .audioBitrate(bitrate)
       .audioFrequency(frequency)
       .audioChannels(channels)
-      .output('out.mp3');
+      .output(file);
+  },
+  flac: output => command => {
+    const { file, bitrate = 128, frequency = 44100, channels = 2 } = output;
+    return command
+      .format('flac')
+      .audioBitrate(bitrate)
+      .audioFrequency(frequency)
+      .audioChannels(channels)
+      .output(file);
+  },
+  mp4: output => command => {
+    const { file, bitrate = 128, frequency = 44100, channels = 2 } = output;
+    return command
+      .format('mp4')
+      .audioBitrate(bitrate)
+      .audioFrequency(frequency)
+      .audioChannels(channels)
+      .output(file);
+  },
+  m4a: output => command => {
+    const { file, bitrate = 128, frequency = 44100, channels = 2 } = output;
+    return command
+      .format('m4a')
+      .audioBitrate(bitrate)
+      .audioFrequency(frequency)
+      .audioChannels(channels)
+      .output(file);
+  },
+  aac: output => command => {
+    const { file, bitrate = 128, frequency = 44100, channels = 2 } = output;
+    return command
+      .format('m4a')
+      .audioBitrate(bitrate)
+      .audioFrequency(frequency)
+      .audioChannels(channels)
+      .output(file);
+  },
+  wav: output => command => {
+    const { file, bitrate = 128, frequency = 44100, channels = 2 } = output;
+    return command
+      .format('m4a')
+      .audioBitrate(bitrate)
+      .audioFrequency(frequency)
+      .audioChannels(channels)
+      .output(file);
+  },
+  ogg: output => command => {
+    const { file, bitrate = 128, frequency = 44100, channels = 2 } = output;
+    return command
+      .format('m4a')
+      .audioBitrate(bitrate)
+      .audioFrequency(frequency)
+      .audioChannels(channels)
+      .output(file);
   }
-};
-
-const getPreset = function ({ output }) {
-  const { format, file } = output;
-  const presets = {
-    mp3(command) {
-      const { bitrate = 128, frequency = 44100, channels = 2 } = output;
-      return command
-        .format('mp3')
-        .audioCodec('libmp3lame')
-        .audioBitrate(bitrate)
-        .audioFrequency(frequency)
-        .audioChannels(channels)
-        .output('out.mp3');
-    }
-  };
-  return presets[format];
 };
 
 window.qaq = function(
@@ -89,66 +124,60 @@ window.qaq = function(
 
 export default class Transcoder {
 
-  constructor(stream) {
+  constructor(stream, options) {
     if (!(stream instanceof Stream.Readable)) {
       throw new Error('Invalid input stream');
     }
+    this.options = options;
     this.stream = stream;
-    this.command = new FFmpeg(this.stream);
+    this.command = new FFmpeg({
+      source: stream,
+      priority: options.priority || 0
+    });
+    this.events = new EventEmitterEx();
     this.addListeners(this.command);
   }
 
-  getPreset(output) {
-    const { format, file } = output;
-    const presets = {
-      mp3(command) {
-        const { bitrate = 128, frequency = 44100, channels = 2 } = output;
-        return command
-          .format('mp3')
-          .audioCodec('libmp3lame')
-          .audioBitrate(bitrate)
-          .audioFrequency(frequency)
-          .audioChannels(channels)
-          .output(file);
-      }
-    };
-    return presets[format];
+
+  get outputDir() {
+    const { savePath } = this.options;
+    return path.resolve(savePath || os.tmpdir());
+  }
+
+  get outputName() {
+    const { info: { filename } } = this.source;
+    return filename ? sanitize(filename) : null;
+  }
+
+  get outputExt() {
+    const { preset: { format } } = this.options;
+    return '.'.concat(format);
+  }
+
+  get getSavePath() {
+    const { outputDir: dir, outputName: name, outputExt: ext } = this;
+    console.log('savePath', path.format({ dir, name, ext }));
+    return path.format({ dir, name, ext });
+  }
+
+  getPreset() {
+    const { preset, savePath = os.tmpdir() } = this.options;
+    return presets[preset.format].apply(this, [ { ...preset, file: this.getSavePath } ]);
   }
   /*
    * Transcode from stream
    * @param {options} FFmpeg command configuration
    */
-  async encode(options) {
-    const { input, output } = options;
-    const preset = this.getPreset(output);
-    this.command.preset(preset);
+  encode(source) {
+    this.source = source;
+    this.command.preset(this.getPreset());
     this.command.run();
+    this.play(
+      document.getElementById('audioElement'),
+      this.stream,
+      source.format.type
+    );
     return this.command;
-  }
-
-  encodeXXX(options) {
-    const { stream } = this;
-    const { input, output } = options;
-    console.log('encode options', options, typeof stream, stream instanceof Stream.Readable);
-    if (!(stream instanceof Stream.Readable)) {
-      throw new Error('Invalid input stream');
-    }
-    const command = new FFmpeg(stream);
-    // this.addListeners(command);
-    command.preset(presets.mp3())
-      .on('start', cmd => console.log('Spawned Ffmpeg with command: ' + cmd))
-      // .on('codecData', data => console.log('Input is ', data.audio, ' audio ', 'with ', data.video, ' video'))
-      // .on('error', error => console.error(error))
-      .on('progress', progress => console.log('progress', progress))
-      .on('end', () => console.log('end conversion!'));
-
-    command.run();
-    // this.play(
-    //   document.getElementById('audioElement'),
-    //   stream,
-    //   options.input.format.type
-    // );
-    return command;
   }
 
   play(
@@ -161,8 +190,11 @@ export default class Transcoder {
 
   getListeners(command = this.command) {
     return {
-      end: [ command.once, function onEnd() { console.log('end conversion!') } ],
-      error: [ command.once, function onError(error) { console.error(error) } ],
+      end: [ command.once, () => {
+        this.events.emit('end', { file: this.getSavePath });
+        return this.cleanup();
+      }],
+      error: [ command.once, (error) => this.onError(error) ],
       start: [ command.once, function onStart(args) { console.log('Spawned Ffmpeg with arguments: ' + args) } ],
       progress: [ command.on, function onProgress(progress) { console.log('progress', progress) } ],
       codecData: [ command.once, function onCodecData(data) { console.log('Input is ', data.audio, ' audio ', 'with ', data.video, ' video') } ],
@@ -174,6 +206,15 @@ export default class Transcoder {
     return Object.entries(listeners).map(([listener, [ func, handler ]]) => {
       return func.apply(command, [ listener, handler ]);
     });
+  }
+
+  onError(error) {
+    console.error(error);
+    return this.cleanup();
+  };
+
+  cleanup(command = this.command) {
+    return command.removeAllListeners();
   }
 
   probe(index = 0) {

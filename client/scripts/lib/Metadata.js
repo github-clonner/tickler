@@ -76,7 +76,7 @@ export default class Metadata {
     return axios.get('https://api.acoustid.org/v2/lookup?meta=' + 'recordings+releasegroups+compress', {
       params: {
         format: 'json',
-        client: 'nOfz4XuXMAo',
+        client: 'zbPJRz2UGAA',
         duration: duration,
         fingerprint: fingerprint
       }

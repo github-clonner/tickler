@@ -41,10 +41,11 @@ import fs from 'fs';
 import path from 'path';
 import throttle from 'lodash/throttle';
 import sanitize from 'sanitize-filename';
+import * as fileSystem from './FileSystem';
 import EventEmitterEx from './EventEmitterEx';
-import Transcoder, { encode } from './Transcoder';
 import Metadata from './Metadata';
 import { ApiClient } from '@maggiben/google-apis';
+
 
 const defaults = {
   params: {
@@ -120,6 +121,23 @@ export default class Youtube {
       'description': snippet.description,
       'thumbnails': snippet.thumbnails,
       'duration': $parseDuration(contentDetails.duration)
+    }
+  )
+
+  metainfo formatter:
+
+  $.(
+    $. {
+      'status': status,
+      'id': video_id,
+      'filename': $toFilename(title),
+      'title': title,
+      'description': description,
+      'related_videos': related_videos,
+      'keywords': keywords,
+      'rating': avg_rating,
+      'views': view_count,
+      'author': author
     }
   )
   */
@@ -199,12 +217,11 @@ export default class Youtube {
    * @return {Promise|Stream} Promise | Readable stream
    */
   async downloadVideo(video) {
-    const { events, streams, options: { download: { savePath, tempPath }}} = this;
-    console.debug('downloadVideo: ', video, savePath, tempPath);
-    const file = path.resolve(tempPath, sanitize(video.title));
+    const { events, streams, options } = this;
+    const { formatters, download: { savePath, tempPath, rename }} = options;
+    const file = path.resolve(savePath || tempPath, sanitize(video.title));
     const stream = fs.createWriteStream(file);
-    this.streams.set(video.id, null);
-
+    streams.set(video.id, null);
     return new Promise((resolve, reject) => {
       try {
         const listener = {
@@ -214,45 +231,26 @@ export default class Youtube {
           error: (error) => {
             console.error('download error', error);
             cleanup(downloader);
-            this.events.emit('error', { video, error });
+            this.events.emit('error', { ...streams.get(video.id), error });
             return reject(error);
           },
           info: (info, format) => {
-            this.events.emit('info', { video, info, format });
-
-            const file = {
-              dir: path.resolve(process.cwd()),
-              name: sanitize(video.title),
-              ext: '.mp3'//format.audioEncoding
-            };
-
-            const output = transcoder.encode({
-              video,
-              info,
-              input: {
-                format
-              },
-              output: {
-                format: 'mp3',
-                bitrate: 192,
-                file: path.format(file)
-              }
-            });
+            return this.events.emit('info', { ...streams.get(video.id), info, format });
           },
           response(response) {
             downloader.pipe(stream);
-            events.emit('response', { video, response, downloader, stream });
+            events.emit('response', { ...streams.get(video.id), response });
           },
           end: () => {
             console.log('download of %s ended', video.id);
             cleanup(downloader);
-            this.events.emit('finish', { video, file });
+            this.events.emit('end', streams.get(video.id));
             return resolve(file);
           },
           abort: () => {
             console.log('download of %s aborted', video.id);
             cleanup(downloader);
-            this.events.emit('abort', { video, file });
+            this.events.emit('abort', streams.get(video.id));
             return reject('abort');
           }
         };
@@ -262,27 +260,19 @@ export default class Youtube {
           stream.end();
           downloader.end();
           downloader.removeAllListeners();
-          // return emitters.map(emitter => {
-          //   return Object.entries(listener).map(function ([ name, handler ]) {
-          //     return emitter.removeListener(name, handler);
-          //   });
-          // });
         };
 
         /* Start download */
         const downloader = ytdl(`http://www.youtube.com/watch?v=${video.id}`, {
           quality: 'highest',
-          filter: (format) => {
-            const { bitrate, audioBitrate, audioEncoding, type } = format;
-            const isTypeSupported = MediaSource.isTypeSupported(type);
-            if(!bitrate && audioBitrate && isTypeSupported) {
-              console.log('format', audioEncoding, 'type', type, 'audioBitrate', audioBitrate , 'isTypeSupported', isTypeSupported);
-              return format;
+          filter: ({ bitrate, audioBitrate, audioEncoding, type }) => {
+            if(!bitrate && audioBitrate && MediaSource.isTypeSupported(type)) {
+              console.dir('format', audioEncoding, 'type', type, 'audioBitrate', audioBitrate);
+              return true;
             }
           }
         });
-        /* Instanciate media transcoder */
-        const transcoder = new Transcoder(downloader);
+
         /* Add private listeners */
         downloader
           .on('response', listener.response)
@@ -293,7 +283,7 @@ export default class Youtube {
           .once('info', listener.info);
 
         /* Memorize operation */
-        this.streams.set(video.id, downloader);
+        streams.set(video.id, { video, downloader, file, stream });
 
       } catch (error) {
         console.error(error);

@@ -94,6 +94,9 @@ export default class Main extends Component {
             { children }
           </List>
         </div>
+        <audio id="audioElement" controls autoPlay />
+        <hr />
+        {/*<video id="videoElement" controls />*/}
         <Player />
       </div>
     );

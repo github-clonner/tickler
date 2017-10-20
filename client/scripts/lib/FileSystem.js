@@ -39,7 +39,7 @@
 
 import electron from 'electron';
 import path from 'path';
-import fs from 'fs';
+import fs from 'fs-extra';
 
 // $FlowIssue
 const isRenderer = (process && process.type === 'renderer');
@@ -98,6 +98,36 @@ export const write = function (path: string, content: Object, options?: string |
 export const remove = function (path: string) : void | Error {
   try {
     return fs.unlinkSync(path);
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+/**
+ * Synchronus file rename
+ * @param {string} source path
+ * @param {string} destination path
+ * @returns {undefined|Error}
+ */
+export const rename = function (source: string, destination: string) : void | Error {
+  try {
+    return fs.renameSync(source, destination);
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+/**
+ * Synchronus file move
+ * @param {string} source path
+ * @param {string} destination path
+ * @returns {undefined|Error}
+ */
+export const move = function (source: string, destination: string, options?: Object) : void | Error {
+  try {
+    return fs.moveSync(source, destination, { overwrite: true });
   } catch (error) {
     console.error(error);
     throw error;

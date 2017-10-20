@@ -42,10 +42,13 @@ import schema from '../../schemas/playlist.json';
 import { DialogOptions } from '../types/PlayList';
 import getObjectProperty from 'lodash/get';
 import jsonata from 'jsonata';
-import { Youtube, Time, parseDuration, SettingsStore, PlayListStore, getPath } from '../lib';
+import { Youtube, Transcoder, Time, parseDuration, SettingsStore, PlayListStore, getPath } from '../lib';
 import fs from 'fs';
+import * as fileSystem from '../lib/FileSystem';
+import Metadata from '../lib/Metadata';
 import os from 'os';
 import path from 'path';
+import sanitize from 'sanitize-filename';
 import { shell, remote } from 'electron';
 import { Howl } from 'howler';
 
@@ -88,6 +91,21 @@ export function fetchItem (item, autoPlay = false) {
 
     const { Audio, Settings } = getState();
     // autoPlay = autoPlay || Settings.get('player.autoPlay');
+    const { transcode } = Settings.get('download');
+    let transcoder = null;
+    let encoder = null;
+
+    const formatInfo = (info) => {
+      try {
+        const { formatters } = Settings.get('plugins.youtube');
+        const formatter = jsonata(formatters.metainfo);
+        formatter.registerFunction('toFilename', string => sanitize(string), '<s:n>');
+        return formatter.evaluate(info);
+      } catch (error) {
+        console.error(error);
+        throw error;
+      }
+    };
 
     const onProgress = ({video, progress}) => {
       return dispatch(editItem(video.id, {
@@ -106,10 +124,36 @@ export function fetchItem (item, autoPlay = false) {
       //   format: ['mp3', 'aac']
       // });
       // sound.play();
+      // const transcoder = transcode ? new Transcoder(downloader, transcode) : undefined;
     }
 
-    const onInfo = ({ video, info, format}) => {
-      return console.log('onInfo', video, info, format)
+    const onInfo = ({ video, downloader, file, info, format }) => {
+      if (transcode) {
+        /* Instanciate media transcoder */
+        transcoder = new Transcoder(downloader, transcode);
+        encoder = transcoder.encode({ info: formatInfo(info), format });
+      }
+      return console.log('onInfo', video, info, format);
+    };
+
+    const onEnd = ({ video, file }) => {
+      if (transcode && transcoder && !transcode.keep) {
+        transcoder.events.once('end', transcoded => {
+          if (!transcode.savePath) {
+            fileSystem.remove(file);
+            const dest = path.format({
+              dir: path.dirname(file),
+              name: path.basename(transcoded.file)
+            });
+            fileSystem.move(transcoded.file, dest);
+            const metadata = new Metadata();
+            metadata.obtain(dest).then(info => console.log('metadata', info));
+         } else {
+            return fileSystem.remove(file);
+         }
+        });
+      }
+      return console.log('onEnd', video, file);
     };
 
     const onError = ({ video, error }) => {
@@ -129,6 +173,7 @@ export function fetchItem (item, autoPlay = false) {
     youtube.events.on('progress', onProgress);
     youtube.events.once('response', onResponse);
     youtube.events.once('info', onInfo);
+    youtube.events.once('end', onEnd);
     youtube.events.once('error', onError);
     youtube.events.once('abort', onAbort);
 
@@ -313,6 +358,23 @@ $.(
     'duration': $parseDuration(contentDetails.duration)
   }
 )
+
+metainfo formatter:
+
+$.(
+  $. {
+    'status': status,
+    'id': video_id,
+    'filename': $toFilename(title),
+    'title': title,
+    'description': description,
+    'related_videos': related_videos,
+    'keywords': keywords,
+    'rating': avg_rating,
+    'views': view_count,
+    'author': author
+  }
+)
 */
 // $.($AccName := function() { $.contentDetails.duration };$.{'id': id,'title': snippet.title,'name': snippet.title,'artists': [{'id': 'sfasdf','name': 'nook'}],'description': snippet.description,'thumbnails': snippet.thumbnails,'duration': $parseDuration(contentDetails.duration)})
 
@@ -363,7 +425,7 @@ export function fetchListItems (id: string) {
     console.log('ids', ids, 'private', restricted, 'missing', missing);
     try {
       const plugins = settings.get('plugins');
-      const formatter = jsonata(plugins.youtube.playlist.formatter);
+      const formatter = jsonata(plugins.youtube.formatters.playlistitem);
       formatter.registerFunction('parseDuration', (duration) => parseDuration(duration), '<s:n>');
       const payload = formatter.evaluate(items);
       return dispatch(receivePlayListItems(payload));

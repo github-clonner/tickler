@@ -31,3 +31,7 @@
   overflow-y: auto;
   height: 100%;
 }
+
+audio, video {
+  width: 100%;
+}
