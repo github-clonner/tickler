@@ -100,6 +100,30 @@ const installer = {
   }
 };
 
+/*
+ * get ffmpeg capabilities
+ */
+export const getCapabilities = async function(...capabilities?: Array<string>) : Object | Error {
+
+  const methods = ['formats', 'codecs', 'encoders', 'filters'];
+  const promisify = function(capability) {
+    const func = camelCase('get-available-'.concat(capability));
+    return new Promise((resolve, reject) => {
+      const callback = (error, result) => (error ? reject(error) : resolve(result));
+      return FFmpeg[ func ].apply(this, [ callback ]);
+    });
+  };
+
+  if (capabilities.length && !capabilities.every(capability => methods.includes(capability))) {
+    return Promise.reject();
+  } else if (!capabilities.length) {
+    capabilities = Array.from(methods);
+  }
+  return Promise
+    .all(capabilities.map(c => promisify(c)))
+    .then(features => features.reduce((features, feature, index) => ({ ...features,  [capabilities[index]]: feature }), {}));
+};
+
 const script = `
 echo 'windows x64'
 echo '  downloading from ffmpeg.zeranoe.com'

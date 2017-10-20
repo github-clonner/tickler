@@ -221,9 +221,9 @@ export default class Youtube {
             this.events.emit('info', { video, info, format });
 
             const file = {
-              dir: path.resolve(tempPath),
+              dir: path.resolve(process.cwd()),
               name: sanitize(video.title),
-              ext: format.audioEncoding
+              ext: '.mp3'//format.audioEncoding
             };
 
             const output = transcoder.encode({
@@ -233,6 +233,8 @@ export default class Youtube {
                 format
               },
               output: {
+                format: 'mp3',
+                bitrate: 192,
                 file: path.format(file)
               }
             });

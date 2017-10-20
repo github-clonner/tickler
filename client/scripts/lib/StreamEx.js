@@ -3,12 +3,12 @@
 ///////////////////////////////////////////////////////////////////////////////
 // @file         : StreamEx.js                                               //
 // @summary      : Enhaced Stream library                                    //
-// @version      : 0.1.0                                                     //
-// @project      : tickelr                                                   //
+// @version      : 1.0.0                                                     //
+// @project      : N/A                                                       //
 // @description  :                                                           //
 // @author       : Benjamin Maggi                                            //
 // @email        : benjaminmaggi@gmail.com                                   //
-// @date         : 15 Oct 2017                                               //
+// @date         : 19 Oct 2017                                               //
 // @license:     : MIT                                                       //
 // ------------------------------------------------------------------------- //
 //                                                                           //
@@ -106,131 +106,126 @@ export class EchoStream extends Stream.Writable {
   }
 }
 
-
-
 export class MediaSourceStream extends Stream.Writable {
 
   constructor(wrapper, obj, ...args) {
     super(...args);
-    this._wrapper = wrapper;
-    this.element = wrapper.element;
-    this.mediaSource = wrapper.mediaSource;
-    this._allStreams = wrapper.streams;
-    this._allStreams.push(this);
-    this._bufferDuration = wrapper.bufferDuration;
-    this._sourceBuffer = null;
-
-    this._flowHandler = () => {
-      return this.flowHandler();
-    }
+    const { element, mediaSource, streams, bufferDuration } = wrapper;
+    this.wrapper = wrapper;
+    this.element = element;
+    this.mediaSource = mediaSource;
+    this.streams = streams.concat(this);
+    this.bufferDuration = bufferDuration;
+    this.sourceBuffer = null;
 
     if (typeof obj === 'string') {
-      this._type = obj;
+      this.mimeType = obj;
       // Need to create a new sourceBuffer
-      if (this.mediaSource.readyState === 'open') {
-        this._createSourceBuffer();
+      if (mediaSource.readyState === 'open') {
+        this.createSourceBuffer();
       } else {
         this.mediaSource.addEventListener('sourceopen', this.onSourceOpen);
       }
-    } else if (obj._sourceBuffer === null) {
+    } else if (obj.sourceBuffer === null) {
       obj.destroy();
-      this._type = obj._type; // The old stream was created but hasn't finished initializing
-      this.mediaSource.addEventListener('sourceopen', this.onSourceOpen);
-    } else if (obj._sourceBuffer) {
+      this.mimeType = obj.mimeType; // The old stream was created but hasn't finished initializing
+      mediaSource.addEventListener('sourceopen', this.onSourceOpen);
+    } else if (obj.sourceBuffer) {
       obj.destroy();
-      this._type = obj._type;
-      this._sourceBuffer = obj._sourceBuffer; // Copy over the old sourceBuffer
-      this._sourceBuffer.addEventListener('updateend', this.onUpdateEnd);
+      this.mimeType = obj.mimeType;
+      this.sourceBuffer = obj.sourceBuffer; // Copy over the old sourceBuffer
+      this.sourceBuffer.addEventListener('updateend', this.onUpdateEnd);
     } else {
       throw new Error('The argument to MediaElementEx.createWriteStream must be a string or a previous stream returned from that function')
     }
 
+    element.addEventListener('timeupdate', this.onTimeUpdate, false);
+    this.on('error', wrapper.error);
+    this.on('finish', this.onFinish);
+  }
 
-    this.element.addEventListener('timeupdate', this.onTimeUpdate);
+  onFinish = () => {
+    const { destroyed, mediaSource, streams } = this;
+    if (destroyed) return;
 
-    this.on('error', error => this._wrapper.error(error));
-    this.on('finish', () => {
-      if (this.destroyed) return;
-
-      this._finished = true;
-      if (this._allStreams.every((other) => { return other._finished })) {
-        try {
-          this.mediaSource.endOfStream();
-        } catch (ignored) {}
-      }
-    })
+    this.finished = true;
+    if (streams.every(other => { return other.finished })) {
+      try {
+        return mediaSource.endOfStream();
+      } catch (ignored) {}
+    }
   }
 
   onSourceOpen = () => {
-    if (this.destroyed) return;
+    const { destroyed, mediaSource } = this;
+    if (destroyed) return;
 
-    this.mediaSource.removeEventListener('sourceopen', this.onSourceOpen);
-    this._createSourceBuffer();
+    mediaSource.removeEventListener('sourceopen', this.onSourceOpen);
+    this.createSourceBuffer();
   }
 
   onUpdateEnd = (...args) => this.flowHandler(...args)
   onTimeUpdate = (...args) => this.flowHandler(...args)
   flowHandler = () => {
-    if (this.destroyed || !this._sourceBuffer || this._sourceBuffer.updating) {
+    const { destroyed, sourceBuffer, mediaSource, bufferDuration } = this;
+    if (destroyed || !sourceBuffer || sourceBuffer.updating) {
       return;
     }
 
-    if (this.mediaSource.readyState === 'open') {
+    // if (!sourceBuffer.updating && mediaSource.readyState === 'open') {
+    //   mediaSource.endOfStream();
+    // }
+
+    if (mediaSource.readyState === 'open') {
       // check buffer size
-      console.log('_getBufferDuration: %d, _bufferDuration: %d', this._getBufferDuration(), this._bufferDuration);
-      if (this._getBufferDuration() > this._bufferDuration) {
+      console.log('buffered: %d, max: %d', this.getBufferDuration(), bufferDuration);
+      if (this.getBufferDuration() > bufferDuration) {
         return;
       }
     }
 
-    if (this._cb) {
-      const callback = this._cb;
-      this._cb = null;
-      return callback();
-    }
+    if (this._cb) return this._cb();
   }
 
   destroy(error) {
+    const { sourceBuffer, mediaSource, element } = this;
     if (this.destroyed) return;
 
     this.destroyed = true;
-
     // Remove from allStreams
-    this._allStreams.splice(this._allStreams.indexOf(this), 1);
+    this.streams.splice(this.streams.indexOf(this), 1);
 
-    this.mediaSource.removeEventListener('sourceopen', this.onSourceOpen);
-    this.element.removeEventListener('timeupdate', this._flowHandler);
+    mediaSource.removeEventListener('sourceopen', this.onSourceOpen);
+    element.removeEventListener('timeupdate', this.onTimeUpdate);
 
-    if (this._sourceBuffer) {
-      this._sourceBuffer.removeEventListener('updateend', this.onUpdateEnd);
-      if (this.mediaSource.readyState === 'open') {
-        this._sourceBuffer.abort();
+    if (sourceBuffer) {
+      sourceBuffer.removeEventListener('updateend', this.onUpdateEnd);
+      if (mediaSource.readyState === 'open') {
+        sourceBuffer.abort();
       }
     }
 
-    return (error) ? this.emit('error', error) : this.emit('close');
+    return error ? this.emit('error', error) : this.emit('close');
   }
 
-  _createSourceBuffer() {
-    if (this.destroyed) return;
+  createSourceBuffer() {
+    const { destroyed, mediaSource, mimeType } = this;
+    if (destroyed) return;
 
-    if (MediaSource.isTypeSupported(this._type)) {
-      this._sourceBuffer = this.mediaSource.addSourceBuffer(this._type);
-      this._sourceBuffer.addEventListener('updateend', this.onUpdateEnd);
-      if (this._cb) {
-        const callback = this._cb;
-        this._cb = null;
-        callback();
-      }
+    if (MediaSource.isTypeSupported(mimeType)) {
+      this.sourceBuffer = mediaSource.addSourceBuffer(mimeType);
+      this.sourceBuffer.addEventListener('updateend', this.onUpdateEnd);
+      if (this._cb) return this._cb();
     } else {
-      this.destroy(new Error('The provided type is not supported'));
+      return this.destroy(new Error('The provided type is not supported'));
     }
   }
 
   _write(chunk, encoding, callback) {
-    if (this.destroyed) return;
+    const { destroyed, sourceBuffer } = this;
+    if (destroyed) return;
 
-    if (!this._sourceBuffer) {
+    if (!sourceBuffer) {
       this._cb = error => {
         if (error) return callback(error);
         this._write(chunk, encoding, callback);
@@ -238,47 +233,32 @@ export class MediaSourceStream extends Stream.Writable {
       return;
     }
 
-    if (this._sourceBuffer.updating) {
+    if (sourceBuffer.updating) {
       return callback(new Error('Cannot append buffer while source buffer updating'))
     }
 
     try {
-      this._sourceBuffer.appendBuffer(toArrayBuffer(chunk));
+      sourceBuffer.appendBuffer(toArrayBuffer(chunk));
     } catch (error) {
       // appendBuffer can throw for a number of reasons, most notably when the data
       // being appended is invalid or if appendBuffer is called after another error
       // already occurred on the media element. In Chrome, there may be useful debugging
       // info in chrome://media-internals
+      console.error(error);
       this.destroy(error);
       return;
     }
-    this._cb = callback;
-  }
-
-  _flow() {
-    if (this.destroyed || !this._sourceBuffer || this._sourceBuffer.updating) {
-      return;
-    }
-
-    if (this.mediaSource.readyState === 'open') {
-      // check buffer size
-      console.log('_getBufferDuration: %d, _bufferDuration: %d', this._getBufferDuration(), this._bufferDuration);
-      if (this._getBufferDuration() > this._bufferDuration) {
-        return;
-      }
-    }
-
-    if (this._cb) {
-      const callback = this._cb;
+    this._cb = error => {
       this._cb = null;
-      return callback();
+      return callback(error);
     }
   }
 
-  _getBufferDuration() {
-    const buffered = this._sourceBuffer.buffered
-    const currentTime = this.element.currentTime
-    let bufferEnd = -1 // end of the buffer
+  getBufferDuration() {
+    const { sourceBuffer, element } = this;
+    const buffered = sourceBuffer.buffered;
+    const currentTime = element.currentTime;
+    let bufferEnd = -1; // end of the buffer
     // This is a little over complex because some browsers seem to separate the
     // buffered region into multiple sections with slight gaps.
     for (let i = 0; i < buffered.length; i++) {
@@ -287,10 +267,10 @@ export class MediaSourceStream extends Stream.Writable {
 
       if (start > currentTime) {
         // Reached past the joined buffer
-        break
+        break;
       } else if (bufferEnd >= 0 || currentTime <= end) {
         // Found the start/continuation of the joined buffer
-        bufferEnd = end
+        bufferEnd = end;
       }
     }
 

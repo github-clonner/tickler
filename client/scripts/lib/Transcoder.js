@@ -50,38 +50,33 @@ import FFmpeg from 'fluent-ffmpeg';
 import camelCase from 'lodash/camelCase';
 import { MediaElementEx } from './MediaSourceEx';
 
-/*
- * get ffmpeg capabilities
- */
-export const getCapabilities = async function(...capabilities?: Array<string>) : Object | Error {
-
-  const methods = ['formats', 'codecs', 'encoders', 'filters'];
-  const promisify = function(capability) {
-    const func = camelCase('get-available-'.concat(capability));
-    return new Promise((resolve, reject) => {
-      const callback = (error, result) => (error ? reject(error) : resolve(result));
-      return FFmpeg[ func ].apply(this, [ callback ]);
-    });
-  };
-
-  if (capabilities.length && !capabilities.every(capability => methods.includes(capability))) {
-    return Promise.reject();
-  } else if (!capabilities.length) {
-    capabilities = Array.from(methods);
-  }
-  return Promise
-    .all(capabilities.map(c => promisify(c)))
-    .then(features => features.reduce((features, feature, index) => ({ ...features,  [capabilities[index]]: feature }), {}));
-};
-
 const presets = {
-  mp3(command) {
+  mp3: ({ bitrate = 128, frequency = 44100, channels = 2 } = {}) => command => {
     return command
       .format('mp3')
       .audioCodec('libmp3lame')
-      .audioBitrate(128)
-      .audioChannels(2);
+      .audioBitrate(bitrate)
+      .audioFrequency(frequency)
+      .audioChannels(channels)
+      .output('out.mp3');
   }
+};
+
+const getPreset = function ({ output }) {
+  const { format, file } = output;
+  const presets = {
+    mp3(command) {
+      const { bitrate = 128, frequency = 44100, channels = 2 } = output;
+      return command
+        .format('mp3')
+        .audioCodec('libmp3lame')
+        .audioBitrate(bitrate)
+        .audioFrequency(frequency)
+        .audioChannels(channels)
+        .output('out.mp3');
+    }
+  };
+  return presets[format];
 };
 
 window.qaq = function(
@@ -95,14 +90,43 @@ window.qaq = function(
 export default class Transcoder {
 
   constructor(stream) {
+    if (!(stream instanceof Stream.Readable)) {
+      throw new Error('Invalid input stream');
+    }
     this.stream = stream;
+    this.command = new FFmpeg(this.stream);
+    this.addListeners(this.command);
   }
 
+  getPreset(output) {
+    const { format, file } = output;
+    const presets = {
+      mp3(command) {
+        const { bitrate = 128, frequency = 44100, channels = 2 } = output;
+        return command
+          .format('mp3')
+          .audioCodec('libmp3lame')
+          .audioBitrate(bitrate)
+          .audioFrequency(frequency)
+          .audioChannels(channels)
+          .output(file);
+      }
+    };
+    return presets[format];
+  }
   /*
    * Transcode from stream
-   * @param {Stream} readable stream
+   * @param {options} FFmpeg command configuration
    */
-  encode(options) {
+  async encode(options) {
+    const { input, output } = options;
+    const preset = this.getPreset(output);
+    this.command.preset(preset);
+    this.command.run();
+    return this.command;
+  }
+
+  encodeXXX(options) {
     const { stream } = this;
     const { input, output } = options;
     console.log('encode options', options, typeof stream, stream instanceof Stream.Readable);
@@ -110,27 +134,20 @@ export default class Transcoder {
       throw new Error('Invalid input stream');
     }
     const command = new FFmpeg(stream);
-    command
-      .audioCodec('libmp3lame')
-      .audioBitrate(128)
-      .audioChannels(2)
-      .format('mp3')
-      .output(`out-${new Date().getMinutes()}.mp3`)
+    // this.addListeners(command);
+    command.preset(presets.mp3())
       .on('start', cmd => console.log('Spawned Ffmpeg with command: ' + cmd))
-      .on('codecData', data => console.log('Input is ', data.audio, ' audio ', 'with ', data.video, ' video'))
-      .on('error', error => console.error(error))
+      // .on('codecData', data => console.log('Input is ', data.audio, ' audio ', 'with ', data.video, ' video'))
+      // .on('error', error => console.error(error))
       .on('progress', progress => console.log('progress', progress))
       .on('end', () => console.log('end conversion!'));
 
-    // const ffstream = command.pipe();
-    // console.log('ffstream', ffstream);
-
     command.run();
-    this.play(
-      document.getElementById('audioElement'),
-      stream,
-      options.input.format.type
-    );
+    // this.play(
+    //   document.getElementById('audioElement'),
+    //   stream,
+    //   options.input.format.type
+    // );
     return command;
   }
 
@@ -142,22 +159,35 @@ export default class Transcoder {
     const mediaElementEx = new MediaElementEx(element, stream, format);
   }
 
-  listeners(command) {
-    return command
-      .on('start', cmd => console.log('Spawned Ffmpeg with command: ' + cmd))
-      .on('codecData', data => console.log('Input is ', data.audio, ' audio ', 'with ', data.video, ' video'))
-      .on('error', error => console.error(error))
-      .on('progress', progress => console.log('progress', progress))
-      .on('end', () => console.log('end conversion!'));
+  getListeners(command = this.command) {
+    return {
+      end: [ command.once, function onEnd() { console.log('end conversion!') } ],
+      error: [ command.once, function onError(error) { console.error(error) } ],
+      start: [ command.once, function onStart(args) { console.log('Spawned Ffmpeg with arguments: ' + args) } ],
+      progress: [ command.on, function onProgress(progress) { console.log('progress', progress) } ],
+      codecData: [ command.once, function onCodecData(data) { console.log('Input is ', data.audio, ' audio ', 'with ', data.video, ' video') } ],
+    };
+  }
 
-    /*
-    .ffprobe(function(error, data) {
-      console.log('metadata:');
-      console.dir(data);
+  addListeners(command = this.command) {
+    const listeners = this.getListeners(command);
+    return Object.entries(listeners).map(([listener, [ func, handler ]]) => {
+      return func.apply(command, [ listener, handler ]);
     });
-    */
+  }
+
+  probe(index = 0) {
+    return new Promise((resolve, reject) => {
+      return this.command.ffprobe(index, (error, data) => (error ? reject(error) : resolve(data)));
+    });
   }
 }
 
 
 
+    // return command
+    //   .on('start', cmd => console.log('Spawned Ffmpeg with command: ' + cmd))
+    //   .on('codecData', data => console.log('Input is ', data.audio, ' audio ', 'with ', data.video, ' video'))
+    //   .on('error', error => console.error(error))
+    //   .on('progress', progress => console.log('progress', progress))
+    //   .on('end', () => console.log('end conversion!'));

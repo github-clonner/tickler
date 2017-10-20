@@ -64,12 +64,14 @@ const DEFAULT_BUFFER_DURATION = 60; // seconds
 export class MediaElementWrapper extends MediaSource {
   constructor(element, options = {}) {
     super();
+
     this.mediaSource = this;
     this.bufferDuration = options.bufferDuration || DEFAULT_BUFFER_DURATION
     this.streams = [];
+
     this.element = element;
+    this.element.addEventListener('error', this.onError);
     this.element.src = URL.createObjectURL(this);
-    this.element.addEventListener('error', this.onError, {once: true});
   }
 
   /*
@@ -77,19 +79,22 @@ export class MediaElementWrapper extends MediaSource {
    * or a string
    */
   createWriteStream(object) {
-    return new MediaSourceStream(this, object);
+    this.mediaSourceStream = new MediaSourceStream(this, object);
+    this.mediaSourceStream.once('error', this.onError);
+    return this.mediaSourceStream;
   }
 
-  onError = (error) => {
-    return this.streams.slice().map(stream => stream.destroy(this.element.error));
+  onError = error => {
+    console.error(error);
+    this.streams.slice().map(stream => stream.destroy(this.element.error));
   }
 
   /*
    * Use to trigger an error on the underlying media element
    */
   error(error) {
+    console.error(error);
     try {
-      console.error(error);
       return this.endOfStream('decode');
     } catch (ignored) {}
   }
@@ -108,12 +113,12 @@ export class MediaElementEx extends MediaElementWrapper {
     this.writable = this.createWriteStream(format);
 
     /* listeners */
-    this.element.addEventListener('error', (error) => {
-      console.error('audio error', this.error);
-    }, {once: true});
-    this.writable.on('error', (error) => {
-      console.error('writable error', error);
-    }, {once: true});
+    // this.element.addEventListener('error', (error) => {
+    //   console.error('audio error', this.error);
+    // }, { once: true });
+    // this.writable.on('error', (error) => {
+    //   console.error('writable error', error);
+    // }, { once: true });
 
     this.readable.pipe(this.writable);
   }
