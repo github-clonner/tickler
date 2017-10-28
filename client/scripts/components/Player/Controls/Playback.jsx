@@ -43,7 +43,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { compose, onlyUpdateForPropTypes, branch, pure, renderNothing, renderComponent, withPropsOnChange, withState, withHandlers, withProps, mapProps, setPropTypes } from 'recompose';
 /* owner libs */
-import { Player, Settings } from '../../../actions';
+import { Player, PlayList, Settings } from '../../../actions';
 import { getSelectedItems, getFilteredItems, getNext, getPrev, getSelected } from '../../../selectors';
 // Import styles
 import classNames from 'classnames';
@@ -76,7 +76,8 @@ function mapStateToProps(state, props) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    player: bindActionCreators(Player, dispatch)
+    player: bindActionCreators(Player, dispatch),
+    playList: bindActionCreators(PlayList, dispatch)
   };
 }
 
@@ -86,19 +87,27 @@ function mapDispatchToProps(dispatch) {
 const enhance = compose(
   pure,
   connect(mapStateToProps, mapDispatchToProps),
-  withProps(({ playlist, player, options, settings, selected, audio }) => {
+  mapProps(({ playList, player, options, selected, audio }) => {
     return {
+      playList,
       player,
       selected: selected ? selected.toJS() : undefined,
       isPlaying: audio.isPlaying,
       currentTime: audio.currentTime,
       stop: player.stop,
+      canOpen: true,
       canSkip: true,
       canPlay: true,
       canStop: (audio.isPlaying || audio.currentTime > 0)
     }
   }),
   withHandlers({
+    open: props => event => {
+      const { playList } = props;
+      const result =  playList.addPlayListItem('https://www.youtube.com/watch?v=BoKx7BTb0lI&list=PLC6A4A4F29BB702A6');
+      console.log('open !', result);
+      return result;
+    },
     play: props => event => {
       const { player, selected } = props;
       console.log('selected: ', selected);
@@ -118,6 +127,7 @@ const enhance = compose(
   }),
   onlyUpdateForPropTypes,
   setPropTypes({
+    canOpen: PropTypes.bool,
     canSkip: PropTypes.bool.isRequired,
     canPlay: PropTypes.bool.isRequired,
     canStop: PropTypes.bool.isRequired
@@ -128,9 +138,10 @@ const enhance = compose(
 /*
  * Playback component renderer
  */
-export default enhance(({ isPlaying, currentTime, canStop, canPlay, canSkip, skip, stop, play }) => {
+export default enhance(({ isPlaying, currentTime, canOpen, canStop, canPlay, canSkip, open, skip, stop, play }) => {
   return (
     <div className={ Style.btnGroup } >
+      <button className={ Style.roundButton } disabled={ !canOpen } onClick={ open } title="backward" >library_add</button>
       <button className={ Style.roundButton } disabled={ !canSkip } onClick={ skip } title="backward" >skip_previous</button>
       <button className={ Style.roundButton } disabled={ !canStop } onClick={ stop } title="stop">stop</button>
       <button className={ Style.roundButton } disabled={ !canSkip } onClick={ skip } title="forward" >skip_next</button>

@@ -55,6 +55,47 @@ const ajv = new Ajv({
   useDefaults: true,
 });
 
+/**
+ * References:
+ *   https://github.com/Bartvds/package.json-schema
+ *   https://github.com/gorillamania/package.json-validator
+ *   http://wiki.commonjs.org/wiki/Packages/1.0
+ *   http://wiki.commonjs.org/wiki/Packages/1.1
+ *   https://docs.npmjs.com/files/package.json
+ */
+export const versionRegExp = {
+  'semver': new RegExp(/^[0-9]+\.[0-9]+[0-9+a-zA-Z\.\-]+$/)
+};
+
+/**
+ * Reference: https://stackoverflow.com/questions/136505/searching-for-uuids-in-text-with-regex
+ */
+export const uuidRegExp = {
+  'v1': new RegExp(/^[0-9A-F]{8}-[0-9A-F]{4}-[1][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i),
+  'v2': new RegExp(/^[0-9A-F]{8}-[0-9A-F]{4}-[2][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i),
+  'v3': new RegExp(/^[0-9A-F]{8}-[0-9A-F]{4}-[3][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i),
+  'v4': new RegExp(/^[0-9A-F]{8}-[0-9A-F]{4}-[4][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i),
+  'v5': new RegExp(/^[0-9A-F]{8}-[0-9A-F]{4}-[5][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i)
+};
+
+
+/**
+ * License formats
+ * References:
+ *   https://spdx.org/licenses/
+ *   https://github.com/spdx/license-list
+ *   https://github.com/kemitchell/spdx.js
+ */
+// export const licenseFormats = {
+//   'spdx': {
+//     validate(data) { return Number.isInteger(data) },
+//     type: 'string'
+//   }
+// }
+
+/**
+ * Numeric formats
+ */
 export const numberFormats = {
   'uint32': {
     validate(data) { return Number.isInteger(data) },
@@ -76,18 +117,6 @@ export const numberFormats = {
     validate(data) { return Number.isFinite(data) },
     type: 'number'
   }
-};
-
-export const versionRegExp = {
-  'semver': new RegExp(/^[0-9]+\.[0-9]+[0-9+a-zA-Z\.\-]+$/)
-};
-
-export const uuidRegExp = {
-  'v1': new RegExp(/^[0-9A-F]{8}-[0-9A-F]{4}-[1][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i),
-  'v2': new RegExp(/^[0-9A-F]{8}-[0-9A-F]{4}-[2][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i),
-  'v3': new RegExp(/^[0-9A-F]{8}-[0-9A-F]{4}-[3][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i),
-  'v4': new RegExp(/^[0-9A-F]{8}-[0-9A-F]{4}-[4][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i),
-  'v5': new RegExp(/^[0-9A-F]{8}-[0-9A-F]{4}-[5][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i)
 };
 
 export const keywordValidator = {

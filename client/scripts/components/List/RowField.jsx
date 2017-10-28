@@ -61,12 +61,20 @@ const getItemIcon = song => {
 };
 
 
+/*
+ * Media item index
+ * @param {number} item index location in the list
+ */
 export const Index = function ({ index }: number, ...args) {
   return (
     <span className={ Style.field } role="index">{ ( index + 1 ) }</span>
   );
 };
 
+/*
+ * Media item status icon
+ * @param {Track} Media Item
+ */
 export const Status = function ({ song }: Track, ...args) {
   const status = getItemStatus(song);
   const icon = getItemIcon(song)
@@ -75,12 +83,20 @@ export const Status = function ({ song }: Track, ...args) {
   );
 };
 
+/*
+ * Media item title
+ * @param {string} The item title
+ */
 export const Title = function ({ title }: string, ...args) {
   return (
     <span className={ Style.field } role="title">{ title }</span>
   );
 };
 
+/*
+ * Media item rating
+ * @param {number} rate valuation
+ */
 export const Rating = function ({ stars }: number) {
   return (
     <span className={ Style.field } role="stars">
@@ -89,6 +105,10 @@ export const Rating = function ({ stars }: number) {
   );
 };
 
+/*
+ * Media item duration
+ * @param {number} Content duration
+ */
 export const Duration = function ({ duration }: number) {
   return (
     <span className={ Style.field } role="duration">
@@ -97,6 +117,10 @@ export const Duration = function ({ duration }: number) {
   );
 };
 
+/*
+ * Media item call to action dropdown menu
+ * @param {Function} onClick action handler
+ */
 export const DropDown = function ({ onClick }: Function, ...args) {
   return (
     <button className={ classNames(Style.field, Style.roundButton, Style.dropdown) } role="dropdown" onClick={ onClick }>•••</button>

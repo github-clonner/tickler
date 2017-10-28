@@ -1,0 +1,33 @@
+{
+  "name": "@plugin/soundcloud",
+  "version": "1.0.0",
+  "description": "Play and save soundcloud media",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm run test:lint && npm run test:typecheck && npm run test:spec"
+  },
+  "keywords": [
+    "soundcloud",
+    "player",
+    "downloader",
+    "video",
+    "playlist"
+  ],
+  "homepage": "https://maggiben.github.io/soundcloud",
+  "author": {
+    "name": "Benjamin Maggi",
+    "email": "benjaminmaggi@gmail.com",
+    "url": "https://github.com/maggiben"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/maggiben/soundcloud"
+  },
+  "bugs": {
+    "url": "https://github.com/maggiben/soundcloud/issues"
+  },
+  "license": "MIT",
+  "dependencies": {
+
+  }
+}

@@ -42,6 +42,7 @@ import fs from 'fs';
 import os from 'os';
 import Ajv from 'ajv';
 import uuid from 'uuid';
+// import chokidar from 'chokidar';
 import schema from '../../schemas/playlist.json';
 import { read, write, remove, getPath } from './FileSystem';
 import SettingsStore from './SettingsStore';
@@ -56,6 +57,7 @@ const ajv = new Ajv({
 export default class PlayListStore {
 
   playlist: PlayList;
+  watcher: Object;
   validate: Function;
 
   constructor (file?: string, create?: boolean = true) {
@@ -90,6 +92,7 @@ export default class PlayListStore {
         try {
           this.playlist = read(file);
           if (this.validate(this.playlist)) {
+            this.watch(file);
             return this.playlist;
           } else {
             console.error(ajv.errorsText());
@@ -145,6 +148,18 @@ export default class PlayListStore {
         return remove(file);
       }
     }
+  }
+
+  /*
+   * Watch for playlist changes
+   */
+  watch (file: string, options?: Object) {
+    // Initialize watcher.
+    const { watcher = fs.watch(file, options) } = this;
+    watcher
+      .on('error', error => console.log(`Watcher error: ${error}`))
+      .on('change', () => console.log(`PlayList ${file} has been changed`))
+    return watcher;
   }
 }
 

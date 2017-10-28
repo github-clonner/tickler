@@ -1,7 +1,7 @@
 {
   "name": "Tickler",
   "productName": "Tickler",
-  "version": "2.3.0",
+  "version": "2.3.2",
   "description": "Audio player",
   "author": {
     "name": "Benjamin Maggi",
@@ -73,7 +73,8 @@
   "dependencies": {
     "@maggiben/duration-format": "0.0.1",
     "@maggiben/google-apis": "file:../npm_links/google-apis",
-    "ajv": "^5.2.3",
+    "ajv": "^5.3.0",
+    "ajv-async": "^0.1.0",
     "axios": "^0.16.2",
     "classnames": "^2.2.5",
     "codemirror": "^5.30.0",
@@ -133,7 +134,7 @@
     "cross-env": "^5.0.5",
     "css-loader": "^0.28.4",
     "devtron": "^1.4.0",
-    "electron": "^1.7.8",
+    "electron": "^1.7.9",
     "electron-builder": "^19.31.1",
     "electron-connect": "^0.6.1",
     "electron-connect-webpack-plugin": "^0.1.1",

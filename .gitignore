@@ -7,6 +7,14 @@ node_modules/
 # Logs
 *.log
 
+# Media
+*.mp3
+*.ogg
+*.flac
+*.m4a
+*.wav
+*.webm
+
 # flow type
 flow-typed/npm
 # Dont track webpack intermediate hot-update files

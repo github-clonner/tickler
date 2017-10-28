@@ -1,0 +1,33 @@
+{
+  "name": "@maggiben/ytdw",
+  "version": "1.0.0",
+  "description": "Play and save youtube videos and playlists",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm run test:lint && npm run test:typecheck && npm run test:spec"
+  },
+  "keywords": [
+    "youtube",
+    "player",
+    "downloader",
+    "video",
+    "playlist"
+  ],
+  "homepage": "https://maggiben.github.io/ytdw",
+  "author": {
+    "name": "Benjamin Maggi",
+    "email": "benjaminmaggi@gmail.com",
+    "url": "https://github.com/maggiben"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/maggiben/ytdw"
+  },
+  "bugs": {
+    "url": "https://github.com/maggiben/ytdw/issues"
+  },
+  "license": "MIT",
+  "dependencies": {
+
+  }
+}

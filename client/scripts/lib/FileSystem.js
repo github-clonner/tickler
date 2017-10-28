@@ -49,6 +49,23 @@ export const getPath = function (name: string) {
 };
 
 /**
+ * Get special/named directory or file path
+ * @param {string} path name
+ * @returns {string} the full path
+ */
+export const getNamedPath = function (name: string) {
+  return isRenderer ? electron.remote.app.getPath(name) : electron.app.getPath(name);
+};
+
+/**
+ * Get Application path
+ * @returns {string} The current application directory
+ */
+export const getAppPath = function () {
+  return isRenderer ? electron.remote.app.getAppPath() : electron.app.getAppPath();
+};
+
+/**
  * List of special directories
  * More info: https://electron.atom.io/docs/api/app/#appgetpathname
  */
@@ -57,6 +74,73 @@ export const OS_DIRECTORIES = ['home', 'appData', 'userData', 'temp', 'music', '
     [name]: getPath(name)
   })
 }, {});
+
+/**
+ * Verify file exists and that it is a file type
+ * @param {string} the file absolute path
+ * @returns {boolean} true if file is valid
+ */
+export const isValidFile = function(file: string) : boolean {
+  try {
+    return fs.statSync(file).isFile();
+  } catch (ignored) {
+    return false;
+  }
+}
+
+/**
+ * Verify dir exists and that is is a directory type
+ * @param {string} the directory absolute path
+ * @returns {boolean} true if directory is valid
+ */
+export const isValidDir = function(dir: string) : boolean {
+  try {
+    return fs.statSync(dir).isDirectory();
+  } catch (ignored) {
+    return false;
+  }
+}
+
+/**
+ * Verify dir is empty
+ * @param {string} the directory absolute path
+ * @returns {boolean} true if directory is empty
+ */
+export const isEmptyDir = function(dir: string) : boolean {
+  try {
+    if (this.isValidDir(dir)) {
+      return Boolean(fs.readdirSync(dir).length);
+    } else {
+      return false;
+    }
+  } catch (ignored) {
+    return false;
+  }
+}
+
+/**
+ * Returns an array of filenames excluding '.' and '..'
+ * @param {string} dir path to scan
+ */
+export const readdir = function(dir: string, options?: Object = Object) : Array<string> {
+  const { resolve = true } = options;
+  try {
+    const files = fs.readdirSync(dir);
+    if (resolve) {
+      return files.map(filename => path.resolve(dir, filename));
+    }
+    return files;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+/**
+ * Ensures that the directory exists. If the directory structure does not exist, it is created. Like mkdir -p.
+ * @param {string} the directory path
+ */
+export const ensureDir = fs.ensureDirSync;
 
 /**
  * Synchronus JSON file reader

@@ -1,14 +1,14 @@
 // @flow
 
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : Plugin.js                                                 //
-// @summary      : Generic Plugin manager                                    //
-// @version      : 0.1.0                                                     //
+// @file         : Item.js                                                   //
+// @summary      : List item actions                                         //
+// @version      : 1.0.0                                                     //
 // @project      : tickelr                                                   //
 // @description  :                                                           //
 // @author       : Benjamin Maggi                                            //
 // @email        : benjaminmaggi@gmail.com                                   //
-// @date         : 15 Oct 2017                                               //
+// @date         : 28 Oct 2017                                               //
 // @license:     : MIT                                                       //
 // ------------------------------------------------------------------------- //
 //                                                                           //
@@ -36,3 +36,5 @@
 // SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                    //
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
+
+import { PlayListActionKeys as Action } from '../../types';

@@ -62,6 +62,7 @@ const youtube = new Youtube({
   }
 });
 
+export const addItem = (id: string, payload: Object) => ({ type: Action.ADD_ITEM, id});
 export const deleteItem = (id: string) => ({ type: Action.DELETE_ITEM, id });
 export const editItem = (id: string, payload) => ({ type: Action.EDIT_ITEM, id, payload });
 export const editItems = (payload: Object) => ({ type: Action.EDIT_ITEMS, payload });
@@ -129,6 +130,7 @@ export function fetchItem (item, autoPlay = false) {
 
     const onInfo = ({ video, downloader, file, info, format }) => {
       if (transcode) {
+        console.log('inco', formatInfo(info));
         /* Instanciate media transcoder */
         transcoder = new Transcoder(downloader, transcode);
         encoder = transcoder.encode({ info: formatInfo(info), format });
@@ -232,6 +234,22 @@ export function openPlayList (options: Object = DialogOptions.open) {
         return dispatch({type: 'ERROR', error: error});
       }
     });
+  }
+}
+
+/**
+ * addPlayListItem
+ * Adds an item to the playlist
+ * @return {null}
+ */
+export function addPlayListItem (source: string) {
+  return async function (dispatch, getState) {
+    const { Audio, Settings } = getState();
+    // todo lookup source handlers
+    const regExp = new RegExp(/^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/)|(?:(?:watch)?\?v(?:i)?=|\&v(?:i)?=))([^#\&\?]*).*/);
+    const id = source.replace(regExp, '$1');
+    console.log('video id', id);
+
   }
 }
 
