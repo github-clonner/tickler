@@ -25,9 +25,9 @@
       "description": "Inspector options"
     },
     "plugins": {
-      "type": "object",
+      "$ref": "#/definitions/Plugins",
       "default": {},
-      "description": "Plugin"
+      "description": "Plugin manager options"
     },
     "createdAt": {
       "type": ["string", "null"],
@@ -240,17 +240,32 @@
         }
       }
     },
-    "Plugin": {
+    "Plugins": {
       "type": "object",
-      "description": "Plugin profile",
+      "description": "Plugin manager options",
+      "required": [ "pluginsDir" ],
       "properties": {
-        "name": {
-          "type": "string",
-          "description": "Plugin name"
+        "pluginsDir": {
+          "$ref": "#/definitions/Path",
+          "default": "userData",
+          "description": "Default folders to search for plugins"
         },
-        "settings": {
-          "type": "object",
-          "description": "Plugin settings"
+        "checkForUpdates": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically check for newer versions"
+        },
+        "interval": {
+          "type": "number",
+          "default": 18000000,
+          "minimum": 3600000,
+          "maximum": 86400000,
+          "description": "Plugin update interval"
+        },
+        "force": {
+          "type": "boolean",
+          "default": false,
+          "description": "Force application reload after successful update"
         }
       }
     },
@@ -311,7 +326,7 @@
           "items": {
             "$ref": "#/definitions/Path"
           },
-          "description": "Default folders to search for and playlist files"
+          "description": "Default folders to search for playlist files"
         },
         "savePath": {
           "$ref": "#/definitions/Path",

@@ -41,20 +41,6 @@ import path from 'path';
 import fs from 'fs';
 import Ajv from 'ajv';
 
-const get = (o, path) => path.split('.').reduce((o = {}, key) => o[key], o);
-const ajv = new Ajv({
-  formats: {
-    path: {
-      type: 'string',
-      validate(data) {
-        return path.isAbsolute(data);
-      }
-    }
-  },
-  allErrors: true,
-  useDefaults: true,
-});
-
 /**
  * References:
  *   https://github.com/Bartvds/package.json-schema
@@ -119,8 +105,22 @@ export const numberFormats = {
   }
 };
 
+/**
+ * Version formats
+ */
+export const versionFormats = {
+  'semver': {
+    type: 'string',
+    validate(data) {
+      const { semver } = versionRegExp;
+      return semver.test(data);
+    }
+  }
+};
+
 export const keywordValidator = {
   'resolve': {
+    async: true,
     type: 'string',
     modifying: true,
     validate: function (
@@ -141,6 +141,7 @@ export const keywordValidator = {
     }
   },
   'exists': {
+    async: true,
     type: 'string',
     modifying: true,
     validate: function (
@@ -160,4 +161,16 @@ export const keywordValidator = {
       }
     }
   }
+};
+
+export const Validator = function (options) {
+  const defaults = {
+    async: true,
+    allErrors: true,
+    useDefaults: true,
+    schemaId: '$id',
+    formats: { ...numberFormats, ...versionFormats }
+  };
+
+  return new Ajv({ ...defaults, ...options });
 };

@@ -1,7 +1,7 @@
 {
   "name": "Tickler",
   "productName": "Tickler",
-  "version": "2.3.2",
+  "version": "2.3.3",
   "description": "Audio player",
   "author": {
     "name": "Benjamin Maggi",
@@ -74,7 +74,6 @@
     "@maggiben/duration-format": "0.0.1",
     "@maggiben/google-apis": "file:../npm_links/google-apis",
     "ajv": "^5.3.0",
-    "ajv-async": "^0.1.0",
     "axios": "^0.16.2",
     "classnames": "^2.2.5",
     "codemirror": "^5.30.0",

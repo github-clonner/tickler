@@ -1,12 +1,21 @@
 {
   "manifest": {
-    "key": "",
-    "preferred": "true",
+    "kind": "source",
     "icons": {
       "x16": "https://www.google.com/images/icons/product/youtube-16.png",
       "x32": "https://www.google.com/images/icons/product/youtube-32.png",
       "x64": "https://www.google.com/images/icons/product/youtube-64.png",
       "x128": "https://www.google.com/images/icons/product/youtube-128.png"
+    },
+    "languages": [ "en-US", "en" ],
+    "formatters": {
+      "PlaylistItem": "$.($AccName:=function(){$.contentDetails.duration};$.{'id':id,'title':snippet.title,'name':snippet.title,'artists':[{'id':'sfasdf','name':'nook'}],'description':snippet.description,'thumbnails':snippet.thumbnails,'duration':$parseDuration(contentDetails.duration)})",
+      "MetaInfo": "$.($.{'status':status,'id':video_id,'filename':$toFilename(title),'title':title,'description':description,'related_videos':related_videos,'keywords':keywords,'rating':avg_rating,'views':view_count,'author':author})"
+    }
+  },
+  "settings": {
+    "updater": {
+      "checkForUpdates": true
     },
     "rootUrl": "https://www.googleapis.com/",
     "servicePath": "youtube/v3/",
@@ -14,10 +23,6 @@
       "url": {
         "pattern": "/^.*(?:(?:youtu\\.be\/|v\/|vi\/|u\/\\w\/|embed\/)|(?:(?:watch)?\\?v(?:i)?=|\\&v(?:i)?=))([^#\\&\\?]*).*/"
       }
-    },
-    "formatters": {
-      "PlaylistItem": "$.($AccName:=function(){$.contentDetails.duration};$.{'id':id,'title':snippet.title,'name':snippet.title,'artists':[{'id':'sfasdf','name':'nook'}],'description':snippet.description,'thumbnails':snippet.thumbnails,'duration':$parseDuration(contentDetails.duration)})",
-      "MetaInfo": "$.($.{'status':status,'id':video_id,'filename':$toFilename(title),'title':title,'description':description,'related_videos':related_videos,'keywords':keywords,'rating':avg_rating,'views':view_count,'author':author})"
     }
   }
 }

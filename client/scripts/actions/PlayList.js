@@ -42,7 +42,15 @@ import schema from '../../schemas/playlist.json';
 import { DialogOptions } from '../types/PlayList';
 import getObjectProperty from 'lodash/get';
 import jsonata from 'jsonata';
-import { Youtube, Transcoder, Time, parseDuration, SettingsStore, PlayListStore, getPath } from '../lib';
+import {
+  Youtube,
+  Transcoder,
+  Time,
+  parseDuration,
+  SettingsStore,
+  PlayListStore,
+  PluginManager
+} from '../lib';
 import fs from 'fs';
 import * as fileSystem from '../lib/FileSystem';
 import Metadata from '../lib/Metadata';
@@ -52,6 +60,7 @@ import sanitize from 'sanitize-filename';
 import { shell, remote } from 'electron';
 import { Howl } from 'howler';
 
+const pluginManager = new PluginManager();
 const settings = window.settings = new SettingsStore();
 const plugins = settings.get('plugins');
 const download = settings.get('download');
@@ -61,6 +70,8 @@ const youtube = new Youtube({
     download: settings.get('download')
   }
 });
+
+console.log('pluginManager', pluginManager);
 
 export const addItem = (id: string, payload: Object) => ({ type: Action.ADD_ITEM, id});
 export const deleteItem = (id: string) => ({ type: Action.DELETE_ITEM, id });

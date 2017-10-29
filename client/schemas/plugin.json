@@ -1,9 +1,11 @@
 {
   "$schema": "http://json-schema.org/draft-06/schema#",
+  "$id": "plugin",
+  "$async": true,
   "type": "object",
   "title": "Plugin",
-  "description": "Plugin manifest schema",
-  "required": ["id", "manifest"],
+  "description": "Plugin schema",
+  "required": [ "manifest" ],
   "properties": {
     "id": {
       "type": "string",
@@ -28,13 +30,16 @@
       "description": "A Web link to the plugin homepage."
     },
     "author": {
-      "$ref": "#/definitions/person",
+      "$ref": "#/definitions/Person",
       "description": "Original author of the plugin."
     },
     "license": {
       "type": "string",
-      "format": "spdx",
       "description": "Specify a license for your package so that people know how they are permitted to use it, and any restrictions you're placing on it"
+    },
+    "settings": {
+      "$ref": "#/definitions/Settings",
+      "description": "Plugin settings"
     },
     "manifest": {
       "$ref": "#/definitions/Manifest",
@@ -42,17 +47,51 @@
     }
   },
   "definitions": {
-    "Manifest": {
+    "Settings": {
       "type": "object",
+      "required": [ "updater" ],
       "additionalProperties": true,
       "properties": {
-        "supportedOS": {
+        "updater": {
+          "$ref": "#/definitions/Updater",
+          "description": "Plugin updater options"
+        }
+      }
+    },
+    "Manifest": {
+      "type": "object",
+      "required": [ "kind" ],
+      "additionalProperties": true,
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [ "source", "customization", "development", "theme" ],
+          "description": "Plugin kind"
+        },
+        "icons": {
+          "type": "object",
+          "description": "Links to 16x16 and 32x32 icons representing the Plugin.",
+          "properties": {
+           "x16": {
+            "type": "string",
+            "format": "url",
+            "description": "The URL of the 16x16 icon."
+           },
+           "x32": {
+            "type": "string",
+            "format": "url",
+            "description": "The URL of the 32x32 icon."
+           }
+          }
+         },
+        "languages": {
           "type": "array",
           "items": {
             "type": "string",
-            "enum": ["darwin", "linux", "win32"]
+            "uniqueItems": true,
+            "pattern": "^[A-Za-z]{1,8}(-[A-Za-z0-9]{1,8})*$"
           },
-          "description": "Which operating systems the plugin will run on"
+          "description": "List of supported languages"
         }
       }
     },
@@ -81,6 +120,30 @@
         }
       }],
       "description": "Person type definition"
+    },
+    "Updater": {
+      "type": "object",
+      "required": [ "checkForUpdates", "interval", "force" ],
+      "additionalProperties": true,
+      "properties": {
+        "checkForUpdates": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically check for newer versions"
+        },
+        "interval": {
+          "type": "number",
+          "default": 18000000,
+          "minimum": 3600000,
+          "maximum": 86400000,
+          "description": "Plugin update interval"
+        },
+        "force": {
+          "type": "boolean",
+          "default": false,
+          "description": "Force application reload"
+        }
+      }
     }
   },
   "formatters": {

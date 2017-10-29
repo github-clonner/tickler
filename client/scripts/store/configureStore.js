@@ -1,12 +1,14 @@
+// @flow
+
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : index.jsx                                                 //
-// @summary      : Application entry point                                   //
+// @file         : configureStore.js                                         //
+// @summary      : Redux store configuration                                 //
 // @version      : 0.0.1                                                     //
 // @project      : tickelr                                                   //
 // @description  :                                                           //
 // @author       : Benjamin Maggi                                            //
 // @email        : benjaminmaggi@gmail.com                                   //
-// @date         : 13 Feb 2017                                               //
+// @date         : 28 Oct 2017                                               //
 // @license:     : MIT                                                       //
 // ------------------------------------------------------------------------- //
 //                                                                           //
@@ -36,80 +38,40 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 import { remote } from 'electron';
-import React from 'react';
-import { render } from 'react-dom';
-import injectTapEventPlugin from 'react-tap-event-plugin';
-import url, { URLSearchParams } from 'url';
-import { Provider } from 'react-redux';
-import { ConnectedRouter } from 'react-router-redux';
-import configureStore, { history } from './store/configureStore';
-/* routes */
-import routes from './routes';
-/* styles */
-import Style from './layout.css';
+import thunk from 'redux-thunk';
+import { createStore, combineReducers, applyMiddleware, compose } from 'redux';
+import { ConnectedRouter, routerReducer, routerMiddleware, push } from 'react-router-redux';
+import createBrowserHistory from 'history/createBrowserHistory';
+import createHashHistory from 'history/createHashHistory';
+import * as reducers from '../reducers';
 
-const { query } = url.parse(window.location.href, true, true);
-console.log('query', query);
+// Create a history of your choosing (we're using a browser history in this case)
+export const history = createBrowserHistory({
+  basename: window.location.pathname
+});
 
-if (query.index) {
-  history.push({
-    pathname: '/' + query.index,
-    query: {
-      modal: true
-    },
-    state: {
-      list: new Date(),
-      video: '/Users'
+const reducer = combineReducers({
+  ...reducers,
+  routing: routerReducer
+});
+
+const enhancer = compose(
+  applyMiddleware(thunk),
+  applyMiddleware(routerMiddleware(history)),
+  applyMiddleware(function ({ dispatch, getState }) {
+    return (next) => action => {
+      //console.log('will dispatch', action)
+      // Call the next dispatch method in the middleware chain.
+      const returnValue = next(action)
+
+      console.log(action, 'state after dispatch', getState())
+
+      // This will likely be the action itself, unless
+      // a middleware further in chain changed it.
+      return returnValue
     }
-  });
-};
-
-/* clipboard manager */
-import ClipBoardManager from './lib/ClipBoardManager';
-const store = configureStore();
-
-// const clipBoardData = new ClipBoardData();
-// clipBoardData.events.on('data', data => {
-//   history.push({
-//     pathname: '/new-list',
-//     query: {
-//       modal: true
-//     },
-//     state: {
-//       list: data.list,
-//       video: data.v
-//     }
-//   });
-// })
-
-// Needed for onTouchTap
-// https://github.com/zilverline/react-tap-event-plugin
-injectTapEventPlugin();
-
-window.goUrl =  (url) => {
-  store.dispatch(push({
-    pathname: url || '/about',
-    state: { some: 'state' }
-  }));
-};
-
-
-const domContainerNode = document.getElementById('app');
-domContainerNode.className = Style.application;
-
-render(
-  <Provider store={ store }>
-    { /* ConnectedRouter will use the store from Provider automatically */ }
-    <ConnectedRouter history={ history }>
-      { routes }
-    </ConnectedRouter>
-  </Provider>,
-  domContainerNode
+  })
 );
 
-
-
-
-
-
+export default (initialState) => createStore(reducer, initialState, enhancer);
 

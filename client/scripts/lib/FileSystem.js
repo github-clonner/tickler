@@ -109,14 +109,15 @@ export const isValidDir = function(dir: string) : boolean {
 export const isEmptyDir = function(dir: string) : boolean {
   try {
     if (this.isValidDir(dir)) {
-      return Boolean(fs.readdirSync(dir).length);
+      const items = fs.readdirSync(dir);
+      return Boolean(!items || !items.length);
     } else {
-      return false;
+      return true;
     }
   } catch (ignored) {
-    return false;
+    return true;
   }
-}
+};
 
 /**
  * Returns an array of filenames excluding '.' and '..'
