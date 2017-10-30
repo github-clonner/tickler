@@ -65,6 +65,9 @@ const AVAILABLE_EXTENSIONS = new Set([
 const DEFAULT_PLUGINS_DIR = [ fileSystem.getAppPath(), fileSystem.getNamedPath('userData') ].map(dir => path.join(dir, 'plugins'));
 const VALIDATOR = Validator({ schemas: [ schema ] });
 
+/**
+ * Plugin class
+ */
 export class Plugin {
 
   module: Object;
@@ -167,9 +170,42 @@ export class Plugin {
 
 }
 
+const MM = [
+  ['A', (store) => (next) => (action) => {
+    console.log('will dispatch', action.type);
+    return next(action);
+  }],
+  ['B', (store) => (next) => (action) => {
+    return next(action);
+  }]
+];
+
+/**
+ * Plugin Manager class
+ */
 export class PluginManager {
 
   plugins: Map<string, *>;
+
+  static middlewares = new Map(MM);
+  // redux middleware generator
+  static middleware({ dispatch, getState }) {
+    return next => action => {
+      const { middlewares } = PluginManager;
+      console.log(middlewares);
+      return next(action);
+      // console.log('will dispatch', action);
+      // // Call the next dispatch method in the middleware chain.
+      // let returnValue = next(action);
+      // console.log('state after dispatch', getState());
+      // // This will likely be the action itself, unless
+      // // a middleware further in chain changed it.
+      // return returnValue;
+    };
+    // const nextMiddleware = remaining => action_ =>
+    //   remaining.length ? remaining[0](store)(nextMiddleware(remaining.slice(1)))(action_) : next(action_);
+    // nextMiddleware(middlewares)(action);
+  };
 
   static get defaults() {
     return {
@@ -245,4 +281,9 @@ export class PluginManager {
   }
 }
 
-export const pluginManager = new PluginManager();
+// redux middleware generator
+export const middleware = store => next => action => {
+  // const nextMiddleware = remaining => action_ =>
+  //   remaining.length ? remaining[0](store)(nextMiddleware(remaining.slice(1)))(action_) : next(action_);
+  // nextMiddleware(middlewares)(action);
+};

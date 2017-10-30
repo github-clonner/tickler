@@ -1,14 +1,12 @@
-// @flow
-
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : ClipBoardData.js                                          //
-// @summary      : Clipboard actions manager                                 //
-// @version      : 0.0.1                                                     //
+// @file         : Middleware.js                                             //
+// @summary      : Redux Store Middleware                                    //
+// @version      : 1.0.0                                                     //
 // @project      : tickelr                                                   //
 // @description  :                                                           //
 // @author       : Benjamin Maggi                                            //
 // @email        : benjaminmaggi@gmail.com                                   //
-// @date         : 28 Oct 2017                                               //
+// @date         : 29 Oct 2017                                               //
 // @license:     : MIT                                                       //
 // ------------------------------------------------------------------------- //
 //                                                                           //
@@ -37,76 +35,39 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-import { clipboard, ipcRenderer } from 'electron';
-import { EventEmitter } from 'events';
-import querystring from 'querystring';
-import url from 'url';
+import { createStore } from 'redux';
+import { isFSA } from 'flux-standard-action';
 
-///////////////////////////////////////////////////////////////////////////////
-// create single EventEmitter instance                                       //
-///////////////////////////////////////////////////////////////////////////////
-class ClipBoardDataEvents extends EventEmitter {
-  constructor(...args) {
-    super(...args);
-  }
+function isPromise(promise) {
+  return promise && promise.then && promise.catch;
 }
 
-const clipBoardDataEvents = new ClipBoardDataEvents();
-
-export default class ClipBoardData {
-  constructor() {
-    this.clipboard = clipboard;
-    this.events = clipBoardDataEvents;
-    this.link = null;
-    this.init();
-  }
-
-  setInterval = (interval = 500) => {
-    this.timer = window.setInterval(() => {
-      const data = this.decode(this.clipboard);
-    }, interval);
-    return this.timer;
-  }
-
-  clearInterval = (timer = this.timer) => {
-    return window.clearInterval(timer);
-  }
-
-  init () {
-    // window.addEventListener('focus', event => {
-    //   this.setInterval();
-    // }, false);
-    // window.addEventListener('blur', event => {
-    //   this.clearInterval();
-    // }, false);
-    // ...same thing if you paste a link
-    window.addEventListener('paste', this.onPaste, false);
-  }
-
-  onPaste = event => {
-    console.log(event)
-    const data = this.decode(this.clipboard);
-  }
-
-  decode () {
-    const formats = this.clipboard.availableFormats();
-    if (formats.indexOf('text/plain') > -1) {
-      const link = this.clipboard.readText();
-      const video = new RegExp(/(?:youtube\.com.*(?:\?|&)(?:v)=|youtube\.com.*embed\/|youtube\.com.*v\/|youtu\.be\/)((?!videoseries)[a-zA-Z0-9_]*)/g);
-      const list = new RegExp(/(?:youtube\.com.*(?:\?|&)(?:list)=)((?!videoseries)[a-zA-Z0-9_]*)/g);
-
-      if (this.link === link) {
-        return null;
+export const actionListener = function (createStore) {
+  return (reducer, initialState, enhancer) => {
+    const actionListeners = {};
+    const store = createStore(reducer, initialState, enhancer);
+    const dispatch = store.dispatch;
+    store.dispatch = action => {
+      if (!isFSA(action)) throw new Error('Invalid action');
+      const result = dispatch(action);
+      if (isPromise(result)) {
+        console.log('isPromise', action)
       }
-      if (link.match(video) || link.match(list)) {
-        this.link = link;
-        const uri = url.parse(link);
-        const query = querystring.parse(uri.query);
-        this.events.emit('data', query);
-        return query;
-      } else {
-        return null;
+      if (action.type in actionListeners) {
+        actionListeners[action.type].forEach((listener) => listener(action));
       }
-    }
-  }
-}
+      return result;
+    };
+    store.addActionListener = (actionType, listener) => {
+      const { [actionType]: listeners = [ ] } = actionListeners;
+      actionListeners[actionType] = [ ...listeners, listener ];
+      return () => {
+        actionListeners[actionType] = listeners.filter((l) => l !== listener);
+      };
+    };
+    return store;
+  };
+};
+
+
+

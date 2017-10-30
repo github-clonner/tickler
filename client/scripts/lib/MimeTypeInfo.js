@@ -1,14 +1,14 @@
 // @flow
 
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : Plugin.js                                                //
-// @summary      :                                                           //
-// @version      : 0.0.1                                                     //
-// @project      : tickelr                                                   //
-// @description  :                                                           //
+// @file         : MimeTypeInfo.js                                           //
+// @summary      : Misc content-type utilities                               //
+// @version      : 1.0.0                                                     //
+// @project      : N/A                                                       //
+// @description  : N/A                                                       //
 // @author       : Benjamin Maggi                                            //
 // @email        : benjaminmaggi@gmail.com                                   //
-// @date         : 16 Oct 2017                                               //
+// @date         : 19 Oct 2017                                               //
 // @license:     : MIT                                                       //
 // ------------------------------------------------------------------------- //
 //                                                                           //
@@ -37,9 +37,54 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-export default function Plugin (state: any = [], action: any) {
-  switch (action.type) {
-    default:
-      return state;
+const MimeType = {
+  format: {
+    video: {
+      'mp4': {
+        extension: 'mp4'
+        codecs: ['avc1.42E01E, mp4a.40.2', 'avc1.58A01E, mp4a.40.2', 'avc1.4D401E, mp4a.40.2', 'avc1.64001E, mp4a.40.2', 'mp4v.20.8, mp4a.40.2', 'mp4v.20.240, mp4a.40.2']
+      }
+    },
+    audio: {
+      'mp4': {
+        extension: 'mp4',
+        codecs: []
+      },
+      'mpeg': {
+        extension: 'mp3',
+        codecs: []
+      },
+      'webm': {
+        extension: 'webm',
+        codecs: []
+      },
+      'ogg': {
+        extension: 'oga',
+        codecs: []
+      },
+      'wav': {
+        extension: '',
+        codecs: []
+      },
+      'ogg': {
+        extension: '',
+        codecs: []
+      },
+      'ogg': {
+        extension: '',
+        codecs: []
+      },
+      '3gpp': {
+        extension: '',
+        codecs: []
+      }
+    }
   }
-}
+
+
+
+
+
+
+
+

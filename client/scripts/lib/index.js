@@ -11,4 +11,5 @@ export { MediaElementEx, MediaElementWrapper } from './MediaSourceEx';
 export Metadata from './Metadata';
 export { MediaSourceStream, EchoStream, toArrayBuffer } from './StreamEx';
 export { createAsyncAction } from './ActionHelpers';
-export { PluginManager, Plugin } from './PluginManager';
+export { PluginManager, Plugin, middleware } from './PluginManager';
+export ClipBoardManager from './ClipBoardManager';

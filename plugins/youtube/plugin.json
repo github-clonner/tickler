@@ -22,6 +22,12 @@
     "sources": {
       "url": {
         "pattern": "/^.*(?:(?:youtu\\.be\/|v\/|vi\/|u\/\\w\/|embed\/)|(?:(?:watch)?\\?v(?:i)?=|\\&v(?:i)?=))([^#\\&\\?]*).*/"
+      },
+      "video": {
+        "pattern": "/(?:youtube\\.com.*(?:\\?|&)(?:v)=|youtube\\.com.*embed\/|youtube\\.com.*v\/|youtu\\.be\/)((?!videoseries)[a-zA-Z0-9_]*)/g"
+      },
+      "playlist": {
+        "pattern": "/(?:youtube\\.com.*(?:\\?|&)(?:list)=)((?!videoseries)[a-zA-Z0-9_]*)/g"
       }
     }
   }

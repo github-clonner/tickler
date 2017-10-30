@@ -40,15 +40,15 @@
 import { clipboard, ipcRenderer } from 'electron';
 import { EventEmitter } from 'events';
 import isEmpty from 'lodash/isEmpty';
-import querystring from 'querystring';
-import url from 'url';
+
 
 export default class ClipBoardManager {
 
+  static emitterSym = Symbol('emitter');
   static get defaults() {
     return {
-      interval: 100,
-      supportedFormats: [ 'text/plain', 'text/html', 'image/png' ],
+      interval: 256,
+      supportedFormats: [ 'text/plain', 'text/uri-list', 'text/csv', 'text/css', 'text/html', 'application/xhtml+xml', 'image/png', 'image/jpg, image/jpeg', 'image/gif', 'image/svg+xml', 'application/xml, text/xml', 'application/javascript', 'application/json', 'application/octet-stream' ]
     };
   };
 
@@ -61,84 +61,99 @@ export default class ClipBoardManager {
     };
   }
 
-  init () {
-    const listener = {
-      paste: (event) => {
-        event.preventDefault();
-        event.stopPropagation();
-        const formats = clipboard.availableFormats();
-        if (formats.indexOf('text/plain') > -1) {
-          const text = this.clipboard.readText();
-          console.log('text', text);
-        }
-      },
-      copy: (event) => {
-        event.clipboardData.setData('text/plain', 'Hello, world!');
-        // We want our data, not data from any selection, to be written to the clipboard
-        event.preventDefault();
-      },
-      blur: (event) => {
-        // event.preventDefault();
-        // event.stopPropagation();
-        this.timer = !(this.timer) ? (this.timer = setInterval(() => this.decode(), 2000)) : false;
-        window.addEventListener('focus', listener.focus, { once: true, capture: true });
-        // event.preventDefault();
-      },
-      focus: (event) => {
-        // event.preventDefault();
-        // event.stopPropagation();
-        this.timer = !!(this.timer) ? (this.timer = clearInterval(this.timer) & false) : false;
-        window.addEventListener('blur', listener.blur, { once: true, capture: true });
-        // event.preventDefault();
-      }
-    };
+  get watchInterval() {
+    const { options: { interval } } = this;
+    return interval;
+  }
 
-    document.addEventListener('paste', listener.paste, false);
-    document.addEventListener('copy', listener.copy, false);
-    window.addEventListener('blur', listener.blur, { once: true, capture: true });
+  get availableFormats() {
+    return clipboard.availableFormats();
+  }
+
+  get isValidFormat() {
+    const { options: { supportedFormats }, availableFormats } = this;
+    return supportedFormats.some(format => availableFormats.includes(format));
+  }
+
+  getEmitter(events) {
+    const emitterSym = ClipBoardManager.emitterSym;
+    if (Object.getOwnPropertySymbols(events).includes(emitterSym)) {
+      return events[emitterSym];
+    } else {
+      return undefined;
+    }
+  }
+
+  /**
+   * Register an event handler of a specific event type on the EventTarge
+   */
+  listen(target, listener, defaults) : Function {
+    const emitter = this.getEmitter(listener);
+    return (event, options) => {
+      target.addEventListener(event, listener[event], { ...defaults, ...options });
+      return () => this.forget(target, listener).apply(this, [ event, { ...defaults, ...options } ]);
+    };
+  }
+
+  /**
+   * Removes an event listener from the EventTarget.
+   */
+  forget(target, listener, defaults) : Function {
+    const emitter = this.getEmitter(listener);
+    return (event, options) => {
+      return target.removeEventListener(event, listener[event], { ...defaults, ...options });
+    }
   }
 
   /**
    * Handle clipboard events
    */
   handleClipboardEvents() {
-    const addEventListener = (event, listener) => {
-
-    }
-    const listener = {
+    const emitterSym = ClipBoardManager.emitterSym;
+    const clipboardEvents = window.clipboardEvents = {
       paste: (event) => {
-        console.log('paste', event);
-        this.events.emit('paste', event);
+        this.events.emit('paste', event); console.log('paste');
+        this.decode();
         return event.preventDefault();
       },
       copy: (event) => {
-        console.log('copy', event);
-        this.events.emit('copy', event);
-        event.clipboardData.setData('text/plain', 'Hello, world! COPY');
-        // We want our data, not data from any selection, to be written to the clipboard
+        this.events.emit('copy', event); console.log('copy');
         return event.preventDefault();
       },
       cut: (event) => {
-        console.log('cut', event);
-        this.events.emit('cut', event);
-        event.clipboardData.setData('text/plain', 'Hello, world! CUT');
-        // We want our data, not data from any selection, to be written to the clipboard
+        this.events.emit('cut', event); console.log('cut');
         return event.preventDefault();
+      },
+      [emitterSym]: {
+        count: 0,
+        listeners: new Map(),
+        eventNames: () => Object.keys(clipboardEvents),
+        on: (event, options) => {
+          return this.listen(document, clipboardEvents).apply(this, [ event, options ]);
+        },
+        off: (event, options) => {
+          return this.forget(document, clipboardEvents).apply(this, [ event, options ]);
+        }
       }
     };
 
     /* Start listening clipboard events */
-    document.addEventListener('paste', listener.paste, false);
-    document.addEventListener('copy', listener.copy, false);
+    const emitter = this.getEmitter(clipboardEvents);
+    return [
+      emitter.on('paste'),
+      emitter.on('copy'),
+      emitter.on('cut')
+    ];
   }
 
-
-  startWatching(event, interval:? number = this.options.interval) {
+  startWatching(event, interval:? number = this.watchInterval) {
+    console.log('startWatching');
     this.events.emit('startWatching');
-    return this.timer = !(this.timer) ? (this.timer = setInterval(this.decode2.bind(this), 2000)) : false;
+    return this.timer = !(this.timer) ? (this.timer = setInterval(() => this.decode(), interval)) : false;
   }
 
   stopWatching(event) {
+    console.log('stopWatching');
     this.events.emit('stopWatching');
     return this.timer = !!(this.timer) ? (this.timer = clearInterval(this.timer) & false) : false;
   }
@@ -147,28 +162,43 @@ export default class ClipBoardManager {
    * Handle window events
    */
   handleWindowEvents() {
-    const listener = {
+    const emitterSym = ClipBoardManager.emitterSym;
+    const windowEvents = this.windowEvents = {
       blur: (event) => {
-        console.log('blur', event);
-        listen('focus');
+        emitter.once('focus');
         return this.startWatching(event);
       },
       focus: (event) => {
-        console.log('focus', event);
-        listen('blur');
+        emitter.once('blur');
         return this.stopWatching(event);
+      },
+      [emitterSym]: {
+        count: 0,
+        listeners: new Map(),
+        eventNames: () => Object.keys(windowEvents),
+        once: (event, options) => {
+          windowEvents[emitterSym].count += 1;
+          return this.listen(window, windowEvents, { once: true }).apply(this, [ event, options ]);
+        },
+        off: (event, options) => {
+          windowEvents[emitterSym].count -= 1;
+          return this.forget(window, windowEvents, { once: true }).apply(this, [ event, options ]);
+        }
       }
     };
 
-    const listen = (event, options) => window.addEventListener(event, listener[event], { once: true, capture: true, ...options });
-    const forget = (event, options) => window.removeEventListener(event, listener[event], { once: true, capture: true, ...options });
     /* Start watching */
-    return listen('blur');
+    const emitter = this.getEmitter(windowEvents);
+    return emitter.once('blur');
   }
 
   destroy() {
-
+    Object
+    .values(this.listeners)
+    .reduce((listeners, listener) => listeners.concat(listener), [])
+    .forEach(listener => listener.apply(this, null));
   }
+
   /**
    * Tell if there is any difference between 2 strings
    */
@@ -183,21 +213,13 @@ export default class ClipBoardManager {
     return !a.isEmpty() && b.toDataURL() !== a.toDataURL()
   }
 
-  decode2() {
-    const formats = clipboard.availableFormats();
-    const text = clipboard.readText();
-    if (!this.isDiffText(text, this.text)) return;
-    console.log('DECODE2', text, this.timer);
-    return this.text = text;
-  }
-
   decode() {
-    const formats = clipboard.availableFormats();
+    if (!this.isValidFormat) return;
     const text = clipboard.readText();
     if (!this.isDiffText(text, this.text)) return;
-    console.log('decode', text, this.timer);
+    console.log('decode', text, this.timer, this.isValidFormat, this.availableFormats);
     return this.text = text;
   }
 }
 
-const clipBoardManager = new ClipBoardManager();
+const clipBoardManager = window.az = new ClipBoardManager();

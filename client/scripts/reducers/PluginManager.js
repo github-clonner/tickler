@@ -1,14 +1,14 @@
 // @flow
 
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : configureStore.js                                         //
-// @summary      : Redux store configuration                                 //
+// @file         : PluginManager.js                                          //
+// @summary      : Plugin manager reducer                                    //
 // @version      : 0.0.1                                                     //
 // @project      : tickelr                                                   //
 // @description  :                                                           //
 // @author       : Benjamin Maggi                                            //
 // @email        : benjaminmaggi@gmail.com                                   //
-// @date         : 28 Oct 2017                                               //
+// @date         : 16 Oct 2017                                               //
 // @license:     : MIT                                                       //
 // ------------------------------------------------------------------------- //
 //                                                                           //
@@ -37,31 +37,18 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-import thunk from 'redux-thunk';
-import { createStore, combineReducers, applyMiddleware, compose } from 'redux';
-import { ConnectedRouter, routerReducer, routerMiddleware, push } from 'react-router-redux';
-import createBrowserHistory from 'history/createBrowserHistory';
-import createHashHistory from 'history/createHashHistory';
-import { ClipBoardManager, PluginManager } from '../lib';
-import { actionListener } from './Middleware';
-import * as reducers from '../reducers';
+import type { PluginManagerActions } from '../types';
+import { PluginManagerActionKeys as Action } from '../types';
+import { PluginManager as PM } from '../lib/PluginManager';
 
-// Create a history of your choosing (we're using a browser history in this case)
-export const history = createBrowserHistory({
-  basename: window.location.pathname
-});
+const pluginManager = new PM();
 
-const reducer = combineReducers({
-  ...reducers,
-  routing: routerReducer
-});
-
-const enhancer = compose(
-  applyMiddleware(thunk),
-  applyMiddleware(routerMiddleware(history)),
-  applyMiddleware(PluginManager.middleware),
-  actionListener
-);
-
-export default (initialState) => createStore(reducer, initialState, enhancer);
-
+export default function PluginManager (state: any = pluginManager, action: any) {
+  switch (action.type) {
+    case Action.ADD_PLUGIN: return { ...state, plugins: action.payload };
+    case Action.REMOVE_PLUGIN: return { ...state, plugins: action.payload };
+    case Action.CONFIG_PLUGIN: return { ...state, plugins: action.payload };
+    default:
+      return state;
+  }
+}

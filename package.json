@@ -1,7 +1,7 @@
 {
   "name": "Tickler",
   "productName": "Tickler",
-  "version": "2.3.3",
+  "version": "2.3.4",
   "description": "Audio player",
   "author": {
     "name": "Benjamin Maggi",
@@ -80,6 +80,7 @@
     "electron-window-state": "^4.1.1",
     "ffbinaries": "^1.0.3",
     "fluent-ffmpeg": "^2.1.2",
+    "flux-standard-action": "^1.2.0",
     "fpcalc": "^1.2.1",
     "fs-extra": "^4.0.2",
     "glob": "^7.1.2",

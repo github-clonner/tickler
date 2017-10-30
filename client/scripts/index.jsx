@@ -35,7 +35,6 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-import { remote } from 'electron';
 import React from 'react';
 import { render } from 'react-dom';
 import injectTapEventPlugin from 'react-tap-event-plugin';
@@ -65,8 +64,11 @@ if (query.index) {
 };
 
 /* clipboard manager */
-import ClipBoardManager from './lib/ClipBoardManager';
-const store = configureStore();
+// import ClipBoardManager from './lib/ClipBoardManager';
+const store = window.store = configureStore();
+// const removeActionListener = store.addActionListener('SELECT_ITEM', () => {
+//   console.log('SELECT_ITEM', arguments);
+// });
 
 // const clipBoardData = new ClipBoardData();
 // clipBoardData.events.on('data', data => {

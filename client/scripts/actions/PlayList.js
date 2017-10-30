@@ -60,7 +60,6 @@ import sanitize from 'sanitize-filename';
 import { shell, remote } from 'electron';
 import { Howl } from 'howler';
 
-const pluginManager = new PluginManager();
 const settings = window.settings = new SettingsStore();
 const plugins = settings.get('plugins');
 const download = settings.get('download');
@@ -70,8 +69,6 @@ const youtube = new Youtube({
     download: settings.get('download')
   }
 });
-
-console.log('pluginManager', pluginManager);
 
 export const addItem = (id: string, payload: Object) => ({ type: Action.ADD_ITEM, id});
 export const deleteItem = (id: string) => ({ type: Action.DELETE_ITEM, id });
@@ -256,10 +253,11 @@ export function openPlayList (options: Object = DialogOptions.open) {
 export function addPlayListItem (source: string) {
   return async function (dispatch, getState) {
     const { Audio, Settings } = getState();
+    console.log('addPlayListItem', getState())
     // todo lookup source handlers
-    const regExp = new RegExp(/^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/)|(?:(?:watch)?\?v(?:i)?=|\&v(?:i)?=))([^#\&\?]*).*/);
-    const id = source.replace(regExp, '$1');
-    console.log('video id', id);
+    // const regExp = new RegExp(/^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/)|(?:(?:watch)?\?v(?:i)?=|\&v(?:i)?=))([^#\&\?]*).*/);
+    // const id = source.replace(regExp, '$1');
+    // console.log('video id', id);
 
   }
 }
