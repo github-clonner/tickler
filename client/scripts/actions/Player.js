@@ -39,11 +39,8 @@
 
 import { PlayerActionKeys as Action } from '../types';
 import { createAsyncAction } from '../lib/ActionHelpers';
-import SettingsStore from '../lib/SettingsStore';
 import WaveSurfer from 'wavesurfer.js';
 import throttle from 'lodash/throttle';
-
-const settings = new SettingsStore();
 
 export const setAnalyzer = (payload: any) => ({ type: Action.SET_ANALYZER, payload });
 export const setContext = (payload: any) => ({ type: Action.SET_CONTEXT, payload });

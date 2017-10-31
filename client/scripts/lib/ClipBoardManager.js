@@ -41,23 +41,141 @@ import { clipboard, ipcRenderer } from 'electron';
 import { EventEmitter } from 'events';
 import isEmpty from 'lodash/isEmpty';
 
+/**
+  - ~ - ~ - ~ - ~ - ~ - ~ - ~ - ~ - ~ - ~ - ~ - ~ - ~ - ~ - ~ - ~ - ~ - ~ -
+  - Stick to Mandatory data types                                         -
+  - Reference: https://w3c.github.io/clipboard-apis/#mandatory-data-types -
+  - ~ - ~ - ~ - ~ - ~ - ~ - ~ - ~ - ~ - ~ - ~ - ~ - ~ - ~ - ~ - ~ - ~ - ~ -
+
+  Reading:
+  --------
+  'text/plain',
+  'text/uri-list',
+  'text/csv',
+  'text/css',
+  'text/html',
+  'application/xhtml+xml',
+  'image/png',
+  'image/jpg,
+  'image/jpeg',
+  'image/gif',
+  'image/svg+xml',
+  'application/xml,
+  'text/xml',
+  'application/javascript',
+  'application/json',
+  'application/octet-stream'
+
+  Writing:
+  --------
+  'text/plain',
+  'text/uri-list',
+  'text/csv',
+  'text/html',
+  'image/svg+xml',
+  'application/xml',
+  'text/xml',
+  'application/json',
+*/
+
+export class ClipBoardReader {
+
+  static defaultReaders = new Map([
+    // [
+    //   'text/plain', [
+    //     function(clipboard, ...args) {
+    //       const sum = Array.prototype.concat(...args).reduce((a, b) => a + b, 0);
+    //       const text = clipboard.readText();
+    //       return `${text}: ${sum}`;
+    //     }
+    //   ]
+    // ],
+    [ 'text/plain',
+      [ function(clipboard, ...args) { return clipboard.readText() } ]
+    ],
+    [ 'text/html',
+      [ function(clipboard, ...args) { return clipboard.readHTML() } ]
+    ]
+  ]);
+
+  static get defaults() {
+    return {
+      supportedReaders: ClipBoardReader.defaultReaders
+    };
+  };
+
+  constructor(clipboard:? Object, options?: Object) {
+    this.options = { ...ClipBoardReader.defaults, ...options };
+    this.clipboard = clipboard || require('electron').clipboard;
+  }
+
+  get supportedFormats() {
+    const { options: { supportedReaders: supported } } = this;
+    return supported.size ? supported.keys() : undefined;
+  }
+
+  get isValidFormat() {
+    try {
+      const { options: { supportedReaders: supported }, availableFormats: available } = this;
+      return (available && supported.size) ? available.some(format => supported.has(format)) : false;
+    } catch (error) { console.error(error); return false; }
+  }
+
+  get availableFormats() {
+    const formats = this.clipboard.availableFormats();
+    return !!(formats.length) ? formats : undefined;
+  }
+
+  get availableReaders() {
+    if (!this.isValidFormat) return undefined;
+    const { options: { supportedReaders: supported }, availableFormats: available } = this;
+    return available
+      .filter(format => supported.has(format))
+      .map(format => [ format, supported.get(format) ]);
+  }
+
+  addReader(format, hanlder, useCapture) {
+    return this.supportedReaders.set(format, handler);
+  }
+
+  removeReader(format, handler) {
+
+  }
+
+  getReader(format) {
+    return this.supportedReaders.get(format);
+  }
+
+  invokeReader(thisArg, ...args) {
+    console.log('invokeReader', this)
+    const { clipboard } = this
+    return (reader) => Reflect.apply(reader, thisArg, [ clipboard, ...args ] );
+  }
+
+  /* Read data from clipboard */
+  read(...args) {
+    if (!this.isValidFormat) return;
+    return this.availableReaders.map(([format, readers]) => [ format, readers.map(this.invokeReader(args)) ]);
+  }
+}
 
 export default class ClipBoardManager {
 
   static emitterSym = Symbol('emitter');
   static get defaults() {
     return {
-      interval: 256,
-      supportedFormats: [ 'text/plain', 'text/uri-list', 'text/csv', 'text/css', 'text/html', 'application/xhtml+xml', 'image/png', 'image/jpg, image/jpeg', 'image/gif', 'image/svg+xml', 'application/xml, text/xml', 'application/javascript', 'application/json', 'application/octet-stream' ]
+      interval: 500,
+      supportedFormats: ['text/plain']
     };
   };
 
   constructor(options?: Object) {
     this.options = { ...ClipBoardManager.defaults, ...options };
     this.events = new EventEmitter();
+    this.clipboardReader = new ClipBoardReader();
     this.listeners = {
       clipboard: this.handleClipboardEvents(),
-      window: this.handleWindowEvents()
+      // window: this.handleWindowEvents()
     };
   }
 
@@ -75,6 +193,7 @@ export default class ClipBoardManager {
     return supportedFormats.some(format => availableFormats.includes(format));
   }
 
+  /* get the event handler emitter symbol */
   getEmitter(events) {
     const emitterSym = ClipBoardManager.emitterSym;
     if (Object.getOwnPropertySymbols(events).includes(emitterSym)) {
@@ -84,9 +203,7 @@ export default class ClipBoardManager {
     }
   }
 
-  /**
-   * Register an event handler of a specific event type on the EventTarge
-   */
+  /* Register an event handler of a specific event type on the EventTarge */
   listen(target, listener, defaults) : Function {
     const emitter = this.getEmitter(listener);
     return (event, options) => {
@@ -95,9 +212,7 @@ export default class ClipBoardManager {
     };
   }
 
-  /**
-   * Removes an event listener from the EventTarget.
-   */
+  /* Removes an event listener from the EventTarget */
   forget(target, listener, defaults) : Function {
     const emitter = this.getEmitter(listener);
     return (event, options) => {
@@ -105,15 +220,19 @@ export default class ClipBoardManager {
     }
   }
 
-  /**
-   * Handle clipboard events
-   */
+  reverse(string) {
+    return string.split('').reverse().join('');
+  }
+
+  /* Handle clipboard events */
   handleClipboardEvents() {
     const emitterSym = ClipBoardManager.emitterSym;
     const clipboardEvents = window.clipboardEvents = {
       paste: (event) => {
         this.events.emit('paste', event); console.log('paste');
-        this.decode();
+        const datum = this.clipboardReader.read(this, 1, 2, 3, 4);
+        console.log('READER', datum);
+        // this.decode();
         return event.preventDefault();
       },
       copy: (event) => {
@@ -146,21 +265,24 @@ export default class ClipBoardManager {
     ];
   }
 
-  startWatching(event, interval:? number = this.watchInterval) {
+  /**
+   * Poll the system clipboard
+   * @param  {number} [interval] in ms between polls
+   * @return {number|boolean} timer id or false
+   */
+  startWatching(interval?: number = this.watchInterval) {
     console.log('startWatching');
     this.events.emit('startWatching');
     return this.timer = !(this.timer) ? (this.timer = setInterval(() => this.decode(), interval)) : false;
   }
 
-  stopWatching(event) {
+  stopWatching() {
     console.log('stopWatching');
     this.events.emit('stopWatching');
     return this.timer = !!(this.timer) ? (this.timer = clearInterval(this.timer) & false) : false;
   }
 
-  /**
-   * Handle window events
-   */
+  /* Handle window events */
   handleWindowEvents() {
     const emitterSym = ClipBoardManager.emitterSym;
     const windowEvents = this.windowEvents = {
@@ -192,6 +314,7 @@ export default class ClipBoardManager {
     return emitter.once('blur');
   }
 
+  /* Self destruct sequence */
   destroy() {
     Object
     .values(this.listeners)
@@ -199,21 +322,17 @@ export default class ClipBoardManager {
     .forEach(listener => listener.apply(this, null));
   }
 
-  /**
-   * Tell if there is any difference between 2 strings
-   */
+  /* Tell if there is any difference between 2 strings */
   isDiffText(a, b) {
     return !isEmpty(a) && !isEmpty(b) ? (b !== a) : true;
   }
 
-  /**
-   * Tell if there is any difference between 2 images
-   */
+  /* Tell if there is any difference between 2 images */
   isDiffImage(a, b) {
     return !a.isEmpty() && b.toDataURL() !== a.toDataURL()
   }
 
-  decode() {
+  decode(skip) {
     if (!this.isValidFormat) return;
     const text = clipboard.readText();
     if (!this.isDiffText(text, this.text)) return;

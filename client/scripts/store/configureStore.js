@@ -42,7 +42,8 @@ import { createStore, combineReducers, applyMiddleware, compose } from 'redux';
 import { ConnectedRouter, routerReducer, routerMiddleware, push } from 'react-router-redux';
 import createBrowserHistory from 'history/createBrowserHistory';
 import createHashHistory from 'history/createHashHistory';
-import { ClipBoardManager, PluginManager } from '../lib';
+import { PluginManager } from '../lib';
+import { ClipBoardManager } from '../lib/ClipBoardManager';
 import { actionListener } from './Middleware';
 import * as reducers from '../reducers';
 
@@ -59,7 +60,7 @@ const reducer = combineReducers({
 const enhancer = compose(
   applyMiddleware(thunk),
   applyMiddleware(routerMiddleware(history)),
-  applyMiddleware(PluginManager.middleware),
+  // applyMiddleware(PluginManager.middleware),
   actionListener
 );
 

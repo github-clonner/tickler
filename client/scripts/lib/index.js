@@ -12,4 +12,3 @@ export Metadata from './Metadata';
 export { MediaSourceStream, EchoStream, toArrayBuffer } from './StreamEx';
 export { createAsyncAction } from './ActionHelpers';
 export { PluginManager, Plugin, middleware } from './PluginManager';
-export ClipBoardManager from './ClipBoardManager';

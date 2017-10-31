@@ -252,8 +252,8 @@ export function openPlayList (options: Object = DialogOptions.open) {
  */
 export function addPlayListItem (source: string) {
   return async function (dispatch, getState) {
-    const { Audio, Settings } = getState();
-    console.log('addPlayListItem', getState())
+    const { Audio, Settings, PluginManager } = getState();
+    console.log('addPlayListItem', getState());
     // todo lookup source handlers
     // const regExp = new RegExp(/^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/)|(?:(?:watch)?\?v(?:i)?=|\&v(?:i)?=))([^#\&\?]*).*/);
     // const id = source.replace(regExp, '$1');
