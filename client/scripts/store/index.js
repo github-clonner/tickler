@@ -1,2 +1,3 @@
 export configureStore, { history } from './configureStore';
-export { actionListener } from './Middleware';
+export { actionListener } from './StoreEnhancers';
+export { MiddlewareManager, compose } from './MiddlewareManager';

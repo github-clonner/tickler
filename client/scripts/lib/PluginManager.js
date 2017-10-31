@@ -48,6 +48,7 @@ import isEmpty from 'lodash/isEmpty';
 import schema from '../../schemas/plugin.json';
 import { Validator } from './Schematismus';
 import * as fileSystem from './FileSystem';
+import { MiddlewareManager } from '../store/MiddlewareManager';
 
 const AVAILABLE_EXTENSIONS = new Set([
   'onApp',
@@ -147,6 +148,10 @@ export class Plugin {
     }
   }
 
+  applyExtensions() {
+
+  }
+
   async load(dir: string) : string | Error {
     try {
       const module = await this.getModule(dir);
@@ -172,7 +177,7 @@ export class Plugin {
 
 const MM = [
   ['A', (store) => (next) => (action) => {
-    console.log('will dispatch', action.type);
+    console.log('WILL DISPATCH', action.type);
     return next(action);
   }],
   ['B', (store) => (next) => (action) => {
@@ -187,13 +192,47 @@ export class PluginManager {
 
   plugins: Map<string, *>;
 
+  // static middlewareManager = new MiddlewareManager(PluginManager);
   static middlewares = new Map(MM);
+  static ActionHandler = {
+    middleware: store => next => action => {
+      console.log('ActionHandler', action);
+      return next(action);
+    }
+  };
+
+  static KAKAKA = store => next => action => {
+    console.log('KAKAKA', next, action.type);
+    return next(action);
+  };
+
+  static menu(action) {
+    console.log('MENU:', action);
+    return action;
+  }
   // redux middleware generator
   static middleware({ dispatch, getState }) {
+
+    const middleware_A = store => next => action => {
+      console.log('middleware_A', action.type);
+      return next(action);
+    }
+
+    const middleware_B = store => next => action => {
+      console.log('middleware_B', action.type);
+      return next(action);
+    }
+
+    //
+    const middlewareManager = new MiddlewareManager(PluginManager);
+    middlewareManager.use('menu', middleware_A, middleware_B);
+
     return next => action => {
       const { middlewares } = PluginManager;
-      console.log(middlewares);
-      return next(action);
+      console.log('PluginManager.middlewares', action.type, middlewares);
+      const result = PluginManager.menu(action);
+      return next(result);
+      // return next(action);
       // console.log('will dispatch', action);
       // // Call the next dispatch method in the middleware chain.
       // let returnValue = next(action);
@@ -214,6 +253,7 @@ export class PluginManager {
   };
 
   constructor(options) {
+    console.log('new PluginManager()')
     this.options = { ...PluginManager.defaults, ...options };
     this.plugins = new Map();
     const paths = this.getPaths();
@@ -257,6 +297,9 @@ export class PluginManager {
         return plugins;
       }
     }, {});
+
+    Object.entries(plugins).forEach(([name, plugin]) => PluginManager.middlewares.set(name, 'caca'))
+
     return this.plugins = new Map(Object.entries(plugins));
   }
 

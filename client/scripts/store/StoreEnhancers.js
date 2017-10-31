@@ -1,14 +1,12 @@
-// @flow
-
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : configureStore.js                                         //
-// @summary      : Redux store configuration                                 //
-// @version      : 0.0.1                                                     //
+// @file         : StoreEnhancers.js                                         //
+// @summary      : Miscellaneous Redux Store Enhancers                       //
+// @version      : 1.0.0                                                     //
 // @project      : tickelr                                                   //
 // @description  :                                                           //
 // @author       : Benjamin Maggi                                            //
 // @email        : benjaminmaggi@gmail.com                                   //
-// @date         : 28 Oct 2017                                               //
+// @date         : 29 Oct 2017                                               //
 // @license:     : MIT                                                       //
 // ------------------------------------------------------------------------- //
 //                                                                           //
@@ -37,51 +35,41 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-import thunk from 'redux-thunk';
-import { createStore, combineReducers, applyMiddleware, compose } from 'redux';
-import { ConnectedRouter, routerReducer, routerMiddleware, push } from 'react-router-redux';
-import createBrowserHistory from 'history/createBrowserHistory';
-import createHashHistory from 'history/createHashHistory';
-import { PluginManager } from '../lib';
-import { ClipBoardManager } from '../lib/ClipBoardManager';
-import { actionListener } from './StoreEnhancers';
-import { MiddlewareManager } from './MiddlewareManager';
-import * as reducers from '../reducers';
+import { createStore } from 'redux';
+import { isFSA } from 'flux-standard-action';
 
-// Create a history of your choosing (we're using a browser history in this case)
-export const history = createBrowserHistory({
-  basename: window.location.pathname
-});
+function isPromise(promise) {
+  return promise && promise.then && promise.catch;
+}
 
-const reducer = combineReducers({
-  ...reducers,
-  routing: routerReducer
-});
+export const actionListener = function (createStore) {
+  return (reducer, initialState, enhancer) => {
+    const actionListeners = {};
+    const store = createStore(reducer, initialState, enhancer);
+    const dispatch = store.dispatch;
+    store.dispatch = action => {
 
-// const pluginMiddlewareManager = new MiddlewareManager(PluginManager);
+      /* fix for legacy actions */
+      // const _action = { ...action }; delete _action.id;
+      // if (!isFSA(_action)) throw new Error('Invalid action');
+      /* end fix for legacy actions */
 
-// console.log('pluginMiddlewareManager', pluginMiddlewareManager);
-
-const enhancer = compose(
-  applyMiddleware(thunk),
-  applyMiddleware(routerMiddleware(history)),
-  applyMiddleware(PluginManager.middleware),
-  // applyMiddleware(pluginMiddlewareManager)
-  actionListener,
-  // applyMiddleware(function ({ dispatch, getState }) {
-  //   return (next) => action => {
-  //     //console.log('will dispatch', action)
-  //     // Call the next dispatch method in the middleware chain.
-  //     let returnValue = next(action)
-
-  //     //console.log('state after dispatch', getState())
-
-  //     // This will likely be the action itself, unless
-  //     // a middleware further in chain changed it.
-  //     return returnValue
-  //   }
-  // })
-);
-
-export default (initialState) => createStore(reducer, initialState, enhancer);
-
+      const result = dispatch(action);
+      if (isPromise(result)) {
+        console.log('isPromise', action)
+      }
+      if (action.type in actionListeners) {
+        actionListeners[action.type].forEach((listener) => listener(action));
+      }
+      return result;
+    };
+    store.addActionListener = (actionType, listener) => {
+      const { [actionType]: listeners = [ ] } = actionListeners;
+      actionListeners[actionType] = [ ...listeners, listener ];
+      return () => {
+        actionListeners[actionType] = listeners.filter((l) => l !== listener);
+      };
+    };
+    return store;
+  };
+};
