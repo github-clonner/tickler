@@ -1,14 +1,14 @@
 // @flow
 
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : configureStore.js                                         //
-// @summary      : Redux store configuration                                 //
-// @version      : 0.0.1                                                     //
-// @project      : tickelr                                                   //
+// @file         : extensions.js                                             //
+// @summary      : Cupported plugin extensions                               //
+// @version      : 1.0.0                                                     //
+// @project      : N/A                                                       //
 // @description  :                                                           //
 // @author       : Benjamin Maggi                                            //
 // @email        : benjaminmaggi@gmail.com                                   //
-// @date         : 28 Oct 2017                                               //
+// @date         : 31 Oct 2017                                               //
 // @license:     : MIT                                                       //
 // ------------------------------------------------------------------------- //
 //                                                                           //
@@ -37,46 +37,33 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-import thunk from 'redux-thunk';
-import { createStore, combineReducers, applyMiddleware, compose } from 'redux';
-import { ConnectedRouter, routerReducer, routerMiddleware, push } from 'react-router-redux';
-import createBrowserHistory from 'history/createBrowserHistory';
-import createHashHistory from 'history/createHashHistory';
-import { PluginManager } from '../lib';
-import { ClipBoardManager } from '../lib/ClipBoardManager';
-import { actionListener } from './StoreEnhancers';
-import { MiddlewareManager } from './MiddlewareManager';
-import * as reducers from '../reducers';
-
-// Create a history of your choosing (we're using a browser history in this case)
-export const history = createBrowserHistory({
-  basename: window.location.pathname
-});
-
-const reducer = combineReducers({
-  ...reducers,
-  routing: routerReducer
-});
-
-const enhancer = compose(
-  applyMiddleware(thunk),
-  applyMiddleware(routerMiddleware(history)),
-  applyMiddleware(PluginManager.middleware),
-  actionListener,
-  // applyMiddleware(function ({ dispatch, getState }) {
-  //   return (next) => action => {
-  //     //console.log('will dispatch', action)
-  //     // Call the next dispatch method in the middleware chain.
-  //     let returnValue = next(action)
-
-  //     //console.log('state after dispatch', getState())
-
-  //     // This will likely be the action itself, unless
-  //     // a middleware further in chain changed it.
-  //     return returnValue
-  //   }
-  // })
+export const supportedExtensions = new Set(
+  [
+    'onApp',
+    'onWindow',
+    'onRendererWindow',
+    'onUnload',
+    'middleware',
+    'decorateMenu',
+    'decorateHeader',
+    'decorateNotification',
+    'decorateNotifications',
+    'decorateConfig',
+    'decorateEnv',
+    'extendKeymaps'
+  ]
 );
 
-export default (initialState) => createStore(reducer, initialState, enhancer);
+export const supportedEvents = new Set(
+  [
+    'onApp',
+    'onWindow',
+    'onRendererWindow',
+    'onUnload',
+  ]
+);
+
+export const hasInterfaces = (instance) => {
+  return Object.keys(instance).some(extension => supportedExtensions.has(extension));
+};
 

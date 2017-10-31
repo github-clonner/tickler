@@ -3,7 +3,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // @file         : PluginManager.js                                          //
 // @summary      : Application Plugin manager                                //
-// @version      : 0.1.0                                                     //
+// @version      : 1.0.0                                                     //
 // @project      : tickelr                                                   //
 // @description  :                                                           //
 // @author       : Benjamin Maggi                                            //
@@ -44,168 +44,17 @@
 import path from 'path';
 import fs from 'fs';
 import { app, dialog, remote } from 'electron';
-import isEmpty from 'lodash/isEmpty';
-import schema from '../../schemas/plugin.json';
-import { Validator } from './Schematismus';
-import * as fileSystem from './FileSystem';
-import { MiddlewareManager } from '../store/MiddlewareManager';
+import { isEmpty, isPromise, isFunction } from '../utils';
+import schema from '../../../schemas/plugin.json';
+import { Validator } from '../Schematismus';
+import * as fileSystem from '../FileSystem';
+import { supportedExtensions } from './extensions';
+import { Plugin, isPlugin } from './Plugin';
+import { MiddlewareManager } from '../../store/MiddlewareManager';
 import uuid from 'uuid/v1';
 
-const AVAILABLE_EXTENSIONS = new Set([
-  'onApp',
-  'onWindow',
-  'onRendererWindow',
-  'onUnload',
-  'middleware',
-  'decorateMenu',
-  'decorateHeader',
-  'decorateNotification',
-  'decorateNotifications',
-  'decorateConfig',
-  'decorateEnv',
-]);
 const DEFAULT_PLUGINS_DIR = [ fileSystem.getAppPath(), fileSystem.getNamedPath('userData') ].map(dir => path.join(dir, 'plugins'));
 const VALIDATOR = Validator({ schemas: [ schema ] });
-
-/**
- * Plugin class
- */
-export class Plugin {
-
-  module: Object;
-  options: Object;
-
-  static validate(data: Object, schemaId?: string = 'plugin') : any | Error {
-    try {
-      const validate = VALIDATOR.getSchema(schemaId);
-      return validate(data);
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  };
-
-  static isValidModule(module) {
-    const hasKeys = (object, keys) => keys.every(key => (key in object));
-    const required = [ 'plugin', 'package' ];
-    return isEmpty(module) || !hasKeys(module, required) ? false : (!isEmpty(module.plugin) && !isEmpty(module.package));
-  };
-
-  static get defaults() {
-    return {
-      availableExtensions: AVAILABLE_EXTENSIONS
-    };
-  };
-
-  constructor(dir: string, options?: Object) {
-    this.options = { ...Plugin.defaults, ...options, ...{ dir }};
-    this.id = uuid();
-    if (fileSystem.isValidDir(dir)) {
-      this.load(dir);
-    }
-  }
-
-  async require(file: string, validator?: Function) : any | Error {
-    try {
-      return validator ? await validator(window.require(file)) : window.require(file);
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  }
-
-  async getModule(dir: string) : Object | Error {
-    /* resolve file path */
-    const resolvePath = ([ key, options ]) => [ key, { ...options, file: path.join(dir, options.file) } ];
-    /* filter invalid files */
-    const isValidPath = ([key, { file }]) => fileSystem.isValidFile(file);
-    /* require path */
-    const requirePath = ([ key, { file, validator }]) => this.require(file, validator).then(result => [ key, { file, validator, ...result }]);
-    /* module template */
-    const properties = [
-      [ 'plugin', { file: 'plugin.json', validator: Plugin.validate }],
-      [ 'package', { file: 'package.json' }]
-    ];
-
-    try {
-      const module = await Promise.all(properties.map(resolvePath).filter(isValidPath).map(requirePath));
-      return module.reduce((module, [ key, options ]) => ({ ...module, [key]: options }), {});
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  }
-
-  async getInstance(dir: string) : Object | Error {
-    const { availableExtensions } = this.options;
-    try {
-      const instance = await this.require(dir);
-      const exposed = instance && Object.keys(instance).some(key => availableExtensions.has(key));
-      if (!exposed) {
-        throw new Error('Plugin error!', `Plugin "${path.basename(dir)}" does not expose any ` + 'Hyper extension API methods');
-      }
-    } catch (error) {
-      console.error(error);
-      return undefined;
-    }
-  }
-
-  applyExtensions() {
-
-  }
-
-  sleep() {
-    return new Promise(resolve => {
-      setTimeout(() => resolve('☕'), 2000); // it takes 2 seconds to make coffee
-    });
-  }
-
-  get isReady() {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => resolve(this.ready), 2000);
-    });
-  }
-
-  set isReady(ready) {
-    this.ready = ready;
-  }
-
-  middleware(store) {
-    const { dispatch, getState } = store;
-    const { module, instance, testX1, testX2 } = this;
-    return next => action => {
-      if (typeof instance.middleware === 'function') {
-        const interceptor = instance.middleware(store);
-        return interceptor(next)(action);
-      } else {
-        return next(action);
-      }
-    }
-  }
-
-  async load(dir: string) : string | Error {
-    try {
-      const module = await this.getModule(dir);
-      if (Plugin.isValidModule(module)) {
-        this.module = module;
-        this.instance = await this.require(dir);
-        this.ready = true;
-        return this;
-      } else {
-        throw new Error(`Cannot load plugin: ${name}`);
-      }
-    } catch (error) {
-      console.error(name, error);
-      return undefined;
-    }
-  }
-
-  unload() {
-    this.module = undefined;
-    this.instance = undefined;
-  }
-
-}
 
 /**
  * Plugin Manager class
@@ -220,7 +69,55 @@ export class PluginManager {
     return action;
   }
 
+  static get pluginsReady() {
+    const pluginsReady = Array.from(PluginManager.middlewares.values()).filter(isPromise);
+    return Promise.all(pluginsReady)
+    .then(middlewares => {
+      middlewares.forEach(([name, plugin]) => PluginManager.middlewares.set(name, plugin));
+      return middlewares;
+    });
+  }
+
+
+
   static middleware(store) {
+
+    const { dispatch, getState } = store;
+    const hook = store => next => action => {
+      return next(action);
+    };
+
+    /* create MiddlewareManager */
+    const middlewareManager = new MiddlewareManager(PluginManager, store);
+    const hookMiddleware = function(plugin, name) {
+      if (isPlugin(plugin)) {
+        const { module, instance } = plugin;
+        middlewareManager.use('menu', plugin.middleware.bind(plugin));
+      }
+    };
+
+    PluginManager.pluginsReady.then(() => PluginManager.middlewares.forEach(hookMiddleware));
+
+    // PluginManager.pluginsReady.then(middlewares => {
+    //   /* Apply middleware generator */
+    //   PluginManager.middlewares.forEach((plugin, name) => {
+    //     console.log('PLUGIN MIDDLEWARE ', plugin, name);
+    //     if (PluginManager.isPlugin(plugin)) {
+    //       const { module, instance } = plugin;
+    //       console.log('MODULE', module);
+    //       middlewareManager.use('menu', plugin.middleware.bind(plugin));
+    //     }
+    //   });
+    // });
+
+    /* Return */
+    return next => action => {
+      const result = PluginManager.menu(action);
+      return next(result);
+    };
+  }
+
+  static middlewareXXX(store) {
     const { dispatch, getState } = store;
     const hook = store => next => action => {
       return next(action);
@@ -236,13 +133,13 @@ export class PluginManager {
     })
     .map(([ name, plugin ]) => {
       console.log('plugin', name);
-      return plugin.isReady;
+      return plugin.ready;
     });
 
     /* Wait for all Plugins to be ready */
     Promise.all(pluginsReady)
-    .then(isReady => {
-      console.log('CX', isReady);
+    .then(ready => {
+      console.log('CX', ready);
 
       /* Apply middleware generator */
       PluginManager.middlewares.forEach((plugin, name) => {
@@ -298,6 +195,30 @@ export class PluginManager {
   }
 
   async loadPlugins(dirs: Array<string>) : string | Error {
+    const promises = dirs.map(dir => {
+      const name = path.basename(dir);
+      const plugin = new Plugin(dir);
+      const result = plugin.ready.then(() => [ name, plugin ]);
+      PluginManager.middlewares.set(name, result);
+      return result;
+    });
+    return this.plugins = new Map(await Promise.all(promises));
+  }
+
+  async loadPluginsXX(dirs: Array<string>) : string | Error {
+    const promises = dirs.map(dir => {
+      const name = path.basename(dir);
+      const plugin = new Plugin(dir);
+      return plugin.ready.then(() => [ name, plugin ]);
+    }, []);
+
+    this.plugins = new Map(await Promise.all(promises));
+    // PluginManager.middlewares = new Map(this.plugins);
+    Array.from(this.plugins.entries()).forEach(([name, plugin]) => PluginManager.middlewares.set(name, plugin));
+    console.log('PLUGINS', Array.from(this.plugins.keys()), Array.from(PluginManager.middlewares.keys()))
+  }
+
+  async loadPluginsX(dirs: Array<string>) : string | Error {
     const plugins = dirs
     /* load plugins */
     .reduce((plugins, dir) => {
@@ -314,7 +235,11 @@ export class PluginManager {
     }, {});
 
     Object.entries(plugins).forEach(([name, plugin]) => PluginManager.middlewares.set(name, plugin))
-    return this.plugins = new Map(Object.entries(plugins));
+    this.plugins = new Map(Object.entries(plugins));
+
+    console.log('PLUGINS', Array.from(this.plugins.keys()), Array.from(PluginManager.middlewares.keys()))
+
+    return this.plugins;
   }
 
   clearCache() {
@@ -337,10 +262,3 @@ export class PluginManager {
     return fileSystem.ensureDir(dir);
   }
 }
-
-// redux middleware generator
-export const middleware = store => next => action => {
-  // const nextMiddleware = remaining => action_ =>
-  //   remaining.length ? remaining[0](store)(nextMiddleware(remaining.slice(1)))(action_) : next(action_);
-  // nextMiddleware(middlewares)(action);
-};

@@ -60,13 +60,19 @@
     },
     "Manifest": {
       "type": "object",
-      "required": [ "kind" ],
+      "required": [ "kind", "target" ],
       "additionalProperties": true,
       "properties": {
         "kind": {
           "type": "string",
           "enum": [ "source", "customization", "development", "theme" ],
           "description": "Plugin kind"
+        },
+        "target": {
+          "type": "string",
+          "enum": [ "main", "renderer" ],
+          "default": "renderer",
+          "description": "Plugin process target"
         },
         "icons": {
           "type": "object",

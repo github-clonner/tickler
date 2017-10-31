@@ -1,14 +1,12 @@
-// @flow
-
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : configureStore.js                                         //
-// @summary      : Redux store configuration                                 //
-// @version      : 0.0.1                                                     //
-// @project      : tickelr                                                   //
+// @file         : utils.js                                                  //
+// @summary      : Miscellaneous utilities                                   //
+// @version      : 1.0.0                                                     //
+// @project      :                                                           //
 // @description  :                                                           //
 // @author       : Benjamin Maggi                                            //
 // @email        : benjaminmaggi@gmail.com                                   //
-// @date         : 28 Oct 2017                                               //
+// @date         : 31 Oct 2017                                               //
 // @license:     : MIT                                                       //
 // ------------------------------------------------------------------------- //
 //                                                                           //
@@ -37,46 +35,42 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-import thunk from 'redux-thunk';
-import { createStore, combineReducers, applyMiddleware, compose } from 'redux';
-import { ConnectedRouter, routerReducer, routerMiddleware, push } from 'react-router-redux';
-import createBrowserHistory from 'history/createBrowserHistory';
-import createHashHistory from 'history/createHashHistory';
-import { PluginManager } from '../lib';
-import { ClipBoardManager } from '../lib/ClipBoardManager';
-import { actionListener } from './StoreEnhancers';
-import { MiddlewareManager } from './MiddlewareManager';
-import * as reducers from '../reducers';
+export isEmpty from 'lodash/isEmpty';
+export throttle from 'lodash/throttle';
+export debounce from 'lodash/debounce';
+export camelCase from 'lodash/camelCase';
 
-// Create a history of your choosing (we're using a browser history in this case)
-export const history = createBrowserHistory({
-  basename: window.location.pathname
-});
+export const isFunction = (method) => {
+  return (method !== null) &&
+    typeof method === 'function' &&
+    method.constructor === Function;
+}
 
-const reducer = combineReducers({
-  ...reducers,
-  routing: routerReducer
-});
+export const isObject = (object) => {
+  return (object !== null) &&
+    typeof object === 'object' &&
+    object.constructor === Object;
+}
 
-const enhancer = compose(
-  applyMiddleware(thunk),
-  applyMiddleware(routerMiddleware(history)),
-  applyMiddleware(PluginManager.middleware),
-  actionListener,
-  // applyMiddleware(function ({ dispatch, getState }) {
-  //   return (next) => action => {
-  //     //console.log('will dispatch', action)
-  //     // Call the next dispatch method in the middleware chain.
-  //     let returnValue = next(action)
+export const isPlainObject = (object) => {
+  return (object !== null) &&
+    typeof object === 'object';
+}
 
-  //     //console.log('state after dispatch', getState())
+export const isPromise = (promise) => {
+  return (promise !== null) &&
+    typeof promise === 'object' &&
+    promise.constructor === Promise &&
+    isFunction(promise.then) &&
+    isFunction(promise.catch);
+}
 
-  //     // This will likely be the action itself, unless
-  //     // a middleware further in chain changed it.
-  //     return returnValue
-  //   }
-  // })
-);
+export const isString = (string) => {
+  return (string !== null) &&
+    typeof string === 'string' &&
+    string.constructor === String;
+}
 
-export default (initialState) => createStore(reducer, initialState, enhancer);
+// $FlowIssue
+export const isRenderer = (process && process.type === 'renderer');
 

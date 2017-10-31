@@ -41,39 +41,8 @@
 
 import { applyMiddleware, compose } from 'redux';
 import { isFSA } from 'flux-standard-action';
+import { isFunction, isObject, isPlainObject, isPromise, isString } from '../lib/utils';
 
-function isFunction(method) {
-  return (method !== null) &&
-    typeof method === 'function' &&
-    method.constructor === Function;
-}
-
-function isObject(object) {
-  return (object !== null) &&
-    typeof object === 'object' &&
-    object.constructor === Object;
-}
-
-function isPlainObject(object) {
-  return (object !== null) &&
-    typeof object === 'object';
-}
-
-function isPromise(promise) {
-  return (promise !== null) &&
-    typeof promise === 'object' &&
-    promise.constructor === Promise &&
-    isFunction(promise.then) &&
-    isFunction(promise.catch);
-}
-
-function isString(string) {
-  return (string !== null) &&
-    typeof string === 'string' &&
-    string.constructor === String;
-}
-
-const middlewareManagerHash = new Map();
 
 /**
  * Composes single-argument functions from right to left. The rightmost
@@ -109,11 +78,12 @@ export class MiddlewareManager {
    * @param {...object} middlewareObjects Middleware objects.
    * @return {object} this
    */
-  constructor(target, ...middlewareObjects) {
+  constructor(target, store, ...middlewareObjects) {
     const { targets } = MiddlewareManager;
     // a target can only has one MiddlewareManager instance
     if (!targets.has(target)) {
       this.target = target;
+      this.store = store;
       this.methods = {};
       this.methodMiddlewares = {};
       targets.set(this, this);
@@ -129,32 +99,32 @@ export class MiddlewareManager {
 
   // Apply middleware to method
   applyToMethod(methodName, ...middlewares) {
-    if (this.methodIsValid(methodName)) {
-      const method = this.methods[methodName] || this.target[methodName];
+    const { target, store, methods, methodMiddlewares, methodIsValid } = this;
+    if (methodIsValid(methodName)) {
+      const method = methods[methodName] || target[methodName];
       if (isFunction(method)) {
-        this.methods[methodName] = method;
-        if (this.methodMiddlewares[methodName] === undefined) {
-          this.methodMiddlewares[methodName] = [];
-        }
-        middlewares
-        .filter(isFunction)
-        .forEach(middleware =>
-          isFunction(middleware) && this.methodMiddlewares[methodName].push(middleware(this.target))
-        );
-        this.target[methodName] = compose(...this.methodMiddlewares[methodName])(method.bind(this.target));
+        methods[methodName] = method;
+        const validMiddlewares = middlewares
+          .filter(isFunction)
+          // .map(middleware => middleware(target, store));
+          .map(middleware => middleware(store));
+        const methodMiddleware = (methodMiddlewares[methodName] || []).concat(validMiddlewares);
+        // Promise.all(methodMiddleware).then(r => console.log('solved', r));
+        // console.log('applyToMethod', validMiddlewares, methodMiddleware);
+        const composed = compose(...methodMiddleware);
+        return target[methodName] = composed(method.bind(target));
       }
     }
   }
 
   getProperties(object) {
-    if (isPlainObject(object)) {
-      const methods = object.middlewareMethods || Object.keys(object);
-      if (methods.length) {
-        return methods;
-      } else {
-        const methods = Object.getOwnPropertyNames(Object.getPrototypeOf(object));
-        return methods;
-      }
+    console.log('getProperties ', typeof object, 'isPromise' ,isPromise(object))
+    if (isObject(object) || 'middlewareMethods' in object) {
+      /* Object is plain object or has middlewareMethods */
+      return object.middlewareMethods || Object.keys(object);
+    } else {
+      /* Object is probably class enumerate */
+      return Object.getOwnPropertyNames(Object.getPrototypeOf(object));
     }
   }
 
@@ -174,7 +144,7 @@ export class MiddlewareManager {
         // only method1 and method2 will be the target function.
         return this.getProperties(arg)
         .filter(key => {
-          return (isFunction(arg[key]) && this.methodIsValid(key))
+          return (isFunction(arg[key]) && this.methodIsValid(key));
         })
         .map(key => {
           return this.applyToMethod(key, arg[key].bind(arg));
@@ -193,17 +163,21 @@ class Person {
   walk(step) {
     this.step = step;
     console.log('WALK', step);
+    return 100;
   }
   speak(word) {
     this.word = word;
+    return 200;
   }
   jump(height) {
     this.height = height;
     console.log('JUMP', height);
+    return 300;
   }
-  swim(distance) {
-    this.distance = distance;
-    console.log('SWIM', distance);
+  swim(action) {
+    const { distance } = action.payload;
+    console.log('SWIM', action.type, distance, action.payload);
+    return 400;
   }
 }
 
@@ -274,6 +248,7 @@ class PersonMiddleware {
     }
   }
   jump(store) {
+    const name = 'jump';
     return next => action => {
       action.payload.hoops += 1;
       return next(action);
@@ -291,8 +266,8 @@ class PersonMiddleware {
 const person = new Person();
 const middlewareManager = new MiddlewareManager(person);
 // middlewareManager.use('walk', middleware_1, middleware_2, middleware_3);
-middlewareManager.use('jump', middleware_A, middleware_B, middleware_C);
-// middlewareManager.use(ActionHandlers_A, ActionHandlers_B, ActionHandlers_B);
+// middlewareManager.use('jump', middleware_A, middleware_B, middleware_C);
+middlewareManager.use(ActionHandlers_A, ActionHandlers_B, ActionHandlers_B);
 person.walk('hello world');
 person.jump({
   type: 'DO_JUMP',
@@ -300,8 +275,15 @@ person.jump({
 });
 person.swim({
   type: 'DO_JUMP',
-  payload: { distance: 0 }
+  payload: { distance: 1 }
 });
+person.swim({
+  type: 'DO_JUMP',
+  payload: { distance: 2 }
+});
+person.walk('dlrow olleh');
+
+*/
 
 // middlewareManager.use(new PersonMiddleware())
 // person.walk('hello world');
@@ -310,12 +292,10 @@ person.swim({
 //   type: 'DO_JUMP',
 //   payload: { hoops: 0 }
 // });
-
-// const kkk = applyMiddleware(middleware_A, middleware_B, middleware_C);
-
-// console.log('APPLYMIDDLEWARE', kkk);
-
-*/
+// person.jump({
+//   type: 'DO_JUMP',
+//   payload: { hoops: 0 }
+// });
 
 /* EOF */
 

@@ -57,7 +57,7 @@ import Metadata from '../lib/Metadata';
 import os from 'os';
 import path from 'path';
 import sanitize from 'sanitize-filename';
-import { shell, remote } from 'electron';
+import { shell, remote, dialog } from 'electron';
 import { Howl } from 'howler';
 
 const settings = window.settings = new SettingsStore();
@@ -480,6 +480,22 @@ export function fetchList (id: string) {
         }));
       }
       console.debug(playList);
+    } catch (error) {
+      console.error(error);
+      return dispatch({type: 'ERROR', error: error});
+    }
+  }
+}
+
+
+export function alert (message: string) {
+  return async function (dispatch, getState) {
+    const state = getState();
+    try {
+      const result = dialog.showMessageBox({
+        message,
+        buttons: ['Ok']
+      });
     } catch (error) {
       console.error(error);
       return dispatch({type: 'ERROR', error: error});

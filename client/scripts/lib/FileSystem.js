@@ -40,9 +40,7 @@
 import electron from 'electron';
 import path from 'path';
 import fs from 'fs-extra';
-
-// $FlowIssue
-const isRenderer = (process && process.type === 'renderer');
+import { isRenderer } from './utils';
 
 export const getPath = function (name: string) {
   return isRenderer ? electron.remote.app.getPath(name) : electron.app.getPath(name);

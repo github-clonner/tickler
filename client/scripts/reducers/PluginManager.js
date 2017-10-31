@@ -39,7 +39,7 @@
 
 import type { PluginManagerActions } from '../types';
 import { PluginManagerActionKeys as Action } from '../types';
-import { PluginManager as PM } from '../lib/PluginManager';
+import { PluginManager as PM } from '../lib';
 
 const pluginManager = new PM();
 

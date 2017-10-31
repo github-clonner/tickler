@@ -39,10 +39,7 @@
 
 import { createAction } from 'redux-actions';
 import throttle from 'lodash/throttle';
-
-function isPromise(promise) {
-  return promise && promise.then && promise.catch;
-}
+import { isPromise } from './utils';
 
 /*
  * Asynchronous action creator
