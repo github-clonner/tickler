@@ -1,14 +1,28 @@
-export Time, { parseDuration } from './Time';
-export FileSystem, { getPath, read, write, remove, rename, OS_DIRECTORIES } from './FileSystem';
+
+/* Stores */
 export SettingsStore from './SettingsStore';
 export PlayListStore from './PlayListStore';
-export EventEmitterEx from './EventEmitterEx';
-export Youtube from './Youtube';
-export { ContextMenu, buildContextMenu } from './ContextMenu';
+
+/* Plugins */
+export { PluginManager, Plugin } from './PluginManager/';
+
+/* Subclassed/extended built-in objects */
 export MapEx from './MapEx';
-export Transcoder from './Transcoder';
+export EventEmitterEx from './EventEmitterEx';
 export { MediaElementEx, MediaElementWrapper } from './MediaSourceEx';
-export Metadata from './Metadata';
 export { MediaSourceStream, EchoStream, toArrayBuffer } from './StreamEx';
+export FileSystem, { getPath, read, write, remove, rename, OS_DIRECTORIES } from './FileSystem';
+
+/* Data transformers */
+export Time, { parseDuration } from './Time';
+
+/* UI */
+export { ContextMenu, buildContextMenu } from './ContextMenu';
+
+/* framework extensions */
 export { createAsyncAction } from './ActionHelpers';
-export { PluginManager, Plugin } from './PluginManager/PluginManager';
+
+/* Media libraries */
+export Youtube from './Youtube';
+export Transcoder from './Transcoder/';
+export Metadata from './Metadata';

@@ -81,6 +81,11 @@ export class Plugin {
     return isEmpty(module) || !hasKeys(module, required) ? false : (!isEmpty(module.plugin) && !isEmpty(module.package));
   };
 
+  static actionBypass(action) {
+    console.log('actionBypass', action.type);
+    return action;
+  }
+
   static get defaults() {
     return {
       supportedExtensions
@@ -153,6 +158,10 @@ export class Plugin {
   set ready(ready) {
     this._ready = ready;
     this.events.emit('ready', this._ready);
+  }
+
+  actionBypass(action) {
+    return action;
   }
 
   middleware(store) {

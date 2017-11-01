@@ -65,7 +65,7 @@ export class PluginManager {
 
   static middlewares = new Map();
 
-  static menu(action) {
+  static actionBypass(action) {
     return action;
   }
 
@@ -78,84 +78,25 @@ export class PluginManager {
     });
   }
 
-
-
   static middleware(store) {
-
-    const { dispatch, getState } = store;
-    const hook = store => next => action => {
-      return next(action);
-    };
-
     /* create MiddlewareManager */
-    const middlewareManager = new MiddlewareManager(PluginManager, store);
     const hookMiddleware = function(plugin, name) {
       if (isPlugin(plugin)) {
+        const middlewareManager = new MiddlewareManager(Plugin, store);
         const { module, instance } = plugin;
-        middlewareManager.use('menu', plugin.middleware.bind(plugin));
+        middlewareManager.use('actionBypass', plugin.middleware.bind(plugin));
       }
     };
 
+    /* Wait for plugins to be loaded then hook the middleware manager */
     PluginManager.pluginsReady.then(() => PluginManager.middlewares.forEach(hookMiddleware));
 
-    // PluginManager.pluginsReady.then(middlewares => {
-    //   /* Apply middleware generator */
-    //   PluginManager.middlewares.forEach((plugin, name) => {
-    //     console.log('PLUGIN MIDDLEWARE ', plugin, name);
-    //     if (PluginManager.isPlugin(plugin)) {
-    //       const { module, instance } = plugin;
-    //       console.log('MODULE', module);
-    //       middlewareManager.use('menu', plugin.middleware.bind(plugin));
-    //     }
-    //   });
-    // });
 
     /* Return */
     return next => action => {
-      const result = PluginManager.menu(action);
+      const result = Plugin.actionBypass(action);
       return next(result);
     };
-  }
-
-  static middlewareXXX(store) {
-    const { dispatch, getState } = store;
-    const hook = store => next => action => {
-      return next(action);
-    };
-
-    /* create MiddlewareManager */
-    const middlewareManager = new MiddlewareManager(PluginManager, store);
-
-    /* Wait for all Plugins to be ready */
-    const pluginsReady = Array.from(PluginManager.middlewares.entries())
-    .filter(([ name, plugin ]) => {
-      return (typeof plugin === 'object' && plugin.middleware);
-    })
-    .map(([ name, plugin ]) => {
-      console.log('plugin', name);
-      return plugin.ready;
-    });
-
-    /* Wait for all Plugins to be ready */
-    Promise.all(pluginsReady)
-    .then(ready => {
-      console.log('CX', ready);
-
-      /* Apply middleware generator */
-      PluginManager.middlewares.forEach((plugin, name) => {
-        if (typeof plugin === 'object' && plugin.middleware) {
-          const { module, instance } = plugin;
-          middlewareManager.use('menu', plugin.middleware.bind(plugin));
-        }
-      });
-    });
-
-    /* Return */
-    return next => action => {
-      const result = PluginManager.menu(action);
-      return next(result);
-    };
-
   }
 
   static get defaults() {
@@ -165,7 +106,6 @@ export class PluginManager {
   };
 
   constructor(options) {
-    console.log('new PluginManager()')
     this.options = { ...PluginManager.defaults, ...options };
     this.plugins = new Map();
     const paths = this.getPaths();
@@ -203,43 +143,6 @@ export class PluginManager {
       return result;
     });
     return this.plugins = new Map(await Promise.all(promises));
-  }
-
-  async loadPluginsXX(dirs: Array<string>) : string | Error {
-    const promises = dirs.map(dir => {
-      const name = path.basename(dir);
-      const plugin = new Plugin(dir);
-      return plugin.ready.then(() => [ name, plugin ]);
-    }, []);
-
-    this.plugins = new Map(await Promise.all(promises));
-    // PluginManager.middlewares = new Map(this.plugins);
-    Array.from(this.plugins.entries()).forEach(([name, plugin]) => PluginManager.middlewares.set(name, plugin));
-    console.log('PLUGINS', Array.from(this.plugins.keys()), Array.from(PluginManager.middlewares.keys()))
-  }
-
-  async loadPluginsX(dirs: Array<string>) : string | Error {
-    const plugins = dirs
-    /* load plugins */
-    .reduce((plugins, dir) => {
-      const name = path.basename(dir);
-      try {
-        const plugin = new Plugin(dir);
-        return {
-          ...plugins,
-          [name]: plugin
-        };
-      } catch (error) {
-        return plugins;
-      }
-    }, {});
-
-    Object.entries(plugins).forEach(([name, plugin]) => PluginManager.middlewares.set(name, plugin))
-    this.plugins = new Map(Object.entries(plugins));
-
-    console.log('PLUGINS', Array.from(this.plugins.keys()), Array.from(PluginManager.middlewares.keys()))
-
-    return this.plugins;
   }
 
   clearCache() {

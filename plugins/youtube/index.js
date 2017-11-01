@@ -152,6 +152,7 @@ exports.middleware = (store) => (next) => (action) => {
   const List = getState().PlayListItems.toJS();
   switch (action.type) {
     case 'SELECT_ITEM': {
+      console.log('HIJACKED BY PLUGIN')
       return next({
         type: 'SELECT_INDEX',
         payload: getRandomInt(0, (List.length - 1))
