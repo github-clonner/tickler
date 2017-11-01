@@ -74,3 +74,74 @@ export const isString = (string) => {
 // $FlowIssue
 export const isRenderer = (process && process.type === 'renderer');
 
+
+/**
+ * Promisify callback style functions
+ */
+function promisify(func) {
+  return (...args) => {
+    return new Promise((resolve, reject) => {
+      return func(...args, (error, result) => (error ? reject(error) : resolve(result)));
+    });
+  }
+}
+
+/*
+ * Access nested object property by string path
+ * inspiration: https://stackoverflow.com/questions/6491463/accessing-nested-javascript-objects-with-string-key
+ */
+const get = (object: Object, path: string, defaultValue?: any) => path
+  .replace(/\[(\w+)\]/g, '.$1') // Convert indexes to properties
+  .replace(/^\./, '')           // strip leading dot
+  .split('.')                   // Split (.) into array of properties
+  .reduce((object = {}, key) => object[key], object);
+
+/*
+ * A factory for a get similar to lodash _.get() just pass a Map()
+ */
+export const getGenerator = (hashMap) => {
+  /*
+   * Gets the value at path of object. If the resolved value is undefined, the defaultValue is returned in its place.
+   * @param {string} path The path of the property to get.
+   * @param {*} default value to return if undefined
+   * @returns {*} Returns the resolved value.
+   */
+  return function (path, defaultValue) {
+    // const { hashMap } = this;
+    /** Used to match property names within property paths. */
+    const reIsDeepProp = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\\]|\\.)*?\1)\]/;
+    const reIsPlainProp = /^\w*$/;
+
+    const hasProperty = property => (reIsPlainProp.test(property) && hashMap.has(property));
+    const getProperty = property => (hasProperty(property) ? hashMap.get(property) : defaultValue);
+
+    if (reIsDeepProp.test(path)) {
+      const [ property, properties ] = path.split(/\.(.+)/).filter(Boolean);
+      return properties
+        .replace(/\[(\w+)\]/g, '.$1') // Convert indexes to properties
+        .replace(/^\./, '') // strip leading dot
+        .split('.') // Split (.) into array of properties
+        .reduce((o = {}, key) => o[key], getProperty(property)) || defaultValue;
+    } else {
+      return getProperty(path);
+    }
+  }
+}
+
+
+export const b64EncodeUnicode = (str) => {
+  // first we use encodeURIComponent to get percent-encoded UTF-8,
+  // then we convert the percent encodings into raw bytes which
+  // can be fed into btoa.
+  return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g,
+    function toSolidBytes(match, p1) {
+      return String.fromCharCode('0x' + p1);
+  }));
+}
+
+export const b64DecodeUnicode = (str) => {
+  // Going backwards: from bytestream, to percent-encoding, to original string.
+  return decodeURIComponent(atob(str).split('').map(function(c) {
+    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+  }).join(''));
+}

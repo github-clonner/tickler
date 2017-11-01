@@ -253,7 +253,14 @@ export function openPlayList (options: Object = DialogOptions.open) {
 export function addPlayListItem (source: string) {
   return async function (dispatch, getState) {
     const { Audio, Settings, PluginManager } = getState();
-    console.log('addPlayListItem', getState());
+    const plugins = PluginManager.plugins.forEach((plugin, name) => {
+      const { instance, availableExtensions } = plugin;
+      if(availableExtensions.includes('extendMediaSources')) {
+        const { extendMediaSources } = instance;
+        const supportsSource = extendMediaSources(source);
+        console.log('supportsSource', supportsSource);
+      }
+    });
     // todo lookup source handlers
     // const regExp = new RegExp(/^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/)|(?:(?:watch)?\?v(?:i)?=|\&v(?:i)?=))([^#\&\?]*).*/);
     // const id = source.replace(regExp, '$1');

@@ -1,5 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-06/schema#",
+  "$id": "settings",
   "type": "object",
   "title": "Settings Schema",
   "description": "Application settings and user preferences",
@@ -199,6 +200,11 @@
           "minimum": 0,
           "maximum": 1,
           "description": "Playback volume (0 = silent, 1 = maximum)"
+        },
+        "mute": {
+          "type": "boolean",
+          "default": false,
+          "description": "Toggle audio output"
         },
         "formats": {
           "type": "array",

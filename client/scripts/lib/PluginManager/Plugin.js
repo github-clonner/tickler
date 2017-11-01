@@ -48,13 +48,12 @@ import { EventEmitter } from 'events';
 import { isEmpty, isObject } from '../utils';
 import { app, dialog, remote } from 'electron';
 import schema from '../../../schemas/plugin.json';
-import { Validator } from '../Schematismus';
+import { Validator } from '../SchemaUtils';
 import * as fileSystem from '../FileSystem';
 import { supportedExtensions } from './extensions';
 import { MiddlewareManager } from '../../store/MiddlewareManager';
 
 const DEFAULT_PLUGINS_DIR = [ fileSystem.getAppPath(), fileSystem.getNamedPath('userData') ].map(dir => path.join(dir, 'plugins'));
-const VALIDATOR = Validator({ schemas: [ schema ] });
 
 /**
  * Plugin class
@@ -82,14 +81,11 @@ export class Plugin {
   };
 
   static actionBypass(action) {
-    console.log('actionBypass', action.type);
     return action;
   }
 
   static get defaults() {
-    return {
-      supportedExtensions
-    };
+    return {};
   };
 
   constructor(dir: string, options?: Object) {
@@ -106,6 +102,7 @@ export class Plugin {
       return validator ? await validator(window.require(file)) : window.require(file);
     } catch (error) {
       console.error(error);
+      this.events.emit('error', error);
       throw error;
     }
   }
@@ -128,6 +125,7 @@ export class Plugin {
       return module.reduce((module, [ key, options ]) => ({ ...module, [key]: options }), {});
     } catch (error) {
       console.error(error);
+      this.events.emit('error', error);
       throw error;
     }
   }
@@ -142,16 +140,22 @@ export class Plugin {
       }
     } catch (error) {
       console.error(error);
+      this.events.emit('error', error);
       return undefined;
     }
   }
 
+  get availableExtensions() {
+    const { instance, ready } = this;
+    const available = (ready && instance) && Object.keys(instance).filter(extension => supportedExtensions.has(extension));
+    console.log('availableExtensions', available);
+    return available;
+  }
+
   get ready() {
     return new Promise((resolve, reject) => {
-      this.events.once('ready', () => {
-        console.log('ready event', this._ready);
-        return resolve(this._ready);
-      });
+      this.events.once('ready', resolve);
+      this.events.once('error', reject);
     });
   }
 
@@ -160,13 +164,9 @@ export class Plugin {
     this.events.emit('ready', this._ready);
   }
 
-  actionBypass(action) {
-    return action;
-  }
-
   middleware(store) {
     const { dispatch, getState } = store;
-    const { module, instance, testX1, testX2 } = this;
+    const { module, instance } = this;
     return next => action => {
       if (typeof instance.middleware === 'function') {
         const interceptor = instance.middleware(store);
@@ -190,6 +190,7 @@ export class Plugin {
       }
     } catch (error) {
       console.error(name, error);
+      this.events.emit('error', error);
       return undefined;
     }
   }

@@ -37,6 +37,8 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
+import type { Action } from './Action';
+
 export type Audio = {
   volume?: number;
 };
@@ -51,9 +53,9 @@ export type Provider = {
 };
 
 export type PlayList = {
-  folders?: Array<"music" | "videos" | "userData">;
+  folders?: Array<'music' | 'videos' | 'userData'>;
   folder?: string;
-  formats?: Array<"mp3" | "mp4" | "m4a" | "aac" | "flac" | "wav" | "ogg" | "3gpp">;
+  formats?: Array<'mp3' | 'mp4' | 'm4a' | 'aac' | 'flac' | 'wav' | 'ogg' | '3gpp'>;
   current?: string | null;
 };
 
@@ -65,3 +67,15 @@ export type Settings = {
   createdAt?: string | null;
   modifiedAt?: string | null;
 };
+
+
+export const SettingsActionKeys = {
+  SETTINGS_GET: 'SETTINGS_GET',
+  SETTINGS_SET: 'SETTINGS_SET'
+};
+
+
+export type SettingsActions =
+  | Action<typeof SettingsActionKeys.SET_CONTEXT, any>
+  | Action<typeof SettingsActionKeys.SETTINGS_SET, any>
+  ;

@@ -37,6 +37,49 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
+export const applicationEvents = new Set(
+  [
+    'onApp',
+    'onWindow',
+    'onRendererWindow',
+    'onUnload'
+  ]
+);
+
+export const playerMethods = new Set(
+  [
+    'play', // Begins playback of a sound
+    'pause', // Pauses playback of sound or group, saving the seek of playback.
+    'stop', // Stops playback of sound, resetting seek to 0.
+    'mute', // Mutes the sound, but doesn't pause the playback.
+    'volume', // Get/set volume of this sound or the group
+    'fade', // Fade a currently playing sound between two volumes
+    'rate', // Get/set the rate of playback for a sound
+    'seek', // Get/set the position of playback for a sound
+    'loop', // Get/set whether to loop the sound or group
+    'state', // Check the load status, returns a unloaded, loading or loaded
+    'playing', // Check if a sound is currently playing or not,
+    'duration' // Get the duration of the audio source
+  ]
+);
+
+export const playerEvents = new Set(
+  [
+    'load',
+    'loaderror',
+    'playerror',
+    'play',
+    'end',
+    'pause',
+    'stop',
+    'mute',
+    'volume',
+    'rate',
+    'seek',
+    'fade'
+  ]
+);
+
 export const supportedExtensions = new Set(
   [
     'onApp',
@@ -50,7 +93,9 @@ export const supportedExtensions = new Set(
     'decorateNotifications',
     'decorateConfig',
     'decorateEnv',
-    'extendKeymaps'
+    'extendKeymaps',
+    'extendMediaSources',
+    'extendMediaIcon'
   ]
 );
 

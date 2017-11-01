@@ -4,7 +4,7 @@ export SettingsStore from './SettingsStore';
 export PlayListStore from './PlayListStore';
 
 /* Plugins */
-export { PluginManager, Plugin } from './PluginManager/';
+export { PluginManager, Plugin } from './PluginManager/PluginManager';
 
 /* Subclassed/extended built-in objects */
 export MapEx from './MapEx';
@@ -24,5 +24,9 @@ export { createAsyncAction } from './ActionHelpers';
 
 /* Media libraries */
 export Youtube from './Youtube';
-export Transcoder from './Transcoder/';
+export Transcoder from './Transcoder/Transcoder';
 export Metadata from './Metadata';
+
+
+/* validators */
+import { Validator } from './SchemaUtils';

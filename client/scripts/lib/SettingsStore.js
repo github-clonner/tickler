@@ -39,76 +39,35 @@
 
 import path from 'path';
 import fs from 'fs';
-import Ajv from 'ajv';
+import { getGenerator } from './utils';
+import { ValidatorSync } from './SchemaUtils';
 import schema from '../../schemas/settings.json';
 import { read, write, remove, getPath } from './FileSystem';
 import { tickler } from '../../../package.json';
-
-const get = (o, path) => path.split('.').reduce((o = {}, key) => o[key], o);
-const ajv = new Ajv({
-  formats: {
-    path: {
-      type: 'string',
-      validate(data) {
-        return path.isAbsolute(data);
-      }
-    }
-  },
-  allErrors: true,
-  useDefaults: true,
-});
-
-ajv.addKeyword('resolve', {
-  type: 'string',
-  modifying: true,
-  validate: function (
-    schemaParameterValue,
-    validatedParameterValue,
-    validationSchemaObject,
-    currentDataPath,
-    validatedParameterObject,
-    validatedParameter,
-    rootData
-  ) {
-    try {
-      return (schemaParameterValue) ? validatedParameterObject[validatedParameter] = getPath(validatedParameterValue) : true;
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  }
-});
-
-ajv.addKeyword('exists', {
-  type: 'string',
-  modifying: true,
-  validate: function (
-    schemaParameterValue,
-    validatedParameterValue,
-    validationSchemaObject,
-    currentDataPath,
-    validatedParameterObject,
-    validatedParameter,
-    rootData
-  ) {
-    try {
-      return fs.statSync(validatedParameterValue)[schemaParameterValue.type]();
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  }
-});
 
 const DEFAULT_SETTINGS_FILENAME = 'settings.json';
 
 export default class SettingsStore {
   settings: Map<string, *>;
   file: string;
-  validate: Function;
+
+  static validator = ValidatorSync();
+  static validate(data: Object) : any | Error {
+    try {
+      const validate = SettingsStore.validator.compile(schema);
+      const valid = validate(data);
+      if (!valid) {
+        console.error(validate.errors);
+      }
+      return valid;
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+  };
 
   constructor () {
-    this.validate = ajv.compile(schema);
+    console.log('SettingsStore');
     this.file = path.join(getPath('userData'), DEFAULT_SETTINGS_FILENAME);
     if (!fs.existsSync(this.file)) {
       this.create();
@@ -124,36 +83,17 @@ export default class SettingsStore {
    * @param {*} default value to return if undefined
    * @returns {*} Returns the resolved value.
    */
-  get (path: string, defaultValue?: any) : any {
-    const { file, settings } = this;
-    /** Used to match property names within property paths. */
-    const reIsDeepProp = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\\]|\\.)*?\1)\]/;
-    const reIsPlainProp = /^\w*$/;
-
-    const hasSetting = property => (reIsPlainProp.test(property) && settings.has(property));
-    const getSetting = property => (hasSetting(property) ? settings.get(property) : defaultValue);
-
-    if (reIsDeepProp.test(path)) {
-      const [ property, properties ] = path.split(/\.(.+)/).filter(Boolean);
-      return properties
-        .replace(/\[(\w+)\]/g, '.$1') // Convert indexes to properties
-        .replace(/^\./, '') // strip leading dot
-        .split('.') // Split (.) into array of properties
-        .reduce((o = {}, key) => o[key], getSetting(property)) || defaultValue;
-    } else {
-      return getSetting(path);
-    }
+  get(...args) {
+    return getGenerator(this.settings).apply(this, [...args]);
   }
 
-  load () : Object | Error {
+  async load () : Object | Error {
     const { file, settings } = this;
     try {
       const data = read(file);
-      if (ajv.validate(schema, data)) {
-        console.log('settings', data);
+      if (SettingsStore.validate(data)) {
         return this.settings = new Map(Object.entries(data));
       } else {
-        console.error(ajv.errorsText(), ajv.errors);
         throw new Error('Invalid settings format');
       }
     } catch (error) {
@@ -187,7 +127,7 @@ export default class SettingsStore {
 
   create () : void | Error {
     let defaults = {};
-    this.validate(defaults);
+    SettingsStore.validate(defaults);
     this.settings = new Map(Object.entries(defaults));
     this.settings.set('createdAt', new Date());
     console.log('new settings', defaults);

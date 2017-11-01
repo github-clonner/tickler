@@ -39,46 +39,51 @@ import fs from 'fs';
 import path from 'path';
 import axios from 'axios';
 import fpcalc from 'fpcalc';
-
-function promisify(func) {
-  return (...args) => {
-    return new Promise((resolve, reject) => {
-      return func(...args, (error, result) => (error ? reject(error) : resolve(result)));
-    });
-  }
-}
-
-function verifyFile(file) {
-  try {
-    return fs.statSync(file).isFile();
-  } catch (error) {
-    return false;
-  }
-}
-
-/*
- * Access nested object property by string path
- * inspiration: https://stackoverflow.com/questions/6491463/accessing-nested-javascript-objects-with-string-key
- */
-const get = (object: Object, path: string, defaultValue?: any) => path
-  .replace(/\[(\w+)\]/g, '.$1') // Convert indexes to properties
-  .replace(/^\./, '')           // strip leading dot
-  .split('.')                   // Split (.) into array of properties
-  .reduce((object = {}, key) => object[key], object);
+import { isValidFile } from './FileSystem';
+import { get } from './utils';
 
 export default class Metadata {
+
+
+  static get metaType() {
+    return ['recordings', 'recordingids', 'releases', 'releaseids', 'releasegroups', 'releasegroupids', 'tracks', 'compress', 'usermeta', 'sources'];
+  }
+
+  static metaParams(...args) {
+     return '?meta=' + args.filter(arg => Metadata.metaType.includes(arg)).join('+');
+  }
+
+  static get defaults() {
+    return {
+      meta: Metadata.metaType,
+      acoustid: {
+        baseURL: 'https://api.acoustid.org/v2/lookup' + Metadata.metaParams,
+        /* response format */
+        format: 'json',
+        /* application's API key */
+        client: 'asmIAEKS75',
+        /* duration of the whole audio file in seconds */
+        duration: undefined,
+        /* audio fingerprint data */
+        fingerprint: undefined
+      }
+    };
+  };
+
+  constructor(options?: Object) {
+    this.options = { ...Metadata.defaults, ...options };
+  }
 
   /*
    * Lookup the MusicBrainz metadata
    */
   lookup(params) {
     const { duration, fingerprint } = params;
-    return axios.get('https://api.acoustid.org/v2/lookup?meta=' + 'recordings+releasegroups+compress', {
+    return axios({
+      // baseURL: 'https://api.acoustid.org/v2/lookup?meta=' + 'recordings+releasegroups+compress'
+      baseURL: 'https://api.acoustid.org/v2/lookup' + Metadata.metaParams,
       params: {
-        format: 'json',
-        client: 'zbPJRz2UGAA',
-        duration: duration,
-        fingerprint: fingerprint
+        ...this.options.params, duration, fingerprint
       }
     })
     .then(response => response.data);
@@ -89,7 +94,7 @@ export default class Metadata {
    */
   getFingerprint(file) {
     const command = path.resolve(process.cwd(), 'fpcalc');
-    if(!verifyFile(file) || !verifyFile(command)) {
+    if(!isValidFile(file) || !isValidFile(command)) {
       return false;
     }
     return new Promise((resolve, reject) => {

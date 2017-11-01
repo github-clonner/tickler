@@ -44,9 +44,9 @@
 import path from 'path';
 import fs from 'fs';
 import { app, dialog, remote } from 'electron';
-import { isEmpty, isPromise, isFunction } from '../utils';
+import { isEmpty, isPromise, isFunction, getGenerator } from '../utils';
 import schema from '../../../schemas/plugin.json';
-import { Validator } from '../Schematismus';
+import { Validator } from '../SchemaUtils';
 import * as fileSystem from '../FileSystem';
 import { supportedExtensions } from './extensions';
 import { Plugin, isPlugin } from './Plugin';
@@ -116,6 +116,17 @@ export class PluginManager {
     }
   }
 
+  /*
+   * Get Path values from hashMap
+   * @public
+   * @param {string} path The path of the property to get.
+   * @param {*} default value to return if undefined
+   * @returns {*} Returns the resolved value.
+   */
+  get(...args) {
+    return getGenerator(this.plugins).apply(this, [...args]);
+  }
+
   getPaths(dirs?: Array<string>) : string | Error {
     const { pluginsDir } = this.options;
     try {
@@ -137,6 +148,7 @@ export class PluginManager {
   async loadPlugins(dirs: Array<string>) : string | Error {
     const promises = dirs.map(dir => {
       const name = path.basename(dir);
+      console.log('loadPlugins', name);
       const plugin = new Plugin(dir);
       const result = plugin.ready.then(() => [ name, plugin ]);
       PluginManager.middlewares.set(name, result);

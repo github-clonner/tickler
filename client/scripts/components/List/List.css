@@ -201,3 +201,8 @@ ul.dnd {
     height: 1em;
   }
 }
+
+img.bitmap-icon {
+  max-width: 24px;
+  max-height: 24px;
+}

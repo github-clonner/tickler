@@ -37,17 +37,19 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
+import type { SettingsActions } from '../types';
+import { SettingsActionKeys as Action } from '../types';
 import SettingsStore from '../lib/SettingsStore';
 
 const settings = new SettingsStore();
 
 export default function Settings (state: any = settings, action: any) {
   switch (action.type) {
-    case 'SETTINGS_GET': {
+    case Action.SETTINGS_GET: {
       const { key } = action;
       return state;
     }
-    case 'SETTINGS_SET': {
+    case Action.SETTINGS_SET: {
       const { key, value } = action;
       state.set(key, value);
       return state;

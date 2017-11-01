@@ -11,6 +11,14 @@
     "formatters": {
       "PlaylistItem": "$.($AccName:=function(){$.contentDetails.duration};$.{'id':id,'title':snippet.title,'name':snippet.title,'artists':[{'id':'sfasdf','name':'nook'}],'description':snippet.description,'thumbnails':snippet.thumbnails,'duration':$parseDuration(contentDetails.duration)})",
       "MetaInfo": "$.($.{'status':status,'id':video_id,'filename':$toFilename(title),'title':title,'description':description,'related_videos':related_videos,'keywords':keywords,'rating':avg_rating,'views':view_count,'author':author})"
+    },
+    "sources": {
+      "http": [
+        "L14uKig/Oig/OnlvdXR1LmJlL3x2L3x2aS98dS93L3xlbWJlZC8pfCg/Oig/OndhdGNoKT8/dig/OmkpPz18JnYoPzppKT89KSkoW14jJj9dKikuKi8="
+      ],
+      "https": [
+        "L14uKig/Oig/OnlvdXR1LmJlL3x2L3x2aS98dS93L3xlbWJlZC8pfCg/Oig/OndhdGNoKT8/dig/OmkpPz18JnYoPzppKT89KSkoW14jJj9dKikuKi8="
+      ]
     }
   },
   "settings": {

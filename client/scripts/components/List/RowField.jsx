@@ -51,7 +51,9 @@ const getItemStatus = (song) => classNames(Style.field, {
 });
 
 const getItemIcon = song => {
-  if (!song.file && !song.isLoading) {
+  if (song.icon) {
+    return <img src={ song.icon } className={ Style.bitmapIcon } />
+  } else if (!song.file && !song.isLoading) {
     return 'wifi';
   } else if (song.isLoading) {
     return <Spinner />;

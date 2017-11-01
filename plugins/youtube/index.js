@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 // @file         : index.js                                                  //
-// @summary      :                                                           //
+// @summary      : Youtube Plugin                                            //
 // @version      : 1.0.0                                                     //
 // @project      :                                                           //
 // @description  :                                                           //
@@ -38,12 +38,18 @@
 /* Dependencies */
 const fs = require('fs');
 const path = require('path');
+const url = require('url');
 const uuid = require('uuid/v1');
+const plugin = require('./plugin.json');
 const { app, shell, remote, remote: { dialog } } = require('electron');
+const { isValidSource } = require('./src/sourceValidate');
+// const validator_A = b64EncodeUnicode(/^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/)|(?:(?:watch)?\?v(?:i)?=|\&v(?:i)?=))([^#\&\?]*).*/);
+const srcValidate_A = new RegExp(/^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/)|(?:(?:watch)?\?v(?:i)?=|\&v(?:i)?=))([^#\&\?]*).*/);
 
 /* Private variables */
 const isRenderer = (process && process.type === 'renderer');
 console.log('isRenderer', isRenderer);
+console.log('YouTube Plugin', plugin);
 
 /* Private Methods */
 function isFunction(method) {
@@ -75,6 +81,23 @@ function isString(string) {
   return (string !== null) &&
     typeof string === 'string' &&
     string.constructor === String;
+}
+
+function b64EncodeUnicode(str) {
+  // first we use encodeURIComponent to get percent-encoded UTF-8,
+  // then we convert the percent encodings into raw bytes which
+  // can be fed into btoa.
+  return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g,
+    function toSolidBytes(match, p1) {
+      return String.fromCharCode('0x' + p1);
+  }));
+}
+
+function b64DecodeUnicode(str) {
+  // Going backwards: from bytestream, to percent-encoding, to original string.
+  return decodeURIComponent(atob(str).split('').map(function(c) {
+    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+  }).join(''));
 }
 
 /**
@@ -139,6 +162,20 @@ function getRandomBool() {
 // };
 
 
+exports.extendsMediaIcon = (origin, size) => {
+  if (isValidSource(origin)) {
+    const { manifest: { icons } } = plugin;
+    return size ? icons[size] : icons;
+  }
+};
+
+exports.extendMediaSources = (origin) => {
+  const { protocol, host } = url.parse(origin);
+  protocol = protocol.slice(0, -1);
+  const { manifest: { sources } } = plugin;
+  return isValidSource(origin);
+};
+
 /* onUnload */
 exports.onUnload = (event) => {
   return new Promise((resolve, reject) => {
@@ -151,13 +188,13 @@ exports.middleware = (store) => (next) => (action) => {
   const { getState, dispatch } = store;
   const List = getState().PlayListItems.toJS();
   switch (action.type) {
-    case 'SELECT_ITEM': {
-      console.log('HIJACKED BY PLUGIN')
-      return next({
-        type: 'SELECT_INDEX',
-        payload: getRandomInt(0, (List.length - 1))
-      });
-    };
+    // case 'SELECT_ITEM': {
+    //   console.log('HIJACKED BY YouTube PLUGIN')
+    //   return next({
+    //     type: 'SELECT_INDEX',
+    //     payload: getRandomInt(0, (List.length - 1))
+    //   });
+    // };
     default:
       return next(action);
   }

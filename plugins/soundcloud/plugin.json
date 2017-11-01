@@ -1,10 +1,23 @@
 {
   "manifest": {
+    "kind": "source",
     "icons": {
       "x16": "https://w.soundcloud.com/icon/?color=orange_transparent&size=16",
       "x32": "https://w.soundcloud.com/icon/?color=orange_transparent&size=16",
       "x48": "https://w.soundcloud.com/icon/?color=orange_transparent&size=48",
       "x64": "https://w.soundcloud.com/icon/?color=orange_transparent&size=64"
+    },
+    "languages": [ "en-US", "en" ],
+    "rootUrl": "https://api.soundcloud.com/",
+    "sources": {
+      "url": {
+        "pattern": "/^https?:\/\/(soundcloud\\.com|snd\\.sc)\/(.*)$/"
+      }
+    }
+  },
+  "settings": {
+    "updater": {
+      "checkForUpdates": true
     },
     "rootUrl": "https://api.soundcloud.com/",
     "sources": {

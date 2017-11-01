@@ -105,7 +105,6 @@ const enhance = compose(
     open: props => event => {
       const { playList } = props;
       const result =  playList.addPlayListItem('https://www.youtube.com/watch?v=BoKx7BTb0lI&list=PLC6A4A4F29BB702A6');
-      console.log('open !', result);
       return result;
     },
     play: props => event => {
@@ -130,7 +129,8 @@ const enhance = compose(
     canOpen: PropTypes.bool,
     canSkip: PropTypes.bool.isRequired,
     canPlay: PropTypes.bool.isRequired,
-    canStop: PropTypes.bool.isRequired
+    canStop: PropTypes.bool.isRequired,
+    isPlaying: PropTypes.bool.isRequired
   })
 );
 
@@ -141,7 +141,7 @@ const enhance = compose(
 export default enhance(({ isPlaying, currentTime, canOpen, canStop, canPlay, canSkip, open, skip, stop, play }) => {
   return (
     <div className={ Style.btnGroup } >
-      <button className={ Style.roundButton } disabled={ !canOpen } onClick={ open } title="backward" >library_add</button>
+      <button className={ Style.roundButton } disabled={ !canOpen } onClick={ open } title="backward" >eject</button>
       <button className={ Style.roundButton } disabled={ !canSkip } onClick={ skip } title="backward" >skip_previous</button>
       <button className={ Style.roundButton } disabled={ !canStop } onClick={ stop } title="stop">stop</button>
       <button className={ Style.roundButton } disabled={ !canSkip } onClick={ skip } title="forward" >skip_next</button>

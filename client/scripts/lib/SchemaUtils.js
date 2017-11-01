@@ -1,7 +1,7 @@
 // @flow
 
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : Schematismus.js                                           //
+// @file         : SchemaUtils.js                                           //
 // @summary      : JSON Schema utilities and extensions                      //
 // @version      : 0.0.1                                                     //
 // @project      : N/A                                                       //
@@ -40,6 +40,7 @@
 import path from 'path';
 import fs from 'fs';
 import Ajv from 'ajv';
+import { getPath } from './FileSystem';
 
 /**
  * References:
@@ -105,6 +106,15 @@ export const numberFormats = {
   }
 };
 
+export const pathFormats = {
+  'path': {
+    type: 'string',
+    validate(data) {
+      return path.isAbsolute(data);
+    }
+  }
+};
+
 /**
  * Version formats
  */
@@ -120,7 +130,6 @@ export const versionFormats = {
 
 export const keywordValidator = {
   'resolve': {
-    async: true,
     type: 'string',
     modifying: true,
     validate: function (
@@ -141,7 +150,6 @@ export const keywordValidator = {
     }
   },
   'exists': {
-    async: true,
     type: 'string',
     modifying: true,
     validate: function (
@@ -163,14 +171,113 @@ export const keywordValidator = {
   }
 };
 
-export const Validator = function (options) {
+export const addKeyword = function(validator, keyword, async = true) {
+  const newKeyword = { ...keywordValidator[keyword], async };
+  console.log('newKeyword', newKeyword)
+  return validator.addKeyword(keyword, newKeyword);
+}
+
+export const Validator = function(options, directives = {}) {
+  const formats = { ...numberFormats, ...pathFormats, ...versionFormats };
   const defaults = {
     async: true,
     allErrors: true,
     useDefaults: true,
+    schemaId: '$id'
+  };
+  const config = { ...defaults, ...options, formats };
+  const ajv = new Ajv(config);
+  return ajv;
+};
+
+export const ValidatorSync = function(options) {
+
+  const defaults = {
+    allErrors: true,
+    useDefaults: true,
     schemaId: '$id',
-    formats: { ...numberFormats, ...versionFormats }
   };
 
-  return new Ajv({ ...defaults, ...options });
+  const formats = { ...numberFormats, ...pathFormats, ...versionFormats };
+  const config = { ...defaults, ...options, formats };
+
+  const ajv = new Ajv(config);
+
+  ajv.addKeyword('resolve', keywordValidator.resolve);
+  ajv.addKeyword('exists', keywordValidator.exists);
+
+  return ajv;
 };
+
+
+// const ss = require('../../schemas/settings.json');
+// const xx = require('/Users/bmaggi/Library/Application Support/Tickler/settings.json');
+// console.log("asdfasdfasd", JSON.stringify(xx, 0, 2));
+
+// const vSync = VSync();
+// const validate = vSync.compile(ss);
+// const sss = validate(xx)
+// console.log(sss, xx);
+
+
+// var ajv = new Ajv({
+//     async: true,
+//     allErrors: true,
+//     useDefaults: true,
+//     schemaId: '$id',
+//     formats: { ...numberFormats, ...pathFormats, ...versionFormats }
+//   });
+
+// ajv.addKeyword('resolve', {
+//   async: true,
+//   type: 'string',
+//   modifying: true,
+//   validate: function(schema, data) {
+//     return Promise.resolve(true);
+//   }
+// });
+
+// ajv.addKeyword('exists', {
+//   async: true,
+//   type: 'string',
+//   modifying: true,
+//   validate: function(schema, data) {
+//     return Promise.resolve(true);
+//   }
+// });
+
+// ajv.addKeyword('idExists', {
+//   async: true,
+//   type: 'number',
+//   validate: function(schema, data) {
+//     return Promise.resolve(true);
+//   }
+// });
+
+// var schema = {
+//   "$async": true,
+//   "properties": {
+//     "userId": {
+//       "type": "integer",
+//       "idExists": { "table": "users" }
+//     },
+//     "postId": {
+//       "type": "integer",
+//       "idExists": { "table": "posts" }
+//     }
+//   }
+// };
+
+// var validate = ajv.compile(require('../../schemas/settings.json'));
+// validate(require('/Users/bmaggi/settings.json'))
+// // validate({ userId: 1, postId: 19 })
+// .then(function (data) {
+//   console.log('Data is valid', data); // { userId: 1, postId: 19 }
+// })
+// .catch(function (err) {
+//   if (!(err instanceof Ajv.ValidationError)) throw err;
+//   // data is invalid
+//   console.log('Validation errors:', err.errors);
+// });
+
+
