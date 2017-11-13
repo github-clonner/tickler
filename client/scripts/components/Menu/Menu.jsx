@@ -38,7 +38,7 @@
 import fs from 'fs';
 import path from 'path';
 import URL, { URL as URI} from 'url';
-import { shell, remote } from 'electron';
+import { shell, remote, nativeImage } from 'electron';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
@@ -49,6 +49,12 @@ import * as Actions from 'actions/PlayList';
 import * as Settings from 'actions/Settings';
 import { ContextMenu, buildContextMenu } from '../../lib';
 import { openModal } from '../Modal/Modal';
+
+// let image = nativeImage.createFromPath('/Users/bmaggi/tickler/media/icon.png')
+// image = image.resize({
+//   width: 16,
+//   height: 16
+// })
 
 /* Private variables */
 const DialogOptions = {
@@ -83,8 +89,15 @@ export const buildListItemMenu = (props) => (event, item) => {
   }, {
     label: 'Media Information...',
     click() {
-      console.log(item);
+      console.log(item, props);
+      props.playlist.getInfo(item.id);
       return openModal('/about');
+    }
+  },
+  {
+    label: 'Item Information...',
+    click() {
+      console.log(item);
     }
   },
   { type: 'separator' },
@@ -98,6 +111,7 @@ export const buildListItemMenu = (props) => (event, item) => {
   { type: 'separator' },
   {
     label: 'Explore item folder',
+    // icon: path.resolve('/Users/bmaggi/tickler/media/icon.png'),
     enabled: fs.existsSync(item.file),
     click() {
       return shell.showItemInFolder(item.file);

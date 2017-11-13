@@ -41,36 +41,34 @@
  * Reference: https://maggiben.github.io/tickler/plugins#youtube
  */
 
-import path from 'path';
 import fs from 'fs';
+import path from 'path';
 import { app, dialog, remote } from 'electron';
 import { isEmpty, isPromise, isFunction, getGenerator } from '../utils';
 import schema from '../../../schemas/plugin.json';
 import { Validator } from '../SchemaUtils';
 import * as fileSystem from '../FileSystem';
+import HashMap from '../HashMap';
 import { supportedExtensions } from './extensions';
 import { Plugin, isPlugin } from './Plugin';
 import { MiddlewareManager } from '../../store/MiddlewareManager';
-import uuid from 'uuid/v1';
 
 const DEFAULT_PLUGINS_DIR = [ fileSystem.getAppPath(), fileSystem.getNamedPath('userData') ].map(dir => path.join(dir, 'plugins'));
-const VALIDATOR = Validator({ schemas: [ schema ] });
 
 /**
  * Plugin Manager class
  */
 export class PluginManager {
 
-  plugins: Map<string, *>;
-
-  static middlewares = new Map();
+  static plugins = new HashMap();
+  static middlewares = new HashMap();
 
   static actionBypass(action) {
     return action;
   }
 
   static get pluginsReady() {
-    const pluginsReady = Array.from(PluginManager.middlewares.values()).filter(isPromise);
+    const pluginsReady = PluginManager.middlewares.toArray().filter(isPromise);
     return Promise.all(pluginsReady)
     .then(middlewares => {
       middlewares.forEach(([name, plugin]) => PluginManager.middlewares.set(name, plugin));
@@ -89,13 +87,20 @@ export class PluginManager {
     };
 
     /* Wait for plugins to be loaded then hook the middleware manager */
-    PluginManager.pluginsReady.then(() => PluginManager.middlewares.forEach(hookMiddleware));
-
+    PluginManager.pluginsReady.then((plugins) => {
+      PluginManager.middlewares.forEach(hookMiddleware);
+    });
 
     /* Return */
     return next => action => {
       const result = Plugin.actionBypass(action);
-      return next(result);
+      PluginManager.pluginsReady.then((plugins) => {
+        const rx = plugins.map(([name, plugin]) => {
+          return plugin.middleware.bind(plugin)(store)(next)(action);
+        })
+        // const result = plugins[0].invokeExtension(middleware, next, action);
+        return next(result);
+      })
     };
   }
 
@@ -107,13 +112,36 @@ export class PluginManager {
 
   constructor(options) {
     this.options = { ...PluginManager.defaults, ...options };
-    this.plugins = new Map();
     const paths = this.getPaths();
     if (Array.isArray(paths) && paths.length > 0) {
       this.loadPlugins(paths);
     } else {
       this.createPluginsDir();
     }
+  }
+
+  get plugins() {
+    console.log('get plugins', PluginManager.plugins);
+    return PluginManager.plugins;
+  }
+
+  set plugins(plugins) {
+    return plugins.copy(PluginManager.plugins);
+  }
+
+  /* find available extension handlers */
+  findExtansionHandler(extension) {
+    const { plugins } = this;
+    return plugins.filter(([name, plugin]) => plugin.hasExtension(extension))
+  }
+
+  invokeExtension(extension, ...args) {
+    const handlers = this.findExtansionHandler(extension);
+    console.log('invokeExtension', handlers);
+    return handlers.map(([ name, plugin ]) => {
+      return plugin.invokeExtension(extension, ...args);
+    });
+    // return handlers;
   }
 
   /*
@@ -123,9 +151,9 @@ export class PluginManager {
    * @param {*} default value to return if undefined
    * @returns {*} Returns the resolved value.
    */
-  get(...args) {
-    return getGenerator(this.plugins).apply(this, [...args]);
-  }
+  // get(...args) {
+  //   return getGenerator(this.plugins).apply(this, [...args]);
+  // }
 
   getPaths(dirs?: Array<string>) : string | Error {
     const { pluginsDir } = this.options;
@@ -146,15 +174,14 @@ export class PluginManager {
   }
 
   async loadPlugins(dirs: Array<string>) : string | Error {
-    const promises = dirs.map(dir => {
+    const promises = dirs.slice(1, 2).map(dir => {
       const name = path.basename(dir);
-      console.log('loadPlugins', name);
       const plugin = new Plugin(dir);
       const result = plugin.ready.then(() => [ name, plugin ]);
       PluginManager.middlewares.set(name, result);
       return result;
     });
-    return this.plugins = new Map(await Promise.all(promises));
+    return this.plugins = new HashMap(await Promise.all(promises));
   }
 
   clearCache() {

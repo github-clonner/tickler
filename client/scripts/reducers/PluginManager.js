@@ -39,15 +39,15 @@
 
 import type { PluginManagerActions } from '../types';
 import { PluginManagerActionKeys as Action } from '../types';
-import { PluginManager as PM } from '../lib';
+// import { PluginManager as PM } from '../lib';
 
-const pluginManager = new PM();
+// const pluginManager = new PM();
 
-export default function PluginManager (state: any = pluginManager, action: any) {
+export default function PluginManager (state: any = {}, action: any) {
   switch (action.type) {
-    case Action.ADD_PLUGIN: return { ...state, plugins: action.payload };
-    case Action.REMOVE_PLUGIN: return { ...state, plugins: action.payload };
-    case Action.CONFIG_PLUGIN: return { ...state, plugins: action.payload };
+//     case Action.ADD_PLUGIN: return { ...state, plugins: action.payload };
+//     case Action.REMOVE_PLUGIN: return { ...state, plugins: action.payload };
+//     case Action.CONFIG_PLUGIN: return { ...state, plugins: action.payload };
     default:
       return state;
   }

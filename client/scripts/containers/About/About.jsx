@@ -132,6 +132,8 @@ export default class About extends Component {
     return (
       <div className="about">
         <h1>About</h1>
+        <hr />
+        <h2>{ window.store.getState().PlayListItems.toJS().findIndex(s => s.selected) }</h2>
         <WebView src={ data } className={ style } />
         { /* <List { ...{ items: elements }} /> */ }
       </div>

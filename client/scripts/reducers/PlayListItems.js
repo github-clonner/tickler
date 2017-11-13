@@ -96,7 +96,12 @@ export default function PlayListItems (state = List([]), action) {
     case Action.EDIT_ITEM: {
       const index = getIndex(action.id);
       if (index > -1) {
-        return state.update(index, item => ( item.merge(action.payload) ));
+        // const edited = new MapEx(action.payload);
+        // console.log('EDIT_ITEM', edited.toJS());
+        console.log('STATE', state.toJS());
+        const newState = state.update(index, item => ( item.merge(action.payload) ));
+        console.log('NEWSTATE', newState.toJS());
+        return newState;
       } else {
         return state;
       }
@@ -165,7 +170,11 @@ export default function PlayListItems (state = List([]), action) {
     }
 
     case Action.SELECT_ITEM: {
-      const index = state.indexOf(new MapEx(action.payload));
+      // const item = new MapEx(action.payload);
+      // const index = state.indexOf(item);
+      // console.log('SELECT_ITEM', item.toJS(), state.get(getIndex(action.payload.id)).toJS(), index, action.payload.id, getIndex(action.payload.id));
+      const { payload: { id } } = action;
+      const index = getIndex(id);
       return unselect().update(index, item => item.set('selected', true));
     }
 

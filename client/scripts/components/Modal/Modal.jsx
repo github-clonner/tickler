@@ -37,20 +37,20 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import classNames from 'classnames';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
-import * as Actions from 'actions/PlayList';
-import * as Settings from 'actions/Settings';
-import { shell, remote } from 'electron';
 import fs from 'fs';
 import path from 'path';
 import URL, { URL as URI} from 'url';
+import PropTypes from 'prop-types';
+import classNames from 'classnames';
+import { connect } from 'react-redux';
+import { shell, remote } from 'electron';
+import React, { Component } from 'react';
+import { bindActionCreators } from 'redux';
+import * as Actions from 'actions/PlayList';
+import * as Settings from 'actions/Settings';
+import { isString, isObject, isEmpty } from '../../lib/utils';
+import { isValidFile } from '../../lib/FileSystem';
 import { DialogOptions } from '../../types/PlayList';
-
-
 /*
 {
   x: this.mainWindowState.x,
@@ -68,29 +68,49 @@ import { DialogOptions } from '../../types/PlayList';
   icon: makeIcon('icon.png')
 }
 */
-const loadView = ({title,scriptUrl}) => {
-  return (`
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <title>${title}</title>
-        <meta charset="UTF-8">
-      </head>
-      <body>
-        <div id="view"></div>
-        <script src="${scriptUrl}"></script>
-      </body>
-    </html>
-  `)
-}
 
-const viewData = 'data:text/html;charset=UTF-8,' + encodeURIComponent(loadView({
-  title: "Account",
-  scriptUrl: "./account.view.js"
+
+const DEFAULT_TEMPLATE = path.join(process.cwd(), 'client', 'scripts', 'components', 'Modal', 'template', 'default.html');
+
+/*
+  Bare bones template engine
+*/
+const hydrate = function(template, scope) {
+  if (
+    isString(template) && !isEmpty(template) &&
+    isObject(scope) && !isEmpty(scope)
+  ) {
+    return Object.entries(scope).reduce((view, [ key, value ]) => {
+      const regexp = new RegExp('\\${' + key + '}', 'gi');
+      return view.replace(regexp, value);
+    }, template.slice(0));
+  } else {
+    return null;
+  }
+};
+
+const renderModal = ( file, scope ) => {
+  if(isValidFile(file)) {
+    try {
+      const template = fs.readFileSync(file, 'UTF-8');
+      return hydrate(template, scope);
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+  }
+};
+
+const MEDIA_INFORMATION_MODAL = 'data:text/html;charset=UTF-8,' + encodeURIComponent(renderModal(DEFAULT_TEMPLATE, {
+  title: 'Media Information',
+  name: 'benja',
+  description: 'My Modal',
+  scriptUrl: './account.view.js'
 }));
 
-console.log('viewData', viewData)
-export const openModal = function (route) {
+console.log('MEDIA_INFORMATION_MODAL', MEDIA_INFORMATION_MODAL);
+
+export const openModal = function (route, state) {
   const basePath = path.join(process.cwd(), 'dist', 'index.html');
   const parent = remote.getCurrentWindow();
   const base = URL.format({
@@ -109,6 +129,7 @@ export const openModal = function (route) {
   });
   console.log('Modal URL', 'target', target, URL.format(target))
   modal.loadURL(URL.format(target));
+  // modal.loadURL(MEDIA_INFORMATION_MODAL); // TODO: load data uri
   modal.once('closed', event => {
     console.log('modal closed', __dirname, process.cwd());
   });

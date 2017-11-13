@@ -73,6 +73,7 @@ export default class Main extends Component {
   componentDidMount () {
     const { settings, playlist } = this.props;
     playlist.getCurrent();
+    // playlist.fetchListItems('PLA0CA9B8A2D82264B');
     // playlist.fetchListItems('PL7XlqX4npddfrdpMCxBnNZXg2GFll7t5y'); // Long Pageable list
     // playlist.fetchListItems('PL1GZkw2FUKCiZSI636mf54HEr2CtDxvW_') // long list w/short sound effects
   }
@@ -94,7 +95,6 @@ export default class Main extends Component {
             { children }
           </List>
         </div>
-        <audio id="audioElement" controls autoPlay />
         <hr />
         {/*<video id="videoElement" controls />*/}
         <Player />

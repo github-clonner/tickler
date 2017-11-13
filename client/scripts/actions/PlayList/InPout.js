@@ -37,6 +37,29 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
+import {
+  parseDuration,
+} from '../../lib';
+import fs from 'fs';
+import os from 'os';
+import path from 'path';
+import jsonata from 'jsonata';
+import sanitize from 'sanitize-filename';
+import schema from '../../../schemas/playlist.json';
+import { PlayListActionKeys as Action } from '../../types';
+
+export function formatJSON(json, rules) {
+  try {
+    const formatter = jsonata(rules);
+    formatter.registerFunction('toFilename', filename => sanitize(filename), '<s:s>');
+    // formatter.registerFunction('parseDuration', (duration) => parseDuration(duration), '<s:n>');
+    return formatter.evaluate(json);
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
 /**
  * fetch youtube video
  * Downloads the item if no local file

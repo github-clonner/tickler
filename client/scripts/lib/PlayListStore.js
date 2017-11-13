@@ -92,6 +92,7 @@ export default class PlayListStore {
         try {
           this.playlist = read(file);
           if (this.validate(this.playlist)) {
+            console.log(`playlist ${file} loaded`);
             this.watch(file);
             return this.playlist;
           } else {

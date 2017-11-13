@@ -58,11 +58,19 @@ const reducer = combineReducers({
   routing: routerReducer
 });
 
+/* hack */
+window.goUrl =  (url) => {
+  store.dispatch(push({
+    pathname: url || '/about',
+    state: { some: 'state' }
+  }));
+};
+
 const enhancer = compose(
   applyMiddleware(thunk),
   applyMiddleware(routerMiddleware(history)),
-  applyMiddleware(PluginManager.middleware),
-  actionListener,
+  // applyMiddleware(PluginManager.middleware),
+  // actionListener,
   // applyMiddleware(function ({ dispatch, getState }) {
   //   return (next) => action => {
   //     //console.log('will dispatch', action)

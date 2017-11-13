@@ -215,9 +215,8 @@ export default class Youtube {
   /*
    * Get video metainfo
    * @param {String} youtube video id.
-   * @param {Object} stream options.
    */
-  async getInfo(id: string, options?: Object) {
+  getInfo(id: string) {
     return new Promise((resolve, reject) => {
       try {
         const downloader = ytdl.getInfo(id, (error, info) => {

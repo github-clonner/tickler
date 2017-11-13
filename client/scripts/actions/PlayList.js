@@ -49,7 +49,9 @@ import {
   parseDuration,
   SettingsStore,
   PlayListStore,
-  PluginManager
+  PluginManager,
+  // DownloadManager,
+  // HttpDownloader
 } from '../lib';
 import fs from 'fs';
 import * as fileSystem from '../lib/FileSystem';
@@ -59,6 +61,11 @@ import path from 'path';
 import sanitize from 'sanitize-filename';
 import { shell, remote, dialog } from 'electron';
 import { Howl } from 'howler';
+
+import { formatJSON } from './PlayList/InPout';
+
+// window.dw = new DownloadManager();
+// window.ht = new HttpDownloader()
 
 const settings = window.settings = new SettingsStore();
 const plugins = settings.get('plugins');
@@ -107,9 +114,10 @@ export function fetchItem (item, autoPlay = false) {
     const formatInfo = (info) => {
       try {
         const { formatters } = Settings.get('plugins.youtube');
-        const formatter = jsonata(formatters.metainfo);
-        formatter.registerFunction('toFilename', string => sanitize(string), '<s:n>');
-        return formatter.evaluate(info);
+        return formatJSON(info, formatters.metainfo);
+        // const formatter = jsonata(formatters.metainfo);
+        // formatter.registerFunction('toFilename', string => sanitize(string), '<s:n>');
+        // return formatter.evaluate(info);
       } catch (error) {
         console.error(error);
         throw error;
@@ -218,6 +226,73 @@ export function fetchItem (item, autoPlay = false) {
 }
 
 /**
+ * Get media metainfo.
+ */
+export function getInfo(id: string) {
+  // return function (dispatch, getState) {
+  //   const { Settings } = getState();
+  //   return youtube.getInfo(id)
+  //   .then(info => {
+  //     // const { formatters: { metainfo: formatter } } = Settings.get('plugins.youtube');
+  //     const formatter = `$.(
+  //       $. {
+  //         'status': status,
+  //         'id': video_id,
+  //         'title': title,
+  //         'name': title,
+  //         'filename': $toFilename(title),
+  //         'description': description,
+  //         'related': related_videos,
+  //         'keywords': keywords,
+  //         'rating': $number(avg_rating),
+  //         'views': $number(view_count),
+  //         'author': author
+  //       }
+  //     )`;
+  //     const metainfo = formatJSON(info, formatter);
+  //     console.info('metainfo', formatter, metainfo);
+  //     return dispatch(editItem(id, {
+  //       rating: metainfo.rating,
+  //       related: metainfo.related,
+  //       keywords: metainfo.keywords,
+  //       description: metainfo.description
+  //     }));
+  //   });
+  // }
+  return async function(dispatch, getState) {
+    const { Settings } = getState();
+    try {
+      const info = await youtube.getInfo(id);
+      // const { formatters: { metainfo: formatter } } = Settings.get('plugins.youtube');
+      const formatter = `$.(
+        $. {
+          'status': status,
+          'id': video_id,
+          'title': title,
+          'name': title,
+          'filename': $toFilename(title),
+          'description': description,
+          'related': related_videos,
+          'keywords': keywords,
+          'rating': $number(avg_rating),
+          'views': $number(view_count),
+          'author': author
+        }
+      )`;
+      const metainfo = formatJSON(info, formatter);
+      return dispatch(editItem(id, {
+        rating: metainfo.rating,
+        related: metainfo.related,
+        keywords: metainfo.keywords,
+        description: metainfo.description
+      }));
+    } catch (error) {
+      dispatch({ type: 'ERROR', error });
+    }
+  }
+}
+
+/**
  * Open PlayList.
  * Allows user to pick a playlist file from disk
  * @return {null}
@@ -253,14 +328,17 @@ export function openPlayList (options: Object = DialogOptions.open) {
 export function addPlayListItem (source: string) {
   return async function (dispatch, getState) {
     const { Audio, Settings, PluginManager } = getState();
-    const plugins = PluginManager.plugins.forEach((plugin, name) => {
-      const { instance, availableExtensions } = plugin;
-      if(availableExtensions.includes('extendMediaSources')) {
-        const { extendMediaSources } = instance;
-        const supportsSource = extendMediaSources(source);
-        console.log('supportsSource', supportsSource);
-      }
-    });
+    const extensionWorker = PluginManager.invokeExtension('mediaPlayback', source);
+
+    console.log('extensionWorker', extensionWorker);
+    // const plugins = PluginManager.plugins.forEach((plugin, name) => {
+    //   const { instance, availableExtensions } = plugin;
+    //   if(availableExtensions.includes('extendMediaSources')) {
+    //     const { extendMediaSources } = instance;
+    //     const supportsSource = extendMediaSources(source);
+    //     console.log('supportsSource', supportsSource);
+    //   }
+    // });
     // todo lookup source handlers
     // const regExp = new RegExp(/^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/)|(?:(?:watch)?\?v(?:i)?=|\&v(?:i)?=))([^#\&\?]*).*/);
     // const id = source.replace(regExp, '$1');
@@ -449,6 +527,24 @@ export function cancel (ids: string | Array<string>, reason?: boolean, options?:
   }
 }
 
+
+const playListFormatter = `$.(
+  $AccName := function() { $.contentDetails.duration };
+  $.{
+    'id': id,
+    'title': snippet.title,
+    'name': snippet.title,
+    'artists': [{
+      'id': 'sfasdf',
+      'name': 'nook'
+    }],
+    'url': 'http://www.youtube.com/watch?v='&id,
+    'description': snippet.description,
+    'thumbnails': snippet.thumbnails,
+    'tags': snippet.tags,
+    'duration': $parseDuration(contentDetails.duration)
+  }
+)`;
 export function fetchListItems (id: string) {
   return async function (dispatch, getState) {
     const playList = await youtube.getPlayListItems(id);
@@ -459,7 +555,7 @@ export function fetchListItems (id: string) {
     console.log('ids', ids, 'private', restricted, 'missing', missing);
     try {
       const plugins = settings.get('plugins');
-      const formatter = jsonata(plugins.youtube.formatters.playlistitem);
+      const formatter = jsonata(playListFormatter);
       formatter.registerFunction('parseDuration', (duration) => parseDuration(duration), '<s:n>');
       const payload = formatter.evaluate(items);
       return dispatch(receivePlayListItems(payload));
@@ -509,3 +605,5 @@ export function alert (message: string) {
     }
   }
 }
+
+

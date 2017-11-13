@@ -41,6 +41,7 @@ import electron from 'electron';
 import path from 'path';
 import fs from 'fs-extra';
 import { isRenderer } from './utils';
+import sanitize from 'sanitize-filename';
 
 export const getPath = function (name: string) {
   return isRenderer ? electron.remote.app.getPath(name) : electron.app.getPath(name);
@@ -114,6 +115,21 @@ export const isEmptyDir = function(dir: string) : boolean {
     }
   } catch (ignored) {
     return true;
+  }
+};
+
+
+/**
+ * Sanitize string for use as filename
+ * @param {string} Some string that may be unsafe or invalid as a filename
+ * @returns {string | error} sanitized filename
+ */
+export const sanitizeFilename = function(filename: string) : string | Error {
+  try {
+    return sanitize(filename);
+  } catch (error) {
+    console.error(error);
+    throw error;
   }
 };
 

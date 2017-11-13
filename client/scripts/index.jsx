@@ -83,14 +83,6 @@ const store = window.store = configureStore();
 //   });
 // })
 
-window.goUrl =  (url) => {
-  store.dispatch(push({
-    pathname: url || '/about',
-    state: { some: 'state' }
-  }));
-};
-
-
 const domContainerNode = document.getElementById('app');
 domContainerNode.className = Style.application;
 
