@@ -153,7 +153,13 @@ const configRenderer = {
     rules: [
       {
         test: /\.html$/,
-        loader: 'file?name=[name].[ext]',
+        // loader: 'file?name=[name].[ext]',
+        use: {
+          loader: 'file-loader',
+          options: {
+            name: '[name].[ext]'
+          }
+        }
       },
       {
         test: /\.(jpe?g|png|gif|svg)$/i,

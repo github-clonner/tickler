@@ -205,10 +205,30 @@ export default class Youtube {
         params.pageToken = nextPageToken;
       } catch (error) {
         console.error(error);
-        return error;
+        throw error;
       }
     } while (params.pageToken);
     return playlistItems;
+  }
+
+
+  /*
+   * Get video metainfo
+   * @param {String} youtube video id.
+   * @param {Object} stream options.
+   */
+  async getInfo(id: string, options?: Object) {
+    return new Promise((resolve, reject) => {
+      try {
+        const downloader = ytdl.getInfo(id, (error, info) => {
+          if (error) return reject(error);
+          return resolve(info);
+        })
+      } catch (error) {
+        console.error(error);
+        return reject(error);
+      }
+    });
   }
 
   /*
