@@ -9,7 +9,7 @@
     },
     "languages": [ "en-US", "en" ],
     "formatters": {
-      "PlaylistItem": "$.($AccName:=function(){$.contentDetails.duration};$.{'id':id,'title':snippet.title,'name':snippet.title,'artists':[{'id':'sfasdf','name':'nook'}],'description':snippet.description,'thumbnails':snippet.thumbnails,'duration':$parseDuration(contentDetails.duration)})",
+      "PlaylistItem": "$.($AccName:=function(){$.contentDetails.duration};$.{'id':id,'title':snippet.title,'name':snippet.title,'artists':[{'id':'sfasdf','name':'nook'}],'description':snippet.description,'thumbnails':snippet.thumbnails,'url':'http://www.youtube.com/watch?v='&id,'tags':snippet.tags,'duration':$parseDuration(contentDetails.duration)})",
       "MetaInfo": "$.($.{'status':status,'id':video_id,'filename':$toFilename(title),'title':title,'description':description,'related_videos':related_videos,'keywords':keywords,'rating':avg_rating,'views':view_count,'author':author})"
     },
     "sources": {

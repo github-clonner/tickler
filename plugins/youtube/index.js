@@ -44,7 +44,7 @@ const plugin = require('./plugin.json');
 const { app, shell, remote, remote: { dialog } } = require('electron');
 const { isValidSource } = require('./src/sourceValidate');
 // const validator_A = b64EncodeUnicode(/^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/)|(?:(?:watch)?\?v(?:i)?=|\&v(?:i)?=))([^#\&\?]*).*/);
-const srcValidate_A = new RegExp(/^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/)|(?:(?:watch)?\?v(?:i)?=|\&v(?:i)?=))([^#\&\?]*).*/);
+const URL_REGEXP = new RegExp(/^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/)|(?:(?:watch)?\?v(?:i)?=|\&v(?:i)?=))([^#\&\?]*).*/);
 
 /* Private variables */
 const isRenderer = (process && process.type === 'renderer');
@@ -161,6 +161,10 @@ function getRandomBool() {
 //   decorateEnv(event) {}
 // };
 
+exports.mediaPlayback = (media, ...args) => {
+  console.log('MEDIAPLAYBACK', media, ...args);
+  return new Date();
+};
 
 exports.extendsMediaIcon = (origin, size) => {
   if (isValidSource(origin)) {
@@ -171,7 +175,6 @@ exports.extendsMediaIcon = (origin, size) => {
 
 exports.extendMediaSources = (origin) => {
   const { protocol, host } = url.parse(origin);
-  protocol = protocol.slice(0, -1);
   const { manifest: { sources } } = plugin;
   return isValidSource(origin);
 };
@@ -183,18 +186,26 @@ exports.onUnload = (event) => {
   });
 };
 
+exports.mapDispatch = (...args) => async (dispatch, getState) => {
+  const { PlayListItems } = getState();
+  return dispatch({
+    type: 'SELECT_INDEX',
+    payload: 10
+  });
+};
+
 /* Our extension's custom redux middleware. Here we can intercept redux actions and respond to them. */
 exports.middleware = (store) => (next) => (action) => {
   const { getState, dispatch } = store;
-  const List = getState().PlayListItems.toJS();
   switch (action.type) {
-    // case 'SELECT_ITEM': {
-    //   console.log('HIJACKED BY YouTube PLUGIN')
-    //   return next({
-    //     type: 'SELECT_INDEX',
-    //     payload: getRandomInt(0, (List.length - 1))
-    //   });
-    // };
+    case 'RECEIVE_LIST_ITEMS': {
+      action.payload.forEach(item => {
+        if (item && URL_REGEXP.test(item.url)) {
+          item.icon = 'https://www.google.com/images/icons/product/youtube-32.png'
+        }
+      })
+      return next(action);
+    }
     default:
       return next(action);
   }
