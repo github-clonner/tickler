@@ -1,14 +1,14 @@
 // @flow
 
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : Item.js                                                   //
-// @summary      : List item actions                                         //
+// @file         : PlayList.jsx                                              //
+// @summary      : PlayList container                                        //
 // @version      : 1.0.0                                                     //
 // @project      : tickelr                                                   //
 // @description  :                                                           //
 // @author       : Benjamin Maggi                                            //
 // @email        : benjaminmaggi@gmail.com                                   //
-// @date         : 01 Nov 2017                                               //
+// @date         : 13 Nov 2017                                               //
 // @license:     : MIT                                                       //
 // ------------------------------------------------------------------------- //
 //                                                                           //
@@ -37,21 +37,16 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-
-import { PlayListActionKeys as Action } from '../../types';
-
-export const addItem = (id: string, payload: Object) => ({ type: Action.ADD_ITEM, id});
-export const deleteItem = (id: string) => ({ type: Action.DELETE_ITEM, id });
-export const editItem = (id: string, payload) => ({ type: Action.EDIT_ITEM, id, payload });
-export const editItems = (payload: Object) => ({ type: Action.EDIT_ITEMS, payload });
-export const selectItems = (payload: any) => ({ type: Action.SELECT_ITEMS, payload });
-export const selectItem = (payload: any) => ({ type: Action.SELECT_ITEM, payload });
-export const selectIndex = (payload: number) => ({ type: Action.SELECT_INDEX, payload });
-
-
-
-
-
-
-
-
+import React, { Component } from 'react';
+import PropTypes from 'prop-types'
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import {
+  compose,
+  withStateHandlers,
+  pure,
+  mapProps
+} from 'recompose';
+// Import styles
+import classNames from 'classnames';
+import Style from '../PlayList.css';

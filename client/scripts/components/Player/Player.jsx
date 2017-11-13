@@ -82,6 +82,7 @@ export default class Play extends Component {
           <Controls.Volume />
           <Controls.Seek />
         </div>
+        <audio id="audioElement" controls className={ Style.audioElement }/>
         <div ref="waves" style={{display: 'none'}}></div>
       </div>
     );

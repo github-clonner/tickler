@@ -66,6 +66,7 @@ export default function PlayListItems (state = List([]), action) {
   switch (action.type) {
 
     case Action.RECEIVE_LIST_ITEMS: {
+      console.info('RECEIVE_LIST_ITEMS', action.payload.length)
       const playlist = action.payload.map(item => new MapEx(item));
       return List(playlist);
     }

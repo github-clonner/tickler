@@ -51,7 +51,6 @@ import schema from '../../../schemas/plugin.json';
 import { Validator } from '../SchemaUtils';
 import * as fileSystem from '../FileSystem';
 import { supportedExtensions } from './extensions';
-import { MiddlewareManager } from '../../store/MiddlewareManager';
 
 const DEFAULT_PLUGINS_DIR = [ fileSystem.getAppPath(), fileSystem.getNamedPath('userData') ].map(dir => path.join(dir, 'plugins'));
 
@@ -81,6 +80,7 @@ export class Plugin {
   };
 
   static actionBypass(action) {
+    console.warn('actionBypass', action.type);
     return action;
   }
 
@@ -148,8 +148,18 @@ export class Plugin {
   get availableExtensions() {
     const { instance, ready } = this;
     const available = (ready && instance) && Object.keys(instance).filter(extension => supportedExtensions.has(extension));
-    console.log('availableExtensions', available);
     return available;
+  }
+
+  hasExtension(extension) {
+    const { instance, ready } = this;
+    const hasExtension = (ready && instance) && Object.keys(instance).includes(extension);
+    return hasExtension;
+  }
+
+  invokeExtension(extension, ...args) {
+    const { instance, ready } = this;
+    return (ready && instance) && instance[extension].apply(null, [...args]);
   }
 
   get ready() {

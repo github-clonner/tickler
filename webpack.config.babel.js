@@ -5,6 +5,7 @@ import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import ElectronConnectWebpackPlugin from 'electron-connect-webpack-plugin';
 import ElectronPlugin from 'electron-webpack-plugin';
 import WebpackCleanupPlugin from 'webpack-cleanup-plugin';
+import CopyWebpackPlugin from 'copy-webpack-plugin';
 import WebpackNotifierPlugin from 'webpack-notifier';
 import { dependencies } from './package.json';
 
@@ -51,12 +52,6 @@ const configRenderer = {
     filename: '[name].js',
     libraryTarget: 'commonjs2'
   },
-  // externals: {
-  //   'fluent-ffmpeg': {
-  //     commonjs: 'fluent-ffmpeg',
-  //     commonjs2: 'fluent-ffmpeg'
-  //   }
-  // },
   node: {
     console: true,
     process: true,
@@ -94,6 +89,11 @@ const configRenderer = {
         }
       }
     }),
+    new CopyWebpackPlugin([
+    {
+      from: path.resolve(__dirname, './client/backend/package.json'), to: path.resolve('dist')
+    }
+    ]),
     new ElectronConnectWebpackPlugin({
       path: path.resolve('dist'),
       logLevel: 0

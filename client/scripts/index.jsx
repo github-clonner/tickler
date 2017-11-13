@@ -37,7 +37,6 @@
 
 import React from 'react';
 import { render } from 'react-dom';
-import injectTapEventPlugin from 'react-tap-event-plugin';
 import url, { URLSearchParams } from 'url';
 import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'react-router-redux';
@@ -83,10 +82,6 @@ const store = window.store = configureStore();
 //     }
 //   });
 // })
-
-// Needed for onTouchTap
-// https://github.com/zilverline/react-tap-event-plugin
-injectTapEventPlugin();
 
 window.goUrl =  (url) => {
   store.dispatch(push({

@@ -8,6 +8,7 @@ export { PluginManager, Plugin } from './PluginManager/PluginManager';
 
 /* Subclassed/extended built-in objects */
 export MapEx from './MapEx';
+export HashMap from './HashMap';
 export EventEmitterEx from './EventEmitterEx';
 export { MediaElementEx, MediaElementWrapper } from './MediaSourceEx';
 export { MediaSourceStream, EchoStream, toArrayBuffer } from './StreamEx';
@@ -26,6 +27,7 @@ export { createAsyncAction } from './ActionHelpers';
 export Youtube from './Youtube';
 export Transcoder from './Transcoder/Transcoder';
 export Metadata from './Metadata';
+export { DownloadManager, HttpDownloader, disposition } from './DownloadManager/DownloadManager';
 
 
 /* validators */

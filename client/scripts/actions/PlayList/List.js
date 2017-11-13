@@ -1,8 +1,8 @@
 // @flow
 
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : Item.js                                                   //
-// @summary      : List item actions                                         //
+// @file         : List.js                                                   //
+// @summary      : List actions                                              //
 // @version      : 1.0.0                                                     //
 // @project      : tickelr                                                   //
 // @description  :                                                           //
@@ -37,21 +37,5 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-
 import { PlayListActionKeys as Action } from '../../types';
-
-export const addItem = (id: string, payload: Object) => ({ type: Action.ADD_ITEM, id});
-export const deleteItem = (id: string) => ({ type: Action.DELETE_ITEM, id });
-export const editItem = (id: string, payload) => ({ type: Action.EDIT_ITEM, id, payload });
-export const editItems = (payload: Object) => ({ type: Action.EDIT_ITEMS, payload });
-export const selectItems = (payload: any) => ({ type: Action.SELECT_ITEMS, payload });
-export const selectItem = (payload: any) => ({ type: Action.SELECT_ITEM, payload });
-export const selectIndex = (payload: number) => ({ type: Action.SELECT_INDEX, payload });
-
-
-
-
-
-
-
 

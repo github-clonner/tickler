@@ -95,7 +95,11 @@ export const supportedExtensions = new Set(
     'decorateEnv',
     'extendKeymaps',
     'extendMediaSources',
-    'extendMediaIcon'
+    'extendMediaIcon',
+
+    'mediaPlayback',
+    'mediaTranscode',
+    'mediaFetch'
   ]
 );
 

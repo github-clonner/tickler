@@ -1,7 +1,7 @@
 {
   "name": "Tickler",
   "productName": "Tickler",
-  "version": "2.4.0",
+  "version": "2.4.1",
   "description": "Media player, transcoder and streamer",
   "keywords": [
     "multimedia",
@@ -37,12 +37,10 @@
     "start": "cross-env NODE_ENV=production; electron ./dist",
     "watch": "cross-env TARGET=render webpack --watch",
     "build:clean": "rimraf ./dist",
-    "build:mainXX": "webpack --config webpack.base.config.babel.js",
-    "build:renderXXX": "webpack --config webpack.config.babel.js",
     "build:main": "cross-env TARGET=main webpack --config webpack.config.babel.js",
     "build:render": "cross-env TARGET=render webpack --config webpack.config.babel.js",
     "build:dev": "cross-env NODE_ENV=development npm run build:main && npm run build:render",
-    "build:prod": "NODE_ENV=production npm run build-main && npm run build-render && npm run start",
+    "build:prod": "cross-env NODE_ENV=production npm run build:main && npm run build:render",
     "pacmac": "build --mac --dir",
     "test": "npm run test:lint && npm run test:typecheck && npm run test:spec",
     "test:lint": "eslint --cache client",
@@ -147,6 +145,7 @@
     "babel-register": "^6.24.1",
     "chai": "^4.1.2",
     "chance": "^1.0.12",
+    "copy-webpack-plugin": "^4.2.0",
     "cross-env": "^5.1.1",
     "css-loader": "^0.28.4",
     "devtron": "^1.4.0",
@@ -177,7 +176,6 @@
     "postcss-url": "^7.1.2",
     "raw-loader": "^0.5.1",
     "react-hot-loader": "^3.1.2",
-    "react-tap-event-plugin": "^3.0.2",
     "react-virtualized": "^9.12.0",
     "rimraf": "^2.6.2",
     "style-loader": "^0.19.0",
@@ -188,4 +186,3 @@
     "webpack-notifier": "^1.5.0"
   }
 }
-

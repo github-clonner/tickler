@@ -47,9 +47,9 @@ const request = require('request');
 const { EventEmitter } = require('events');
 const { remote, app } = require('electron');
 const sanitize = require('sanitize-filename');
-const resumable = require('resumable-request');
+// const resumable = require('resumable-request');
 const { throttle } = require('lodash/throttle');
-const requestPromise = require('request-promise-native');
+// const requestPromise = require('request-promise-native');
 const { disposition } = require('./disposition');
 
 const EventHandlers = {
