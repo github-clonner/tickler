@@ -101,6 +101,7 @@ class ElectonApplication {
       width: this.mainWindowState.width,
       height: this.mainWindowState.height,
       backgroundThrottling: false, // do not throttle animations/timers when page is background
+      backgroundColor: '#FFF',
       minWidth: 800,
       minHeight: 400,
       darkTheme: true, // Forces dark theme (GTK+3)

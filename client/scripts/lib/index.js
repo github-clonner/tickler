@@ -32,3 +32,7 @@ export { DownloadManager, HttpDownloader, disposition } from './DownloadManager/
 
 /* validators */
 import { Validator } from './SchemaUtils';
+
+/* UI */
+export { renderModal, openModal, Modal } from './Modal/Modal';
+

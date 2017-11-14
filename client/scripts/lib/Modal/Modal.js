@@ -1,14 +1,14 @@
 // @flow
 
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : Modal.jsx                                                 //
-// @summary      : Modal component                                           //
-// @version      : 0.0.1                                                     //
+// @file         : Modal.js                                                  //
+// @summary      : Modal class                                               //
+// @version      : 1.0.0                                                     //
 // @project      : tickelr                                                   //
 // @description  :                                                           //
 // @author       : Benjamin Maggi                                            //
 // @email        : benjaminmaggi@gmail.com                                   //
-// @date         : 26 Sep 2017                                               //
+// @date         : 13 Nov 2017                                               //
 // @license:     : MIT                                                       //
 // ------------------------------------------------------------------------- //
 //                                                                           //
@@ -40,42 +40,20 @@
 import fs from 'fs';
 import path from 'path';
 import URL, { URL as URI} from 'url';
-import PropTypes from 'prop-types';
-import classNames from 'classnames';
 import querystring from 'querystring';
-import { connect } from 'react-redux';
-import { shell, remote } from 'electron';
-import React, { Component } from 'react';
-import { bindActionCreators } from 'redux';
-import * as Actions from 'actions/PlayList';
-import * as Settings from 'actions/Settings';
-import { isString, isObject, isEmpty, isDataURL } from '../../lib/utils';
+import { shell, remote, ipcRenderer } from 'electron';
+import { isString, isObject, isEmpty, isDataURL, isWebURL, isRenderer, renderTemplate, camelCase, camelToDash } from '../../lib/utils';
 import { isValidFile } from '../../lib/FileSystem';
 import { DialogOptions } from '../../types/PlayList';
-/*
-{
-  x: this.mainWindowState.x,
-  y: this.mainWindowState.y,
-  width: this.mainWindowState.width,
-  height: this.mainWindowState.height,
-  backgroundThrottling: false, // do not throttle animations/timers when page is background
-  minWidth: 800,
-  minHeight: 400,
-  darkTheme: true, // Forces dark theme (GTK+3)
-  titleBarStyle: 'hidden-inset', // Hide title bar (Mac)
-  useContentSize: true, // Specify web page size without OS chrome
-  center: true,
-  frame: false,
-  icon: makeIcon('icon.png')
-}
-*/
+import uuid from 'uuid/v1';
 
 
 const DEFAULT_TEMPLATE = path.join(process.cwd(), 'client', 'scripts', 'components', 'Modal', 'template', 'default.html');
 
-/*
-  Bare bones template engine
-*/
+/**
+ *
+ * Bare bones template engine
+ */
 const hydrate = function(template, scope) {
   if (
     isString(template) && !isEmpty(template) &&
@@ -90,6 +68,9 @@ const hydrate = function(template, scope) {
   }
 };
 
+/*
+ *  Load from file then apply scope
+ */
 export const renderModal = ( file, scope ) => {
   if(isValidFile(file)) {
     try {
@@ -111,6 +92,46 @@ const MEDIA_INFORMATION_MODAL = 'data:text/html;charset=UTF-8,' + encodeURICompo
 
 console.log('MEDIA_INFORMATION_MODAL', MEDIA_INFORMATION_MODAL);
 
+const defaultWindowOptions = {
+  title: 'Modal',
+  backgroundColor: '#FFF',
+  maximizable: false,
+  resizable: false,
+  fullscreenable: false,
+  webviewTag: true,
+  modal: true,
+  show: false,
+  postData: [{
+    type: 'rawData',
+    bytes: Buffer.from('hello=world')
+  }],
+};
+
+const showModal = function(url, options) {
+  const parent = remote.getCurrentWindow();
+  const modal = new remote.BrowserWindow({ parent, ...defaultWindowOptions, ...options });
+  modal.loadURL(url);
+  modal.once('closed', event => {
+    console.log('modal closed', __dirname, process.cwd());
+  });
+  modal.webContents.on('before-input-event', (event, input) => {
+    if (input.key === 'Escape') {
+      modal.close();
+    }
+  });
+  ipcRenderer.once('modal:close', (event) => {
+    console.log('ipcRenderer:modal:close', event);
+    modal.close();
+  });
+  modal.once('ready-to-show', () => {
+    modal.show();
+    modal.focus();
+  });
+  window.modal = modal;
+  console.log('window id', modal.id);
+  return modal;
+};
+
 export const openModal = function (url, state) {
   if(isDataURL(url)) {
     return showModal(url);
@@ -119,7 +140,7 @@ export const openModal = function (url, state) {
     const initialState = {
       readOnly: 'true',
       mode: 'javascript',
-      index: 'about'
+      index: 'modal'
     };
     const base = URL.format({
       protocol: 'file',
@@ -131,70 +152,116 @@ export const openModal = function (url, state) {
     console.log('Modal URL', 'target', target, URL.format(target));
     return showModal(URL.format(target));
   }
+};
 
-  function showModal(url, options) {
-    const parent = remote.getCurrentWindow();
-    const modal = new remote.BrowserWindow({
+export class Modal {
+
+  static get options() {
+    return {
+      title: 'Modal',
       backgroundColor: '#FFF',
+      maximizable: false,
+      resizable: false,
+      fullscreenable: false,
       webviewTag: true,
-      parent: parent,
       modal: true,
       show: false,
       postData: [{
         type: 'rawData',
         bytes: Buffer.from('hello=world')
       }],
-    });
-    modal.loadURL(url);
-    modal.once('closed', event => {
-      console.log('modal closed', __dirname, process.cwd());
-    });
-    modal.webContents.on('before-input-event', (event, input) => {
-      if (input.key === 'Escape') {
-        modal.close();
-      }
-    });
-    modal.once('ready-to-show', () => {
-      modal.show();
-      modal.focus();
-    });
-    window.modal = modal;
-    console.log('window id', modal.id);
-    return modal;
-  }
-}
+    };
+  };
 
-export const openModal2 = function (route, state) {
-  const basePath = path.join(process.cwd(), 'dist', 'index.html');
-  const parent = remote.getCurrentWindow();
-  const base = URL.format({
-    protocol: 'file',
-    slashes: true,
-    pathname: basePath
-  });
-  // const location = path.parse(decodeURIComponent(base));
-  const target = new URI(base);
-  target.search = 'readOnly=true&mode=javascript&index=about';
-  const modal = new remote.BrowserWindow({
-    webviewTag: true,
-    parent: parent,
-    modal: true,
-    show: false
-  });
-  console.log('Modal URL', 'target', target, URL.format(target))
-  modal.loadURL(URL.format(target));
-  // modal.loadURL(MEDIA_INFORMATION_MODAL); // TODO: load data uri
-  modal.once('closed', event => {
-    console.log('modal closed', __dirname, process.cwd());
-  });
-  modal.webContents.on('before-input-event', (event, input) => {
-    if (input.key === 'Escape') {
-      modal.close();
+  static get state() {
+    return {
+      readOnly: 'true',
+      mode: 'javascript',
+      index: 'modal'
+    };
+  };
+
+  static loadTemplate(template, state) {
+    if(isDataURL(template)) {
+      return template;
+    } else if (isWebURL(template)) {
+      return template;
+    } else {
+      const basePath = path.resolve(__dirname, 'index.html');
+      const initialState = {
+        readOnly: 'true',
+        mode: 'javascript',
+        index: 'modal/media/metadata'
+      };
+      const base = URL.format({
+        protocol: 'file',
+        slashes: true,
+        pathname: basePath,
+        search: querystring.stringify({ ...initialState, ...state })
+      });
+      const target = new URI(base);
+      return URL.format(target);
     }
-  });
-  modal.once('ready-to-show', () => {
-    modal.show();
-    modal.focus();
-  });
-  window.modal = modal;
-}
+    return null;
+  };
+
+  constructor(template, state = {}, options = {}) {
+    this.template = Modal.loadTemplate(template, state);
+    this.options = { ...Modal.options, ...options, parent };
+    this.state = { ...Modal.state, ...state };
+    this.id = uuid();
+    if (this.options.show) {
+      this.show();
+    }
+  }
+
+  show(options) {
+    console.log('show', this.template, this.options);
+    try {
+      this.modal = new remote.BrowserWindow({
+        ...this.options,
+        parent: remote.getCurrentWindow()
+      });
+      if (this.modal) {
+        this.modal.loadURL(this.template);
+        this.attachListeners();
+        return this.modal.id;
+      } else {
+        throw new Error('Cannot show modal');
+      }
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+  };
+
+  attachListeners() {
+    const { modal } = this;
+    const windowEvents = this.windowEvents = Object.entries({
+      closed: [ this.modal.once, (event) => { console.log('MODAL CLOSED', event) } ],
+      beforeInputEvent: [ this.modal.webContents.on,  (event, input) => {
+        if (input.key === 'Escape') {
+          return this.modal.close();
+        }
+      }],
+      readyToShow: [ modal.once,  () => {
+        console.log('readyToShow');
+        this.modal.show();
+        this.modal.focus();
+      } ],
+    })
+    .map(([ listener, [ func, handler ]]) => {
+      const event = camelToDash(listener);
+      return func.apply(this.modal, [ event, handler ]);
+    });
+
+    const modalEvents = this.modalEvents = Object.entries({
+      modalClose: [ ipcRenderer.once, (event) => this.modal.close() ]
+    })
+    .map(([ listener, [ func, handler ]]) => {
+      const event = camelToDash(listener, ':');
+      return func.apply(this.modal, [ event, handler ]);
+    });
+  }
+
+};

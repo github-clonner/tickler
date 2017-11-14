@@ -44,18 +44,18 @@ export const isFunction = (method) => {
   return (method !== null) &&
     typeof method === 'function' &&
     method.constructor === Function;
-}
+};
 
 export const isObject = (object) => {
   return (object !== null) &&
     typeof object === 'object' &&
     object.constructor === Object;
-}
+};
 
 export const isPlainObject = (object) => {
   return (object !== null) &&
     typeof object === 'object';
-}
+};
 
 export const isPromise = (promise) => {
   return (promise !== null) &&
@@ -63,13 +63,77 @@ export const isPromise = (promise) => {
     promise.constructor === Promise &&
     isFunction(promise.then) &&
     isFunction(promise.catch);
-}
+};
 
 export const isString = (string) => {
   return (string !== null) &&
     typeof string === 'string' &&
     string.constructor === String;
-}
+};
+
+/**
+ *
+ * inspiration: https://gist.github.com/bgrins/6194623
+ */
+export const isDataURL = (url) => {
+  const regex = new RegExp(/^\s*data:([a-z]+\/[a-z0-9-+.]+(;[a-z-]+=[a-z0-9-]+)?)?(;base64)?,([a-z0-9!$&',()*+;=\-._~:@\/?%\s]*)\s*$/i);
+  return regex.test(url);
+};
+
+/**
+ * URL validation
+ * inspiration: https://gist.github.com/dperini/729294
+ */
+export const isWebURL = (url) => {
+  const regex = new RegExp(
+    "^" +
+      // protocol identifier
+      "(?:(?:https?|ftp)://)" +
+      // user:pass authentication
+      "(?:\\S+(?::\\S*)?@)?" +
+      "(?:" +
+        // IP address exclusion
+        // private & local networks
+        "(?!(?:10|127)(?:\\.\\d{1,3}){3})" +
+        "(?!(?:169\\.254|192\\.168)(?:\\.\\d{1,3}){2})" +
+        "(?!172\\.(?:1[6-9]|2\\d|3[0-1])(?:\\.\\d{1,3}){2})" +
+        // IP address dotted notation octets
+        // excludes loopback network 0.0.0.0
+        // excludes reserved space >= 224.0.0.0
+        // excludes network & broacast addresses
+        // (first & last IP address of each class)
+        "(?:[1-9]\\d?|1\\d\\d|2[01]\\d|22[0-3])" +
+        "(?:\\.(?:1?\\d{1,2}|2[0-4]\\d|25[0-5])){2}" +
+        "(?:\\.(?:[1-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-4]))" +
+      "|" +
+        // host name
+        "(?:(?:[a-z\\u00a1-\\uffff0-9]-*)*[a-z\\u00a1-\\uffff0-9]+)" +
+        // domain name
+        "(?:\\.(?:[a-z\\u00a1-\\uffff0-9]-*)*[a-z\\u00a1-\\uffff0-9]+)*" +
+        // TLD identifier
+        "(?:\\.(?:[a-z\\u00a1-\\uffff]{2,}))" +
+        // TLD may end with dot
+        "\\.?" +
+      ")" +
+      // port number
+      "(?::\\d{2,5})?" +
+      // resource path
+      "(?:[/?#]\\S*)?" +
+    "$", "i"
+  );
+  return regex.test(url);
+};
+
+
+/**
+ * Converts camel cased string to dash (or custom)
+ * @param {string} The string to convert.
+ * @param {string} field separator.
+ * @returns {string} Returns the dashed string.
+ */
+export const camelToDash = (string, separator = '-') => string
+    .replace(/(^[A-Z])/, ([first]) => first.toLowerCase())
+    .replace(/([A-Z])/g, ([letter]) => separator.concat(letter.toLowerCase()));
 
 // $FlowIssue
 export const isRenderer = (process && process.type === 'renderer');
@@ -144,4 +208,40 @@ export const b64DecodeUnicode = (str) => {
   return decodeURIComponent(atob(str).split('').map(function(c) {
     return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
   }).join(''));
-}
+};
+
+
+/**
+ *  Bare bones template interpolation/compiler
+ */
+export const hydrate = ( template, scope ) => {
+  if (
+    isString(template) && !isEmpty(template) &&
+    isObject(scope) && !isEmpty(scope)
+  ) {
+    return Object.entries(scope).reduce((view, [ key, value ]) => {
+      const regexp = new RegExp('\\${' + key + '}', 'gi');
+      return view.replace(regexp, value);
+    }, template.slice(0));
+  } else {
+    return null;
+  }
+};
+
+/*
+ *  Load and compile text based templates
+ */
+export const compileTemplate = async (template, scope) => {
+  try {
+    if(isValidFile(template)) {
+      return hydrate(await fs.readFile(template, 'UTF-8'), scope);
+    } else if (isWebURL(template)) {
+      return hydrate(template, scope);
+    } else {
+      return hydrate(template, scope);
+    }
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};

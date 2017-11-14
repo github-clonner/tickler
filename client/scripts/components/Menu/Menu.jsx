@@ -47,8 +47,8 @@ import { connect } from 'react-redux';
 /* Private Modules */
 import * as Actions from 'actions/PlayList';
 import * as Settings from 'actions/Settings';
-import { ContextMenu, buildContextMenu } from '../../lib';
-import { openModal } from '../Modal/Modal';
+import { ContextMenu, buildContextMenu, Modal } from '../../lib';
+// import { openModal } from '../Modal/Modal';
 
 // let image = nativeImage.createFromPath('/Users/bmaggi/tickler/media/icon.png')
 // image = image.resize({
@@ -89,9 +89,10 @@ export const buildListItemMenu = (props) => (event, item) => {
   }, {
     label: 'Media Information...',
     click() {
-      console.log(item, props);
       props.playlist.getInfo(item.id);
-      return openModal('/about');
+      const modal = new Modal('/modal/metainfo');
+      const id = modal.show();
+      return;
     }
   },
   {

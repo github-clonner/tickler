@@ -1,14 +1,12 @@
-// @flow
-
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : routes.jsx                                                //
-// @summary      : Application states / routes                               //
-// @version      : 0.0.1                                                     //
+// @file         : Modal.jsx                                                 //
+// @summary      : Modal HOC                                                 //
+// @version      : 1.0.0                                                     //
 // @project      : tickelr                                                   //
 // @description  :                                                           //
 // @author       : Benjamin Maggi                                            //
 // @email        : benjaminmaggi@gmail.com                                   //
-// @date         : 07 Sep 2017                                               //
+// @date         : 13 Nov 2017                                               //
 // @license:     : MIT                                                       //
 // ------------------------------------------------------------------------- //
 //                                                                           //
@@ -37,17 +35,69 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
+import Style from './Modal.css';
+import PropTypes from 'prop-types';
+import URL, { URL as URI} from 'url';
+import { connect } from 'react-redux';
 import React, { Component } from 'react';
-import { Router, Route, Redirect, Link, Switch } from 'react-router-dom';
-import { Main, About, NewList, Inspector, Modal } from './containers';
+import { bindActionCreators } from 'redux';
+import { WebView } from '../../components';
+import { shell, remote, ipcRenderer } from 'electron';
+import * as Settings from '../../actions/Settings';
 
-export default (
-  <Switch>
-    <Route exact path="/" component={ Main } />
-    <Route path="/about" component={ About } />
-    <Route path="/list" component={ NewList } />
-    <Route path="/inspector/:file?" component={ Inspector } />
-    <Route path="/modal/:type/*" component={ Modal } />
-    <Redirect from="/*" exact to="/" />
-  </Switch>
-);
+function mapStateToProps (state, ownProps) {
+  console.log('ownProps', ownProps);
+  const { match: { params }} = ownProps;
+  console.log('type', params.type, 'sub:', Object.values(params).slice(1));
+  return {
+    type: params.type,
+    sub: Object.values(params).slice(1)
+  };
+}
+
+function mapDispatchToProps(dispatch: Dispatch) {
+  return {
+    settings: bindActionCreators(Settings, dispatch)
+  };
+}
+
+// $FlowIssue
+@connect(mapStateToProps, mapDispatchToProps)
+export default class Modal extends Component {
+
+  static propTypes = {
+    header: PropTypes.string,
+    title: PropTypes.object,
+    body: PropTypes.string,
+    footer: PropTypes.string
+  };
+
+  static close(event) {
+    // const wc = remote.webContents.getFocusedWebContents();
+    const wc = remote.webContents.fromId(1);
+    console.log('modal:close', wc.getId(), wc);
+    return wc.send('modal:close', { result: new Date().getTime() });
+  }
+
+  render () {
+    const { header, title, body, footer } = this.props;
+    return (
+      <div className={ Style.modal } role="dialog" >
+        <div className={ Style.content } role="document" >
+          <div className={ Style.header }>
+            <h5 className={ Style.title }>Modal title</h5>
+            <button type="button" className={ Style.close } onClick={ Modal.close }>
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div className={ Style.body }>
+            <p>Modal body text goes here.</p>
+          </div>
+          <div className={ Style.footer} >
+            <p>footer</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+}
