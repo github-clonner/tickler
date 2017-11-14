@@ -42,11 +42,8 @@ import path from 'path';
 import URL, { URL as URI} from 'url';
 import querystring from 'querystring';
 import { shell, remote, ipcRenderer } from 'electron';
-import { isString, isObject, isEmpty, isDataURL, isWebURL, isRenderer, renderTemplate, camelCase, camelToDash } from '../../lib/utils';
+import { isString, isObject, isEmpty, isDataURL, isWebURL, renderTemplate, camelToDash } from '../../lib/utils';
 import { isValidFile } from '../../lib/FileSystem';
-import { DialogOptions } from '../../types/PlayList';
-import uuid from 'uuid/v1';
-
 
 const DEFAULT_TEMPLATE = path.join(process.cwd(), 'client', 'scripts', 'components', 'Modal', 'template', 'default.html');
 
@@ -90,70 +87,6 @@ const MEDIA_INFORMATION_MODAL = 'data:text/html;charset=UTF-8,' + encodeURICompo
   scriptUrl: './account.view.js'
 }));
 
-console.log('MEDIA_INFORMATION_MODAL', MEDIA_INFORMATION_MODAL);
-
-const defaultWindowOptions = {
-  title: 'Modal',
-  backgroundColor: '#FFF',
-  maximizable: false,
-  resizable: false,
-  fullscreenable: false,
-  webviewTag: true,
-  modal: true,
-  show: false,
-  postData: [{
-    type: 'rawData',
-    bytes: Buffer.from('hello=world')
-  }],
-};
-
-const showModal = function(url, options) {
-  const parent = remote.getCurrentWindow();
-  const modal = new remote.BrowserWindow({ parent, ...defaultWindowOptions, ...options });
-  modal.loadURL(url);
-  modal.once('closed', event => {
-    console.log('modal closed', __dirname, process.cwd());
-  });
-  modal.webContents.on('before-input-event', (event, input) => {
-    if (input.key === 'Escape') {
-      modal.close();
-    }
-  });
-  ipcRenderer.once('modal:close', (event) => {
-    console.log('ipcRenderer:modal:close', event);
-    modal.close();
-  });
-  modal.once('ready-to-show', () => {
-    modal.show();
-    modal.focus();
-  });
-  window.modal = modal;
-  console.log('window id', modal.id);
-  return modal;
-};
-
-export const openModal = function (url, state) {
-  if(isDataURL(url)) {
-    return showModal(url);
-  } else {
-    const basePath = path.resolve(__dirname, 'index.html');
-    const initialState = {
-      readOnly: 'true',
-      mode: 'javascript',
-      index: 'modal'
-    };
-    const base = URL.format({
-      protocol: 'file',
-      slashes: true,
-      pathname: basePath,
-      search: querystring.stringify({ ...initialState, ...state })
-    });
-    const target = new URI(base);
-    console.log('Modal URL', 'target', target, URL.format(target));
-    return showModal(URL.format(target));
-  }
-};
-
 export class Modal {
 
   static get options() {
@@ -161,7 +94,7 @@ export class Modal {
       title: 'Modal',
       backgroundColor: '#FFF',
       maximizable: false,
-      resizable: false,
+      resizable: true,
       fullscreenable: false,
       webviewTag: true,
       modal: true,
@@ -170,53 +103,45 @@ export class Modal {
         type: 'rawData',
         bytes: Buffer.from('hello=world')
       }],
+      extraHeaders: 'Content-Type: application/x-www-form-urlencoded'
     };
   };
 
   static get state() {
     return {
-      readOnly: 'true',
-      mode: 'javascript',
-      index: 'modal'
+      autoSave: 'true'
     };
   };
 
   static loadTemplate(template, state) {
+    console.log('loadTemplate', template, state);
     if(isDataURL(template)) {
       return template;
     } else if (isWebURL(template)) {
       return template;
     } else {
-      const basePath = path.resolve(__dirname, 'index.html');
-      const initialState = {
-        readOnly: 'true',
-        mode: 'javascript',
-        index: 'modal/media/metadata'
-      };
-      const base = URL.format({
+      const target = {
         protocol: 'file',
         slashes: true,
-        pathname: basePath,
-        search: querystring.stringify({ ...initialState, ...state })
-      });
-      const target = new URI(base);
+        pathname: path.resolve(__dirname, 'index.html'),
+        search: querystring.stringify({ ...state, index: template })
+      };
+      console.log('loadTemplate', target);
       return URL.format(target);
     }
     return null;
   };
 
   constructor(template, state = {}, options = {}) {
-    this.template = Modal.loadTemplate(template, state);
-    this.options = { ...Modal.options, ...options, parent };
     this.state = { ...Modal.state, ...state };
-    this.id = uuid();
+    this.options = { ...Modal.options, ...options };
+    this.template = Modal.loadTemplate(template, this.state);
     if (this.options.show) {
       this.show();
     }
   }
 
   show(options) {
-    console.log('show', this.template, this.options);
     try {
       this.modal = new remote.BrowserWindow({
         ...this.options,
@@ -238,17 +163,18 @@ export class Modal {
   attachListeners() {
     const { modal } = this;
     const windowEvents = this.windowEvents = Object.entries({
-      closed: [ this.modal.once, (event) => { console.log('MODAL CLOSED', event) } ],
+      closed: [this.modal.once, (event) => { console.log('MODAL CLOSED', event) }],
       beforeInputEvent: [ this.modal.webContents.on,  (event, input) => {
         if (input.key === 'Escape') {
           return this.modal.close();
         }
       }],
-      readyToShow: [ modal.once,  () => {
+      readyToShow: [modal.once,  () => {
         console.log('readyToShow');
         this.modal.show();
         this.modal.focus();
-      } ],
+        this.modal.webContents.send('modal:set:scope', { state: this.state, options: this.options });
+      }],
     })
     .map(([ listener, [ func, handler ]]) => {
       const event = camelToDash(listener);
@@ -256,11 +182,14 @@ export class Modal {
     });
 
     const modalEvents = this.modalEvents = Object.entries({
-      modalClose: [ ipcRenderer.once, (event) => this.modal.close() ]
+      modalClose: [ ipcRenderer.once, (event) => {
+        console.log('modal:close');
+        return this.modal.close();
+      }]
     })
     .map(([ listener, [ func, handler ]]) => {
       const event = camelToDash(listener, ':');
-      return func.apply(this.modal, [ event, handler ]);
+      return func.apply(ipcRenderer, [ event, handler ]);
     });
   }
 

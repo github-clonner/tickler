@@ -50,6 +50,7 @@ import {
   SettingsStore,
   PlayListStore,
   PluginManager,
+  Modal
   // DownloadManager,
   // HttpDownloader
 } from '../lib';
@@ -225,40 +226,35 @@ export function fetchItem (item, autoPlay = false) {
   }
 }
 
+async function getYoutubeMediaInfo(id: string) {
+  try {
+    const info = await youtube.getInfo(id);
+    const formatter = `$.(
+      $. {
+        'status': status,
+        'id': video_id,
+        'title': title,
+        'name': title,
+        'filename': $toFilename(title),
+        'description': description,
+        'related': related_videos,
+        'keywords': keywords,
+        'rating': $number(avg_rating),
+        'views': $number(view_count),
+        'author': author
+      }
+    )`;
+    return formatJSON(info, formatter);
+  } catch (error) {
+    console.error(error);
+    return error;
+  }
+}
+
 /**
  * Get media metainfo.
  */
 export function getInfo(id: string) {
-  // return function (dispatch, getState) {
-  //   const { Settings } = getState();
-  //   return youtube.getInfo(id)
-  //   .then(info => {
-  //     // const { formatters: { metainfo: formatter } } = Settings.get('plugins.youtube');
-  //     const formatter = `$.(
-  //       $. {
-  //         'status': status,
-  //         'id': video_id,
-  //         'title': title,
-  //         'name': title,
-  //         'filename': $toFilename(title),
-  //         'description': description,
-  //         'related': related_videos,
-  //         'keywords': keywords,
-  //         'rating': $number(avg_rating),
-  //         'views': $number(view_count),
-  //         'author': author
-  //       }
-  //     )`;
-  //     const metainfo = formatJSON(info, formatter);
-  //     console.info('metainfo', formatter, metainfo);
-  //     return dispatch(editItem(id, {
-  //       rating: metainfo.rating,
-  //       related: metainfo.related,
-  //       keywords: metainfo.keywords,
-  //       description: metainfo.description
-  //     }));
-  //   });
-  // }
   return async function(dispatch, getState) {
     const { Settings } = getState();
     try {
@@ -280,16 +276,31 @@ export function getInfo(id: string) {
         }
       )`;
       const metainfo = formatJSON(info, formatter);
-      return dispatch(editItem(id, {
+      dispatch(editItem(id, {
         rating: metainfo.rating,
         related: metainfo.related,
         keywords: metainfo.keywords,
         description: metainfo.description
       }));
+      return
     } catch (error) {
-      dispatch({ type: 'ERROR', error });
+      return dispatch({ type: 'ERROR', error });
     }
-  }
+  };
+}
+
+export function viewMediaInfo(media) {
+  return async function(dispatch, getState) {
+    const { PlayListItems } = getState();
+    try {
+      const info = await getYoutubeMediaInfo(media.id);
+      const modal = new Modal('/modal/media/metadata', info, { details: true, stats: true });
+      return modal.show();
+    } catch (error) {
+      console.error(error);
+      return dispatch({ type: 'ERROR', error });
+    }
+  };
 }
 
 /**

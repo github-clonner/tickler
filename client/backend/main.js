@@ -144,7 +144,7 @@ class ElectonApplication {
   }
 
   didFinishLoad = () => {
-    this.mainWindow.setTitle('Soundnode');
+    this.mainWindow.setTitle(config.package.name);
     this.mainWindow.show();
     this.mainWindow.focus();
     this.mainWindow.webContents.send('config' , config);

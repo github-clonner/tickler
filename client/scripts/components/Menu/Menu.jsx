@@ -88,11 +88,13 @@ export const buildListItemMenu = (props) => (event, item) => {
     }
   }, {
     label: 'Media Information...',
-    click() {
-      props.playlist.getInfo(item.id);
-      const modal = new Modal('/modal/metainfo');
-      const id = modal.show();
-      return;
+    id: item.id,
+    click(menuItem, browserWindow, event) {
+      return props.playlist.viewMediaInfo(item);
+      // console.log('menuItem, browserWindow, event', menuItem, browserWindow, event);
+      // const modal = new Modal('/modal/media/metadata', item, { stats: true });
+      // const id = modal.show();
+      // return;
     }
   },
   {

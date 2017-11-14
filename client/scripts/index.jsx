@@ -37,8 +37,8 @@
 
 import React from 'react';
 import { render } from 'react-dom';
-import url, { URLSearchParams } from 'url';
 import { Provider } from 'react-redux';
+import URL, { URLSearchParams } from 'url';
 import { ConnectedRouter } from 'react-router-redux';
 import configureStore, { history } from './store/configureStore';
 /* routes */
@@ -46,20 +46,9 @@ import routes from './routes';
 /* styles */
 import Style from './layout.css';
 
-const { query } = url.parse(window.location.href, true, true);
-console.log('query', query);
-
+const { query, query: { index: pathname } } = URL.parse(window.location.href, true, true);
 if (query.index) {
-  history.push({
-    pathname: '/' + query.index,
-    query: {
-      modal: true
-    },
-    state: {
-      list: new Date(),
-      video: '/Users'
-    }
-  });
+  history.push({ pathname, query, state: { cta: new Date() } });
 };
 
 /* clipboard manager */

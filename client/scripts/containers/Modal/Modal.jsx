@@ -45,13 +45,97 @@ import { WebView } from '../../components';
 import { shell, remote, ipcRenderer } from 'electron';
 import * as Settings from '../../actions/Settings';
 
+const General = function ({ media }, ...args) {
+  console.log('General', media)
+  return (
+    <form>
+      <div className={ Style.formGroup }>
+        <label htmlFor="title">Title</label>
+        <input type="text" className={ Style.formControl } id="title" value={ media.title} />
+        <small className={ Style.formText }>We'll never share your email with anyone else.</small>
+      </div>
+      <div className={ Style.formGroup }>
+        <label htmlFor="artist">artist</label>
+        <input type="text" className={ Style.formControl } id="artist" value={ media.artist }/>
+        <small className={ Style.formText }>We'll never share your email with anyone else.</small>
+      </div>
+      <div className={ Style.formGroup }>
+        <label htmlFor="album">album</label>
+        <input type="text" className={ Style.formControl } id="album" value={ media.album }/>
+        <small className={ Style.formText }>We'll never share your email with anyone else.</small>
+      </div>
+      <div className={ Style.formGroup }>
+        <label htmlFor="genre">genre</label>
+        <input type="text" className={ Style.formControl } id="genre" value={ media.genre }/>
+        <small className={ Style.formText }>We'll never share your email with anyone else.</small>
+      </div>
+      <div className={ Style.formGroup }>
+        <label htmlFor="description">description</label>
+        <input type="text" className={ Style.formControl } id="description" value={ media.description } />
+        <small className={ Style.formText }>We'll never share your email with anyone else.</small>
+      </div>
+      <div className={ Style.formGroup }>
+        <label htmlFor="copyright">copyright</label>
+        <input type="text" className={ Style.formControl } id="copyright" value={ media.copyright }/>
+        <small className={ Style.formText }>We'll never share your email with anyone else.</small>
+      </div>
+      <div className={ Style.formGroup }>
+        <label htmlFor="location">location</label>
+        <input type="text" className={ Style.formControl } id="location" />
+        <small className={ Style.formText }>We'll never share your email with anyone else.</small>
+      </div>
+      <button type="submit" className={ Style.btn }>Submit</button>
+    </form>
+  );
+};
+
+const Related = function ({ items }, ...args) {
+  console.log('related', items);
+  const list = function (list) {
+
+  };
+  const media = function ({ title, iurlhq, iurlmq, id, length_seconds, short_view_count_text }) {
+    return (
+      <div className={ Style.media }>
+        <div className={ Style.thumbnail }>
+          <a href="#">
+            <div className={ Style.overlay }>
+              <div className={ Style.stats }><i></i><span className={ Style.text }>{ short_view_count_text }</span></div>
+              <div className={ Style.duration }><i></i>{ length_seconds }</div>
+              <div className={ Style.play }><i></i></div>
+            </div>
+            <img src={ iurlmq } />
+          </a>
+        </div>
+        <div className={ Style.caption } >
+          <h5>{ title }</h5>
+        </div>
+      </div>
+    );
+  };
+  return (
+    <ul className={ Style.related } >
+      {
+        items
+        .filter(item => !(item.list))
+        .map((item, index) => {
+          return (
+            <li key={ index } className={ Style.item } >{ media(item) }</li>
+          );
+        })
+      }
+    </ul>
+  );
+}
+
 function mapStateToProps (state, ownProps) {
   console.log('ownProps', ownProps);
-  const { match: { params }} = ownProps;
-  console.log('type', params.type, 'sub:', Object.values(params).slice(1));
+  const { match: { params: { type, ...sub }}} = ownProps;
+  const { location: { query }} = ownProps;
   return {
-    type: params.type,
-    sub: Object.values(params).slice(1)
+    type,
+    query,
+    sub: Object.values(sub)
   };
 }
 
@@ -73,14 +157,43 @@ export default class Modal extends Component {
   };
 
   static close(event) {
-    // const wc = remote.webContents.getFocusedWebContents();
-    const wc = remote.webContents.fromId(1);
-    console.log('modal:close', wc.getId(), wc);
-    return wc.send('modal:close', { result: new Date().getTime() });
+    const webContents = remote.getCurrentWindow();
+    console.log('modal:close', webContents.id, webContents);
+    return webContents.getParentWindow().send('modal:close');
+  }
+
+  state = {
+    media: {
+      related: [],
+    }
+  };
+
+  componentDidMount () {
+    this.modal = remote.getCurrentWindow();
+    window.xxx = this.modal;
+    this.listener = {
+      modalEvent: (event, data) => {
+        console.log('modal:event', data);
+      },
+    };
+    ipcRenderer.on('modal:event', this.listener.modalEvent);
+  }
+
+  componentWillMount () {
+    this.modal = remote.getCurrentWindow();
+    this.listener = {
+      setScope: (event, { state: media, options }) => {
+        return this.setState({ media, options });
+      }
+    };
+    ipcRenderer.on('modal:set:scope', this.listener.setScope);
   }
 
   render () {
-    const { header, title, body, footer } = this.props;
+    const { header, title, body, footer, query } = this.props;
+    const { related } = query;
+    const { media } = this.state;
+    console.log('Modal.Props', this.props)
     return (
       <div className={ Style.modal } role="dialog" >
         <div className={ Style.content } role="document" >
@@ -91,7 +204,21 @@ export default class Modal extends Component {
             </button>
           </div>
           <div className={ Style.body }>
+            { /*
             <p>Modal body text goes here.</p>
+            <div className={ Style.thumbnail }>
+              <a href="#">
+                <div className={ Style.overlay }>
+                  <div className={ Style.stats }><i></i> <span className={ Style.text }>2500</span></div>
+                  <div className={ Style.duration }><i></i> 2:20</div>
+                  <div className={ Style.play }><i></i></div>
+                </div>
+                <img src="https://i.ytimg.com/vi/12CeaxLiMgE/mqdefault.jpg" />
+              </a>
+            </div>
+            <General media={ this.props.query } />
+            */ }
+            <Related items={ media.related } />
           </div>
           <div className={ Style.footer} >
             <p>footer</p>
