@@ -37,6 +37,7 @@
 
 import Style from './Modal.css';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import URL, { URL as URI} from 'url';
 import { connect } from 'react-redux';
 import React, { Component } from 'react';
@@ -47,49 +48,9 @@ import * as Settings from '../../actions/Settings';
 import Time, { parseDuration } from '../../lib/Time';
 import durationFormat from '@maggiben/duration-format';
 
-const General = function ({ media }, ...args) {
-  console.log('General', media)
-  return (
-    <form>
-      <div className={ Style.formGroup }>
-        <label htmlFor="title">Title</label>
-        <input type="text" className={ Style.formControl } id="title" value={ media.title} />
-        <small className={ Style.formText }>We'll never share your email with anyone else.</small>
-      </div>
-      <div className={ Style.formGroup }>
-        <label htmlFor="artist">artist</label>
-        <input type="text" className={ Style.formControl } id="artist" value={ media.artist }/>
-        <small className={ Style.formText }>We'll never share your email with anyone else.</small>
-      </div>
-      <div className={ Style.formGroup }>
-        <label htmlFor="album">album</label>
-        <input type="text" className={ Style.formControl } id="album" value={ media.album }/>
-        <small className={ Style.formText }>We'll never share your email with anyone else.</small>
-      </div>
-      <div className={ Style.formGroup }>
-        <label htmlFor="genre">genre</label>
-        <input type="text" className={ Style.formControl } id="genre" value={ media.genre }/>
-        <small className={ Style.formText }>We'll never share your email with anyone else.</small>
-      </div>
-      <div className={ Style.formGroup }>
-        <label htmlFor="description">description</label>
-        <input type="text" className={ Style.formControl } id="description" value={ media.description } />
-        <small className={ Style.formText }>We'll never share your email with anyone else.</small>
-      </div>
-      <div className={ Style.formGroup }>
-        <label htmlFor="copyright">copyright</label>
-        <input type="text" className={ Style.formControl } id="copyright" value={ media.copyright }/>
-        <small className={ Style.formText }>We'll never share your email with anyone else.</small>
-      </div>
-      <div className={ Style.formGroup }>
-        <label htmlFor="location">location</label>
-        <input type="text" className={ Style.formControl } id="location" />
-        <small className={ Style.formText }>We'll never share your email with anyone else.</small>
-      </div>
-      <button type="submit" className={ Style.btn }>Submit</button>
-    </form>
-  );
-};
+/* Modals */
+import { MediaInfo } from './MediaInfo';
+import { SortableComponent } from './Related';
 
 const Related = function ({ items }, ...args) {
   console.log('related', items);
@@ -136,6 +97,7 @@ const Related = function ({ items }, ...args) {
   );
 }
 
+const QI = {status:"ok",id:"JqiGYpvxt7A",title:"Daft Punk - High Life",name:"Daft Punk - High Life",filename:"Daft Punk - High Life",description:"Daft Punk - High Life",related:[{endscreen_autoplay_session_data:"itct=CBQQ4ZIBIhMI_caR0-vE1wIVT8GQCh1yWwAOKPgdMgxyZWxhdGVkLWF1dG9IsO_G36nModQm&playnext=1&autonav=1",id:"zNRbP7U0Iq8",length_seconds:"241",session_data:"itct=CBMQvU4YACITCP3GkdPrxNcCFU_BkAodclsADij4HTIJZW5kc2NyZWVuSLDvxt-pzKHUJg%3D%3D",short_view_count_text:"4.4M views",iurlhq:"https://i.ytimg.com/vi/zNRbP7U0Iq8/hqdefault.jpg",title:"Daft Punk - Face To Face",iurlmq:"https://i.ytimg.com/vi/zNRbP7U0Iq8/mqdefault.jpg",author:"Costa Ntino"},{playlist_iurlmq:"https://i.ytimg.com/vi/JqiGYpvxt7A/mqdefault.jpg",video_id:"zNRbP7U0Iq8",thumbnail_ids:"zNRbP7U0Iq8",list:"RDJqiGYpvxt7A",session_data:"itct=CBIQvk4YASITCP3GkdPrxNcCFU_BkAodclsADij4HTIJZW5kc2NyZWVuSLDvxt-pzKHUJg%3D%3D",playlist_length:"0",playlist_iurlhq:"https://i.ytimg.com/vi/JqiGYpvxt7A/hqdefault.jpg",playlist_title:"Mix - Daft Punk - High Life"},{id:"n6RTF4OPzf8",length_seconds:"321",session_data:"itct=CBEQvU4YAiITCP3GkdPrxNcCFU_BkAodclsADij4HTIJZW5kc2NyZWVuSLDvxt-pzKHUJg%3D%3D",short_view_count_text:"10M views",iurlhq:"https://i.ytimg.com/vi/n6RTF4OPzf8/hqdefault.jpg",title:"Daft Punk - One More Time [HQ]",iurlmq:"https://i.ytimg.com/vi/n6RTF4OPzf8/mqdefault.jpg",author:"Naf' Manson"},{id:"oUutxbjzL18",length_seconds:"229",session_data:"itct=CBAQvU4YAyITCP3GkdPrxNcCFU_BkAodclsADij4HTIJZW5kc2NyZWVuSLDvxt-pzKHUJg%3D%3D",short_view_count_text:"6.8K views",iurlhq:"https://i.ytimg.com/vi/oUutxbjzL18/hqdefault.jpg",title:"Daft Punk - High Life (FL Studio Remake)",iurlmq:"https://i.ytimg.com/vi/oUutxbjzL18/mqdefault.jpg",author:"Oscar Betancourt"},{id:"tEJpLDEOivA",length_seconds:"229",session_data:"itct=CA8QvU4YBCITCP3GkdPrxNcCFU_BkAodclsADij4HTIJZW5kc2NyZWVuSLDvxt-pzKHUJg%3D%3D",short_view_count_text:"2.6M views",iurlhq:"https://i.ytimg.com/vi/tEJpLDEOivA/hqdefault.jpg",title:"Daft Punk - Voyager",iurlmq:"https://i.ytimg.com/vi/tEJpLDEOivA/mqdefault.jpg",author:"Costa Ntino"},{playlist_iurlmq:"https://i.ytimg.com/vi/n6RTF4OPzf8/mqdefault.jpg",video_id:"n6RTF4OPzf8",thumbnail_ids:"n6RTF4OPzf8",list:"PLjIuADMrDKIb_TAE3RsW8kffG9N9LxjrU",session_data:"itct=CA4Qvk4YBSITCP3GkdPrxNcCFU_BkAodclsADij4HTIJZW5kc2NyZWVuSLDvxt-pzKHUJg%3D%3D",playlist_length:"14",playlist_iurlhq:"https://i.ytimg.com/vi/n6RTF4OPzf8/hqdefault.jpg",playlist_title:"Daft Punk - Discovery full album"},{id:"quHVq28Y_gg",length_seconds:"213",session_data:"itct=CA0QvU4YBiITCP3GkdPrxNcCFU_BkAodclsADij4HTIJZW5kc2NyZWVuSLDvxt-pzKHUJg%3D%3D",short_view_count_text:"1.3M views",iurlhq:"https://i.ytimg.com/vi/quHVq28Y_gg/hqdefault.jpg",title:"Daft Punk - Crescendolls",iurlmq:"https://i.ytimg.com/vi/quHVq28Y_gg/mqdefault.jpg",author:"Costa Ntino"},{id:"sIv17mT9pBc",length_seconds:"232",session_data:"itct=CAwQvU4YByITCP3GkdPrxNcCFU_BkAodclsADij4HTIJZW5kc2NyZWVuSLDvxt-pzKHUJg%3D%3D",short_view_count_text:"2.5M views",iurlhq:"https://i.ytimg.com/vi/sIv17mT9pBc/hqdefault.jpg",title:"Daft Punk - Something About Us",iurlmq:"https://i.ytimg.com/vi/sIv17mT9pBc/mqdefault.jpg",author:"Costa Ntino"},{id:"X4fa44_sq2E",length_seconds:"239",session_data:"itct=CAsQvU4YCCITCP3GkdPrxNcCFU_BkAodclsADij4HTIJZW5kc2NyZWVuSLDvxt-pzKHUJg%3D%3D",short_view_count_text:"1.4M views",iurlhq:"https://i.ytimg.com/vi/X4fa44_sq2E/hqdefault.jpg",title:"Daft Punk - Superheroes",iurlmq:"https://i.ytimg.com/vi/X4fa44_sq2E/mqdefault.jpg",author:"Costa Ntino"},{id:"Oq77lLDEFGY",length_seconds:"601",session_data:"itct=CAoQvU4YCSITCP3GkdPrxNcCFU_BkAodclsADij4HTIJZW5kc2NyZWVuSLDvxt-pzKHUJg%3D%3D",short_view_count_text:"982K views",iurlhq:"https://i.ytimg.com/vi/Oq77lLDEFGY/hqdefault.jpg",title:"Daft Punk - Too Long",iurlmq:"https://i.ytimg.com/vi/Oq77lLDEFGY/mqdefault.jpg",author:"Costa Ntino"},{id:"QOngRDVtEQI",length_seconds:"299",session_data:"itct=CAkQvU4YCiITCP3GkdPrxNcCFU_BkAodclsADij4HTIJZW5kc2NyZWVuSLDvxt-pzKHUJg%3D%3D",short_view_count_text:"10M views",iurlhq:"https://i.ytimg.com/vi/QOngRDVtEQI/hqdefault.jpg",title:"Daft Punk - Digital Love",iurlmq:"https://i.ytimg.com/vi/QOngRDVtEQI/mqdefault.jpg",author:"Costa Ntino"},{id:"dh3jFRvYvDE",length_seconds:"346",session_data:"itct=CAgQvU4YCyITCP3GkdPrxNcCFU_BkAodclsADij4HTIJZW5kc2NyZWVuSLDvxt-pzKHUJg%3D%3D",short_view_count_text:"1.4M views",iurlhq:"https://i.ytimg.com/vi/dh3jFRvYvDE/hqdefault.jpg",title:"Daft Punk - Veridis Quo",iurlmq:"https://i.ytimg.com/vi/dh3jFRvYvDE/mqdefault.jpg",author:"Costa Ntino"}],keywords:["Discovery","Daft Punk (Musical Group)","High","Life"],rating:4.8902584493,views:1314119,author:{id:"UCIVB9h04X5FXmx7r9zatZJQ",name:"Costa Ntino",avatar:"https://yt3.ggpht.com/-lZQMUToQIF8/AAAAAAAAAAI/AAAAAAAAAAA/qnfriszfzlY/s88-c-k-no-mo-rj-c0xffffff/photo.jpg",user:"aimo10",channel_url:"https://www.youtube.com/channel/UCIVB9h04X5FXmx7r9zatZJQ",user_url:"https://www.youtube.com/user/aimo10"}};
 function mapStateToProps (state, ownProps) {
   console.log('ownProps', ownProps);
   const { match: { params: { type, ...sub }}} = ownProps;
@@ -179,12 +141,6 @@ export default class Modal extends Component {
   componentDidMount () {
     this.modal = remote.getCurrentWindow();
     window.xxx = this.modal;
-    this.listener = {
-      modalEvent: (event, data) => {
-        console.log('modal:event', data);
-      },
-    };
-    ipcRenderer.on('modal:event', this.listener.modalEvent);
   }
 
   componentWillMount () {
@@ -192,14 +148,26 @@ export default class Modal extends Component {
     this.listener = {
       setScope: (event, { state: media, options }) => {
         return this.setState({ media, options });
+      },
+      modalEvent: (event, data) => {
+        console.log('modal:event', data);
       }
     };
+    console.log('modal:componentWillMount');
+    ipcRenderer.on('modal:event', this.listener.modalEvent);
     ipcRenderer.on('modal:set:scope', this.listener.setScope);
+  }
+
+  componentWillUnmount() {
+    console.log('modal:componentWillUnmount');
+    /* Remove listeners */
+    ipcRenderer.removeListener('modal:event', this.listener.modalEvent);
+    ipcRenderer.removeListener('modal:set:scope', this.listener.setScope);
   }
 
   render () {
     const { header, title, body, footer, query } = this.props;
-    const { related } = query;
+    const { related } = query || QI;
     const { media } = this.state;
     console.log('Modal.Props', this.props)
     return (
@@ -207,7 +175,7 @@ export default class Modal extends Component {
         <div className={ Style.content } role="document" >
           <div className={ Style.header }>
             <h5 className={ Style.title }>Modal title</h5>
-            <button type="button" className={ Style.close } onClick={ Modal.close }>
+            <button type="button" className={ classNames( Style.modalButton, Style.close) } onClick={ Modal.close }>
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
@@ -224,9 +192,12 @@ export default class Modal extends Component {
                 <img src="https://i.ytimg.com/vi/12CeaxLiMgE/mqdefault.jpg" />
               </a>
             </div>
-            <General media={ this.props.query } />
+
+            <MediaInfo media={ this.props.query } />
             */ }
-            <Related items={ media.related } />
+
+            { /* <Related items={ media.related } /> */ }
+            <SortableComponent items={ media.related } />
           </div>
           <div className={ Style.footer} >
             { /* <p>footer</p> */ }

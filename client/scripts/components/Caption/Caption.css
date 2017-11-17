@@ -1,0 +1,28 @@
+@import "styles/variables.css";
+
+:root {
+  --titleColor: #222;
+  --subtitleColor: #A2A2A2;
+  --descriptionColor: #8C8C8C;
+}
+
+.caption {
+  flex: 1;
+  margin: 0 10px;
+  font-family: var(--mainFont);
+  & .title {
+    margin: 0;
+    font-size: 1em;
+    font-weight: normal;
+    color: var(--titleColor);
+  }
+  & .subtitle {
+    margin: 3px 0px;
+    font-size: 80%;
+    color: var(--subtitleColor);
+    font-weight: lighter;
+  }
+  & .description {
+    color: var(--descriptionColor);
+  }
+}

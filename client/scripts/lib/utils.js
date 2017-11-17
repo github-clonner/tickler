@@ -35,6 +35,7 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
+export random from 'lodash/random';
 export isEmpty from 'lodash/isEmpty';
 export throttle from 'lodash/throttle';
 export debounce from 'lodash/debounce';
@@ -72,7 +73,19 @@ export const isString = (string) => {
 };
 
 /**
- *
+ * Shuffle array
+ * inspiration: https://stackoverflow.com/a/12646864/787098
+ */
+export const shuffle = (array) => {
+  array = Array.from(array);
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+};
+
+/**
  * inspiration: https://gist.github.com/bgrins/6194623
  */
 export const isDataURL = (url) => {

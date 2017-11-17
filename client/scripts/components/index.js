@@ -10,3 +10,5 @@ export CoverFlow from './CoverFlow/CoverFlow';
 export Equalizer from './Equalizer/Equalizer';
 export Editor from './Editor/Editor';
 export WebView from './WebView/WebView';
+export Thumbnail from './Thumbnail/Thumbnail';
+export Caption from './Caption/Caption';

@@ -50,7 +50,7 @@ import classNames from 'classnames';
 import Style from '../Player.css';
 
 /*
- * Subbscribe to redux store and merge these props
+ * subscribe to redux store and merge these props
  * reference: https://github.com/reactjs/react-redux/blob/master/docs/api.md
  */
 function mapStateToProps(state, props) {
@@ -74,6 +74,10 @@ function mapStateToProps(state, props) {
   };
 }
 
+/*
+ * Redux action creators
+ * reference: https://github.com/reactjs/react-redux/blob/master/docs/api.md
+ */
 function mapDispatchToProps(dispatch) {
   return {
     player: bindActionCreators(Player, dispatch),
@@ -133,7 +137,6 @@ const enhance = compose(
     isPlaying: PropTypes.bool.isRequired
   })
 );
-
 
 /*
  * Playback component renderer
