@@ -8,6 +8,7 @@
   --bodyBackground: #fff;
   --headerBorder: 1px solid #ccc;
   --footerBorder: 1px solid #ccc;
+  --iconFont: 'Material Icons';
 }
 
 
@@ -75,12 +76,34 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  font-family: var(--mainFont);
+  list-style: none;
   & .item {
     flex-grow: 1;
-    margin: 5px;
     & .media {
       display: flex;
       flex-direction: row;
+      margin: 10px;
+    }
+    & .caption {
+      flex: 1;
+      font-family: var(--mainFont);
+      margin: 0 10px;
+      & .title {
+        margin: 0;
+        font-size: 1em;
+        font-weight: normal;
+        color: #222;
+      }
+      & .subtitle {
+        margin: 3px 0px;
+        font-size: 80%;
+        color: #a2a2a2;
+        font-weight: lighter;
+      }
+      & .description {
+        color: #8c8c8c;
+      }
     }
   }
 }
@@ -89,6 +112,16 @@
   position: relative;
   backface-visibility: hidden;
   overflow: hidden;
+  box-sizing: border-box;
+  & .icon {
+    font-family: var(--iconFont);
+    font-style: normal;
+    display: inline-block;
+    font-size: inherit;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    vertical-align: middle;
+  }
   & .overlay {
     position: absolute;
     width: 100%;
@@ -118,7 +151,7 @@
     }
   }
   & img {
-    max-width: 320px;
+    max-width: 220px;
     max-height: 180px;
     vertical-align: top;
   }

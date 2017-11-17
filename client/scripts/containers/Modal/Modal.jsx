@@ -44,6 +44,8 @@ import { bindActionCreators } from 'redux';
 import { WebView } from '../../components';
 import { shell, remote, ipcRenderer } from 'electron';
 import * as Settings from '../../actions/Settings';
+import Time, { parseDuration } from '../../lib/Time';
+import durationFormat from '@maggiben/duration-format';
 
 const General = function ({ media }, ...args) {
   console.log('General', media)
@@ -100,15 +102,21 @@ const Related = function ({ items }, ...args) {
         <div className={ Style.thumbnail }>
           <a href="#">
             <div className={ Style.overlay }>
-              <div className={ Style.stats }><i></i><span className={ Style.text }>{ short_view_count_text }</span></div>
-              <div className={ Style.duration }><i></i>{ length_seconds }</div>
-              <div className={ Style.play }><i></i></div>
+              <div className={ Style.stats }><i className={ Style.icon }>grade</i>&nbsp;<span className={ Style.text }>{ short_view_count_text }</span></div>
+              <div className={ Style.duration }><i className={ Style.icon }>alarm</i>&nbsp;&nbsp;{ durationFormat((parseInt(length_seconds, 10) * 1000), '#{2H}:#{2M}:#{2S}')  }</div>
+              <div className={ Style.play }><i className={ Style.icon }>play_arrow</i></div>
             </div>
             <img src={ iurlmq } />
           </a>
         </div>
         <div className={ Style.caption } >
-          <h5>{ title }</h5>
+          <h1 className={ Style.title }>{ title }</h1>
+          <h2 className={ Style.subtitle }>
+            <span>Artist</span>
+            <span>•</span>
+            <span>{ short_view_count_text }</span>
+          </h2>
+          <p className={ Style.description }>description</p>
         </div>
       </div>
     );
@@ -221,7 +229,7 @@ export default class Modal extends Component {
             <Related items={ media.related } />
           </div>
           <div className={ Style.footer} >
-            <p>footer</p>
+            { /* <p>footer</p> */ }
           </div>
         </div>
       </div>
