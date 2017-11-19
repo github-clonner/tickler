@@ -1,12 +1,14 @@
+// @flow
+
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : Thumbnail.jsx                                             //
-// @summary      : Thumbnail component                                       //
+// @file         : selector.js                                               //
+// @summary      : Header reselect selectors                                 //
 // @version      : 1.0.0                                                     //
 // @project      : tickelr                                                   //
 // @description  :                                                           //
 // @author       : Benjamin Maggi                                            //
 // @email        : benjaminmaggi@gmail.com                                   //
-// @date         : 17 Nov 2017                                               //
+// @date         : 18 Nov 2017                                               //
 // @license:     : MIT                                                       //
 // ------------------------------------------------------------------------- //
 //                                                                           //
@@ -35,41 +37,40 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-import Style from './Thumbnail.css';
-import classNames from 'classnames';
-import React, { Component } from 'react';
+import { createSelector } from 'reselect';
 
+/* Get header state */
+export const geHeader = state => state;
 
-const Box = ({ type, children }) =>
-  <section className={ classNames( Style.overlayPop, type ) }>
-    { children }
-  </section>;
-
-const BoxIcon = ({ type, icon, children }) =>
-  <Box type={ type }>
-    <i className={ Style.icon }>{ icon }</i>
-    { children }
-  </Box>;
-
-const BoxLabel = ({ type, icon, label }) =>
-  <BoxIcon type={ type } icon={ icon }>
-    <span className={ Style.label }>{ label }</span>
-  </BoxIcon>;
-
-const BoxAction = ({ type, action: [ icon, handler ] }) =>
-  <BoxIcon type={ type } icon={ icon } />;
-
-const Thumbnail = ({ type, image, duration, stats, action, style }) => {
-  return (<div className={ Style.thumbnail }>
-    <a className={ Style.link } href="#">
-      <div className={ Style.overlay }>
-        <BoxLabel type={ Style.stats } icon="grade" label={ stats }></BoxLabel>
-        <BoxLabel type={ Style.duration } icon="alarm" label={ duration }></BoxLabel>
-        <BoxAction type={ Style.action } action={ action }></BoxAction>
-      </div>
-      <img src={ image } className={ classNames(style, Style.image ) }/>
-    </a>
-  </div>);
+/* Get header actions */
+export const getAction = (state, props) => {
+  console.log('getAction', state, props);
+  return state;
 };
 
-export default Thumbnail;
+/* Get modal settings */
+export const getModalSettings = (state, props) => {
+  console.log('getModalSettings', state, props);
+  return state;
+};
+
+/*
+ * Redux Action Creators
+ * Each key inside this object is assumed to be a Redux action creator
+ * reference: https://github.com/reactjs/react-redux/blob/master/docs/api.md
+ */
+export const getHeaderActions = createSelector(
+  [ getAction, geHeader ], function(action, header) {
+    switch (action) {
+      case 'CLOSE': return 'CLOSE';
+      // case 'SHOW': return items.filter(({ file }) => !(file));
+      // case 'MAXIMIZE': return items.filter(({ isLoading }) => (isLoading));
+      // case 'MINIMIZE': return items.filter(({ isLoading }) => (isLoading));
+      default:
+        return items
+    }
+  }
+);
+
+
+

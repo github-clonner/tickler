@@ -1,12 +1,14 @@
+// @flow
+
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : Thumbnail.jsx                                             //
-// @summary      : Thumbnail component                                       //
+// @file         : Header.jsx                                                //
+// @summary      : Modal header component                                    //
 // @version      : 1.0.0                                                     //
 // @project      : tickelr                                                   //
 // @description  :                                                           //
 // @author       : Benjamin Maggi                                            //
 // @email        : benjaminmaggi@gmail.com                                   //
-// @date         : 17 Nov 2017                                               //
+// @date         : 18 Nov 2017                                               //
 // @license:     : MIT                                                       //
 // ------------------------------------------------------------------------- //
 //                                                                           //
@@ -35,41 +37,86 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-import Style from './Thumbnail.css';
+import Style from './Header.css';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import { connect } from 'react-redux';
 import React, { Component } from 'react';
+import { bindActionCreators } from 'redux';
+import {
+  compose,
+  onlyUpdateForPropTypes,
+  branch,
+  pure,
+  renderNothing,
+  renderComponent,
+  withPropsOnChange,
+  withState,
+  withHandlers,
+  withProps,
+  mapProps,
+  setPropTypes,
+  getContext
+} from 'recompose';
+import { Player, Settings } from '../../../../actions';
+import { getModalSettings, getHeaderActions } from './selector';
 
+const conditionalRender = (states) =>
+  compose(...states.map(state =>
+    branch(state.when, renderComponent(state.then))
+  ));
 
-const Box = ({ type, children }) =>
-  <section className={ classNames( Style.overlayPop, type ) }>
-    { children }
-  </section>;
+/*
+ * subscribe to redux store and merge these props
+ * reference: https://github.com/reactjs/react-redux/blob/master/docs/api.md
+ */
+function mapStateToProps(state, props) {
+  return {
+    settings: getModalSettings(state.Settings),
+    options: state.options
+  };
+}
 
-const BoxIcon = ({ type, icon, children }) =>
-  <Box type={ type }>
-    <i className={ Style.icon }>{ icon }</i>
-    { children }
-  </Box>;
+/*
+ * Redux action creators
+ * reference: https://github.com/reactjs/react-redux/blob/master/docs/api.md
+ */
+function mapDispatchToProps(dispatch) {
+  return {
+    player: bindActionCreators(Player, dispatch)
+  };
+}
 
-const BoxLabel = ({ type, icon, label }) =>
-  <BoxIcon type={ type } icon={ icon }>
-    <span className={ Style.label }>{ label }</span>
-  </BoxIcon>;
+/*
+ * Component wrapper
+ */
+const enhance = compose(
+  pure,
+  connect(mapStateToProps, mapDispatchToProps),
+  getContext({
+    modal: PropTypes.object
+  }),
+  withHandlers({
+    close: props => event => {
+      console.log('Close Modal', props, event);
+      return;
+    }
+  }),
+  onlyUpdateForPropTypes,
+  setPropTypes({
+    modal: PropTypes.object,
+    options: PropTypes.object,
+    settings: PropTypes.object
+  })
+);
 
-const BoxAction = ({ type, action: [ icon, handler ] }) =>
-  <BoxIcon type={ type } icon={ icon } />;
-
-const Thumbnail = ({ type, image, duration, stats, action, style }) => {
-  return (<div className={ Style.thumbnail }>
-    <a className={ Style.link } href="#">
-      <div className={ Style.overlay }>
-        <BoxLabel type={ Style.stats } icon="grade" label={ stats }></BoxLabel>
-        <BoxLabel type={ Style.duration } icon="alarm" label={ duration }></BoxLabel>
-        <BoxAction type={ Style.action } action={ action }></BoxAction>
-      </div>
-      <img src={ image } className={ classNames(style, Style.image ) }/>
-    </a>
-  </div>);
-};
-
-export default Thumbnail;
+export default enhance(({ modal: { header }, close }) => {
+  return (
+    <div className={ Style.header }>
+      <h5 className={ Style.title }>{ header }</h5>
+      <button type="button" className={ classNames( Style.modalButton, Style.close) } onClick={ close }>
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+  );
+});

@@ -37,61 +37,16 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-import fs from 'fs';
 import path from 'path';
-import URL, { URL as URI} from 'url';
+import { URL } from 'url';
 import querystring from 'querystring';
-import { shell, remote, ipcRenderer } from 'electron';
-import { isString, isObject, isEmpty, isDataURL, isWebURL, renderTemplate, camelToDash } from '../../lib/utils';
-import { isValidFile } from '../../lib/FileSystem';
-
-const DEFAULT_TEMPLATE = path.join(process.cwd(), 'client', 'scripts', 'components', 'Modal', 'template', 'default.html');
-
-/**
- *
- * Bare bones template engine
- */
-const hydrate = function(template, scope) {
-  if (
-    isString(template) && !isEmpty(template) &&
-    isObject(scope) && !isEmpty(scope)
-  ) {
-    return Object.entries(scope).reduce((view, [ key, value ]) => {
-      const regexp = new RegExp('\\${' + key + '}', 'gi');
-      return view.replace(regexp, value);
-    }, template.slice(0));
-  } else {
-    return null;
-  }
-};
-
-/*
- *  Load from file then apply scope
- */
-export const renderModal = ( file, scope ) => {
-  if(isValidFile(file)) {
-    try {
-      const template = fs.readFileSync(file, 'UTF-8');
-      return hydrate(template, scope);
-    } catch (error) {
-      console.error(error);
-      return false;
-    }
-  }
-};
-
-const MEDIA_INFORMATION_MODAL = 'data:text/html;charset=UTF-8,' + encodeURIComponent(renderModal(DEFAULT_TEMPLATE, {
-  title: 'Media Information',
-  name: 'benja',
-  description: 'My Modal',
-  scriptUrl: './account.view.js'
-}));
+import { remote, ipcRenderer } from 'electron';
+import { isDataURL, isWebURL, camelToDash, toBuffer } from '../../lib/utils';
 
 export class Modal {
 
-  static get options() {
+  static config(options) {
     return {
-      title: 'Modal',
       backgroundColor: '#FFF',
       maximizable: false,
       resizable: true,
@@ -99,98 +54,147 @@ export class Modal {
       webviewTag: true,
       modal: true,
       show: false,
-      postData: [{
-        type: 'rawData',
-        bytes: Buffer.from('hello=world')
-      }],
+      parent: remote.getCurrentWindow(),
+      ...options
+    };
+  };
+
+  static hRef(hRef, params) {
+    try {
+      if (isDataURL(hRef) || isWebURL(hRef)) {
+        return hRef;
+      } else {
+        const url = new URL(path.resolve(__dirname, 'index.html'), 'file://');
+        url.searchParams.set('modal', hRef);
+        return url.href;
+      }
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  };
+
+  static postData(data) {
+    return {
+      postData: [{ type: 'rawData', bytes: toBuffer(data) }],
       extraHeaders: 'Content-Type: application/x-www-form-urlencoded'
     };
   };
 
-  static get state() {
-    return {
-      autoSave: 'true'
-    };
-  };
+  constructor(modal, data, options) {
+    this.options = options;
+    this.data = data;
+    this.modal = modal;
+  }
 
-  static loadTemplate(template, state) {
-    console.log('loadTemplate', template, state);
-    if(isDataURL(template)) {
-      return template;
-    } else if (isWebURL(template)) {
-      return template;
-    } else {
-      const target = {
-        protocol: 'file',
-        slashes: true,
-        pathname: path.resolve(__dirname, 'index.html'),
-        search: querystring.stringify({ ...state, index: template })
-      };
-      console.log('loadTemplate', target);
-      return URL.format(target);
-    }
-    return null;
-  };
-
-  constructor(template, state = {}, options = {}) {
-    this.state = { ...Modal.state, ...state };
-    this.options = { ...Modal.options, ...options };
-    this.template = Modal.loadTemplate(template, this.state);
-    if (this.options.show) {
-      this.show();
+  modalWindow(hRef) {
+    try {
+      const modal = new remote.BrowserWindow(this.options);
+      if (!modal) throw new Error('Error loading modal');
+      modal.loadURL(hRef, this.data);
+      return modal;
+    } catch (error) {
+      console.error(error);
+      throw error;
     }
   }
 
-  show(options) {
+  set modal(modal) {
     try {
-      this.modal = new remote.BrowserWindow({
-        ...this.options,
-        parent: remote.getCurrentWindow()
-      });
-      if (this.modal) {
-        this.modal.loadURL(this.template);
-        this.attachListeners();
-        return this.modal.id;
-      } else {
-        throw new Error('Cannot show modal');
-      }
+      const hRef = Modal.hRef(modal);
+      this._modal = this.modalWindow(hRef);
+      this.attachListeners();
     } catch (error) {
       console.error(error);
-      return false;
+      throw error;
     }
   };
 
-  attachListeners() {
-    const { modal } = this;
-    const windowEvents = this.windowEvents = Object.entries({
-      closed: [this.modal.once, (event) => { console.log('MODAL CLOSED', event) }],
-      beforeInputEvent: [ this.modal.webContents.on,  (event, input) => {
-        if (input.key === 'Escape') {
-          return this.modal.close();
-        }
-      }],
-      readyToShow: [modal.once,  () => {
-        console.log('readyToShow');
-        this.modal.show();
-        this.modal.focus();
-        this.modal.webContents.send('modal:set:scope', { state: this.state, options: this.options });
-      }],
-    })
-    .map(([ listener, [ func, handler ]]) => {
-      const event = camelToDash(listener);
-      return func.apply(this.modal, [ event, handler ]);
-    });
+  get modal() {
+    return this._modal;
+  }
 
-    const modalEvents = this.modalEvents = Object.entries({
-      modalClose: [ ipcRenderer.once, (event) => {
-        console.log('modal:close');
-        return this.modal.close();
-      }]
-    })
-    .map(([ listener, [ func, handler ]]) => {
-      const event = camelToDash(listener, ':');
-      return func.apply(ipcRenderer, [ event, handler ]);
-    });
+  send(event, ...args) {
+    console.info('send', event, ...args);
+    return this.modal.webContents.send(event, ...args);
+  };
+
+  set data(data) {
+    this._data = Modal.postData(data);
+  }
+
+  get data() {
+    return this._data;
+  }
+
+  set options(options) {
+    this._options = Modal.config(options);
+  }
+
+  get options() {
+    return this._options;
+  }
+
+
+  get listeners() {
+    const { modal, modal: { id }, modal: { webContents }, data, options } = this;
+    return {
+      /* modal event listeners */
+      modal: {
+        closed: [ modal.once, (event) => { console.log('MODAL CLOSED', event) }],
+        readyToShow: [ modal.once,  () => {
+          console.log('readyToShow');
+          return this.send('modal:set:scope', { data, options, id });
+        }]
+      },
+
+      /* webContent event listeners */
+      webContent: {
+        beforeInputEvent: [ webContents.on,  (event, input) => {
+          console.log('beforeInputEvent');
+          if (input.key === 'Escape') return modal.close();
+        }],
+        didFinishLoad: [ webContents.once, () => {
+          console.log('didFinishLoad');
+          modal.show();
+          modal.focus();
+          // this.send('modal:set:scope', { data: this.data, options: this.options });
+          webContents.openDevTools();
+        }]
+      },
+
+      /* ipcRenderer event listeners */
+      ipcRenderer: {
+        modalClose: [ ipcRenderer.once, (event) => modal.close() ]
+      },
+
+      /* application event listeners */
+      application: {
+        beforeQuit: [ remote.app.once, (event) => {
+          return event.preventDefault();
+          // return modal.close();
+        }]
+      }
+    };
+  }
+
+  attachListeners() {
+    const { modal, modal: { webContent }, listeners } = this;
+    /* modal event listeners */
+    const modalEvents = this.modalEvents = Object.entries(listeners.modal)
+    .map(([ listener, [ func, handler ]]) => func.apply(modal, [ camelToDash(listener), handler ]));
+
+    /* webContent event listeners */
+    const webContentEvent = this.webContentEvent = Object.entries(listeners.webContent)
+    .map(([ listener, [ func, handler ]]) => func.apply(webContent, [ camelToDash(listener), handler ]));
+
+    /* ipcRenderer event listeners */
+    const ipcRendererEvents = this.ipcRendererEvents = Object.entries(listeners.ipcRenderer)
+    .map(([ listener, [ func, handler ]]) => func.apply(ipcRenderer, [ camelToDash(listener, ':'), handler ]));
+
+    /* application event listeners */
+    const applicationEvents = this.applicationEvents = Object.entries(listeners.application)
+    .map(([ listener, [ func, handler ]]) => func.apply(remote.app, [ camelToDash(listener), handler ]));
   }
 
 };

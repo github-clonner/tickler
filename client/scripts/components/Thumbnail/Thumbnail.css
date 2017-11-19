@@ -14,29 +14,53 @@
     color: var(--iconColor);
     font-style: normal;
     display: inline-block;
-    font-size: inherit;
     text-rendering: auto;
-    -webkit-font-smoothing: antialiased;
     vertical-align: middle;
+  }
+  & a.link {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+  }
+  & img.image {
+    border-radius: 2px;
+    max-height: 64px;
+    &.x16 {
+      max-height: 16px;
+    }
+    &.x32 {
+      max-height: 32px;
+    }
+    &.x48 {
+      max-height: 48px;
+    }
+    &.x64 {
+      max-height: 64px;
+    }
   }
   & .overlay {
     position: absolute;
-    width: 100%;
+    width: auto;
     top: 0;
     right: 0;
     bottom: 0;
     left: 0;
     opacity: 1;
     transition: opacity 0.1s linear;
-    font-size: 0.65em;
+    font-size: 1vw;
+    & .overlay-pop {
+      display: inline-flex;
+      align-items: center;
+    }
     & .duration {
       transform: translateX(150%);
     }
     & .stats {
       transform: translateY(-150%);
     }
-    & .play {
-      font-size: 5em;
+    & .action {
+      font-size: 2.5vw;
       opacity: 0;
       position: absolute;
       left: 50%;
@@ -45,11 +69,6 @@
       transform: translate(-50%, -50%);
       transform-style: preserve-3d;
     }
-  }
-  & img {
-    max-width: 220px;
-    max-height: 180px;
-    vertical-align: top;
   }
   & .duration {
     position: absolute;
@@ -62,7 +81,7 @@
     top: 0px;
     margin: 4px;
   }
-  & .text {
+  & .text, & .label {
     color: #fff;
   }
   &:hover {
@@ -74,8 +93,8 @@
       & .stats {
         animation: jump-in 0.25s forwards;
       }
-      & .play {
-        opacity: 1;
+      & .action {
+        opacity: 0.85;
       }
     }
   }

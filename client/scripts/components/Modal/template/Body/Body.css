@@ -1,0 +1,15 @@
+@import "styles/variables.css";
+
+:root {
+  --background: #FFF;
+}
+
+:local(.body) {
+  flex: 1;
+  background: var(--background);
+  box-sizing: border-box;
+  overflow-y: auto;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+}

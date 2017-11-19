@@ -125,7 +125,7 @@ export const openModal = function (url, state) {
       protocol: 'file',
       slashes: true,
       pathname: basePath,
-      search: querystring.stringify({ ...initialState, ...state })
+      search: encodeURIComponent(JSON.stringify({ ...initialState, ...state }))
     });
     const target = new URI(base);
     console.log('Modal URL', 'target', target, URL.format(target));

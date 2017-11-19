@@ -1,0 +1,25 @@
+@import "styles/variables.css";
+@import "styles/buttons.css";
+
+:root {
+  --background: #FFF;
+  --border: 1px solid #CCC;
+}
+
+:local(.header) {
+  background: var(--background);
+  border-bottom: var(--border);
+  padding: 15px;
+  min-height: 1px;
+  justify-content: space-between;
+  & .title {
+    text-transform: capitalize;
+    margin: 0;
+    font-weight: normal;
+    font-size: 1em;
+    line-height: 1em;
+  }
+  & .close {
+    float: right;
+  }
+}

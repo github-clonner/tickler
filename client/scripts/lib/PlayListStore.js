@@ -37,16 +37,18 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-import path from 'path';
+
 import fs from 'fs';
 import os from 'os';
 import Ajv from 'ajv';
+import path from 'path';
 import uuid from 'uuid';
+import Dialog from './Dialog';
+import { PlayList } from '../types';
+import SettingsStore from './SettingsStore';
 // import chokidar from 'chokidar';
 import schema from '../../schemas/playlist.json';
 import { read, write, remove, getPath } from './FileSystem';
-import SettingsStore from './SettingsStore';
-import { PlayList } from '../types';
 
 const settings = new SettingsStore();
 const ajv = new Ajv({

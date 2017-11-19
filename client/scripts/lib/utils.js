@@ -40,6 +40,7 @@ export isEmpty from 'lodash/isEmpty';
 export throttle from 'lodash/throttle';
 export debounce from 'lodash/debounce';
 export camelCase from 'lodash/camelCase';
+export fromPairs from 'lodash/fromPairs';
 
 export const isFunction = (method) => {
   return (method !== null) &&
@@ -71,6 +72,10 @@ export const isString = (string) => {
     typeof string === 'string' &&
     string.constructor === String;
 };
+
+export const isIterable = (variable) => (
+  variable !== null && Symbol.iterator in Object(variable)
+);
 
 /**
  * Shuffle array
@@ -258,3 +263,69 @@ export const compileTemplate = async (template, scope) => {
     throw error;
   }
 };
+
+/**
+ * Compile and encode text templates
+ * @param {template} template
+ * @return {object} binding object
+ * @return {string} encoded template
+ */
+export const encodeURITemplate = (template, scope) => 'data:text/html;charset=UTF-8,' + encodeURIComponent(compileTemplate(template, scope));
+
+/**
+ * Convert primitive data types to Buffer
+ * @param {any} data to make buffer from
+ * @return {buffer} buffer or null if can't convert
+ */
+export const toBuffer = (data) => {
+  try {
+    switch (data.constructor) {
+      case String: return Buffer.from(data);
+      case Object: return Buffer.from(JSON.stringify(data));
+      case Number: return Buffer.from(data.toString());
+      default:
+        return null;
+    }
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+/**
+ * Create object from iterable entries
+ * @param {iterator} key-value pairs
+ * @return {object} a dictionary of key-values
+ */
+export const fromEntries = (entries) => (
+  isIterable(entries) && Array.from(entries).reduce((object, [ key, value ]) => ({ ...object, [ key ]: value }), Object)
+);
+
+/*
+  Prettify/Format large numbers
+*/
+const numeral = function (value, format) {
+
+  const magnitude = (value) => {
+    return Math.floor(Math.log(value * 10) / Math.LN10 + Number.EPSILON); // because float math rounding
+  };
+
+  const abbreviations = {
+    hundred: [null, 0],
+    thousand: ['K', 3],
+    million: ['M', 6],
+    billion: ['B', 9],
+    trillion: ['T', 12]
+  };
+
+  const humanize = (value) => {
+    const mag = magnitude(value);
+    return Object.entries(abbreviations)
+      .filter(([abbreviation, [symbol, range]]) => (mag > range && mag <= (range + 3)))
+      .reduce((result, [abbreviation, [symbol, range]]) => result.toString().substr(0, mag - range).concat(symbol), value);
+  };
+
+  return humanize(value);
+};
+
+export const prettyNumber = input => (typeof input === 'number') ? numeral(input) : 0;

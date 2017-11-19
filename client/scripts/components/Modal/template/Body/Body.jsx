@@ -1,12 +1,14 @@
+// @flow
+
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : Thumbnail.jsx                                             //
-// @summary      : Thumbnail component                                       //
+// @file         : Body.jsx                                                  //
+// @summary      : Modal body component                                      //
 // @version      : 1.0.0                                                     //
 // @project      : tickelr                                                   //
 // @description  :                                                           //
 // @author       : Benjamin Maggi                                            //
 // @email        : benjaminmaggi@gmail.com                                   //
-// @date         : 17 Nov 2017                                               //
+// @date         : 18 Nov 2017                                               //
 // @license:     : MIT                                                       //
 // ------------------------------------------------------------------------- //
 //                                                                           //
@@ -34,42 +36,3 @@
 // SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                    //
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
-
-import Style from './Thumbnail.css';
-import classNames from 'classnames';
-import React, { Component } from 'react';
-
-
-const Box = ({ type, children }) =>
-  <section className={ classNames( Style.overlayPop, type ) }>
-    { children }
-  </section>;
-
-const BoxIcon = ({ type, icon, children }) =>
-  <Box type={ type }>
-    <i className={ Style.icon }>{ icon }</i>
-    { children }
-  </Box>;
-
-const BoxLabel = ({ type, icon, label }) =>
-  <BoxIcon type={ type } icon={ icon }>
-    <span className={ Style.label }>{ label }</span>
-  </BoxIcon>;
-
-const BoxAction = ({ type, action: [ icon, handler ] }) =>
-  <BoxIcon type={ type } icon={ icon } />;
-
-const Thumbnail = ({ type, image, duration, stats, action, style }) => {
-  return (<div className={ Style.thumbnail }>
-    <a className={ Style.link } href="#">
-      <div className={ Style.overlay }>
-        <BoxLabel type={ Style.stats } icon="grade" label={ stats }></BoxLabel>
-        <BoxLabel type={ Style.duration } icon="alarm" label={ duration }></BoxLabel>
-        <BoxAction type={ Style.action } action={ action }></BoxAction>
-      </div>
-      <img src={ image } className={ classNames(style, Style.image ) }/>
-    </a>
-  </div>);
-};
-
-export default Thumbnail;

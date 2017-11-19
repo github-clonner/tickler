@@ -1,12 +1,12 @@
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : Thumbnail.jsx                                             //
-// @summary      : Thumbnail component                                       //
+// @file         : ModalWindow.jsx                                           //
+// @summary      : ModalWindow HOC                                           //
 // @version      : 1.0.0                                                     //
 // @project      : tickelr                                                   //
 // @description  :                                                           //
 // @author       : Benjamin Maggi                                            //
 // @email        : benjaminmaggi@gmail.com                                   //
-// @date         : 17 Nov 2017                                               //
+// @date         : 18 Nov 2017                                               //
 // @license:     : MIT                                                       //
 // ------------------------------------------------------------------------- //
 //                                                                           //
@@ -35,41 +35,70 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-import Style from './Thumbnail.css';
-import classNames from 'classnames';
+import Modal from './Modal';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import React, { Component } from 'react';
+import { bindActionCreators } from 'redux';
+import { withRouter } from "react-router-dom";
+import * as Settings from '../../actions/Settings';
+import { shell, remote, ipcRenderer } from 'electron';
+import { ModalType } from '../../components/Modal';
+import {
+  compose,
+  setPropTypes,
+  mapProps,
+  withHandlers,
+  branch,
+  renderComponent,
+  renderNothing
+} from 'recompose';
 
+function mapStateToProps (state, ownProps) {
+  console.log('ModalWindow ownProps', ownProps);
+  const { match: { params: { type, ...category }}} = ownProps;
+  const { location: { query: params }} = ownProps;
+  return {
+    modal: {
+      header: 'My Modal Window',
+      body: 'My Modal Window',
+      options: {
+        type: 'modal',
+        category: Object.values(category),
+        params: params
+      }
+    }
+  };
+}
 
-const Box = ({ type, children }) =>
-  <section className={ classNames( Style.overlayPop, type ) }>
-    { children }
-  </section>;
+function mapDispatchToProps(dispatch: Dispatch) {
+  return {
+    settings: bindActionCreators(Settings, dispatch)
+  };
+}
 
-const BoxIcon = ({ type, icon, children }) =>
-  <Box type={ type }>
-    <i className={ Style.icon }>{ icon }</i>
-    { children }
-  </Box>;
-
-const BoxLabel = ({ type, icon, label }) =>
-  <BoxIcon type={ type } icon={ icon }>
-    <span className={ Style.label }>{ label }</span>
-  </BoxIcon>;
-
-const BoxAction = ({ type, action: [ icon, handler ] }) =>
-  <BoxIcon type={ type } icon={ icon } />;
-
-const Thumbnail = ({ type, image, duration, stats, action, style }) => {
-  return (<div className={ Style.thumbnail }>
-    <a className={ Style.link } href="#">
-      <div className={ Style.overlay }>
-        <BoxLabel type={ Style.stats } icon="grade" label={ stats }></BoxLabel>
-        <BoxLabel type={ Style.duration } icon="alarm" label={ duration }></BoxLabel>
-        <BoxAction type={ Style.action } action={ action }></BoxAction>
-      </div>
-      <img src={ image } className={ classNames(style, Style.image ) }/>
-    </a>
-  </div>);
-};
-
-export default Thumbnail;
+export const ModalWindow = compose(
+  connect(mapStateToProps, mapDispatchToProps),
+  withRouter,
+  setPropTypes({
+    modal: ModalType
+  }),
+  // mapProps(({ modal }) => ({ modal })),
+  mapProps((props) => {
+    console.log('ModalWindow PROPS', props);
+    return props
+  }),
+  withHandlers({
+    onClick: (props) => (event, data) => {
+      console.log('onClick', props, event, data);
+    }
+  }),
+  branch(
+    ({ modal }) => {
+      console.log('ModalWindow', modal);
+      return (modal && modal.options.type)
+    },
+    renderComponent(Modal),
+    renderNothing, /* renderComponent(Dialog) */
+  )
+)(Modal);

@@ -39,15 +39,44 @@ import Style from './Caption.css';
 import classNames from 'classnames';
 import React, { Component } from 'react';
 
-const Caption = ({ title, artist, description }) =>
+const Title = ({ title }) =>
+  <h1 className={ Style.title }>
+    { title }
+  </h1>;
+
+const Author = ({ author }) =>
+  <h2 className={ classNames( Style.metadataLine, Style.author ) }>
+    <span>Author</span>
+    <span>{ author }</span>
+  </h2>;
+
+const Artist = ({ artist }) =>
+  <h2 className={ classNames( Style.metadataLine, Style.artist ) }>
+    <span>Artist</span>
+    <span>{ artist }</span>
+  </h2>;
+
+const Size = ({ size }) =>
+  <h2 className={ classNames( Style.metadataLine ) }>
+    <span>Size</span>
+    <span>{ size }</span>
+  </h2>;
+
+const Description = ({ description }) =>
+  <p className={ Style.description }>
+    { description }
+  </p>;
+
+export const MediaCaption = ({ title, artist, description }) =>
   <div className={ Style.caption } >
-    <h1 className={ Style.title }>{ title }</h1>
-    <h2 className={ Style.subtitle }>
-      <span>Artist</span>
-      <span>•</span>
-      <span>{ artist }</span>
-    </h2>
-    <p className={ Style.description }>{ description }</p>
+    <Title title={ title } />
+    <Artist artist={ artist } />
+    <Description description={ description } />
   </div>;
 
-export default Caption;
+export const LibraryCaption = ({ title, size, description }) =>
+  <div className={ Style.caption } >
+    <Title title={ title } />
+    <Size size={ size } />
+    <Description description={ description } />
+  </div>;

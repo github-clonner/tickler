@@ -118,6 +118,27 @@ export const isEmptyDir = function(dir: string) : boolean {
   }
 };
 
+/**
+ * Verify path exists (files and directories)
+ * @param {string} the path
+ * @returns {boolean} true if path extists
+ */
+export const isValidPath = function(filename: string) : boolean {
+  try {
+    return fs.existsSync(filename);
+  } catch (ignored) {
+    return false;
+  }
+};
+
+/**
+ * Verify list of paths
+ * @param {array} list of file paths
+ * @returns {boolean} true if list contains one or more valid paths
+ */
+export const isValidPathList = function(filePaths: Array<string>) : boolean {
+  return (!isEmpty(filePaths) || !filePaths.some(isValidPath));
+};
 
 /**
  * Sanitize string for use as filename

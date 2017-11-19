@@ -1,0 +1,14 @@
+@import "styles/variables.css";
+@import "styles/buttons.css";
+
+:root {
+  --background: #FFF;
+  --border: 1px solid #CCC;
+}
+
+:local(.footer) {
+  background: var(--background);
+  border-top: var(--border);
+  padding: 15px;
+  text-align: right;
+}

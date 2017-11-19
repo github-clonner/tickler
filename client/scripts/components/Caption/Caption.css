@@ -2,25 +2,37 @@
 
 :root {
   --titleColor: #222;
-  --subtitleColor: #A2A2A2;
+  --metadataColor: #444;
   --descriptionColor: #8C8C8C;
+  --subtitleColor: #8C8C8C;
+}
+
+:local(.metadata-line) {
+  margin: 3px 0px;
+  font-size: 80%;
+  color: var(--metadataColor);
+  font-weight: lighter;
+  & > span:not(:last-of-type):after {
+    content: '•';
+    margin: 0 4px;
+  }
 }
 
 .caption {
-  flex: 1;
+  flex: 1 auto;
   margin: 0 10px;
   font-family: var(--mainFont);
-  & .title {
+  & .title, & .headline {
     margin: 0;
     font-size: 1em;
     font-weight: normal;
     color: var(--titleColor);
   }
-  & .subtitle {
-    margin: 3px 0px;
-    font-size: 80%;
+  & .subtitle, & .legend {
     color: var(--subtitleColor);
-    font-weight: lighter;
+  }
+  & .author, & .artist, & .creator {
+    text-transform: capitalize;
   }
   & .description {
     color: var(--descriptionColor);
