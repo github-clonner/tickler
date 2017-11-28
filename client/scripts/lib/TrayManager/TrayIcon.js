@@ -57,7 +57,8 @@ export const STANDARD_ICON = {
     size: {
       small: { width: 16, height: 16 },
       medium: { width: 22, height: 22 },
-      normal: { width: 32, height: 32 }
+      normal: { width: 32, height: 32 },
+      large: { width: 48, height: 48 }
     },
     bounds: {
       height: screen.getMenuBarHeight(), // https://electronjs.org/docs/api/screen#screengetmenubarheight-macos
@@ -79,7 +80,7 @@ export const STANDARD_ICON = {
     size: {
       small: { width: 16, height: 16 },
       normal: { width: 32, height: 32 },
-      large: { width: 32, height: 32 }
+      large: { width: 48, height: 48 }
     },
     bounds: {
       height: 32, // https://electronjs.org/docs/api/screen#screengetmenubarheight-macos
@@ -92,7 +93,7 @@ export const STANDARD_ICON = {
     size: {
       small: { width: 16, height: 16 },
       normal: { width: 32, height: 32 },
-      large: { width: 32, height: 32 }
+      large: { width: 48, height: 48 }
     },
     bounds: {
       height: 32, // https://electronjs.org/docs/api/screen#screengetmenubarheight-macos
@@ -111,17 +112,15 @@ const isInside = ({ width, height }, { width: maxWidth, height: maxHeight }) => 
   }
 }
 
-const findNearestSize = (scales, bounds) => {
-  console.log('scales', scales, bounds);
-  const inside = Object.entries(scales)
+const findNearestSize = (size, bounds) => {
+  const { size: scales } = standardIcon();
+  console.log('scales', scales, size, bounds);
+  return Object.entries(scales)
   .sort((a, b) => b[1].width - a[1].width)
-  .filter(([scale, size]) => isInside(size, bounds));
-
-  console.log('findNearestSize', inside)
-  return inside;
+  .find(([scale, size]) => isInside(size, bounds));
 };
 
-export const standardIcon = () => {
+const standardIcon = () => {
   const platform = os.platform();
   if (platform in STANDARD_ICON) {
     return { ...STANDARD_ICON[platform] };
@@ -150,7 +149,7 @@ export const createIcon = (source, options) => {
   return isEmpty(options) ? create(source) : fitIcon(create(source), options);
 };
 
-export const getFileIcon = (file, options = { size: 'normal' }) => {
+const getFileIcon = (file, options = { size: 'normal' }) => {
   if (isEmpty(file) || !isValidFile(file)) return Promise.reject(new Error('Invalid file'));
   return new Promise((resolve, reject) => {
     return app.getFileIcon(file, options, (error, icon) => {
@@ -161,13 +160,20 @@ export const getFileIcon = (file, options = { size: 'normal' }) => {
   });
 };
 
-export const getMaxDimension = (size) => {
+const getMaxDimension = (size) => {
   return Object.entries(size).reduce((dimension, [ property, measure ], index, array) => {
     return dimension ? ((size[dimension] < measure) ? property : dimension) : property;
   }, null);
 };
 
-export const fitIcon = (icon, options) => {
+const inflate = ({ width, height }, factor) => {
+  return {
+    width: (width + factor),
+    height: (height + factor)
+  };
+};
+
+const fitIcon = (icon, options) => {
   options = { size: 'small', ...options };
 
   function getBounds(options) {
@@ -179,11 +185,7 @@ export const fitIcon = (icon, options) => {
       return bounds;
     }
   }
-
   const bounds = getBounds(options);
-  const { size: { [options.size]: size }} = standardIcon();
-  const { width: maxWidth, height: maxHeight } = bounds;
-
   const iconMetrics = {
     size: icon.getSize(),
     aspectRatio: icon.getAspectRatio(),
@@ -203,11 +205,10 @@ export const fitIcon = (icon, options) => {
       return isInside(icon.getSize(), bounds);
     }
   };
-
   if (!iconMetrics.isInside(bounds)) {
-    const maxDimension = getMaxDimension(iconMetrics.size);
-    console.log('findNearestSize', findNearestSize(iconMetrics.size, bounds));
-    return icon.resize({ [maxDimension]: (bounds[maxDimension] - 4) });
+    const [scale, { width, height }] = findNearestSize(iconMetrics.size, bounds);
+    console.log('findNearestSize', { width, height });
+    return icon.resize(inflate({ width, height }, -4));
   } else {
     return icon;
   }

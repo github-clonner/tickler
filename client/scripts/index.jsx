@@ -45,53 +45,6 @@ import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'react-router-redux';
 import configureStore, { history } from './store/configureStore';
 
-
-
-
-// const onBeforeRequest = remote.session.defaultSession.webRequest.onBeforeRequest({ urls: ['file://*'] }, (details, callback) => {
-//   console.log('SESSION', JSON.stringify(details,0,2), window.location.href);
-//   callback({ cancel: false })
-// });
-
-// const onBeforeSendHeaders = remote.session.defaultSession.webRequest.onBeforeSendHeaders({ urls: ['file://*'] }, (details, callback) => {
-//   console.log('SESSION', JSON.stringify(details,0,2), window.location.href);
-//   callback({ cancel: false, requestHeaders: details.requestHeaders });
-// })
-
-// const { query, query: { index: pathname } } = URL.parse(window.location.href, true, true);
-// if (query.index) {
-//   history.push({ pathname, query, state: { cta: new Date() } });
-// };
-
-// const ModalRouter = (href) => {
-//   const { ipcRenderer, remote } = require('electron');
-//   const waitCommand = function (query, command) {
-//     ipcRenderer.once(command, function (event, { state, options, id }) {
-//       // const webContents = remote.webContents.fromId(id);
-//       // const modal = webContents.getOwnerBrowserWindow();
-//       // const modal = electron.remote.getCurrentWindow();
-//       // modal.show();
-//       // modal.focus();
-//       // modal.webContents.openDevTools();
-//       history.push({ pathname: query.index, query, state });
-//     });
-//   }
-//   // const { query, query: { index: pathname } } = URL.parse(window.location.href, true, true);
-//   try {
-//     console.log('ModalRouter', location.pathname);
-//     const url = URL.parse(href, false);
-//     const search = decodeURIComponent(url.query);
-//     const query = JSON.parse(search);
-//     console.log('ModalRouter', query);
-//     if (query && query.index) {
-//       waitCommand(query, 'modal:set:scope');
-//       // history.push({ pathname: query.index, query, state: { cta: new Date() } });
-//     };
-//   } catch (error) {
-//     console.log(error);
-//   }
-// }
-
 const ModalRouter = (href) => {
   const { ipcRenderer, remote } = require('electron');
 

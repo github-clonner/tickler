@@ -44,7 +44,7 @@ const { remote } = require('electron');
 const { app, Menu, MenuItem, Tray, nativeImage, BrowserWindow, screen } = remote;
 const { isEmpty, isDataURL, isPlainObject, isObject, isString, isBuffer, fromEntries } = require('../utils');
 const { isValidFile } = require('../FileSystem');
-const { createIcon, fitIcon } = require('./TrayIcon');
+const { createIcon } = require('./TrayIcon');
 
 const isMenu = (object) => (!isPlainObject(object) && !isEmpty(object.items));
 
@@ -52,7 +52,6 @@ const isMenu = (object) => (!isPlainObject(object) && !isEmpty(object.items));
 export default class TrayManager extends EventEmitter {
 
   static defaults(options) {
-    console.log('options', options)
     return {
       icon: '/Users/bmaggi/tickler/assets/images/cheese.png', // '/Users/bmaggi/tickler/assets/images/cheese.icns', // '/Users/bmaggi/tickler/assets/images/play.icns',
       toolTip: 'This is my application.',
@@ -84,7 +83,6 @@ export default class TrayManager extends EventEmitter {
   }
 
   get menu() {
-    console.log('isMenu', this.options.menu, isMenu(this.options.menu));
     if (isMenu(this.options.menu)) {
       return this.options.menu;
     } else if(isPlainObject(this.options.menu)) {
@@ -93,7 +91,6 @@ export default class TrayManager extends EventEmitter {
   }
 
   get bounds() {
-    console.log('getBounds', this.tray, this.tray.getBounds())
     try {
       return this.tray.getBounds();
     } catch (error) {
@@ -132,4 +129,4 @@ const MENU_TEMPLATE = [
   { label: 'item #4', type: 'radio' }
 ];
 
-export const trayManager = window.trayManager = new TrayManager({ menu: Menu.buildFromTemplate(MENU_TEMPLATE)});
+// export const trayManager = window.trayManager = new TrayManager({ menu: Menu.buildFromTemplate(MENU_TEMPLATE)});

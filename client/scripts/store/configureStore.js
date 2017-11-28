@@ -38,15 +38,25 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 import thunk from 'redux-thunk';
+import { remote } from 'electron';
 import { createStore, combineReducers, applyMiddleware, compose } from 'redux';
 import { ConnectedRouter, routerReducer, routerMiddleware, push } from 'react-router-redux';
 import createBrowserHistory from 'history/createBrowserHistory';
 import createHashHistory from 'history/createHashHistory';
 import { PluginManager } from '../lib';
 import { ClipBoardManager } from '../lib/ClipBoardManager';
+import { TrayManager } from '../lib';
 import { actionListener } from './StoreEnhancers';
 import { MiddlewareManager } from './MiddlewareManager';
 import * as reducers from '../reducers';
+
+const MENU_TEMPLATE = [
+  { label: 'item #1', type: 'radio' },
+  { label: 'item #2', type: 'radio' },
+  { label: 'item #3', type: 'radio', checked: true },
+  { label: 'item #4', type: 'radio' }
+];
+const trayManager = window.trayManager = new TrayManager({ menu: remote.Menu.buildFromTemplate(MENU_TEMPLATE)});
 
 // Create a history of your choosing (we're using a browser history in this case)
 export const history = createBrowserHistory({
