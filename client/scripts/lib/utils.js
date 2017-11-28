@@ -41,41 +41,73 @@ export throttle from 'lodash/throttle';
 export debounce from 'lodash/debounce';
 export camelCase from 'lodash/camelCase';
 export fromPairs from 'lodash/fromPairs';
+export isPlainObject from 'lodash/isPlainObject';
 
-export const isFunction = (method) => {
-  return (method !== null) &&
-    typeof method === 'function' &&
-    method.constructor === Function;
+/**
+ * Determine if variable is an function
+ * @param {*} Whatever you need to determine to be function
+ */
+export const isFunction = (variable) => {
+  return (variable !== null) &&
+    typeof variable === 'function' &&
+    variable.constructor === Function;
 };
 
-export const isObject = (object) => {
-  return (object !== null) &&
-    typeof object === 'object' &&
-    object.constructor === Object;
+/**
+ * Determine if variable is an object
+ * @param {*} Whatever you need to determine to be an object
+ */
+export const isObject = (variable) => {
+  return (variable !== null) &&
+    typeof variable === 'object' &&
+    variable.constructor === Object;
 };
 
-export const isPlainObject = (object) => {
-  return (object !== null) &&
-    typeof object === 'object';
+/**
+ * Determine if variable is a plain object
+ * @param {*} Whatever you need to determine to be a plain object
+ */
+// export const isPlainObject = (variable) => {
+//   return (variable !== null) &&
+//     typeof variable === 'object';
+// };
+
+/**
+ * Determine if variable is a Promise
+ * @param {*} Whatever you need to determine to be a Promise
+ */
+export const isPromise = (variable) => {
+  return (variable !== null) &&
+    typeof variable === 'object' &&
+    variable.constructor === Promise &&
+    isFunction(variable.then) &&
+    isFunction(variable.catch);
 };
 
-export const isPromise = (promise) => {
-  return (promise !== null) &&
-    typeof promise === 'object' &&
-    promise.constructor === Promise &&
-    isFunction(promise.then) &&
-    isFunction(promise.catch);
+/**
+ * Determine if variable is a String
+ * @param {*} Whatever you need to determine to be a String
+ */
+export const isString = (variable) => {
+  return (variable !== null) &&
+    typeof variable === 'variable' &&
+    variable.constructor === String;
 };
 
-export const isString = (string) => {
-  return (string !== null) &&
-    typeof string === 'string' &&
-    string.constructor === String;
-};
-
+/**
+ * Determine if variable is iterable
+ * @param {*} Whatever you need to determine to be iterable
+ * Inspiration: https://stackoverflow.com/questions/18884249/checking-whether-something-is-iterable
+ */
 export const isIterable = (variable) => (
   variable !== null && Symbol.iterator in Object(variable)
 );
+
+/**
+ * Determine if variable is a Buffer
+ * @param {*} Whatever you need to determine to be a Buffer
+ */
+export const isBuffer = (variable) => (Buffer.isBuffer(variable));
 
 /**
  * Shuffle array
@@ -298,8 +330,11 @@ export const toBuffer = (data) => {
  * @return {object} a dictionary of key-values
  */
 export const fromEntries = (entries) => (
-  isIterable(entries) && Array.from(entries).reduce((object, [ key, value ]) => ({ ...object, [ key ]: value }), Object)
+  isIterable(entries) && Object.assign( ...entries.map(([ key, value ]) => ({ [key]: value })) )
 );
+// export const fromEntries = (entries) => (
+//   isIterable(entries) && Array.from(entries).reduce((object, [ key, value ]) => ({ ...object, [ key ]: value }), Object)
+// );
 
 /*
   Prettify/Format large numbers

@@ -35,4 +35,5 @@ import { Validator } from './SchemaUtils';
 
 /* UI */
 export { renderModal, openModal, Modal } from './Modal/Modal';
+export TrayManager from './TrayManager/TrayManager';
 

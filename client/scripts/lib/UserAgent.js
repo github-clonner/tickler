@@ -35,28 +35,65 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
+/**
+ * Inspirations:
+ * -------------
+ *
+ * http://uadetector.sourceforge.net/modules/uadetector-core/apidocs/net/sf/uadetector/UserAgent.Builder.html
+ */
+
 const os = require('os');
 const path = require('path');
 const fs = require('fs');
 const { version, name, homepage } = require('package.json');
 
 class Browser {
+
   chrome(arch) {
-    var safari = version_string.safari(),
-      os_ver = (arch === 'mac') ? '(Macintosh; ' + randomProc('mac') + ' Mac OS X ' + version_string.osx('_') + ') ' : (arch === 'win') ? '(Windows; U; Windows NT ' + version_string.nt() + ')' : '(X11; Linux ' + randomProc(arch);
+    var safari = version_string.safari(), os_ver = (arch === 'mac') ? '(Macintosh; ' + os.platform() + ' Mac OS X ' + os.release() + ') ' : (arch === 'win') ? '(Windows; U; Windows NT ' + version_string.nt() + ')' : '(X11; Linux ' + os.arch();
     return 'Mozilla/5.0 ' + os_ver + ' AppleWebKit/' + safari + ' (KHTML, like Gecko) Chrome/' + version_string.chrome() + ' Safari/' + safari;
   }
+
 };
+
 export default class UserAgent {
 
-  static defaults() {
 
-  }
+  static get core() {
+    return [ 'node', 'electron', 'chrome' ];
+  };
+
+  static get modules() {
+    return process.versions.map(module => module.toLowerCase());
+  };
+
+  static get modules() {
+    return Object.keys(process.versions)
+    .filter(([ module, version ] => core.includes(module))
+    .reduce((modules, [ module, version ) => modules.concat(`${module}/${version}`)));
+  };
+
+  static get serviceType() {
+    const type = {
+      backend: [ 'node' ],
+      mobile: [ 'chrome' ],
+      desktop: [ 'electron', 'chrome', 'node' ]
+    };
+    return UserAgent.modules.reduce((acc, module) => { return (module in type) ? }, Object.keys(type))
+  };
+
+  static 0ers0hao
 
   /* Gets the detected device category */
   static get deviceCategory() {
-
+    /*
+     * The process.versions property returns an object listing the version strings of Node.js and its dependencies.
+     * process.versions.modules indicates the current ABI version, which is increased whenever a C++ API changes.
+     * Node.js will refuse to load modules that were compiled against a different module ABI version.
+     */
+    return process.versions.some(module => UserAgent.core.includes(module))
   };
+
   /* Gets the family of an user agent */
   static get family() {
 
@@ -65,6 +102,7 @@ export default class UserAgent {
   static get icon() {
 
   };
+
   /* Gets the name of an user agent */
   static get name() {
 
@@ -96,7 +134,7 @@ export default class UserAgent {
   };
   /* Returns the URL to the product or information page of an user agent */
   static get url() {
-
+    return
   };
   /* Gets the version number of an user agent */
   static get versionNumer() {
@@ -113,8 +151,8 @@ export default class UserAgent {
 
   }
 }
+/*
 UserAgent build()
-
 DeviceCategory  getDeviceCategory()
 UserAgentFamily getFamily()
 java.lang.String  getIcon()
@@ -140,4 +178,5 @@ UserAgent.Builder setTypeName(java.lang.String typeName)
 UserAgent.Builder setUrl(java.lang.String url)
 UserAgent.Builder setUserAgentString(java.lang.String userAgentString)
 UserAgent.Builder setVersionNumber(VersionNumber versionNumber)
+*/
 

@@ -98,26 +98,26 @@ const configRenderer = {
       path: path.resolve('dist'),
       logLevel: 0
     }),
-    new ElectronPlugin({
-      // if a module ID matches this regex and that module has changed, electron will be restarted
-      // *required*
-      test: /^.\/main/,
-      // the path to launch electron with
-      // *required*
-      path: path.resolve('dist'),
-      // the command line arguments to launch electron with
-      // optional
-      args: ['--enable-logging'],
-      // the options to pass to child_process.spawn
-      // see: https://nodejs.org/api/child_process.html#child_process_child_process_spawnsync_command_args_options
-      // optional
-      options: {
-        env: {
-          NODE_ENV: 'development',
-          BABEL_ENV: 'development'
-        }
-      }
-    }),
+    // new ElectronPlugin({
+    //   // if a module ID matches this regex and that module has changed, electron will be restarted
+    //   // *required*
+    //   test: /^.\/main/,
+    //   // the path to launch electron with
+    //   // *required*
+    //   path: path.resolve('dist'),
+    //   // the command line arguments to launch electron with
+    //   // optional
+    //   args: ['--enable-logging'],
+    //   // the options to pass to child_process.spawn
+    //   // see: https://nodejs.org/api/child_process.html#child_process_child_process_spawnsync_command_args_options
+    //   // optional
+    //   options: {
+    //     env: {
+    //       NODE_ENV: 'development',
+    //       BABEL_ENV: 'development'
+    //     }
+    //   }
+    // }),
     new WebpackCleanupPlugin({
       exclude: ['package.json', 'main.js', 'index.html', 'bootstrapper.js', 'window.js'],
     }),
@@ -221,6 +221,22 @@ const configRenderer = {
             }
           }
         ]
+      },
+      {
+        test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+        loader: 'url-loader',
+        options: {
+          // Limit at 450k. Above that it emits separate files
+          limit: 450000,
+          // Output below the fonts directory
+          name: './fonts/[name].[ext]',
+          // url-loader sets mimetype if it's passed.
+          // Without this it derives it from the file extension
+          minetype: 'application/font-woff',
+          // Tweak publicPath to fix CSS lookups to take
+          // the directory into account.
+          publicPath: path.resolve(__dirname, './assets/fonts')
+        }
       },
       // {
       //   test: /\.jsx?$/,

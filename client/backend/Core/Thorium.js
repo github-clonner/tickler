@@ -1,14 +1,12 @@
-// @flow
-
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : routes.jsx                                                //
-// @summary      : Application states / routes                               //
-// @version      : 0.0.1                                                     //
-// @project      : tickelr                                                   //
-// @description  :                                                           //
+// @file         : Thorium.js                                                //
+// @summary      : Thorium core class                                        //
+// @version      : 1.0.0                                                     //
+// @project      : Thorium Famework                                          //
+// @description  : Lightweight application framework for Electron            //
 // @author       : Benjamin Maggi                                            //
 // @email        : benjaminmaggi@gmail.com                                   //
-// @date         : 07 Sep 2017                                               //
+// @date         : 19 Nov 2017                                               //
 // @license:     : MIT                                                       //
 // ------------------------------------------------------------------------- //
 //                                                                           //
@@ -37,17 +35,54 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-import React, { Component } from 'react';
-import { Router, Route, Redirect, Link, Switch } from 'react-router-dom';
-import { Main, About, NewList, Inspector, Modal, ModalWindow } from './containers';
+import {
+  app,
+  nativeImage,
+  BrowserWindow,
+  ipcMain,
+  globalShortcut,
+  Tray,
+  systemPreferences
+} from 'electron';
+import fs from 'fs';
+import path from 'path';
+import windowStateKeeper from 'electron-window-state';
 
-export default (
-  <Switch>
-    <Route exact path="/" component={ Main } />
-    <Route path="/about" component={ About } />
-    <Route path="/list" component={ NewList } />
-    <Route path="/inspector/:file?" component={ Inspector } />
-    <Route path="/modal/:type?/*" component={ ModalWindow } />
-    { /* <Redirect from="/*" exact to="/" /> */ }
-  </Switch>
-);
+export default class Thorium {
+
+  static config(options) {
+    return {
+      backgroundThrottling: false, // do not throttle animations/timers when page is background
+      backgroundColor: '#FFF',
+      minWidth: 800,
+      minHeight: 400,
+      darkTheme: true, // Forces dark theme (GTK+3)
+      titleBarStyle: 'hidden-inset', // Hide title bar (Mac)
+      useContentSize: true, // Specify web page size without OS chrome
+      center: true,
+      frame: false,
+      icon: makeIcon('icon.png'),
+      ...options
+    };
+  };
+
+  static windowStateKeeper(options) {
+    return windowStateKeeper({ defaultWidth: 800, defaultHeight: 400, ...options });
+  }
+
+  modalWindow(hRef) {
+    try {
+      const modal = new BrowserWindow(this.options);
+      if (!modal) throw new Error('Error loading modal');
+      modal.loadURL(hRef, this.data);
+      return modal;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  constructor() {
+
+  }
+}

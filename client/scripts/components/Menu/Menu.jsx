@@ -155,5 +155,26 @@ export const buildListItemMenu = (props) => (event, item) => {
       });
     }
   }]);
+  console.log('menu', menu);
   return menu.popup();
+};
+
+export const buildTrayMenu = (props) => (event, data) => {
+  event.preventDefault();
+  event.stopPropagation();
+  const { clientX, clientY } = event;
+
+  const menu = buildContextMenu([{
+    label: 'About',
+    click(menuItem, browserWindow, event) {
+      return true;
+    }
+  },
+  { type: 'separator' },
+  {
+    label: 'Quit',
+    click(menuItem, browserWindow, event) {
+      return true;
+    }
+  }]);
 };
