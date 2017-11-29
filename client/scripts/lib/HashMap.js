@@ -40,16 +40,18 @@
 // Formula.sum      = function(...args) { return Array.prototype.reduce.call(Formula.flatten(...args), (acc, curr) => (acc + curr)); };
 // Formula.avg      = function(...args) { return Array.prototype.reduce.call([Formula.sum(...args)], (size, sum) => (sum / size), Formula.flatten(...args).length); };
 // Formula.sort     = function(...args) { return Array.prototype.sort.apply(Formula.flatten(...args), [(a, b) => a - b]); };
+import { isString, isSymbol, isValidKey } from './utils';
 
 export default class HashMap extends Map {
 
-  static get types() {
-    return ['function', 'string', 'object'];
+  static fromArray(array) {
+    return new HashMap(array.map((value, index) => ([value,[]])));
   };
 
-  static isValid(key, value) {
-    const ascii = new RegExp(/^[\x00-\x7F]*$/);
-    return (key && key.length) ? ascii.test(key) : false;
+  static fromObject(object) {
+    const entries = Object.entries(object);
+    const symbols = Object.getOwnPropertySymbols(object).map(symbol => [ symbol, object[symbol] ]);
+    return new HashMap([...entries, ...symbols]);
   };
 
   constructor(...args) {
@@ -57,9 +59,12 @@ export default class HashMap extends Map {
   }
 
   set(key, value) {
-    if (HashMap.isValid(key)) {
-      return super.set(key, value);
-    }
+    console.log('set', key, value)
+    return super.set(key, value);
+  }
+
+  get(key) {
+    return super.get(key);
   }
 
   push(key, value) {
@@ -88,10 +93,6 @@ export default class HashMap extends Map {
 
   toArray() {
     return Array.from(this.values());
-  }
-
-  fromArray(array) {
-    return new HashMap(array.map((value, index) => ([value,[]])));
   }
 
   toObject() {

@@ -79,6 +79,7 @@ window.goUrl =  (url) => {
 const enhancer = compose(
   applyMiddleware(thunk),
   applyMiddleware(routerMiddleware(history)),
+  applyMiddleware(trayManager.middleware)
   // applyMiddleware(PluginManager.middleware),
   // actionListener,
   // applyMiddleware(function ({ dispatch, getState }) {

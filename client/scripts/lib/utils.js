@@ -110,6 +110,27 @@ export const isIterable = (variable) => (
 export const isBuffer = (variable) => (Buffer.isBuffer(variable));
 
 /**
+ * Determine if variable is a Symbol
+ * @param {*} Whatever you need to determine to be a Symbol
+ */
+export const isSymbol = (variable) => (
+  ((variable !== null) && (typeof variable === 'symbol') && (variable.constructor === Symbol))
+);
+
+/**
+ * Determine if variable is a valid Object / Map key
+ * @param {*} Whatever you need to determine to be a valid key
+ */
+export const isValidKey = (variable) => {
+  if (!isString(variable) || !isSymbol(variable)) {
+    return false;
+  } else {
+    return isString(variable) ? /^[\x00-\x7F]*$/.test(variable) : variable;
+  }
+};
+
+
+/**
  * Shuffle array
  * inspiration: https://stackoverflow.com/a/12646864/787098
  */

@@ -39,9 +39,10 @@
 
 import path from 'path';
 import { URL } from 'url';
+import HashMap from '../HashMap';
 import querystring from 'querystring';
 import { remote, ipcRenderer } from 'electron';
-import { isDataURL, isWebURL, camelToDash, toBuffer } from '../../lib/utils';
+import { isFunction, isDataURL, isWebURL, camelToDash, toBuffer, isSymbol } from '../../lib/utils';
 
 export class Modal {
 
@@ -79,6 +80,10 @@ export class Modal {
       postData: [{ type: 'rawData', bytes: toBuffer(data) }],
       extraHeaders: 'Content-Type: application/x-www-form-urlencoded'
     };
+  };
+
+  static listenerConfig = {
+    configKey: Symbol('config')
   };
 
   constructor(modal, data, options) {
@@ -135,66 +140,71 @@ export class Modal {
     return this._options;
   }
 
+  get listenerConfig() {
+    return this.constructor.listenerConfig;
+  }
 
   get listeners() {
-    const { modal, modal: { id }, modal: { webContents }, data, options } = this;
-    return {
+    const { modal, modal: { id }, modal: { webContents }, data, options, listenerConfig: { configKey } } = this;
+    return this._listeners || HashMap.fromObject({
       /* modal event listeners */
-      modal: {
-        closed: [ modal.once, (event) => { console.log('MODAL CLOSED', event) }],
-        readyToShow: [ modal.once,  () => {
+      modal: HashMap.fromObject({
+        closed: [ 'once', (event) => { console.log('MODAL CLOSED', event) }],
+        readyToShow: [ 'once',  () => {
           console.log('readyToShow');
           return this.send('modal:set:scope', { data, options, id });
-        }]
-      },
+        }],
+        [configKey]: { producer: this.modal }
+      }),
 
-      /* webContent event listeners */
-      webContent: {
-        beforeInputEvent: [ webContents.on,  (event, input) => {
+      /* webContents event listeners */
+      webContents: HashMap.fromObject({
+        beforeInputEvent: [ 'on',  (event, input) => {
           console.log('beforeInputEvent');
           if (input.key === 'Escape') return modal.close();
         }],
-        didFinishLoad: [ webContents.once, () => {
+        didFinishLoad: [ 'on', () => {
           console.log('didFinishLoad');
           modal.show();
           modal.focus();
           // this.send('modal:set:scope', { data: this.data, options: this.options });
           webContents.openDevTools();
-        }]
-      },
+        }],
+        [configKey]: { producer: webContents }
+      }),
 
       /* ipcRenderer event listeners */
-      ipcRenderer: {
-        modalClose: [ ipcRenderer.once, (event) => modal.close() ]
-      },
+      ipcRenderer: HashMap.fromObject({
+        modalClose: [ 'once', (event) => modal.close() ],
+        [configKey]: { producer: ipcRenderer, sep: ':'}
+      }),
 
       /* application event listeners */
-      application: {
-        beforeQuit: [ remote.app.once, (event) => {
+      application: HashMap.fromObject({
+        beforeQuit: [ 'once', (event) => {
           return event.preventDefault();
           // return modal.close();
-        }]
-      }
-    };
+        }],
+        [configKey]: { producer: remote.app }
+      })
+    });
+  }
+
+  set listeners(listeners) {
+    this._listeners = listeners;
   }
 
   attachListeners() {
-    const { modal, modal: { webContent }, listeners } = this;
-    /* modal event listeners */
-    const modalEvents = this.modalEvents = Object.entries(listeners.modal)
-    .map(([ listener, [ func, handler ]]) => func.apply(modal, [ camelToDash(listener), handler ]));
-
-    /* webContent event listeners */
-    const webContentEvent = this.webContentEvent = Object.entries(listeners.webContent)
-    .map(([ listener, [ func, handler ]]) => func.apply(webContent, [ camelToDash(listener), handler ]));
-
-    /* ipcRenderer event listeners */
-    const ipcRendererEvents = this.ipcRendererEvents = Object.entries(listeners.ipcRenderer)
-    .map(([ listener, [ func, handler ]]) => func.apply(ipcRenderer, [ camelToDash(listener, ':'), handler ]));
-
-    /* application event listeners */
-    const applicationEvents = this.applicationEvents = Object.entries(listeners.application)
-    .map(([ listener, [ func, handler ]]) => func.apply(remote.app, [ camelToDash(listener), handler ]));
+    const { configKey } = this.listenerConfig;
+    const excludeSymbols = ([name]) => !isSymbol(name);
+    const mapProducers = ({ producer, sep }) => ([ name, [ method, handler ]]) => [ camelToDash(name, sep), [ producer[method].bind(producer), handler ]];
+    const mapListeners = ([ emitter, events ]) => ([ emitter, events.filter(excludeSymbols).map(mapProducers(events.get(configKey))) ]);
+    const mapHandlers = ([ name, [ method, handler ]]) => method.apply(method, [ name, handler ]);
+    const toDictionary = (listeners, [ emitter, events ]) => ({ ...listeners, [emitter]: events.map(mapHandlers) });
+    return this.listeners = this.listeners.map(mapListeners).reduce(toDictionary, {});
   }
 
+  destroy() {
+
+  }
 };
