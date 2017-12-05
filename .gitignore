@@ -15,6 +15,11 @@ node_modules/
 *.wav
 *.webm
 
+# old copies
+*.old*
+# good copies (functional snapshots)
+*.good*
+
 # flow type
 flow-typed/npm
 # Dont track webpack intermediate hot-update files
@@ -24,6 +29,7 @@ dist/[0-9]*.*.json
 # Dont track generated files
 dist/bundle.js
 dist/index.html
+dist/main.js
 
 # Keep these demo files in media folder
 !media/Library.xml
