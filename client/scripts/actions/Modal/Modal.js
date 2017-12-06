@@ -71,7 +71,17 @@ export const Related = (media) => {
       title: 'Related media'
     },
     behavior: {
-      type: 'DEFAULT'
+      type: {
+        // buttons: [ 'Backup', 'Restore' ],
+        // buttons: [
+        //   {
+        //     label: 'YES',
+        //     style: 'buttonSecondary'
+        //   },
+        //   'Restore'
+        // ],
+        icon: 'backup'
+      }
     }
   };
   return async function(dispatch, getState) {

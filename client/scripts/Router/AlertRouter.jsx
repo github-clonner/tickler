@@ -1,14 +1,14 @@
 // @flow
 
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : Footer.jsx                                                //
-// @summary      : Modal footer component                                    //
+// @file         : AlertRouter.jsx                                           //
+// @summary      : Alert and notification state router                       //
 // @version      : 1.0.0                                                     //
 // @project      : tickelr                                                   //
 // @description  :                                                           //
 // @author       : Benjamin Maggi                                            //
 // @email        : benjaminmaggi@gmail.com                                   //
-// @date         : 18 Nov 2017                                               //
+// @date         : 05 Dec 2017                                               //
 // @license:     : MIT                                                       //
 // ------------------------------------------------------------------------- //
 //                                                                           //
@@ -37,55 +37,21 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-import Style from './Footer.css';
-import classNames from 'classnames';
-import React, { Component } from 'react';
-import {
-  pure,
-  branch,
-  compose,
-  getContext,
-  setPropTypes,
-  renderNothing,
-  renderComponent,
-  onlyUpdateForPropTypes
-} from 'recompose';
-import { ModalType } from '../../ModalType';
+import React from 'react';
+import { URLSearchParams } from 'url';
+import { Redirect } from 'react-router-dom';
 
-const buttonClass = (child) => {
-  const className = classNames(child.props.className, Style.footerButton );
-  const props = {
-    className
+const getAlertRoute = ({ location: { search }}) => {
+  const type = new URLSearchParams(search).get('type');
+  return {
+    pathname: type,
+    search: params.toString(),
+    state: {
+      timeStamp: Date.now()
+    }
   };
-  return React.cloneElement(child, props);
 };
 
-const Footer = ({ modal: { footer, actions, options }}) => {
-  return (
-    <div className={ Style.footer } >
-      { React.Children.map(footer, buttonClass) }
-    </div>
-  );
+export const AlertRouter = (props) => {
+  return (<Redirect to={ getAlertRoute(props) } {...props } />);
 };
-
-/*
- * Component wrapper
- */
-export default compose(
-  pure,
-  getContext({
-    modal: ModalType
-  }),
-  onlyUpdateForPropTypes,
-  setPropTypes({
-    modal: ModalType
-  }),
-  branch(
-    ({ modal }) => {
-      return React.Children.count(modal.footer) > 1;
-    },
-    renderComponent(Footer),
-    renderNothing,
-  )
-)(Footer);
-

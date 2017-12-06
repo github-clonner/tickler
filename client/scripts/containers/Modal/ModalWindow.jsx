@@ -96,11 +96,8 @@ import { ModalFactory } from './ModalFactory';
 // };
 
 function mapStateToProps (state, ownProps) {
-  console.log('ModalWindow ownProps', state, ownProps);
   const { location: { state: { data, options, id }}, match: { params: { type, ...category }}} = ownProps;
-  const modal = ModalFactory(type, Object.values(category), options, data);
-  console.log('modal', modal);
-  return modal;
+  return ModalFactory(type, Object.values(category), options, data);
 }
 
 function mapDispatchToProps(dispatch: Dispatch) {
@@ -131,7 +128,6 @@ export const ModalWindow = compose(
     ({ modal }) => {
       try {
         const { options } = modal;
-        console.log('TYPE: ', options.type);
         return (modal && modal.options.type);
       } catch (error) {
         console.error(error);

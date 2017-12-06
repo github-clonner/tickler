@@ -70,10 +70,11 @@ const reducer = combineReducers({
 
 /* hack */
 window.goUrl =  (url) => {
-  store.dispatch(push({
-    pathname: url || '/about',
-    state: { some: 'state' }
-  }));
+  // store.dispatch(push({
+  //   pathname: url || '/about',
+  //   state: { some: 'state' }
+  // }));
+  history.push({ pathname: url || '/about', state: { some: 'state' } });
 };
 
 const enhancer = compose(

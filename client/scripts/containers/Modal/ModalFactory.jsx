@@ -44,30 +44,41 @@ import ModalStyle from './ModalStyle.json';
 import { ModalType } from '../../components/Modal';
 import { isPlainObject, isString, has } from '../../lib/utils';
 
-console.log('ModalStyle', ModalStyle);
-
-const getButton = (button) => {
-  if (isString(button) && ModalStyle.button.hasOwnProperty(button)) {
-    return ModalStyle.button[button];
-  } else if (isString(button) && !ModalStyle.button.hasOwnProperty(button)) {
-    return { ...ModalStyle.button.DEFAULT, label: button };
-  } else if (isPlainObject(button) && has(button, [ 'label', 'style' ])) {
-    return button;
-  } else {
-    console.log('getButton nada', button);
-    return ModalStyle.button.DEFAULT;
-  }
+const getButton = (type, label) => {
+  const { DEFAULT, [type]: styled = { ...DEFAULT, label: label = type, ...(isPlainObject(type) ? type : undefined) }} = ModalStyle.button;
+  const { actions } = styled;
+  console.log('actions', actions);
+  return { ...styled };
 };
 
-const FooterFactory = (type = 'DEFAULT', category) => {
-  const { [type]: modalType } = ModalStyle.type;
+const FooterFactory = ({ behavior: { type }, ...options}) => {
+  const { DEFAULT, [type]: styled = { ...DEFAULT, ...type }} = ModalStyle.type;
   return (
-    modalType.buttons.map((button, index) => {
-      const { label, style }= getButton(button);
-      return (
-        <button data-role="#f00" className={ classNames(Style.modalButton, Style[style]) } key={ index } onClick={ () => {} }>{ label }</button>
-      );
-    })
+    styled.buttons.map(getButton).map((button, index) => (
+      <button className={ classNames(Style.modalButton, Style[button.style]) } key={ index } onClick={ button.onClick }>
+        <i className={ Style.modalIcon } role="icon">
+          { button.icon }
+        </i>
+        { button.label }
+      </button>
+    ))
+  );
+};
+
+const getHeader = (type, title) => {
+  const { DEFAULT, [type]: styled = { ...DEFAULT, ...type }} = ModalStyle.type;
+  return { ...styled, title };
+};
+
+const HeaderFactory = ({ behavior: { type }, window: { title }, ...options}) => {
+  const header = getHeader(type, title);
+  return (
+    <h5 className={ classNames(Style.modalTitle, Style[header.style])}>
+      <i className={ Style.modalIcon } role="icon">
+        { header.icon }
+      </i>
+      { header.title }
+    </h5>
   );
 };
 
@@ -76,22 +87,21 @@ export const ModalFactory = (type, category, options, data) => {
     const template = {
       options: { type, category, ...options }
     };
-    console.log('ModalFactory', options)
     switch (category.join('.')) {
       case 'metadata': return {
         modal: {
           ...template,
-          header: (<span>{ options.window.title }</span>),
+          header: <HeaderFactory { ...options } />,
           body: <MediaInfo { ...data } />,
-          footer: FooterFactory(options.behavior.type)
+          footer: FooterFactory(options)
         }
       };
       case 'related': return {
         modal: {
           ...template,
-          header: (<span>{ options.window.title }</span>),
+          header: <HeaderFactory { ...options } />,
           body: <Related { ...data } />,
-          footer: FooterFactory(options.behavior.type)
+          footer: <FooterFactory { ...options } />
         }
       };
       default: return {

@@ -224,13 +224,6 @@ export default class TrayManager extends EventEmitter {
     return this.constructor.proxyfier(object);
   }
 
-  createListener(event, subscriber, handler, config) {
-    const { listenerConfig: { configKey } } = this;
-    const descriptor = { [event]: [ subscriber, handler, { [configKey]: config }] };
-    console.log('descriptor', descriptor);
-    return descriptor;
-  }
-
   get listeners() {
     const { tray, menubar, options, listenerConfig: { configKey } } = this;
     const listeners = new HashMap();

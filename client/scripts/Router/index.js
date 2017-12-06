@@ -1,2 +1,3 @@
-export Router from './Router.jsx';
-export { ModalRouter } from './ModalRouter.jsx';
+export Router from './Router';
+export { ModalRouter } from './ModalRouter';
+export { AlertRouter } from './AlertRouter';

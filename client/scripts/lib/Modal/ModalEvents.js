@@ -44,24 +44,25 @@ import querystring from 'querystring';
 import { remote, ipcRenderer } from 'electron';
 import { isFunction, isDataURL, isWebURL, camelToDash, toBuffer, isSymbol } from '../../lib/utils';
 
-export const eventNames = (names) => ([
+export const names = [
   'pushProps',
   'beforeInputEvent',
   'didFinishLoad',
-  'modalClose',
-  ...names
-]).reduce((events, name) => ({ ...events, [name]: camelToDash(name) }), {});
+  'close'
+].reduce((events, name) => {
+  return { ...events, [name]: 'modal:'.concat(camelToDash(name)) };
+}, {});
 
 export const configKey = Symbol('config');
 
-export function eventListeners(configKey = configKey, listeners) {
-  console.info('eventListeners', this, configKey, listeners);
+export function listeners(configKey = configKey, listeners) {
   return {
     /* modal event listeners */
     modal: {
       readyToShow: [ 'once',  (event) => {
-        console.info('modal:readyToShow');
-        const { data, options, modal: { webContents, id }} = this;
+        // console.info('modal:readyToShow');
+        const { data, options, modal: { webContents }} = this;
+        const { id } = remote.getCurrentWindow();
         return this.send('modal:push-props', { data, options, id });
       }],
       [configKey]: { producer: this.modal, context: this }
@@ -69,7 +70,7 @@ export function eventListeners(configKey = configKey, listeners) {
     /* webContents event listeners */
     webContents: {
       beforeInputEvent: [ 'on',  (event, input) => {
-        console.info('webContents:beforeInputEvent');
+        // console.info('webContents:beforeInputEvent');
         this.send('modal:before-input-event', event, input);
         switch (input.key) {
           case 'Escape': return this.close();
@@ -78,7 +79,7 @@ export function eventListeners(configKey = configKey, listeners) {
         }
       }],
       didFinishLoad: [ 'on', (event) => {
-        console.info('webContents:didFinishLoad');
+        // console.info('webContents:didFinishLoad');
         this.send('modal:didi-finish-load', event);
         this.modal.show();
         this.modal.focus();
@@ -88,7 +89,7 @@ export function eventListeners(configKey = configKey, listeners) {
     /* ipcRenderer event listeners */
     ipcRenderer: {
       modalClose: [ 'once', (event) => {
-        console.info('ipcRenderer:modalClose');
+        // console.info('ipcRenderer:modalClose');
         this.send('modal:modal-close', event);
         return this.close();
       }],

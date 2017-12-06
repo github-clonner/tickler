@@ -42,7 +42,7 @@ import { URL } from 'url';
 import HashMap from '../HashMap';
 import querystring from 'querystring';
 import { EventEmitter } from 'events';
-import { eventNames, eventListeners } from './ModalEvents';
+import * as ModalEvents from './ModalEvents';
 import { remote, ipcRenderer } from 'electron';
 import { EventEmitterEx } from '../EventEmitterEx/EventEmitterEx';
 import { isFunction, isDataURL, isWebURL, camelToDash, toBuffer, isSymbol, has } from '../../lib/utils';
@@ -123,7 +123,7 @@ export class Modal extends EventEmitterEx {
     this.options = options;
     this.data = data;
     this.modal = modal;
-    this.events = eventListeners.apply(this, [ configKey, events ]);
+    this.events = ModalEvents.listeners.apply(this, [ configKey, events ]);
     this.attachListeners();
   }
 
@@ -150,275 +150,275 @@ export class Modal extends EventEmitterEx {
   }
 }
 
-export class Modal2 extends EventEmitter {
+// export class Modal2 extends EventEmitter {
 
-  static config(options) {
-    return {
-      window: {
-        backgroundColor: '#FFF',
-        maximizable: false,
-        resizable: true,
-        fullscreenable: false,
-        webviewTag: true,
-        modal: true,
-        show: false,
-        minWidth: 640,
-        parent: remote.getCurrentWindow(),
-        ...options.window
-      },
-      indexURL: options.indexURL || Modal.indexURL,
-      behavior: {
-        type: 'OK_ONLY',
-        ...options.behavior
-      }
-    };
-  };
+//   static config(options) {
+//     return {
+//       window: {
+//         backgroundColor: '#FFF',
+//         maximizable: false,
+//         resizable: true,
+//         fullscreenable: false,
+//         webviewTag: true,
+//         modal: true,
+//         show: false,
+//         minWidth: 640,
+//         parent: remote.getCurrentWindow(),
+//         ...options.window
+//       },
+//       indexURL: options.indexURL || Modal.indexURL,
+//       behavior: {
+//         type: 'OK_ONLY',
+//         ...options.behavior
+//       }
+//     };
+//   };
 
-  static mapEmitterMethod(property, object) {
-    if (!isSymbol(property) && (property in object)) {
-      const { configKey } = Modal.listenerConfig;
-      const { [configKey]: { producer, sub }} = object;
-      let { [property]: listener } = object;
-      listener.splice(0, 1, producer[listener.slice(0, 1).pop()]);
-      return true;
-    } else {
-      return false;
-    }
-  };
+//   static mapEmitterMethod(property, object) {
+//     if (!isSymbol(property) && (property in object)) {
+//       const { configKey } = Modal.listenerConfig;
+//       const { [configKey]: { producer, sub }} = object;
+//       let { [property]: listener } = object;
+//       listener.splice(0, 1, producer[listener.slice(0, 1).pop()]);
+//       return true;
+//     } else {
+//       return false;
+//     }
+//   };
 
-  static proxyfier(object) {
+//   static proxyfier(object) {
 
-    const handler = {
-      construct: function(object, argumentsList, newTarget) {
-        console.log('construct', object, argumentsList, newTarget);
-        return Reflect.construct(object, argumentsList, newTarget);
-      },
-      ownKeys: function (target) {
-        console.log('ownKeys', target, Object.getOwnPropertyNames(target));
-        Object.getOwnPropertySymbols(target).forEach(symbol => {
-          Object.defineProperty(target, symbol, { enumerable: false });
-        });
-        return Reflect.ownKeys(target);
-      },
-      has: function (taget, property) {
-        console.log('has', taget, property, typeof property);
-        return Reflect.has(object, property);
-      },
-      set: function(object, property, value, receiver) {
-        console.log('set', object, property, value, receiver);
-        return Reflect.set(object, property, value, receiver);
-      },
-      get: function (object, property, receiver) {
-        console.log('get', object, property);
-        Modal.mapEmitterMethod(property, object);
-        return Reflect.get(object, property, receiver);
-      },
-      apply: function(object, thisArg, argumentsList) {
-        console.log('apply', object, thisArg, argumentsList);
-        return Reflect.apply(object, thisArg, argumentsList);
-      }
-    }
-    return new Proxy(object, handler);
-  };
+//     const handler = {
+//       construct: function(object, argumentsList, newTarget) {
+//         console.log('construct', object, argumentsList, newTarget);
+//         return Reflect.construct(object, argumentsList, newTarget);
+//       },
+//       ownKeys: function (target) {
+//         console.log('ownKeys', target, Object.getOwnPropertyNames(target));
+//         Object.getOwnPropertySymbols(target).forEach(symbol => {
+//           Object.defineProperty(target, symbol, { enumerable: false });
+//         });
+//         return Reflect.ownKeys(target);
+//       },
+//       has: function (taget, property) {
+//         console.log('has', taget, property, typeof property);
+//         return Reflect.has(object, property);
+//       },
+//       set: function(object, property, value, receiver) {
+//         console.log('set', object, property, value, receiver);
+//         return Reflect.set(object, property, value, receiver);
+//       },
+//       get: function (object, property, receiver) {
+//         console.log('get', object, property);
+//         Modal.mapEmitterMethod(property, object);
+//         return Reflect.get(object, property, receiver);
+//       },
+//       apply: function(object, thisArg, argumentsList) {
+//         console.log('apply', object, thisArg, argumentsList);
+//         return Reflect.apply(object, thisArg, argumentsList);
+//       }
+//     }
+//     return new Proxy(object, handler);
+//   };
 
-  static hRef(hRef, params) {
-    try {
-      if (isDataURL(hRef) || isWebURL(hRef)) {
-        return hRef;
-      } else {
-        const url = new URL(Modal.indexURL);
-        url.searchParams.set('modal', hRef);
-        return url.href;
-      }
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  };
+//   static hRef(hRef, params) {
+//     try {
+//       if (isDataURL(hRef) || isWebURL(hRef)) {
+//         return hRef;
+//       } else {
+//         const url = new URL(Modal.indexURL);
+//         url.searchParams.set('modal', hRef);
+//         return url.href;
+//       }
+//     } catch (error) {
+//       console.error(error);
+//       throw error;
+//     }
+//   };
 
-  static postData(data) {
-    return {
-      postData: [{ type: 'rawData', bytes: toBuffer(data) }],
-      extraHeaders: 'Content-Type: application/x-www-form-urlencoded'
-    };
-  };
+//   static postData(data) {
+//     return {
+//       postData: [{ type: 'rawData', bytes: toBuffer(data) }],
+//       extraHeaders: 'Content-Type: application/x-www-form-urlencoded'
+//     };
+//   };
 
-  static listenerConfig = {
-    configKey: Symbol('config')
-  };
+//   static listenerConfig = {
+//     configKey: Symbol('config')
+//   };
 
-  static indexURL = new URL(path.resolve(__dirname, 'index.html'), 'file://');
+//   static indexURL = new URL(path.resolve(__dirname, 'index.html'), 'file://');
 
-  set modal(modal) {
-    try {
-      const hRef = Modal.hRef(modal);
-      this._modal = this.modalWindow(hRef);
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  };
+//   set modal(modal) {
+//     try {
+//       const hRef = Modal.hRef(modal);
+//       this._modal = this.modalWindow(hRef);
+//     } catch (error) {
+//       console.error(error);
+//       throw error;
+//     }
+//   };
 
-  get modal() {
-    return this._modal;
-  }
+//   get modal() {
+//     return this._modal;
+//   }
 
-  set options(options) {
-    this._options = Modal.config(options);
-  }
+//   set options(options) {
+//     this._options = Modal.config(options);
+//   }
 
-  get options() {
-    return this._options;
-  }
+//   get options() {
+//     return this._options;
+//   }
 
-  get listenerConfig() {
-    return this.constructor.listenerConfig;
-  }
+//   get listenerConfig() {
+//     return this.constructor.listenerConfig;
+//   }
 
-  get listeners() {
-    if (this.modal.isDestroyed() || this._listeners) return this._listeners;
+//   get listeners() {
+//     if (this.modal.isDestroyed() || this._listeners) return this._listeners;
 
-    const { modal, send, data, options, listenerConfig: { configKey }, modal: { id, webContents } } = this;
-    // const {
-    //   modal,
-    //   send,
-    //   data,
-    //   options,
-    //   listenerConfig: { configKey },
-    //   modal: { id, webContents }
-    // } = this;
+//     const { modal, send, data, options, listenerConfig: { configKey }, modal: { webContents } } = this;
+//     // const {
+//     //   modal,
+//     //   send,
+//     //   data,
+//     //   options,
+//     //   listenerConfig: { configKey },
+//     //   modal: { id, webContents }
+//     // } = this;
 
-    const listeners = new HashMap();
+//     const listeners = new HashMap();
 
-    /* modal event listeners */
-    listeners.set('modal', this.proxyfier({
-      closed: [ 'once', (event) => {
-        console.info('modal:closed');
-        return this.send('modal:closed');
-      }],
-      readyToShow: [ 'once',  (event) => {
-        console.info('modal:readyToShow');
-        return this.send('modal:set:scope', { data, options, id });
-      }],
-      [configKey]: { producer: modal, context: this }
-    }));
+//     /* modal event listeners */
+//     listeners.set('modal', this.proxyfier({
+//       closed: [ 'once', (event) => {
+//         // console.info('modal:closed');
+//         return this.send('modal:closed');
+//       }],
+//       readyToShow: [ 'once',  (event) => {
+//         // console.info('modal:readyToShow');
+//         return this.send('modal:set:scope', { data, options, id: webContents.getId() });
+//       }],
+//       [configKey]: { producer: modal, context: this }
+//     }));
 
-    /* webContents event listeners */
-    listeners.set('webContents', this.proxyfier({
-      beforeInputEvent: [ 'on',  (event, input) => {
-        console.info('webContents:beforeInputEvent');
-        // this.send('modal:before-input-event', input);
-        switch (input.key) {
-          case 'Escape': return this.close();
-          default:
-            return;
-        }
-      }],
-      didFinishLoad: [ 'on', () => {
-        console.info('webContents:didFinishLoad');
-        modal.show();
-        modal.focus();
-        // webContents.openDevTools();
-      }],
-      [configKey]: { producer: webContents }
-    }));
+//     /* webContents event listeners */
+//     listeners.set('webContents', this.proxyfier({
+//       beforeInputEvent: [ 'on',  (event, input) => {
+//         // console.info('webContents:beforeInputEvent');
+//         // this.send('modal:before-input-event', input);
+//         switch (input.key) {
+//           case 'Escape': return this.close();
+//           default:
+//             return;
+//         }
+//       }],
+//       didFinishLoad: [ 'on', () => {
+//         // console.info('webContents:didFinishLoad');
+//         modal.show();
+//         modal.focus();
+//         // webContents.openDevTools();
+//       }],
+//       [configKey]: { producer: webContents }
+//     }));
 
-    /* ipcRenderer event listeners */
-    listeners.set('ipcRenderer', this.proxyfier({
-      modalClose: [ 'once', (event) => {
-        console.info('ipcRenderer:modalClose', event, this);
-        return this.close();
-      }],
-      [configKey]: { producer: ipcRenderer, sep: ':'}
-    }));
+//     /* ipcRenderer event listeners */
+//     listeners.set('ipcRenderer', this.proxyfier({
+//       modalClose: [ 'once', (event) => {
+//         // console.info('ipcRenderer:modalClose', event, this);
+//         return this.close();
+//       }],
+//       [configKey]: { producer: ipcRenderer, sep: ':'}
+//     }));
 
-    return listeners;
-  }
+//     return listeners;
+//   }
 
-  set listeners(listeners) {
-    this._listeners = listeners;
-  }
+//   set listeners(listeners) {
+//     this._listeners = listeners;
+//   }
 
-  constructor(modal, data, options, ...args) {
-    super(...args);
-    this.options = options;
-    this.data = data;
-    this.modal = modal;
-    this.attachListeners();
-  }
+//   constructor(modal, data, options, ...args) {
+//     super(...args);
+//     this.options = options;
+//     this.data = data;
+//     this.modal = modal;
+//     this.attachListeners();
+//   }
 
-  modalWindow(hRef) {
-    try {
-      const { options, data } = this;
-      const modal = new remote.BrowserWindow(options.window);
-      modal.loadURL(hRef, Modal.postData(data));
-      return modal;
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  }
+//   modalWindow(hRef) {
+//     try {
+//       const { options, data } = this;
+//       const modal = new remote.BrowserWindow(options.window);
+//       modal.loadURL(hRef, Modal.postData(data));
+//       return modal;
+//     } catch (error) {
+//       console.error(error);
+//       throw error;
+//     }
+//   }
 
-  proxyfier(object) {
-    return this.constructor.proxyfier(object);
-  }
+//   proxyfier(object) {
+//     return this.constructor.proxyfier(object);
+//   }
 
-  send(event, ...args) {
-    console.info('send', event, ...args);
-    return this.modal.webContents.send(event, ...args);
-  };
+//   send(event, ...args) {
+//     console.info('send', event, ...args);
+//     return this.modal.webContents.send(event, ...args);
+//   };
 
-  attachListeners2() {
-    const { configKey } = this.listenerConfig;
-    const excludeSymbols = ([name]) => !isSymbol(name);
-    const mapProducers = ({ producer, context, sep }) => ([ name, [ method, handler ]]) => [ camelToDash(name, sep), [ producer[method].bind(context || producer), handler ]];
-    const mapListeners = ([ emitter, events ]) => ([ emitter, events.filter(excludeSymbols).map(mapProducers(events.get(configKey))) ]);
-    const mapHandlers = ([ name, [ method, handler ]]) => method.apply(method, [ name, handler ]);
-    const toDictionary = (listeners, [ emitter, events ]) => ({ ...listeners, [emitter]: events.map(mapHandlers) });
-    return this.listeners = this.listeners.map(mapListeners).reduce(toDictionary, {});
-  }
+//   attachListeners2() {
+//     const { configKey } = this.listenerConfig;
+//     const excludeSymbols = ([name]) => !isSymbol(name);
+//     const mapProducers = ({ producer, context, sep }) => ([ name, [ method, handler ]]) => [ camelToDash(name, sep), [ producer[method].bind(context || producer), handler ]];
+//     const mapListeners = ([ emitter, events ]) => ([ emitter, events.filter(excludeSymbols).map(mapProducers(events.get(configKey))) ]);
+//     const mapHandlers = ([ name, [ method, handler ]]) => method.apply(method, [ name, handler ]);
+//     const toDictionary = (listeners, [ emitter, events ]) => ({ ...listeners, [emitter]: events.map(mapHandlers) });
+//     return this.listeners = this.listeners.map(mapListeners).reduce(toDictionary, {});
+//   }
 
-  attachListeners() {
-    const { configKey } = this.listenerConfig;
-    const excludeSymbols = ([name]) => !isSymbol(name);
-    const mapProducers = ({ producer, context, sep }) => ([ name, [ method, handler ]]) => {
-      return [ camelToDash(name, sep), [ method.bind(context || producer), handler ]];
-    }
-    const mapListeners = ([ emitter, events ]) => {
-      return [ emitter, Object.entries(events).filter(excludeSymbols).map(mapProducers(events[configKey])).map(mapHandlers) ];
-    };
-    const mapHandlers = ([ name, [ method, handler ]]) => [ name, [ method.apply(method, [ name, handler ]), handler ] ];
-    const toDictionary = (listeners, [ emitter, events ]) => ({ ...listeners, [emitter]: events });
-    return this.listeners = this.listeners.map(mapListeners);
-  }
+//   attachListeners() {
+//     const { configKey } = this.listenerConfig;
+//     const excludeSymbols = ([name]) => !isSymbol(name);
+//     const mapProducers = ({ producer, context, sep }) => ([ name, [ method, handler ]]) => {
+//       return [ camelToDash(name, sep), [ method.bind(context || producer), handler ]];
+//     }
+//     const mapListeners = ([ emitter, events ]) => {
+//       return [ emitter, Object.entries(events).filter(excludeSymbols).map(mapProducers(events[configKey])).map(mapHandlers) ];
+//     };
+//     const mapHandlers = ([ name, [ method, handler ]]) => [ name, [ method.apply(method, [ name, handler ]), handler ] ];
+//     const toDictionary = (listeners, [ emitter, events ]) => ({ ...listeners, [emitter]: events });
+//     return this.listeners = this.listeners.map(mapListeners);
+//   }
 
-  detachListeners() {
-    var online = 0;
-    var offline = 0;
-    console.log('REMOVE')
-    const actions = this.listeners.map(([ emitter, events ]) => {
-      return events.map(([name, [ producer, handler ]]) => {
-        const listeners = (producer && producer.listeners(name));
-        online += listeners.length;
-        return (listeners.length) ? producer.removeListener(name, handler) : false;
-      });
-    });
-    console.log('LIST')
-    this.listeners.map(([ emitter, events ]) => {
-      return events.map(([name, [ producer, handler ]]) => {
-        if (producer && producer.eventNames) {
-          console.log('listener:', name, 'listeners', producer.listeners(name));
-          offline += producer.listeners(name).length;
-        } else {
-          console.log('listener:', name)
-        }
-      })
-    });
-    console.log('TOTAL', online, offline);
-  }
+//   detachListeners() {
+//     var online = 0;
+//     var offline = 0;
+//     console.log('REMOVE')
+//     const actions = this.listeners.map(([ emitter, events ]) => {
+//       return events.map(([name, [ producer, handler ]]) => {
+//         const listeners = (producer && producer.listeners(name));
+//         online += listeners.length;
+//         return (listeners.length) ? producer.removeListener(name, handler) : false;
+//       });
+//     });
+//     console.log('LIST')
+//     this.listeners.map(([ emitter, events ]) => {
+//       return events.map(([name, [ producer, handler ]]) => {
+//         if (producer && producer.eventNames) {
+//           console.log('listener:', name, 'listeners', producer.listeners(name));
+//           offline += producer.listeners(name).length;
+//         } else {
+//           console.log('listener:', name)
+//         }
+//       })
+//     });
+//     console.log('TOTAL', online, offline);
+//   }
 
-  close() {
-    this.detachListeners();
-    this.modal.close();
-  }
-};
+//   close() {
+//     this.detachListeners();
+//     this.modal.close();
+//   }
+// };

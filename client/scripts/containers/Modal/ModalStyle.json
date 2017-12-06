@@ -2,34 +2,51 @@
   "button": {
     "OK": {
       "label": "Ok",
+      "icon": "check",
       "style": "buttonPrimary"
     },
     "NO": {
       "label": "No",
+      "icon": "not_interested",
       "style": "buttonSecondary"
     },
     "YES": {
       "label": "Yes",
+      "icon": "check",
       "style": "buttonPrimary"
     },
     "SAVE": {
       "label": "Save",
+      "actions": {
+        "onClick": "save"
+      },
+      "icon": "save",
       "style": "buttonPrimary"
     },
     "DISCARD": {
       "label": "Discard",
+      "actions": {
+        "onClick": "close"
+      },
+      "icon": "undo",
       "style": "buttonSecondary"
     },
     "CANCEL": {
       "label": "Cancel",
+      "actions": {
+        "onClick": "close"
+      },
+      "icon": "not_interested",
       "style": "buttonSecondary"
     },
     "ABORT": {
       "label": "Abort",
+      "icon": "cancel",
       "style": "buttonPrimary"
     },
     "RETRY": {
       "label": "Retry",
+      "icon": "sync",
       "style": "buttonSecondary"
     },
     "IGNORE": {
@@ -41,7 +58,6 @@
       "style": "buttonPrimary"
     },
     "DEFAULT": {
-      "label": null,
       "style": "buttonPrimary"
     }
   },
@@ -67,6 +83,7 @@
       "title": null
     },
     "SAVE_DISCARD_CANCEL": {
+      "icon": "save",
       "buttons": [ "DISCARD", "CANCEL", "SAVE" ],
       "prompt": null,
       "title": null
@@ -82,7 +99,7 @@
       "title": null
     },
     "CRITICAL": {
-      "icon": "critical",
+      "icon": "error",
       "prompt": null,
       "title": null
     },
@@ -92,12 +109,12 @@
       "title": null
     },
     "EXCLAMATION": {
-      "icon": "exclamation",
+      "icon": "warning",
       "prompt": null,
       "title": null
     },
     "INFORMATION": {
-      "icon": "information",
+      "icon": "info_outline",
       "prompt": null,
       "title": null
     },

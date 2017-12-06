@@ -70,7 +70,6 @@ const withStore = compose(
 
 
 function mapStateToProps (state, ownProps) {
-  console.log('Modal ownProps', state, ownProps);
   if (ownProps && ownProps.modal) {
     return ownProps;
   } else if (ownProps && ownProps.match) {
@@ -143,7 +142,6 @@ export default class Modal extends Component {
   };
 
   getChildContext() {
-    console.log('getChildContext', this.props.modal);
     const { modal = this.props.modal } = this.state;
     return {
       modal: {
@@ -195,7 +193,6 @@ export default class Modal extends Component {
 
   render () {
     const { modal } = this.props;
-    console.log('FOOTER', modal.footer);
     return (
       <div className={ Style.modal } role="dialog" >
         <div className={ Style.content } role="document" >

@@ -43,6 +43,7 @@ import { ipcRenderer, remote } from 'electron';
 import { Router, Route, Redirect, Link, Switch } from 'react-router-dom';
 import { Main, About, NewList, Inspector, Modal, ModalWindow, ShowError } from '../containers';
 import { ModalRouter } from './ModalRouter';
+import { AlertRouter } from './AlertRouter';
 
 const locationOverride = (props, DefaultComponent) => {
   try {
@@ -52,6 +53,7 @@ const locationOverride = (props, DefaultComponent) => {
       const [ name,  value ] = param.value;
       switch (name) {
         case 'modal': return ModalRouter(props);
+        case 'alert': return AlertRouter(props);
         default:
           return (<DefaultComponent {...props } />);
       }

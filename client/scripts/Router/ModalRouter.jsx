@@ -41,7 +41,15 @@ import React, { Component } from 'react';
 import { URL, URLSearchParams } from 'url';
 import { Redirect } from 'react-router-dom';
 import { ipcRenderer, remote } from 'electron';
+import { ModalEvents } from '../lib/Modal';
 
+/* event listeners cache */
+const listeners = new Map();
+
+/* event names */
+const { pushProps } = ModalEvents.names;
+
+/* location factory */
 const getModalRoute = (location) => {
   const params = new URLSearchParams(location.search);
   return {
@@ -53,35 +61,56 @@ const getModalRoute = (location) => {
   };
 };
 
-const getErrorRoute = (location) => {
-  const params = new URLSearchParams(location.search);
-  return {
-    pathname: '/error',
-    search: params.toString(),
-    state: {
-      timeStamp: Date.now()
-    }
-  };
+/* Navigation handle */
+const navigationHandler = (command, { history, location }) => (event, { data, options, id }) => {
+  try {
+    const modalRoute = getModalRoute(location);
+    const webContents = remote.webContents.fromId(id);
+    const modal = webContents.getOwnerBrowserWindow();
+    return history.push({ ...modalRoute, state: { data, options, id } });
+  } catch (error) {
+    throw error;
+  } finally {
+    return eventForget(command);
+  }
 };
 
-const waitCommand = (command, { history, location }) => {
-  return ipcRenderer.once(command, (event, { data, options, id }) => {
-    try {
-      const modalRoute = getModalRoute(location);
-      console.log('modal:push-props', event, { data, options, id }, modalRoute);
-      const webContents = remote.webContents.fromId(id);
-      const modal = webContents.getOwnerBrowserWindow();
-      return history.push({ ...modalRoute, state: { data, options, id } });
-    } catch (error) {
-      const errorRoute = getErrorRoute(location);
-      return history.push({ ...errorRoute, state: { data, options, id } });
+/* event subscribe */
+const eventListen = (command, { history, location }) => {
+  try {
+    if(!listeners.has(command)) {
+      const eventHandler = navigationHandler(command, { history, location });
+      const eventUnlisten = ipcRenderer.once(command, eventHandler) ? () => { return ipcRenderer.removeListener(command, eventHandler) } : undefined;
+      const historyUnlisten = history.listen((location, action) => {
+        console.log('on history change', location, action);
+        return eventForget(command);
+      });
+      listeners.set(command, [ eventUnlisten, historyUnlisten ]);
+    } else {
+      return (eventForget(command), eventListen.apply(this, arguments));
     }
-  });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
 };
 
+/* event unsubscribe */
+const eventForget = (command) => {
+  if(!listeners.has(command)) return;
+  const [ eventUnlisten, historyUnlisten ] = listeners.get(command);
+  console.log('eventForget', command);
+  return (
+    eventUnlisten(),
+    historyUnlisten(),
+    listeners.delete(command)
+  );
+};
+
+/* route handler */
 export const ModalRouter = (props) => {
-
-  const listener = waitCommand('modal:push-props', props);
-  // return (<Redirect to={ location } {...props } />);
+  console.log('ipcRenderer', ipcRenderer.eventNames(), ipcRenderer.listeners(pushProps));
+  eventListen(pushProps, props);
+  console.log('ipcRenderer', ipcRenderer.eventNames(), ipcRenderer.listeners(pushProps));
   return false;
 };

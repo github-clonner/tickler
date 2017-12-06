@@ -51,34 +51,34 @@ const mapEmitterMethod = (configKey, property, object) => {
 };
 
 export const EventProxify = (configKey, object) => {
-  console.info('EventProxify', configKey, object);
+  // console.info('EventProxify', configKey, object);
   const handler = {
     construct: function(object, argumentsList, newTarget) {
-      console.info('construct', object, argumentsList, newTarget);
+      // console.info('construct', object, argumentsList, newTarget);
       return Reflect.construct(object, argumentsList, newTarget);
     },
     ownKeys: function (target) {
-      console.info('ownKeys', target, Object.getOwnPropertyNames(target));
+      // console.info('ownKeys', target, Object.getOwnPropertyNames(target));
       Object.getOwnPropertySymbols(target).forEach(symbol => {
         Object.defineProperty(target, symbol, { enumerable: false });
       });
       return Reflect.ownKeys(target);
     },
     has: function (taget, property) {
-      console.info('has', taget, property, typeof property);
+      // console.info('has', taget, property, typeof property);
       return Reflect.has(object, property);
     },
     set: function(object, property, value, receiver) {
-      console.info('set', object, property, value, receiver);
+      // console.info('set', object, property, value, receiver);
       return Reflect.set(object, property, value, receiver);
     },
     get: function (object, property, receiver) {
-      console.info('get', object, property);
+      // console.info('get', object, property);
       mapEmitterMethod(configKey, property, object);
       return Reflect.get(object, property, receiver);
     },
     apply: function(object, thisArg, argumentsList) {
-      console.info('apply', object, thisArg, argumentsList);
+      // console.info('apply', object, thisArg, argumentsList);
       return Reflect.apply(object, thisArg, argumentsList);
     }
   };

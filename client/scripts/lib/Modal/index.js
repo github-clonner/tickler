@@ -1,1 +1,2 @@
-export { renderModal, openModal, Modal } from './Modal/Modal';
+export { Modal } from './Modal';
+export * as ModalEvents, { names, listeners } from './ModalEvents';

@@ -117,7 +117,7 @@
  * Modal buttons
  */
 :local(.modal-button) {
-  display: inline-block;
+  display: flex;
   font-weight: normal;
   white-space: nowrap;
   vertical-align: middle;
@@ -133,18 +133,25 @@
   position: relative;
   color: var(--button-color);
   transition: background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out, opacity .15s ease-in-out;
+  flex-direction: row;
+  align-items: center;
+  & .modal-icon {
+    color: var(--button-color);
+    font-style: initial;
+    background-color: transparent !important;
+  }
 }
 
 :local(.button-primary) {
   color: color(var(--button-primary-background) contrast(90%));
   background-color: var(--button-primary-background);
   border-color: color(var(--button-primary-background) lightness(-10%));
-  &:hover:not(:disabled) {
+  &:hover:not(:disabled), & .modal-icon {
     color: color(var(--button-primary-background) contrast(100%));
     background-color: color(var(--button-primary-background) blackness(10%));
     border-color: color(var(--button-primary-background) lightness(-15%));
   }
-  &:active, &:focus {
+  &:active, &:focus, & .modal-icon {
     color: color(var(--button-primary-background) contrast(100%));
     background-color: color(var(--button-primary-background) lightness(-15%));
     border-color: color(var(--button-primary-background) lightness(-25%));
@@ -156,12 +163,12 @@
   color: color(var(--button-secondary-background) contrast(90%));
   background-color: var(--button-secondary-background);
   border-color: color(var(--button-secondary-background) lightness(-10%));
-  &:hover:not(:disabled) {
+  &:hover:not(:disabled), & .modal-icon {
     color: color(var(--button-secondary-background) contrast(100%));
     background-color: color(var(--button-secondary-background) blackness(10%));
     border-color: color(var(--button-secondary-background) lightness(-15%));
   }
-  &:active, &:focus {
+  &:active, &:focus, & .modal-icon {
     color: color(var(--button-secondary-background) contrast(100%));
     background-color: color(var(--button-secondary-background) lightness(-15%));
     border-color: color(var(--button-secondary-background) lightness(-25%));

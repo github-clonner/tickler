@@ -114,10 +114,13 @@ const enhance = compose(
 export default enhance(({ modal, modal: { header, actions: { close }, options }}) => {
   return (
     <div className={ Style.header }>
+      { /*
       <h5 className={ Style.title }>
         <span className={ Style.icon } role="icon">announcement</span>
         { header }
       </h5>
+      */ }
+      { header }
       <button type="button" className={ classNames( Style.modalButton, Style.headerButton, Style.closeButton) } onClick={ close }>
         <span aria-hidden="true">&times;</span>
       </button>
