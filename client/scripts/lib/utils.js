@@ -42,6 +42,8 @@ export debounce from 'lodash/debounce';
 export camelCase from 'lodash/camelCase';
 export fromPairs from 'lodash/fromPairs';
 export isPlainObject from 'lodash/isPlainObject';
+export has from 'lodash/has';
+export isString from 'lodash/isString';
 
 /**
  * Determine if variable is an function
@@ -88,11 +90,11 @@ export const isPromise = (variable) => {
  * Determine if variable is a String
  * @param {*} Whatever you need to determine to be a String
  */
-export const isString = (variable) => {
-  return (variable !== null) &&
-    typeof variable === 'variable' &&
-    variable.constructor === String;
-};
+// export const isString = (variable) => {
+//   return (variable !== null) &&
+//     typeof variable === 'variable' &&
+//     variable.constructor === String;
+// };
 
 /**
  * Determine if variable is iterable

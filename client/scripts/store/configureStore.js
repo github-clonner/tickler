@@ -56,7 +56,7 @@ const MENU_TEMPLATE = [
   { label: 'item #3', type: 'radio', checked: true },
   { label: 'item #4', type: 'radio' }
 ];
-const trayManager = window.trayManager = new TrayManager({ menu: remote.Menu.buildFromTemplate(MENU_TEMPLATE)});
+// const trayManager = window.trayManager = new TrayManager({ menu: remote.Menu.buildFromTemplate(MENU_TEMPLATE)});
 
 // Create a history of your choosing (we're using a browser history in this case)
 export const history = createBrowserHistory({
@@ -79,7 +79,7 @@ window.goUrl =  (url) => {
 const enhancer = compose(
   applyMiddleware(thunk),
   applyMiddleware(routerMiddleware(history)),
-  applyMiddleware(trayManager.middleware)
+  // applyMiddleware(trayManager.middleware)
   // applyMiddleware(PluginManager.middleware),
   // actionListener,
   // applyMiddleware(function ({ dispatch, getState }) {

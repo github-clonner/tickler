@@ -1,0 +1,16 @@
+{
+  "browserWindow": {
+    "width": 400,
+    "height": 400,
+    "show": false,
+    "frame": false,
+    "resizable": false,
+    "maximizable": false,
+    "fullscreenable": false,
+    "autoHideMenuBar": true,
+    "hasShadow": false,
+    "titleBarStyle": "customButtonsOnHover",
+    "transparent": true,
+    "backgroundColor": "#00FFFFFF"
+    }
+}

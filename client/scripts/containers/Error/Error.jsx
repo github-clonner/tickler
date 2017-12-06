@@ -1,14 +1,12 @@
-// @flow
-
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : routes.jsx                                                //
-// @summary      : Application states / routes                               //
-// @version      : 0.0.1                                                     //
+// @file         : Error.jsx                                                 //
+// @summary      : Error display container                                   //
+// @version      : 1.0.0                                                     //
 // @project      : tickelr                                                   //
 // @description  :                                                           //
 // @author       : Benjamin Maggi                                            //
 // @email        : benjaminmaggi@gmail.com                                   //
-// @date         : 07 Sep 2017                                               //
+// @date         : 05 Dec 2017                                               //
 // @license:     : MIT                                                       //
 // ------------------------------------------------------------------------- //
 //                                                                           //
@@ -37,17 +35,18 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
+import Style from './Error.css';
+import classNames from 'classnames';
 import React, { Component } from 'react';
-import { Router, Route, Redirect, Link, Switch } from 'react-router-dom';
-import { Main, About, NewList, Inspector, Modal, ModalWindow } from './containers';
 
-export default (
-  <Switch>
-    <Route exact path="/" component={ Main } />
-    <Route path="/about" component={ About } />
-    <Route path="/list" component={ NewList } />
-    <Route path="/inspector/:file?" component={ Inspector } />
-    <Route path="/modal/:type?/*" component={ ModalWindow } />
-    { /* <Redirect from="/*" exact to="/" /> */ }
-  </Switch>
-);
+export class ShowError extends Component {
+  render () {
+    return (
+      <div className={ Style.error }>
+        <h1>Error</h1>
+        <hr />
+        <pre>{ JSON.stringify(this.props, 0, 2) }</pre>
+      </div>
+    );
+  }
+}

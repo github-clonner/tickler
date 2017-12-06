@@ -4,11 +4,22 @@
 :root {
   --background: #FFF;
   --border: 1px solid #CCC;
+  --padding: 15px;
+  --button-color: #000;
+}
+
+:local(.footer-button) {
+  font-weight: lighter;
 }
 
 :local(.footer) {
   background: var(--background);
   border-top: var(--border);
-  padding: 15px;
-  text-align: right;
+  padding: var(--padding);
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  & > :not(:first-child) {
+    margin-left: .25rem;
+  }
 }

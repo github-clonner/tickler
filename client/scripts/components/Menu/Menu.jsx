@@ -73,7 +73,7 @@ export const buildListItemMenu = (props) => (event, item) => {
   event.preventDefault();
   event.stopPropagation();
   const { clientX, clientY } = event;
-  const { player, playlist, inspect, items } = props;
+  const { player, playlist, inspect, items, modal } = props;
 
   const menu = buildContextMenu([{
     label: item.file ? (item.isPlaying ? 'Pause' : 'Play') : (item.isLoading ? 'cancel' : 'download'),
@@ -88,9 +88,17 @@ export const buildListItemMenu = (props) => (event, item) => {
     }
   }, {
     label: 'Media Information...',
-    id: item.id,
     click(menuItem, browserWindow, event) {
-      return props.playlist.viewMediaInfo(item);
+      return modal.MediaInfo(item);
+      // console.log('menuItem, browserWindow, event', menuItem, browserWindow, event);
+      // const modal = new Modal('/modal/media/metadata', item, { stats: true });
+      // const id = modal.show();
+      // return;
+    }
+  }, {
+    label: 'Related media...',
+    click(menuItem, browserWindow, event) {
+      return modal.Related(item);
       // console.log('menuItem, browserWindow, event', menuItem, browserWindow, event);
       // const modal = new Modal('/modal/media/metadata', item, { stats: true });
       // const id = modal.show();

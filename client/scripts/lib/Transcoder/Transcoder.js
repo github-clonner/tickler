@@ -43,7 +43,7 @@ import os from 'os';
 import Stream from 'stream';
 import FFmpeg from 'fluent-ffmpeg';
 import sanitize from 'sanitize-filename';
-import EventEmitterEx from '../EventEmitterEx';
+import { EventEmitter } from 'events';
 import { MediaElementEx } from '../MediaSourceEx';
 import { presets } from './presets';
 
@@ -67,7 +67,7 @@ export default class Transcoder {
       source: stream,
       priority: options.priority || 0
     });
-    this.events = new EventEmitterEx();
+    this.events = new EventEmitter();
     this.addListeners(this.command);
   }
 

@@ -38,9 +38,44 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 import Style from './Footer.css';
+import classNames from 'classnames';
 import React, { Component } from 'react';
+import {
+  pure,
+  compose,
+  getContext,
+  setPropTypes,
+  onlyUpdateForPropTypes
+} from 'recompose';
+import { ModalType } from '../../ModalType';
 
-export const Footer = ({ children }) =>
-  <div className={ Style.footer} >
-    { children }
-  </div>;
+/*
+ * Component wrapper
+ */
+const enhance = compose(
+  pure,
+  getContext({
+    modal: ModalType
+  }),
+  onlyUpdateForPropTypes,
+  setPropTypes({
+    modal: ModalType
+  })
+);
+
+const buttonClass = (child) => {
+  if (!child.type.match(/button/i)) return child;
+  const className = classNames(child.props.className, Style.footerButton );
+  const props = {
+    className
+  };
+  return React.cloneElement(child, props);
+};
+
+export default enhance(({ modal: { footer, actions, options }}) => {
+  return (
+    <div className={ Style.footer } >
+      { React.Children.map(footer, buttonClass) }
+    </div>
+  );
+});

@@ -59,7 +59,6 @@ export default class HashMap extends Map {
   }
 
   set(key, value) {
-    console.log('set', key, value)
     return super.set(key, value);
   }
 

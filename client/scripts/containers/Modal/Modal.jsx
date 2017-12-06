@@ -41,6 +41,7 @@ import classNames from 'classnames';
 import URL, { URL as URI} from 'url';
 import { connect } from 'react-redux';
 import React, { Component } from 'react';
+import MsgBoxStyle from './ModalStyle.json';
 import { bindActionCreators } from 'redux';
 import * as Settings from '../../actions/Settings';
 import { shell, remote, ipcRenderer } from 'electron';
@@ -56,10 +57,10 @@ import {
   withContext
 } from 'recompose';
 
-import { MediaInfo } from './MediaInfo';
-import { SortableComponent } from './Related';
+// import { MediaInfo } from './MediaInfo';
+// import { SortableComponent } from './Related';
 
-import { Header, ModalType } from '../../components/Modal';
+import { Header, Body, Footer, ModalType } from '../../components/Modal';
 
 
 const withStore = compose(
@@ -67,59 +68,27 @@ const withStore = compose(
   getContext({ store: PropTypes.object })
 );
 
-class Title extends React.Component {
-
-  static propTypes = {
-    title: PropTypes.string.isRequired
-  };
-
-  static defaultProps = {
-    title: 'Hello World'
-  };
-
-  static childContextTypes = {
-    title: PropTypes.string.isRequired
-  }
-
-  getChildContext() {
-    return this.props.title;
-  }
-
-  render() {
-    return <h1>{ this.props.title }</h1>;
-  }
-}
-
-const MsgBoxStyle = {
-  OK_ONLY: { buttons: [ 'Ok' ], prompt: null, title: null },
-  OK_CANCEL: { buttons: [ 'Ok', 'Cancel' ], prompt: null, title: null },
-  ABORT_RETRY_IGNORE: { buttons: [ 'Abort', 'Retry', 'Ignore'], prompt: null, title: null },
-  YES_NO_CANCEL: { buttons: [ 'Yes', 'No', 'Cancel'], prompt: null, title: null },
-  YES_NO: { buttons: [ 'Yes', 'No' ], prompt: null, title: null },
-  RETRY_CANCEL: { buttons: [ 'Retry', 'Cancel' ], prompt: null, title: null },
-  CRITICAL: { buttons: [ ], prompt: null, title: null },
-  QUESTION: { buttons: [ ], prompt: null, title: null },
-  EXCLAMATION: { buttons: [ ], prompt: null, title: null },
-  INFORMATION: { buttons: [ ], prompt: null, title: null }
-};
 
 function mapStateToProps (state, ownProps) {
-  console.log('ModalWindow ownProps', ownProps);
+  console.log('Modal ownProps', state, ownProps);
   if (ownProps && ownProps.modal) {
     return ownProps;
   } else if (ownProps && ownProps.match) {
     const { match: { params: { type, ...category }}} = ownProps;
     const { location: { query: params }} = ownProps;
+    const { modal } = ownProps;
     return {
       modal: {
-        header: 'MyModal',
-        body: 'MyModal',
+        header: 'MyModalHeader',
+        body: 'MyModalBody',
+        footer: 'MyModalFooter',
         options: {
           type: 'modal',
           category: Object.values(category),
           params: params
         }
-      }
+      },
+      ...modal
     };
   }
 }
@@ -140,8 +109,8 @@ export default class Modal extends Component {
 
   static defaultProps = {
     modal: {
-      header: 'My Header Title',
-      body: 'Hello World'
+      header: 'My Header',
+      body: 'My Body'
     }
   };
 
@@ -149,20 +118,47 @@ export default class Modal extends Component {
     modal: ModalType
   };
 
+  static close(event) {
+    const webContents = remote.getCurrentWindow();
+    console.log('modal:close', webContents.id);
+    return webContents.getParentWindow().send('modal:close');
+  };
+
+  static save(event) {
+    const webContents = remote.getCurrentWindow();
+    console.log('modal:save', webContents.id);
+    return webContents.getParentWindow().send('modal:save');
+  };
+
+  static ignore(event) {
+    const webContents = remote.getCurrentWindow();
+    console.log('modal:ignore', webContents.id);
+    return webContents.getParentWindow().send('modal:ignore');
+  };
+
+  static retry(event) {
+    const webContents = remote.getCurrentWindow();
+    console.log('modal:retry', webContents.id);
+    return webContents.getParentWindow().send('modal:retry');
+  };
+
   getChildContext() {
+    console.log('getChildContext', this.props.modal);
     const { modal = this.props.modal } = this.state;
     return {
       modal: {
         header: modal.header,
-        body: modal.body
+        body: modal.body,
+        footer: modal.footer,
+        options: modal.options,
+        actions: {
+          close: Modal.close,
+          save: Modal.save,
+          ignore: Modal.ignore,
+          retry: Modal.retry
+        }
       }
     }
-  }
-
-  static close(event) {
-    const webContents = remote.getCurrentWindow();
-    console.log('modal:close', webContents.id, webContents);
-    return webContents.getParentWindow().send('modal:close');
   }
 
   state = {
@@ -172,10 +168,10 @@ export default class Modal extends Component {
   };
 
   componentDidMount () {
-    this.modal = remote.getCurrentWindow();
-    this.modal.show();
-    this.modal.focus();
-    this.modal.webContents.openDevTools();
+    // this.modal = remote.getCurrentWindow();
+    // this.modal.show();
+    // this.modal.focus();
+    // this.modal.webContents.openDevTools();
   }
 
   componentWillMount () {
@@ -187,42 +183,25 @@ export default class Modal extends Component {
         console.log('modal:event', data);
       }
     };
-    console.log('modal:componentWillMount');
-    ipcRenderer.on('modal:event', this.listener.modalEvent);
+    // ipcRenderer.on('modal:event', this.listener.modalEvent);
     // ipcRenderer.on('modal:set:scope', this.listener.setScope);
   }
 
   componentWillUnmount() {
-    console.log('modal:componentWillUnmount');
-    /* Remove listeners */
-    ipcRenderer.removeListener('modal:event', this.listener.modalEvent);
-    ipcRenderer.removeListener('modal:set:scope', this.listener.setScope);
+    // ipcRenderer.removeListener('modal:event', this.listener.modalEvent);
+    // ipcRenderer.removeListener('modal:set:scope', this.listener.setScope);
+    // ipcRenderer.removeListener('modal:set:state', this.listener.setState);
   }
 
   render () {
-    // const { header, title, body, footer, query } = this.props;
-    // const { related } = query || QI;
-    // const { media } = this.state;
     const { modal } = this.props;
-    // console.log('Modal.Props', this.props)
-    // console.log('Modal.State', this.state)
+    console.log('FOOTER', modal.footer);
     return (
       <div className={ Style.modal } role="dialog" >
         <div className={ Style.content } role="document" >
-          <div className={ Style.header }>
-            <h5 className={ Style.title }>Modal title</h5>
-            <button type="button" className={ classNames( Style.modalButton, Style.close) } onClick={ Modal.close }>
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <Header>{ this.props.modal.header }</Header>
-          <div className={ Style.body }>
-            { /* <MediaInfo media={ this.props.query } /> */ }
-            { /* <SortableComponent items={ media.related } /> */ }
-          </div>
-          <div className={ Style.footer} >
-            { /* <p>footer</p> */ }
-          </div>
+          <Header>{ modal.header }</Header>
+          <Body>{ modal.body }</Body>
+          <Footer>{ modal.footer }</Footer>
         </div>
       </div>
     );

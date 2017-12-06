@@ -9,10 +9,11 @@ export { PluginManager, Plugin } from './PluginManager/PluginManager';
 /* Subclassed/extended built-in objects */
 export MapEx from './MapEx';
 export HashMap from './HashMap';
-export EventEmitterEx from './EventEmitterEx';
+// export EventEmitterEx from './EventEmitterEx';
 export { MediaElementEx, MediaElementWrapper } from './MediaSourceEx';
 export { MediaSourceStream, EchoStream, toArrayBuffer } from './StreamEx';
 export FileSystem, { getPath, read, write, remove, rename, OS_DIRECTORIES } from './FileSystem';
+export { EventEmitterEx } from './EventEmitterEx/EventEmitterEx';
 
 /* Data transformers */
 export Time, { parseDuration } from './Time';

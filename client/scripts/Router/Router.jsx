@@ -1,12 +1,14 @@
+// @flow
+
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : index.jsx                                                 //
-// @summary      : Application entry point                                   //
-// @version      : 0.0.1                                                     //
+// @file         : Router.jsx                                                //
+// @summary      : Application state router                                  //
+// @version      : 1.0.0                                                     //
 // @project      : tickelr                                                   //
 // @description  :                                                           //
 // @author       : Benjamin Maggi                                            //
 // @email        : benjaminmaggi@gmail.com                                   //
-// @date         : 13 Feb 2017                                               //
+// @date         : 05 Dec 2017                                               //
 // @license:     : MIT                                                       //
 // ------------------------------------------------------------------------- //
 //                                                                           //
@@ -35,60 +37,41 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-import { URL } from 'url';
-import React from 'react';
-import { Router } from './Router';
-import Style from './layout.css';
-import { remote } from 'electron';
-import { render } from 'react-dom';
-import { Provider } from 'react-redux';
-import { ConnectedRouter } from 'react-router-redux';
-import configureStore, { history } from './store/configureStore';
+import { URL, URLSearchParams } from 'url';
+import React, { Component } from 'react';
+import { ipcRenderer, remote } from 'electron';
+import { Router, Route, Redirect, Link, Switch } from 'react-router-dom';
+import { Main, About, NewList, Inspector, Modal, ModalWindow, ShowError } from '../containers';
+import { ModalRouter } from './ModalRouter';
 
-// const onBeforeRequest = remote.session.defaultSession.webRequest.onBeforeRequest({ urls: ['file://*'] }, (details, callback) => {
-//   // console.log('SESSION', JSON.stringify(details,0,2), window.location.href);
-//   console.log('SESSION', details, window.location.href);
-//   callback({ cancel: false })
-// });
+const locationOverride = (props, DefaultComponent) => {
+  try {
+    const { location } = props;
+    const param = new URLSearchParams(location.search).entries().next();
+    if (param.value) {
+      const [ name,  value ] = param.value;
+      switch (name) {
+        case 'modal': return ModalRouter(props);
+        default:
+          return (<DefaultComponent {...props } />);
+      }
+    } else {
+      return (<DefaultComponent {...props } />);
+    }
+  } catch (error) {
+    console.error(error);
+    return (<ShowError {...props } />);
+  }
+}
 
-/* clipboard manager */
-// import ClipBoardManager from './lib/ClipBoardManager';
-const store = window.store = configureStore();
-const electron = window.electron = require('electron');
-// const removeActionListener = store.addActionListener('SELECT_ITEM', () => {
-//   console.log('SELECT_ITEM', arguments);
-// });
-
-// const clipBoardData = new ClipBoardData();
-// clipBoardData.events.on('data', data => {
-//   history.push({
-//     pathname: '/new-list',
-//     query: {
-//       modal: true
-//     },
-//     state: {
-//       list: data.list,
-//       video: data.v
-//     }
-//   });
-// })
-
-const domContainerNode = document.getElementById('app');
-domContainerNode.className = Style.application;
-
-render(
-  <Provider store={ store }>
-    { /* ConnectedRouter will use the store from Provider automatically */ }
-    <ConnectedRouter history={ history }>
-      { Router }
-    </ConnectedRouter>
-  </Provider>,
-  domContainerNode
+export default (
+  <Switch>
+    <Route exact path="/" render={ (props) => (locationOverride(props, Main)) }/>
+    <Route path="/about" component={ About } />
+    <Route path="/list" component={ NewList } />
+    <Route path="/inspector/:file?" component={ Inspector } />
+    <Route path="/modal/:type?/*" component={ ModalWindow } />
+    <Route path="/error/:type?/*" component={ ShowError } />
+    <Redirect from="/*" exact to="/" />
+  </Switch>
 );
-
-
-
-
-
-
-

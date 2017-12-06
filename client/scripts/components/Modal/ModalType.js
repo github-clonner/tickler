@@ -43,12 +43,19 @@ export const ModalType = PropTypes.shape({
   header: PropTypes.node.isRequired,
   body: PropTypes.node.isRequired,
   footer: PropTypes.node,
+  actions: PropTypes.shape({
+    close: PropTypes.func,
+    save: PropTypes.func,
+    ignore: PropTypes.func,
+    retry: PropTypes.func
+  }),
   options: PropTypes.shape({
-    type: PropTypes.oneOf([ 'modal', 'dialog' ]),
+    type: PropTypes.oneOf([ 'media', 'settings' ]),
     autosave: PropTypes.bool,
     confirm: PropTypes.bool,
     style: PropTypes.oneOf([ 'OK_ONLY', 'OK_CANCEL', 'ABORT_RETRY_IGNORE', 'YES_NO_CANCEL', 'YES_NO', 'RETRY_CANCEL', 'CRITICAL', 'QUESTION', 'EXCLAMATION', 'INFORMATION' ]),
     className: PropTypes.node,
-    fullscreen: PropTypes.bool
+    fullscreen: PropTypes.bool,
+    close: PropTypes.func
   })
 });

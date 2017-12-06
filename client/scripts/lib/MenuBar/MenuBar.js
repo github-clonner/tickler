@@ -91,19 +91,10 @@ const handler = {
 
 export class MenuBar extends EventEmitter {
   static config(options) {
+    const { browserWindow } = require('./MenuBar.json');
+    console.log('browserWindow.defaults', browserWindow);
     return {
-      width: 400,
-      height: 400,
-      show: false,
-      frame: false,
-      resizable: false,
-      maximizable: false,
-      fullscreenable: false,
-      autoHideMenuBar: true,
-      hasShadow: false,
-      titleBarStyle: 'customButtonsOnHover',
-      transparent: true,
-      backgroundColor: '#00FFFFFF',
+      ...browserWindow,
       ...options
     };
   };
@@ -139,7 +130,7 @@ export class MenuBar extends EventEmitter {
       /* app event listeners */
       app: {
         ready: [ app.once, (event) =>  {
-
+          console.log('app.ready', event)
         }]
       },
       /* application event listeners */

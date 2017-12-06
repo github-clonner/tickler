@@ -43,7 +43,6 @@ import { bindActionCreators } from 'redux';
 import { withRouter } from "react-router-dom";
 import * as Settings from '../../actions/Settings';
 import { shell, remote, ipcRenderer } from 'electron';
-import { ModalType } from '../../components/Modal';
 import {
   compose,
   setPropTypes,
@@ -53,22 +52,55 @@ import {
   renderComponent,
   renderNothing
 } from 'recompose';
+import { ModalType } from '../../components/Modal';
+import { MediaInfo } from './MediaInfo';
+import { Related } from './Related';
+import { ModalFactory } from './ModalFactory';
+
+
+// const ModalFactory = (type, category, options, data) => {
+//   try {
+//     const template = {
+//       options: { type, category, ...options }
+//     };
+//     switch (category.join('.')) {
+//       case 'metadata': return {
+//         modal: {
+//           ...template,
+//           header: (<span>Title</span>),
+//           body: <MediaInfo { ...data } />,
+//           footer: (<button>Hola</button>)
+//         }
+//       };
+//       case 'related': return {
+//         modal: {
+//           ...template,
+//           header: '<Header { ...data } />',
+//           body: <Related { ...data } />,
+//           footer: '<Footer { ...options } />'
+//         }
+//       };
+//       default: return {
+//         modal: {
+//           ...template,
+//           header: '<Header { ...data } />',
+//           body: (<div { ...data } />),
+//           footer: '<Footer { ...options } />'
+//         }
+//       };
+//     }
+//   } catch (error) {
+//     console.error(error);
+//     throw error;
+//   }
+// };
 
 function mapStateToProps (state, ownProps) {
-  console.log('ModalWindow ownProps', ownProps);
-  const { match: { params: { type, ...category }}} = ownProps;
-  const { location: { query: params }} = ownProps;
-  return {
-    modal: {
-      header: 'My Modal Window',
-      body: 'My Modal Window',
-      options: {
-        type: 'modal',
-        category: Object.values(category),
-        params: params
-      }
-    }
-  };
+  console.log('ModalWindow ownProps', state, ownProps);
+  const { location: { state: { data, options, id }}, match: { params: { type, ...category }}} = ownProps;
+  const modal = ModalFactory(type, Object.values(category), options, data);
+  console.log('modal', modal);
+  return modal;
 }
 
 function mapDispatchToProps(dispatch: Dispatch) {
@@ -81,24 +113,32 @@ export const ModalWindow = compose(
   connect(mapStateToProps, mapDispatchToProps),
   withRouter,
   setPropTypes({
-    modal: ModalType
+    modal: ModalType,
+    settings: PropTypes.any
   }),
-  // mapProps(({ modal }) => ({ modal })),
   mapProps((props) => {
-    console.log('ModalWindow PROPS', props);
     return props
   }),
   withHandlers({
     onClick: (props) => (event, data) => {
       console.log('onClick', props, event, data);
+    },
+    close: (props) => (event, data) => {
+      console.log('ModalWindow close', props, event, data);
     }
   }),
   branch(
     ({ modal }) => {
-      console.log('ModalWindow', modal);
-      return (modal && modal.options.type)
+      try {
+        const { options } = modal;
+        console.log('TYPE: ', options.type);
+        return (modal && modal.options.type);
+      } catch (error) {
+        console.error(error);
+        return false;
+      }
     },
     renderComponent(Modal),
-    renderNothing, /* renderComponent(Dialog) */
+    renderNothing,
   )
 )(Modal);

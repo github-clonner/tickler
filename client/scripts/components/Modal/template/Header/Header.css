@@ -3,23 +3,48 @@
 
 :root {
   --background: #FFF;
+  --color: #000;
   --border: 1px solid #CCC;
+  --padding: 0.65em;
+  --close-button-color: #000;
+}
+
+
+:local(.header-button) {
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  line-height: 1;
 }
 
 :local(.header) {
-  background: var(--background);
+  display: flex;
+  user-select: none;
+  align-items: center;
+  padding: var(--padding);
   border-bottom: var(--border);
-  padding: 15px;
-  min-height: 1px;
+  background: var(--background);
   justify-content: space-between;
+  cursor: default;
   & .title {
-    text-transform: capitalize;
     margin: 0;
-    font-weight: normal;
+    display: flex;
     font-size: 1em;
     line-height: 1em;
+    color: var(--color);
+    font-weight: lighter;
+    align-content: center;
+    text-transform: capitalize;
   }
-  & .close {
-    float: right;
+  & .icon {
+    font-weight: normal;
+    font-family: var(--iconFont);
+    color: var(--color);
+    opacity: 0.65;
+    margin-right: 0.5em;
+    text-transform: none;
+  }
+  & .close-button {
+    color: var(--color);
   }
 }

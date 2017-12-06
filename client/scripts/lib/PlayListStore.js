@@ -43,7 +43,6 @@ import os from 'os';
 import Ajv from 'ajv';
 import path from 'path';
 import uuid from 'uuid';
-import Dialog from './Dialog';
 import { PlayList } from '../types';
 import SettingsStore from './SettingsStore';
 // import chokidar from 'chokidar';

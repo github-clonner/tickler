@@ -1,14 +1,12 @@
-// @flow
-
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : Body.jsx                                                  //
-// @summary      : Modal body component                                      //
+// @file         : MediaInfo.jsx                                             //
+// @summary      : Media information container                               //
 // @version      : 1.0.0                                                     //
 // @project      : tickelr                                                   //
 // @description  :                                                           //
 // @author       : Benjamin Maggi                                            //
 // @email        : benjaminmaggi@gmail.com                                   //
-// @date         : 18 Nov 2017                                               //
+// @date         : 17 Nov 2017                                               //
 // @license:     : MIT                                                       //
 // ------------------------------------------------------------------------- //
 //                                                                           //
@@ -37,35 +35,52 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-import Style from './Body.css';
+import Style from './MediaInfo.css';
 import React, { Component } from 'react';
-import {
-  pure,
-  compose,
-  getContext,
-  setPropTypes,
-  onlyUpdateForPropTypes
-} from 'recompose';
-import { ModalType } from '../../ModalType';
 
-/*
- * Component wrapper
- */
-const enhance = compose(
-  pure,
-  getContext({
-    modal: ModalType
-  }),
-  onlyUpdateForPropTypes,
-  setPropTypes({
-    modal: ModalType
-  })
-);
+export const MediaInfo = function (media, ...args) {
+  const noop = () => {};
+  const $error = {
+    message: null
+  };
 
-export default enhance(({ modal: { body, actions, options }}) => {
   return (
-    <div className={ Style.body } >
-      { body }
-    </div>
+    <form className={ Style.form }>
+      <div className={ Style.formGroup }>
+        <label htmlFor="title">Title</label>
+        <input type="text" className={ Style.formControl } id="title" value={ media.title} onChange={ noop }/>
+        <small className={ Style.formText }>{ $error.message }</small>
+      </div>
+      <div className={ Style.formGroup }>
+        <label htmlFor="artist">artist</label>
+        <input type="text" className={ Style.formControl } id="artist" value={ media.artist } onChange={ noop }/>
+        <small className={ Style.formText }>{ $error.message }</small>
+      </div>
+      <div className={ Style.formGroup }>
+        <label htmlFor="album">album</label>
+        <input type="text" className={ Style.formControl } id="album" value={ media.album } onChange={ noop }/>
+        <small className={ Style.formText }>{ $error.message }</small>
+      </div>
+      <div className={ Style.formGroup }>
+        <label htmlFor="genre">genre</label>
+        <input type="text" className={ Style.formControl } id="genre" value={ media.genre } onChange={ noop }/>
+        <small className={ Style.formText }>{ $error.message }</small>
+      </div>
+      <div className={ Style.formGroup }>
+        <label htmlFor="description">description</label>
+        <input type="text" className={ Style.formControl } id="description" value={ media.description } onChange={ noop }/>
+        <small className={ Style.formText }>{ $error.message }</small>
+      </div>
+      <div className={ Style.formGroup }>
+        <label htmlFor="copyright">copyright</label>
+        <input type="text" className={ Style.formControl } id="copyright" value={ media.copyright } onChange={ noop }/>
+        <small className={ Style.formText }>{ $error.message }</small>
+      </div>
+      <div className={ Style.formGroup }>
+        <label htmlFor="location">location</label>
+        <input type="text" className={ Style.formControl } id="location" onChange={ noop }/>
+        <small className={ Style.formText }>{ $error.message }</small>
+      </div>
+    </form>
   );
-});
+};

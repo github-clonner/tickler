@@ -38,11 +38,12 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 import Style from './Header.css';
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { connect } from 'react-redux';
+// import { connect } from 'react-redux';
 import React, { Component } from 'react';
-import { bindActionCreators } from 'redux';
+// import { bindActionCreators } from 'redux';
+import { shell, remote, ipcRenderer } from 'electron';
 import {
   compose,
   onlyUpdateForPropTypes,
@@ -50,17 +51,18 @@ import {
   pure,
   renderNothing,
   renderComponent,
-  withPropsOnChange,
-  withState,
-  withHandlers,
-  withProps,
-  mapProps,
   setPropTypes,
   getContext
 } from 'recompose';
-import { Player, Settings } from '../../../../actions';
-import { getModalSettings, getHeaderActions } from './selector';
+// import { Player, Settings } from '../../../../actions';
+// import { getModalSettings, getHeaderActions } from './selector';
+import { ModalType } from '../../ModalType';
 
+
+/*
+ * conditional state render
+ * inspiration: https://blog.bigbinary.com/2017/09/12/using-recompose-to-build-higher-order-components.html
+ */
 const conditionalRender = (states) =>
   compose(...states.map(state =>
     branch(state.when, renderComponent(state.then))
@@ -72,8 +74,8 @@ const conditionalRender = (states) =>
  */
 function mapStateToProps(state, props) {
   return {
-    settings: getModalSettings(state.Settings),
-    options: state.options
+    // settings: getModalSettings(state.Settings),
+    // options: state.options
   };
 }
 
@@ -83,7 +85,7 @@ function mapStateToProps(state, props) {
  */
 function mapDispatchToProps(dispatch) {
   return {
-    player: bindActionCreators(Player, dispatch)
+    // player: bindActionCreators(Player, dispatch)
   };
 }
 
@@ -92,29 +94,31 @@ function mapDispatchToProps(dispatch) {
  */
 const enhance = compose(
   pure,
-  connect(mapStateToProps, mapDispatchToProps),
+  // connect(mapStateToProps, mapDispatchToProps),
   getContext({
-    modal: PropTypes.object
+    modal: ModalType
   }),
-  withHandlers({
-    close: props => event => {
-      console.log('Close Modal', props, event);
-      return;
-    }
-  }),
+  // withHandlers({
+  //   close: props => event => {
+  //     const webContents = remote.getCurrentWindow();
+  //     console.log('modal:close', webContents.id, webContents);
+  //     return webContents.getParentWindow().send('modal:close');
+  //   }
+  // }),
   onlyUpdateForPropTypes,
   setPropTypes({
-    modal: PropTypes.object,
-    options: PropTypes.object,
-    settings: PropTypes.object
+    modal: ModalType
   })
 );
 
-export default enhance(({ modal: { header }, close }) => {
+export default enhance(({ modal, modal: { header, actions: { close }, options }}) => {
   return (
     <div className={ Style.header }>
-      <h5 className={ Style.title }>{ header }</h5>
-      <button type="button" className={ classNames( Style.modalButton, Style.close) } onClick={ close }>
+      <h5 className={ Style.title }>
+        <span className={ Style.icon } role="icon">announcement</span>
+        { header }
+      </h5>
+      <button type="button" className={ classNames( Style.modalButton, Style.headerButton, Style.closeButton) } onClick={ close }>
         <span aria-hidden="true">&times;</span>
       </button>
     </div>

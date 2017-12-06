@@ -1,0 +1,111 @@
+{
+  "button": {
+    "OK": {
+      "label": "Ok",
+      "style": "buttonPrimary"
+    },
+    "NO": {
+      "label": "No",
+      "style": "buttonSecondary"
+    },
+    "YES": {
+      "label": "Yes",
+      "style": "buttonPrimary"
+    },
+    "SAVE": {
+      "label": "Save",
+      "style": "buttonPrimary"
+    },
+    "DISCARD": {
+      "label": "Discard",
+      "style": "buttonSecondary"
+    },
+    "CANCEL": {
+      "label": "Cancel",
+      "style": "buttonSecondary"
+    },
+    "ABORT": {
+      "label": "Abort",
+      "style": "buttonPrimary"
+    },
+    "RETRY": {
+      "label": "Retry",
+      "style": "buttonSecondary"
+    },
+    "IGNORE": {
+      "label": "Ignore",
+      "style": "buttonSecondary"
+    },
+    "CONTINUE": {
+      "label": "Continue",
+      "style": "buttonPrimary"
+    },
+    "DEFAULT": {
+      "label": null,
+      "style": "buttonPrimary"
+    }
+  },
+  "type": {
+    "OK_ONLY": {
+      "buttons": [ "OK" ],
+      "prompt": null,
+      "title": null
+    },
+    "OK_CANCEL": {
+      "buttons": [ "OK", "CANCEL" ],
+      "prompt": null,
+      "title": null
+    },
+    "ABORT_RETRY_IGNORE": {
+      "buttons": [ "ABORT", "RETRY", "IGNORE" ],
+      "prompt": null,
+      "title": null
+    },
+    "YES_NO_CANCEL": {
+      "buttons": [ "YES", "NO", "CANCEL" ],
+      "prompt": null,
+      "title": null
+    },
+    "SAVE_DISCARD_CANCEL": {
+      "buttons": [ "DISCARD", "CANCEL", "SAVE" ],
+      "prompt": null,
+      "title": null
+    },
+    "YES_NO": {
+      "buttons": [ "YES", "NO" ],
+      "prompt": null,
+      "title": null
+    },
+    "RETRY_CANCEL": {
+      "buttons": [ "RETRY", "CANCEL" ],
+      "prompt": null,
+      "title": null
+    },
+    "CRITICAL": {
+      "icon": "critical",
+      "prompt": null,
+      "title": null
+    },
+    "QUESTION": {
+      "icon": "question",
+      "prompt": null,
+      "title": null
+    },
+    "EXCLAMATION": {
+      "icon": "exclamation",
+      "prompt": null,
+      "title": null
+    },
+    "INFORMATION": {
+      "icon": "information",
+      "prompt": null,
+      "title": null
+    },
+    "DEFAULT": {
+      "icon": "default",
+      "buttons": [ ],
+      "prompt": null,
+      "title": null
+    }
+  }
+}

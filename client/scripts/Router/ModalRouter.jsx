@@ -1,12 +1,14 @@
+// @flow
+
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : MediaInfo.jsx                                             //
-// @summary      : Media information container                               //
+// @file         : ModalRouter.jsx                                           //
+// @summary      : Modal state router                                        //
 // @version      : 1.0.0                                                     //
 // @project      : tickelr                                                   //
 // @description  :                                                           //
 // @author       : Benjamin Maggi                                            //
 // @email        : benjaminmaggi@gmail.com                                   //
-// @date         : 17 Nov 2017                                               //
+// @date         : 05 Dec 2017                                               //
 // @license:     : MIT                                                       //
 // ------------------------------------------------------------------------- //
 //                                                                           //
@@ -35,49 +37,51 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-import Style from './MediaInfo.css';
 import React, { Component } from 'react';
+import { URL, URLSearchParams } from 'url';
+import { Redirect } from 'react-router-dom';
+import { ipcRenderer, remote } from 'electron';
 
-export const MediaInfo = function ({ media }, ...args) {
-  console.log('General', media)
-  return (
-    <form className={ Style.form }>
-      <div className={ Style.formGroup }>
-        <label htmlFor="title">Title</label>
-        <input type="text" className={ Style.formControl } id="title" value={ media.title} />
-        <small className={ Style.formText }>We'll never share your email with anyone else.</small>
-      </div>
-      <div className={ Style.formGroup }>
-        <label htmlFor="artist">artist</label>
-        <input type="text" className={ Style.formControl } id="artist" value={ media.artist }/>
-        <small className={ Style.formText }>We'll never share your email with anyone else.</small>
-      </div>
-      <div className={ Style.formGroup }>
-        <label htmlFor="album">album</label>
-        <input type="text" className={ Style.formControl } id="album" value={ media.album }/>
-        <small className={ Style.formText }>We'll never share your email with anyone else.</small>
-      </div>
-      <div className={ Style.formGroup }>
-        <label htmlFor="genre">genre</label>
-        <input type="text" className={ Style.formControl } id="genre" value={ media.genre }/>
-        <small className={ Style.formText }>We'll never share your email with anyone else.</small>
-      </div>
-      <div className={ Style.formGroup }>
-        <label htmlFor="description">description</label>
-        <input type="text" className={ Style.formControl } id="description" value={ media.description } />
-        <small className={ Style.formText }>We'll never share your email with anyone else.</small>
-      </div>
-      <div className={ Style.formGroup }>
-        <label htmlFor="copyright">copyright</label>
-        <input type="text" className={ Style.formControl } id="copyright" value={ media.copyright }/>
-        <small className={ Style.formText }>We'll never share your email with anyone else.</small>
-      </div>
-      <div className={ Style.formGroup }>
-        <label htmlFor="location">location</label>
-        <input type="text" className={ Style.formControl } id="location" />
-        <small className={ Style.formText }>We'll never share your email with anyone else.</small>
-      </div>
-      <button type="submit" className={ Style.btn }>Submit</button>
-    </form>
-  );
+const getModalRoute = (location) => {
+  const params = new URLSearchParams(location.search);
+  return {
+    pathname: params.get('modal'),
+    search: params.toString(),
+    state: {
+      timeStamp: Date.now()
+    }
+  };
+};
+
+const getErrorRoute = (location) => {
+  const params = new URLSearchParams(location.search);
+  return {
+    pathname: '/error',
+    search: params.toString(),
+    state: {
+      timeStamp: Date.now()
+    }
+  };
+};
+
+const waitCommand = (command, { history, location }) => {
+  return ipcRenderer.once(command, (event, { data, options, id }) => {
+    try {
+      const modalRoute = getModalRoute(location);
+      console.log('modal:push-props', event, { data, options, id }, modalRoute);
+      const webContents = remote.webContents.fromId(id);
+      const modal = webContents.getOwnerBrowserWindow();
+      return history.push({ ...modalRoute, state: { data, options, id } });
+    } catch (error) {
+      const errorRoute = getErrorRoute(location);
+      return history.push({ ...errorRoute, state: { data, options, id } });
+    }
+  });
+};
+
+export const ModalRouter = (props) => {
+
+  const listener = waitCommand('modal:push-props', props);
+  // return (<Redirect to={ location } {...props } />);
+  return false;
 };

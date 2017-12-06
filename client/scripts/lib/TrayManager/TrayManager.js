@@ -145,7 +145,7 @@ export default class TrayManager extends EventEmitter {
 
   static defaults(options) {
     return {
-      icon: '/Users/bmaggi/tickler/assets/images/cheese.png', // '/Users/bmaggi/tickler/assets/images/cheese.icns', // '/Users/bmaggi/tickler/assets/images/play.icns',
+      icon: '/Users/bmaggi/tickler/assets/images/logo.png', // '/Users/bmaggi/tickler/assets/images/cheese.icns', // '/Users/bmaggi/tickler/assets/images/play.icns',
       ...options
     };
   };

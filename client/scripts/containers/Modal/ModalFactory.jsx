@@ -1,14 +1,12 @@
-// @flow
-
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : Body.jsx                                                  //
-// @summary      : Modal body component                                      //
+// @file         : ModalFactory.jsx                                          //
+// @summary      : Modal factory for stock styles                            //
 // @version      : 1.0.0                                                     //
 // @project      : tickelr                                                   //
 // @description  :                                                           //
 // @author       : Benjamin Maggi                                            //
 // @email        : benjaminmaggi@gmail.com                                   //
-// @date         : 18 Nov 2017                                               //
+// @date         : 05 Dec 2017                                               //
 // @license:     : MIT                                                       //
 // ------------------------------------------------------------------------- //
 //                                                                           //
@@ -37,35 +35,76 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-import Style from './Body.css';
+import Style from './Modal.css';
+import classNames from 'classnames';
+import { Related } from './Related';
+import { MediaInfo } from './MediaInfo';
 import React, { Component } from 'react';
-import {
-  pure,
-  compose,
-  getContext,
-  setPropTypes,
-  onlyUpdateForPropTypes
-} from 'recompose';
-import { ModalType } from '../../ModalType';
+import ModalStyle from './ModalStyle.json';
+import { ModalType } from '../../components/Modal';
+import { isPlainObject, isString, has } from '../../lib/utils';
 
-/*
- * Component wrapper
- */
-const enhance = compose(
-  pure,
-  getContext({
-    modal: ModalType
-  }),
-  onlyUpdateForPropTypes,
-  setPropTypes({
-    modal: ModalType
-  })
-);
+console.log('ModalStyle', ModalStyle);
 
-export default enhance(({ modal: { body, actions, options }}) => {
+const getButton = (button) => {
+  if (isString(button) && ModalStyle.button.hasOwnProperty(button)) {
+    return ModalStyle.button[button];
+  } else if (isString(button) && !ModalStyle.button.hasOwnProperty(button)) {
+    return { ...ModalStyle.button.DEFAULT, label: button };
+  } else if (isPlainObject(button) && has(button, [ 'label', 'style' ])) {
+    return button;
+  } else {
+    console.log('getButton nada', button);
+    return ModalStyle.button.DEFAULT;
+  }
+};
+
+const FooterFactory = (type = 'DEFAULT', category) => {
+  const { [type]: modalType } = ModalStyle.type;
   return (
-    <div className={ Style.body } >
-      { body }
-    </div>
+    modalType.buttons.map((button, index) => {
+      const { label, style }= getButton(button);
+      return (
+        <button data-role="#f00" className={ classNames(Style.modalButton, Style[style]) } key={ index } onClick={ () => {} }>{ label }</button>
+      );
+    })
   );
-});
+};
+
+export const ModalFactory = (type, category, options, data) => {
+  try {
+    const template = {
+      options: { type, category, ...options }
+    };
+    console.log('ModalFactory', options)
+    switch (category.join('.')) {
+      case 'metadata': return {
+        modal: {
+          ...template,
+          header: (<span>{ options.window.title }</span>),
+          body: <MediaInfo { ...data } />,
+          footer: FooterFactory(options.behavior.type)
+        }
+      };
+      case 'related': return {
+        modal: {
+          ...template,
+          header: (<span>{ options.window.title }</span>),
+          body: <Related { ...data } />,
+          footer: FooterFactory(options.behavior.type)
+        }
+      };
+      default: return {
+        modal: {
+          ...template,
+          header: '<Header { ...data } />',
+          body: (<div { ...data } />),
+          footer: FooterFactory(options.behavior.type)
+        }
+      };
+    }
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};

@@ -1,12 +1,14 @@
+// @flow
+
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : index.jsx                                                 //
-// @summary      : Application entry point                                   //
-// @version      : 0.0.1                                                     //
+// @file         : ModalEvents.js                                            //
+// @summary      : Event handlers and utilities                              //
+// @version      : 1.0.0                                                     //
 // @project      : tickelr                                                   //
 // @description  :                                                           //
 // @author       : Benjamin Maggi                                            //
 // @email        : benjaminmaggi@gmail.com                                   //
-// @date         : 13 Feb 2017                                               //
+// @date         : 05 Dec 2017                                               //
 // @license:     : MIT                                                       //
 // ------------------------------------------------------------------------- //
 //                                                                           //
@@ -35,60 +37,63 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
+import path from 'path';
 import { URL } from 'url';
-import React from 'react';
-import { Router } from './Router';
-import Style from './layout.css';
-import { remote } from 'electron';
-import { render } from 'react-dom';
-import { Provider } from 'react-redux';
-import { ConnectedRouter } from 'react-router-redux';
-import configureStore, { history } from './store/configureStore';
+import HashMap from '../HashMap';
+import querystring from 'querystring';
+import { remote, ipcRenderer } from 'electron';
+import { isFunction, isDataURL, isWebURL, camelToDash, toBuffer, isSymbol } from '../../lib/utils';
 
-// const onBeforeRequest = remote.session.defaultSession.webRequest.onBeforeRequest({ urls: ['file://*'] }, (details, callback) => {
-//   // console.log('SESSION', JSON.stringify(details,0,2), window.location.href);
-//   console.log('SESSION', details, window.location.href);
-//   callback({ cancel: false })
-// });
+export const eventNames = (names) => ([
+  'pushProps',
+  'beforeInputEvent',
+  'didFinishLoad',
+  'modalClose',
+  ...names
+]).reduce((events, name) => ({ ...events, [name]: camelToDash(name) }), {});
 
-/* clipboard manager */
-// import ClipBoardManager from './lib/ClipBoardManager';
-const store = window.store = configureStore();
-const electron = window.electron = require('electron');
-// const removeActionListener = store.addActionListener('SELECT_ITEM', () => {
-//   console.log('SELECT_ITEM', arguments);
-// });
+export const configKey = Symbol('config');
 
-// const clipBoardData = new ClipBoardData();
-// clipBoardData.events.on('data', data => {
-//   history.push({
-//     pathname: '/new-list',
-//     query: {
-//       modal: true
-//     },
-//     state: {
-//       list: data.list,
-//       video: data.v
-//     }
-//   });
-// })
-
-const domContainerNode = document.getElementById('app');
-domContainerNode.className = Style.application;
-
-render(
-  <Provider store={ store }>
-    { /* ConnectedRouter will use the store from Provider automatically */ }
-    <ConnectedRouter history={ history }>
-      { Router }
-    </ConnectedRouter>
-  </Provider>,
-  domContainerNode
-);
-
-
-
-
-
-
-
+export function eventListeners(configKey = configKey, listeners) {
+  console.info('eventListeners', this, configKey, listeners);
+  return {
+    /* modal event listeners */
+    modal: {
+      readyToShow: [ 'once',  (event) => {
+        console.info('modal:readyToShow');
+        const { data, options, modal: { webContents, id }} = this;
+        return this.send('modal:push-props', { data, options, id });
+      }],
+      [configKey]: { producer: this.modal, context: this }
+    },
+    /* webContents event listeners */
+    webContents: {
+      beforeInputEvent: [ 'on',  (event, input) => {
+        console.info('webContents:beforeInputEvent');
+        this.send('modal:before-input-event', event, input);
+        switch (input.key) {
+          case 'Escape': return this.close();
+          default:
+            return;
+        }
+      }],
+      didFinishLoad: [ 'on', (event) => {
+        console.info('webContents:didFinishLoad');
+        this.send('modal:didi-finish-load', event);
+        this.modal.show();
+        this.modal.focus();
+      }],
+      [configKey]: { producer: this.modal.webContents }
+    },
+    /* ipcRenderer event listeners */
+    ipcRenderer: {
+      modalClose: [ 'once', (event) => {
+        console.info('ipcRenderer:modalClose');
+        this.send('modal:modal-close', event);
+        return this.close();
+      }],
+      [configKey]: { producer: ipcRenderer, sep: ':'}
+    },
+    ...listeners
+  };
+};

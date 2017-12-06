@@ -42,7 +42,7 @@ import path from 'path';
 import throttle from 'lodash/throttle';
 import sanitize from 'sanitize-filename';
 import * as fileSystem from './FileSystem';
-import EventEmitterEx from './EventEmitterEx';
+import { EventEmitter } from 'events';
 import Metadata from './Metadata';
 import { ApiClient } from '@maggiben/google-apis';
 
@@ -62,7 +62,7 @@ export default class Youtube {
     });
     this.streams = new Map();
     this.options = { ...defaults, ...options };
-    this.events = new EventEmitterEx();
+    this.events = new EventEmitter();
 
     this.events.on('cancel', ({ id, reason, options }) => {
       if (this.streams.has(id)) {

@@ -41,23 +41,184 @@ import path from 'path';
 import { URL } from 'url';
 import HashMap from '../HashMap';
 import querystring from 'querystring';
+import { EventEmitter } from 'events';
+import { eventNames, eventListeners } from './ModalEvents';
 import { remote, ipcRenderer } from 'electron';
-import { isFunction, isDataURL, isWebURL, camelToDash, toBuffer, isSymbol } from '../../lib/utils';
+import { EventEmitterEx } from '../EventEmitterEx/EventEmitterEx';
+import { isFunction, isDataURL, isWebURL, camelToDash, toBuffer, isSymbol, has } from '../../lib/utils';
 
-export class Modal {
+
+export class Modal extends EventEmitterEx {
+  static config(options) {
+    return {
+      window: {
+        backgroundColor: '#FFF',
+        maximizable: false,
+        resizable: true,
+        fullscreenable: false,
+        webviewTag: true,
+        modal: true,
+        show: false,
+        minWidth: 640,
+        parent: remote.getCurrentWindow(),
+        ...options.window
+      },
+      indexURL: options.indexURL || Modal.indexURL,
+      behavior: {
+        type: 'OK_ONLY',
+        ...options.behavior
+      }
+    };
+  };
+
+  static indexURL = new URL(path.resolve(__dirname, 'index.html'), 'file://');
+
+  static hRef(hRef, params) {
+    try {
+      if (isDataURL(hRef) || isWebURL(hRef)) {
+        return hRef;
+      } else {
+        const url = new URL(Modal.indexURL);
+        url.searchParams.set('modal', hRef);
+        return url.href;
+      }
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  };
+
+  static postData(data) {
+    return {
+      postData: [{ type: 'rawData', bytes: toBuffer(data) }],
+      extraHeaders: 'Content-Type: application/x-www-form-urlencoded'
+    };
+  };
+
+  set modal(modal) {
+    try {
+      const hRef = Modal.hRef(modal);
+      this._modal = this.modalWindow(hRef);
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  };
+
+  get modal() {
+    return this._modal;
+  }
+
+  set options(options) {
+    this._options = Modal.config(options);
+  }
+
+  get options() {
+    return this._options;
+  }
+
+  constructor(modal, data, options, events, ...args) {
+    super(...args);
+    const { configKey } = this.listenerConfig;
+    this.options = options;
+    this.data = data;
+    this.modal = modal;
+    this.events = eventListeners.apply(this, [ configKey, events ]);
+    this.attachListeners();
+  }
+
+  modalWindow(hRef) {
+    try {
+      const { options, data } = this;
+      const modal = new remote.BrowserWindow(options.window);
+      modal.loadURL(hRef, Modal.postData(data));
+      return modal;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  send(event, ...args) {
+    console.info('send', event, ...args);
+    return this.modal.webContents.send(event, ...args);
+  };
+
+  close() {
+    this.detachListeners();
+    this.modal.close();
+  }
+}
+
+export class Modal2 extends EventEmitter {
 
   static config(options) {
     return {
-      backgroundColor: '#FFF',
-      maximizable: false,
-      resizable: true,
-      fullscreenable: false,
-      webviewTag: true,
-      modal: true,
-      show: false,
-      parent: remote.getCurrentWindow(),
-      ...options
+      window: {
+        backgroundColor: '#FFF',
+        maximizable: false,
+        resizable: true,
+        fullscreenable: false,
+        webviewTag: true,
+        modal: true,
+        show: false,
+        minWidth: 640,
+        parent: remote.getCurrentWindow(),
+        ...options.window
+      },
+      indexURL: options.indexURL || Modal.indexURL,
+      behavior: {
+        type: 'OK_ONLY',
+        ...options.behavior
+      }
     };
+  };
+
+  static mapEmitterMethod(property, object) {
+    if (!isSymbol(property) && (property in object)) {
+      const { configKey } = Modal.listenerConfig;
+      const { [configKey]: { producer, sub }} = object;
+      let { [property]: listener } = object;
+      listener.splice(0, 1, producer[listener.slice(0, 1).pop()]);
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  static proxyfier(object) {
+
+    const handler = {
+      construct: function(object, argumentsList, newTarget) {
+        console.log('construct', object, argumentsList, newTarget);
+        return Reflect.construct(object, argumentsList, newTarget);
+      },
+      ownKeys: function (target) {
+        console.log('ownKeys', target, Object.getOwnPropertyNames(target));
+        Object.getOwnPropertySymbols(target).forEach(symbol => {
+          Object.defineProperty(target, symbol, { enumerable: false });
+        });
+        return Reflect.ownKeys(target);
+      },
+      has: function (taget, property) {
+        console.log('has', taget, property, typeof property);
+        return Reflect.has(object, property);
+      },
+      set: function(object, property, value, receiver) {
+        console.log('set', object, property, value, receiver);
+        return Reflect.set(object, property, value, receiver);
+      },
+      get: function (object, property, receiver) {
+        console.log('get', object, property);
+        Modal.mapEmitterMethod(property, object);
+        return Reflect.get(object, property, receiver);
+      },
+      apply: function(object, thisArg, argumentsList) {
+        console.log('apply', object, thisArg, argumentsList);
+        return Reflect.apply(object, thisArg, argumentsList);
+      }
+    }
+    return new Proxy(object, handler);
   };
 
   static hRef(hRef, params) {
@@ -65,7 +226,7 @@ export class Modal {
       if (isDataURL(hRef) || isWebURL(hRef)) {
         return hRef;
       } else {
-        const url = new URL(path.resolve(__dirname, 'index.html'), 'file://');
+        const url = new URL(Modal.indexURL);
         url.searchParams.set('modal', hRef);
         return url.href;
       }
@@ -86,29 +247,12 @@ export class Modal {
     configKey: Symbol('config')
   };
 
-  constructor(modal, data, options) {
-    this.options = options;
-    this.data = data;
-    this.modal = modal;
-  }
-
-  modalWindow(hRef) {
-    try {
-      const modal = new remote.BrowserWindow(this.options);
-      if (!modal) throw new Error('Error loading modal');
-      modal.loadURL(hRef, this.data);
-      return modal;
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  }
+  static indexURL = new URL(path.resolve(__dirname, 'index.html'), 'file://');
 
   set modal(modal) {
     try {
       const hRef = Modal.hRef(modal);
       this._modal = this.modalWindow(hRef);
-      this.attachListeners();
     } catch (error) {
       console.error(error);
       throw error;
@@ -117,19 +261,6 @@ export class Modal {
 
   get modal() {
     return this._modal;
-  }
-
-  send(event, ...args) {
-    console.info('send', event, ...args);
-    return this.modal.webContents.send(event, ...args);
-  };
-
-  set data(data) {
-    this._data = Modal.postData(data);
-  }
-
-  get data() {
-    return this._data;
   }
 
   set options(options) {
@@ -145,66 +276,149 @@ export class Modal {
   }
 
   get listeners() {
-    const { modal, modal: { id }, modal: { webContents }, data, options, listenerConfig: { configKey } } = this;
-    return this._listeners || HashMap.fromObject({
-      /* modal event listeners */
-      modal: HashMap.fromObject({
-        closed: [ 'once', (event) => { console.log('MODAL CLOSED', event) }],
-        readyToShow: [ 'once',  () => {
-          console.log('readyToShow');
-          return this.send('modal:set:scope', { data, options, id });
-        }],
-        [configKey]: { producer: this.modal }
-      }),
+    if (this.modal.isDestroyed() || this._listeners) return this._listeners;
 
-      /* webContents event listeners */
-      webContents: HashMap.fromObject({
-        beforeInputEvent: [ 'on',  (event, input) => {
-          console.log('beforeInputEvent');
-          if (input.key === 'Escape') return modal.close();
-        }],
-        didFinishLoad: [ 'on', () => {
-          console.log('didFinishLoad');
-          modal.show();
-          modal.focus();
-          // this.send('modal:set:scope', { data: this.data, options: this.options });
-          webContents.openDevTools();
-        }],
-        [configKey]: { producer: webContents }
-      }),
+    const { modal, send, data, options, listenerConfig: { configKey }, modal: { id, webContents } } = this;
+    // const {
+    //   modal,
+    //   send,
+    //   data,
+    //   options,
+    //   listenerConfig: { configKey },
+    //   modal: { id, webContents }
+    // } = this;
 
-      /* ipcRenderer event listeners */
-      ipcRenderer: HashMap.fromObject({
-        modalClose: [ 'once', (event) => modal.close() ],
-        [configKey]: { producer: ipcRenderer, sep: ':'}
-      }),
+    const listeners = new HashMap();
 
-      /* application event listeners */
-      application: HashMap.fromObject({
-        beforeQuit: [ 'once', (event) => {
-          return event.preventDefault();
-          // return modal.close();
-        }],
-        [configKey]: { producer: remote.app }
-      })
-    });
+    /* modal event listeners */
+    listeners.set('modal', this.proxyfier({
+      closed: [ 'once', (event) => {
+        console.info('modal:closed');
+        return this.send('modal:closed');
+      }],
+      readyToShow: [ 'once',  (event) => {
+        console.info('modal:readyToShow');
+        return this.send('modal:set:scope', { data, options, id });
+      }],
+      [configKey]: { producer: modal, context: this }
+    }));
+
+    /* webContents event listeners */
+    listeners.set('webContents', this.proxyfier({
+      beforeInputEvent: [ 'on',  (event, input) => {
+        console.info('webContents:beforeInputEvent');
+        // this.send('modal:before-input-event', input);
+        switch (input.key) {
+          case 'Escape': return this.close();
+          default:
+            return;
+        }
+      }],
+      didFinishLoad: [ 'on', () => {
+        console.info('webContents:didFinishLoad');
+        modal.show();
+        modal.focus();
+        // webContents.openDevTools();
+      }],
+      [configKey]: { producer: webContents }
+    }));
+
+    /* ipcRenderer event listeners */
+    listeners.set('ipcRenderer', this.proxyfier({
+      modalClose: [ 'once', (event) => {
+        console.info('ipcRenderer:modalClose', event, this);
+        return this.close();
+      }],
+      [configKey]: { producer: ipcRenderer, sep: ':'}
+    }));
+
+    return listeners;
   }
 
   set listeners(listeners) {
     this._listeners = listeners;
   }
 
-  attachListeners() {
+  constructor(modal, data, options, ...args) {
+    super(...args);
+    this.options = options;
+    this.data = data;
+    this.modal = modal;
+    this.attachListeners();
+  }
+
+  modalWindow(hRef) {
+    try {
+      const { options, data } = this;
+      const modal = new remote.BrowserWindow(options.window);
+      modal.loadURL(hRef, Modal.postData(data));
+      return modal;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  proxyfier(object) {
+    return this.constructor.proxyfier(object);
+  }
+
+  send(event, ...args) {
+    console.info('send', event, ...args);
+    return this.modal.webContents.send(event, ...args);
+  };
+
+  attachListeners2() {
     const { configKey } = this.listenerConfig;
     const excludeSymbols = ([name]) => !isSymbol(name);
-    const mapProducers = ({ producer, sep }) => ([ name, [ method, handler ]]) => [ camelToDash(name, sep), [ producer[method].bind(producer), handler ]];
+    const mapProducers = ({ producer, context, sep }) => ([ name, [ method, handler ]]) => [ camelToDash(name, sep), [ producer[method].bind(context || producer), handler ]];
     const mapListeners = ([ emitter, events ]) => ([ emitter, events.filter(excludeSymbols).map(mapProducers(events.get(configKey))) ]);
     const mapHandlers = ([ name, [ method, handler ]]) => method.apply(method, [ name, handler ]);
     const toDictionary = (listeners, [ emitter, events ]) => ({ ...listeners, [emitter]: events.map(mapHandlers) });
     return this.listeners = this.listeners.map(mapListeners).reduce(toDictionary, {});
   }
 
-  destroy() {
+  attachListeners() {
+    const { configKey } = this.listenerConfig;
+    const excludeSymbols = ([name]) => !isSymbol(name);
+    const mapProducers = ({ producer, context, sep }) => ([ name, [ method, handler ]]) => {
+      return [ camelToDash(name, sep), [ method.bind(context || producer), handler ]];
+    }
+    const mapListeners = ([ emitter, events ]) => {
+      return [ emitter, Object.entries(events).filter(excludeSymbols).map(mapProducers(events[configKey])).map(mapHandlers) ];
+    };
+    const mapHandlers = ([ name, [ method, handler ]]) => [ name, [ method.apply(method, [ name, handler ]), handler ] ];
+    const toDictionary = (listeners, [ emitter, events ]) => ({ ...listeners, [emitter]: events });
+    return this.listeners = this.listeners.map(mapListeners);
+  }
 
+  detachListeners() {
+    var online = 0;
+    var offline = 0;
+    console.log('REMOVE')
+    const actions = this.listeners.map(([ emitter, events ]) => {
+      return events.map(([name, [ producer, handler ]]) => {
+        const listeners = (producer && producer.listeners(name));
+        online += listeners.length;
+        return (listeners.length) ? producer.removeListener(name, handler) : false;
+      });
+    });
+    console.log('LIST')
+    this.listeners.map(([ emitter, events ]) => {
+      return events.map(([name, [ producer, handler ]]) => {
+        if (producer && producer.eventNames) {
+          console.log('listener:', name, 'listeners', producer.listeners(name));
+          offline += producer.listeners(name).length;
+        } else {
+          console.log('listener:', name)
+        }
+      })
+    });
+    console.log('TOTAL', online, offline);
+  }
+
+  close() {
+    this.detachListeners();
+    this.modal.close();
   }
 };

@@ -41,7 +41,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { PlayList, Player, Settings } from '../../actions';
+import { PlayList, Player, Settings, Modal } from '../../actions';
 import { push } from 'react-router-redux';
 import Sortable from './Sortable';
 import { compose, branch, pure, renderNothing, renderComponent, withPropsOnChange, withState, withReducer, withHandlers, withProps, mapProps, renameProp, defaultProps, setPropTypes } from 'recompose';
@@ -64,6 +64,7 @@ const mapDispatchToProps = function (dispatch) {
     playlist: bindActionCreators(PlayList, dispatch),
     player: bindActionCreators(Player, dispatch),
     settings: bindActionCreators(Settings, dispatch),
+    modal: bindActionCreators(Modal, dispatch),
     inspect: (file: string, options: Object, state?: any) => dispatch(push({
       pathname: `/inspector/${file}`,
       search: options,
@@ -122,7 +123,7 @@ export default compose(
       })
     })
   }),
-  mapProps(({ list: items, settings, player, playlist, inspect }) => ({ items, settings, player, playlist, inspect })),
+  mapProps(({ list: items, settings, player, playlist, inspect, modal }) => ({ items, settings, player, playlist, inspect, modal })),
   withHandlers({
     onClick: ({ settings, playlist, items }) => (event, item) => {
       const selected = handleClick(event, items, item);
@@ -141,7 +142,10 @@ export default compose(
         return playlist.playItem(item);
       }
     },
-    onContextMenu: props => buildListItemMenu(props)
+    onContextMenu: props => {
+      console.log('onContextMenu', props);
+      return buildListItemMenu(props);
+    }
   }),
   branch(
     ({ items }) => (items && items.length),

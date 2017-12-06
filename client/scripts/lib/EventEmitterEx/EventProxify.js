@@ -1,12 +1,14 @@
+// @flow
+
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : EventEmitterEx.js                                         //
-// @summary      : Extended Event Emitter                                    //
-// @version      : 0.0.1                                                     //
+// @file         : EventProxify.js                                           //
+// @summary      : Emitter proxy                                             //
+// @version      : 1.0.0                                                     //
 // @project      : tickelr                                                   //
 // @description  :                                                           //
 // @author       : Benjamin Maggi                                            //
 // @email        : benjaminmaggi@gmail.com                                   //
-// @date         : 12 Oct 2017                                               //
+// @date         : 05 Dec 2017                                               //
 // @license:     : MIT                                                       //
 // ------------------------------------------------------------------------- //
 //                                                                           //
@@ -34,49 +36,52 @@
 // SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                    //
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
-import debounce from 'lodash/debounce';
-import throttle from 'lodash/throttle';
-import { EventEmitter } from 'events';
 
-export default class EventEmitterEx extends EventEmitter {
+import { camelToDash, isSymbol } from '../../lib/utils';
 
-  static makeSafe(thisArg, receiver) {
-    return function() {
-      try {
-        return receiver.apply(thisArg, arguments);
-      } catch (error) {
-        console.error(error);
-        throw error;
-      }
-    };
+const mapEmitterMethod = (configKey, property, object) => {
+  if (!isSymbol(property) && (property in object)) {
+    const { [configKey]: { producer, context, sub }} = object;
+    let { [property]: listener } = object;
+    listener.splice(0, 1, producer[listener.slice(0, 1).pop()]);
+    return true;
+  } else {
+    return false;
+  }
+};
+
+export const EventProxify = (configKey, object) => {
+  console.info('EventProxify', configKey, object);
+  const handler = {
+    construct: function(object, argumentsList, newTarget) {
+      console.info('construct', object, argumentsList, newTarget);
+      return Reflect.construct(object, argumentsList, newTarget);
+    },
+    ownKeys: function (target) {
+      console.info('ownKeys', target, Object.getOwnPropertyNames(target));
+      Object.getOwnPropertySymbols(target).forEach(symbol => {
+        Object.defineProperty(target, symbol, { enumerable: false });
+      });
+      return Reflect.ownKeys(target);
+    },
+    has: function (taget, property) {
+      console.info('has', taget, property, typeof property);
+      return Reflect.has(object, property);
+    },
+    set: function(object, property, value, receiver) {
+      console.info('set', object, property, value, receiver);
+      return Reflect.set(object, property, value, receiver);
+    },
+    get: function (object, property, receiver) {
+      console.info('get', object, property);
+      mapEmitterMethod(configKey, property, object);
+      return Reflect.get(object, property, receiver);
+    },
+    apply: function(object, thisArg, argumentsList) {
+      console.info('apply', object, thisArg, argumentsList);
+      return Reflect.apply(object, thisArg, argumentsList);
+    }
   };
 
-  constructor(...args) {
-    super(...args);
-  }
-
-  on(eventName, listener) {
-    //console.log(`on ${eventName}`);
-    return super.on(eventName, listener);
-  }
-
-  addListener(eventName, listener) {
-    //console.log(`addListener ${eventName}`);
-    return super.addListener(eventName, listener);
-  }
-
-  removeListener(eventName, listener) {
-    //console.log(`removeListener ${eventName}`);
-    return super.removeListener(eventName, listener);
-  }
-
-  off(eventName, listener) {
-    //console.log(`off ${eventName}`);
-    return super.removeListener(eventName, listener);
-  }
-}
-
-
-export class YoutubeEvents extends EventEmitterEx {
-
-}
+  return new Proxy(object, handler);
+};

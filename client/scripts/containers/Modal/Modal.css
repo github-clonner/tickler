@@ -24,16 +24,13 @@
       flex-direction: column;
       justify-content: center;
       background: var(--contentBackground);
-    & > div {
-      display: flex;
-      align-items: center;
-      justify-content: space-around;
-    }
     & .header {
       background: var(--headerBackground);
       border-bottom: var(--headerBorder);
       padding: 15px;
       min-height: 1px;
+      display: flex;
+      flex-direction: row;
       justify-content: space-between;
       & .title {
         text-transform: capitalize;
@@ -48,18 +45,22 @@
     }
     & .body {
       flex: 1;
+      font-family: var(--mainFont);
       background: var(--bodyBackground);
       box-sizing: border-box;
       overflow-y: auto;
       display: flex;
       justify-content: space-between;
       flex-direction: column;
-    }
+    }/*
     & .footer {
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-end;
       background: var(--footerBackground);
       border-top: var(--footerBorder);
       padding: 15px;
       text-align: right;
-    }
+    } */
   }
 }
