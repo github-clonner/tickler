@@ -37,21 +37,33 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-import Style from './Body.css';
-import React, { Component } from 'react';
 import {
   pure,
+  branch,
   compose,
+  mapProps,
   getContext,
   setPropTypes,
+  renderNothing,
+  renderComponent,
   onlyUpdateForPropTypes
 } from 'recompose';
+import Style from './Body.css';
+import classNames from 'classnames';
+import React, { Component } from 'react';
 import { ModalType } from '../../ModalType';
+import { isEmpty } from '../../../../lib/utils';
+import ModalStyle from '../../../../containers/Modal/ModalStyle.json';
+
+const Body = ({ modal: { body, actions, options }}) =>
+  <div className={ Style.body } >
+    { body }
+  </div>;
 
 /*
  * Component wrapper
  */
-const enhance = compose(
+export default compose(
   pure,
   getContext({
     modal: ModalType
@@ -59,13 +71,12 @@ const enhance = compose(
   onlyUpdateForPropTypes,
   setPropTypes({
     modal: ModalType
-  })
-);
+  }),
+  branch(
+    ({ modal: { body }}) => !isEmpty(body),
+    renderComponent(Body),
+    renderNothing,
+  )
+)(Body);
 
-export default enhance(({ modal: { body, actions, options }}) => {
-  return (
-    <div className={ Style.body } >
-      { body }
-    </div>
-  );
-});
+

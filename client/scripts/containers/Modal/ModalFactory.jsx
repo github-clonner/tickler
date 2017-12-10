@@ -44,44 +44,6 @@ import ModalStyle from './ModalStyle.json';
 import { ModalType } from '../../components/Modal';
 import { isPlainObject, isString, has } from '../../lib/utils';
 
-const getButton = (type, label) => {
-  const { DEFAULT, [type]: styled = { ...DEFAULT, label: label = type, ...(isPlainObject(type) ? type : undefined) }} = ModalStyle.button;
-  const { actions } = styled;
-  console.log('actions', actions);
-  return { ...styled };
-};
-
-const FooterFactory = ({ behavior: { type }, ...options}) => {
-  const { DEFAULT, [type]: styled = { ...DEFAULT, ...type }} = ModalStyle.type;
-  return (
-    styled.buttons.map(getButton).map((button, index) => (
-      <button className={ classNames(Style.modalButton, Style[button.style]) } key={ index } onClick={ button.onClick }>
-        <i className={ Style.modalIcon } role="icon">
-          { button.icon }
-        </i>
-        { button.label }
-      </button>
-    ))
-  );
-};
-
-const getHeader = (type, title) => {
-  const { DEFAULT, [type]: styled = { ...DEFAULT, ...type }} = ModalStyle.type;
-  return { ...styled, title };
-};
-
-const HeaderFactory = ({ behavior: { type }, window: { title }, ...options}) => {
-  const header = getHeader(type, title);
-  return (
-    <h5 className={ classNames(Style.modalTitle, Style[header.style])}>
-      <i className={ Style.modalIcon } role="icon">
-        { header.icon }
-      </i>
-      { header.title }
-    </h5>
-  );
-};
-
 export const ModalFactory = (type, category, options, data) => {
   try {
     const template = {
@@ -91,25 +53,23 @@ export const ModalFactory = (type, category, options, data) => {
       case 'metadata': return {
         modal: {
           ...template,
-          header: <HeaderFactory { ...options } />,
+          header: 'hello',
           body: <MediaInfo { ...data } />,
-          footer: FooterFactory(options)
+          footer: 'Hellow'
         }
       };
       case 'related': return {
         modal: {
           ...template,
-          header: <HeaderFactory { ...options } />,
+          header: 'related',//<HeaderFactory { ...options } />,
           body: <Related { ...data } />,
-          footer: <FooterFactory { ...options } />
         }
       };
       default: return {
         modal: {
           ...template,
           header: '<Header { ...data } />',
-          body: (<div { ...data } />),
-          footer: FooterFactory(options.behavior.type)
+          body: (<div { ...data } />)
         }
       };
     }

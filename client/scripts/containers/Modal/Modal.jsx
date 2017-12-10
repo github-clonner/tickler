@@ -165,13 +165,6 @@ export default class Modal extends Component {
     }
   };
 
-  componentDidMount () {
-    // this.modal = remote.getCurrentWindow();
-    // this.modal.show();
-    // this.modal.focus();
-    // this.modal.webContents.openDevTools();
-  }
-
   componentWillMount () {
     this.listener = {
       setScope: (event, { state: media, options }) => {

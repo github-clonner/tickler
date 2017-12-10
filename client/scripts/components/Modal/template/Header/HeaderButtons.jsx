@@ -1,6 +1,8 @@
+// @flow
+
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : ModalWindow.jsx                                           //
-// @summary      : ModalWindow HOC                                           //
+// @file         : HeaderButtons.jsx                                         //
+// @summary      : Header buttons                                            //
 // @version      : 1.0.0                                                     //
 // @project      : tickelr                                                   //
 // @description  :                                                           //
@@ -35,68 +37,54 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-import Modal from './Modal';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import classNames from 'classnames';
+import Style from './HeaderButtons.css';
 import React, { Component } from 'react';
-import { bindActionCreators } from 'redux';
-import { withRouter } from "react-router-dom";
-import * as Settings from '../../actions/Settings';
-import { shell, remote, ipcRenderer } from 'electron';
 import {
-  compose,
-  setPropTypes,
-  mapProps,
-  withHandlers,
+  pure,
   branch,
-  renderComponent,
-  renderNothing
+  compose,
+  renderNothing,
+  renderComponent
 } from 'recompose';
-import { ModalType } from '../../components/Modal';
-import { ModalFactory } from './ModalFactory';
 
-function mapStateToProps (state, ownProps) {
-  const { location: { state: { data, options, id }}, match: { params: { type, ...category }}} = ownProps;
-  const modal = ModalFactory(type, Object.values(category), options, data);
-  console.log('MODAL', modal);
-  return modal;
-}
+const Button = (props) =>
+  <button type="button" className={ classNames( Style.headerButton, Style[props.style] ) } disabled={ props.disabled }>{ props.children }</button>;
 
-function mapDispatchToProps(dispatch: Dispatch) {
-  return {
-    settings: bindActionCreators(Settings, dispatch)
-  };
-}
+const Close = ({ actions: { close }}) =>
+  <Button disabled={ true } onClick={ close }>
+    <span aria-hidden="true">&times;</span>
+  </Button>;
 
-export const ModalWindow = compose(
-  connect(mapStateToProps, mapDispatchToProps),
-  withRouter,
-  setPropTypes({
-    modal: ModalType,
-    settings: PropTypes.any
-  }),
-  mapProps((props) => {
-    return props
-  }),
-  withHandlers({
-    onClick: (props) => (event, data) => {
-      console.log('onClick', props, event, data);
-    },
-    close: (props) => (event, data) => {
-      console.log('ModalWindow close', props, event, data);
-    }
-  }),
-  branch(
-    ({ modal }) => {
-      try {
-        const { options } = modal;
-        return (modal && modal.options.type);
-      } catch (error) {
-        console.error(error);
-        return false;
-      }
-    },
-    renderComponent(Modal),
-    renderNothing,
-  )
-)(Modal);
+const Alert = () =>
+  <Button type="button">
+    <span aria-hidden="true">&quest;</span>
+  </Button>;
+
+const Quest = ({ actions: { help }}) =>
+  <Button type="button">
+    <span aria-hidden="true">&quest;</span>
+  </Button>;
+
+/*
+ * conditional state render
+ * inspiration: https://blog.bigbinary.com/2017/09/12/using-recompose-to-build-higher-order-components.html
+ */
+const isMedia = ({ options: { type }}) => (/media/i.test(type));
+const isAlert = ({ options: { type }}) => (/alert/i.test(type));
+const isQuest = ({ options: { type }}) => (/quest/i.test(type));
+
+const conditionalRender = (states) =>
+  compose(...states.map(state =>
+    branch(state.when, renderComponent(state.then))
+  ));
+
+export default compose(
+  pure,
+  conditionalRender([
+    { name: 'media', when: isMedia, then: Close },
+    { name: 'alert', when: isAlert, then: Alert },
+    { name: 'quest', when: isQuest, then: Quest },
+
+  ])
+)(renderNothing);

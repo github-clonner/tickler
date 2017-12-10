@@ -17,7 +17,7 @@
     },
     "SAVE": {
       "label": "Save",
-      "actions": {
+      "events": {
         "onClick": "save"
       },
       "icon": "save",
@@ -25,7 +25,7 @@
     },
     "DISCARD": {
       "label": "Discard",
-      "actions": {
+      "events": {
         "onClick": "close"
       },
       "icon": "undo",
@@ -33,7 +33,7 @@
     },
     "CANCEL": {
       "label": "Cancel",
-      "actions": {
+      "events": {
         "onClick": "close"
       },
       "icon": "not_interested",

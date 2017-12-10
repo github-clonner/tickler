@@ -140,7 +140,7 @@ export class Modal extends EventEmitterEx {
   }
 
   send(event, ...args) {
-    console.info('send', event, ...args);
+    // console.info('send', event, ...args);
     return this.modal.webContents.send(event, ...args);
   };
 

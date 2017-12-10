@@ -23,3 +23,12 @@
     margin-left: .25rem;
   }
 }
+
+:local(.modal-icon) {
+  font-weight: normal;
+  font-family: var(--iconFont);
+  opacity: 0.65;
+  margin-right: 0.5em;
+  text-transform: none;
+  font-style: initial;
+}

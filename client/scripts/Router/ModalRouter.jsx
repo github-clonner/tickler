@@ -99,7 +99,6 @@ const eventListen = (command, { history, location }) => {
 const eventForget = (command) => {
   if(!listeners.has(command)) return;
   const [ eventUnlisten, historyUnlisten ] = listeners.get(command);
-  console.log('eventForget', command);
   return (
     eventUnlisten(),
     historyUnlisten(),
@@ -109,8 +108,6 @@ const eventForget = (command) => {
 
 /* route handler */
 export const ModalRouter = (props) => {
-  console.log('ipcRenderer', ipcRenderer.eventNames(), ipcRenderer.listeners(pushProps));
   eventListen(pushProps, props);
-  console.log('ipcRenderer', ipcRenderer.eventNames(), ipcRenderer.listeners(pushProps));
   return false;
 };

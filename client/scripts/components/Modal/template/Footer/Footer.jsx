@@ -44,6 +44,7 @@ import {
   pure,
   branch,
   compose,
+  mapProps,
   getContext,
   setPropTypes,
   renderNothing,
@@ -51,8 +52,19 @@ import {
   onlyUpdateForPropTypes
 } from 'recompose';
 import { ModalType } from '../../ModalType';
+import ModalStyle from '../../../../containers/Modal/ModalStyle.json';
+
+
+const Footer = ({ modal: { footer, actions, options }}) => {
+  return (
+    <div className={ Style.footer } >
+      { React.Children.map(footer, buttonClass) }
+    </div>
+  );
+};
 
 const buttonClass = (child) => {
+  console.log('buttonClass', child.props);
   const className = classNames(child.props.className, Style.footerButton );
   const props = {
     className
@@ -60,11 +72,34 @@ const buttonClass = (child) => {
   return React.cloneElement(child, props);
 };
 
-const Footer = ({ modal: { footer, actions, options }}) => {
+const mapButtonType = (type) => {
+  const { DEFAULT, [type]: styled = { ...DEFAULT, label: label = type, ...(isPlainObject(type) ? type : undefined) }} = ModalStyle.button;
+  return { ...styled };
+};
+
+const mapButtonEvents = (actions) => ({ events, ...button }) => {
+  return {
+    ...button,
+    events: Object
+    .entries(events)
+    .filter(([name, handler]) => (handler in actions))
+    .reduce((events, [ name, handler ]) => ({...events, [name]: actions[handler] }), {})
+  };
+};
+
+const mapButtonElement = ({ icon, label, style, events }, index) =>
+  <button className={ classNames(Style.modalButton, Style[style]) } key={ index } { ...events }>
+    <i className={ Style.modalIcon } role="icon">{ icon }</i>
+    { label }
+  </button>;
+
+const FooterFactory = ({ behavior: { type }, ...options}, actions) => {
+  const { DEFAULT, [type]: styled = { ...DEFAULT, ...type }} = ModalStyle.type;
   return (
-    <div className={ Style.footer } >
-      { React.Children.map(footer, buttonClass) }
-    </div>
+    styled.buttons
+    .map(mapButtonType)
+    .map(mapButtonEvents(actions))
+    .map(mapButtonElement)
   );
 };
 
@@ -75,6 +110,18 @@ export default compose(
   pure,
   getContext({
     modal: ModalType
+  }),
+  mapProps(({ modal: { header, body, footer, actions, options } }) => {
+    console.log('actions', actions);
+    return {
+      modal: {
+        header,
+        body,
+        footer: FooterFactory(options, actions),
+        actions,
+        options
+      }
+    }
   }),
   onlyUpdateForPropTypes,
   setPropTypes({

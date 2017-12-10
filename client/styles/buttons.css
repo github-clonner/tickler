@@ -149,12 +149,14 @@
   &:hover:not(:disabled), & .modal-icon {
     color: color(var(--button-primary-background) contrast(100%));
     background-color: color(var(--button-primary-background) blackness(10%));
+    /* TODO: REMOVE FOR ICON */
     border-color: color(var(--button-primary-background) lightness(-15%));
   }
   &:active, &:focus, & .modal-icon {
     color: color(var(--button-primary-background) contrast(100%));
     background-color: color(var(--button-primary-background) lightness(-15%));
     border-color: color(var(--button-primary-background) lightness(-25%));
+    /* TODO: REMOVE FOR ICON */
     box-shadow: 0 0 0 1px color(var(--button-primary-background) lightness(-5%));
   }
 }
@@ -166,12 +168,14 @@
   &:hover:not(:disabled), & .modal-icon {
     color: color(var(--button-secondary-background) contrast(100%));
     background-color: color(var(--button-secondary-background) blackness(10%));
+    /* TODO: REMOVE FOR ICON */
     border-color: color(var(--button-secondary-background) lightness(-15%));
   }
   &:active, &:focus, & .modal-icon {
     color: color(var(--button-secondary-background) contrast(100%));
     background-color: color(var(--button-secondary-background) lightness(-15%));
     border-color: color(var(--button-secondary-background) lightness(-25%));
+    /* TODO: REMOVE FOR ICON */
     box-shadow: 0 0 0 1px color(var(--button-secondary-background) lightness(-5%));
   }
 }

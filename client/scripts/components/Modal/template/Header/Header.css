@@ -2,49 +2,83 @@
 @import "styles/buttons.css";
 
 :root {
-  --background: #FFF;
   --color: #000;
-  --border: 1px solid #CCC;
-  --padding: 0.65em;
-  --close-button-color: #000;
+  --font-size: 1em;
+  --background: #FFF;
+  --line-height: var(--font-size);
+  --padding: calc(var(--font-size), * 0.25);
+  --border: 1px solid color(var(--background) lightness(45&));
+  --button: {
+    margin: 0;
+    padding: 0;
+    border: none;
+    outline: none;
+    display: flex;
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+    flex-direction: row;
+    align-items: center;
+    line-height: inherit;
+    background: transparent;
+    justify-content: space-between;
+    font-size: calc(var(--font-size) + 50%);
+    color: color(var(--color) lightness(35%));
+    transition: background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out, opacity .15s ease-in-out;
+    &:disabled {
+      color: color(var(--color) lightness(75%));
+      text-shadow: -1px -1px color(var(--color) lightness(65%)), 1px 1px color(var(--color) lightness(85%));
+    }
+    &:hover:not(:disabled) {
+      color: color(var(--color) lightness(25%));
+    }
+    &:active, &:focus {
+      color: var(--color);
+    }
+  };
 }
 
-
-:local(.header-button) {
-  background: transparent;
-  border: none;
-  font-size: 1.5rem;
-  line-height: 1;
-}
+@custom-selector :--header-icon i, .icon, .header-icon;
+@custom-selector :--header-button button, .button, .header-button;
+@custom-selector :--header-title h1, h2, h3, h4, h5, h6, .title, .header-title;
 
 :local(.header) {
   display: flex;
+  cursor: default;
   user-select: none;
   align-items: center;
   padding: var(--padding);
   border-bottom: var(--border);
   background: var(--background);
   justify-content: space-between;
-  cursor: default;
-  & .title {
+
+  & :--header-title {
     margin: 0;
     display: flex;
-    font-size: 1em;
-    line-height: 1em;
     color: var(--color);
-    font-weight: lighter;
+    flex-direction: row;
+    align-items: center;
     align-content: center;
     text-transform: capitalize;
+    font-size: var(--font-size);
+    line-height: var(--line-height);
   }
-  & .icon {
+
+  & :--header-icon {
+    color: var(--color);
     font-weight: normal;
-    font-family: var(--iconFont);
-    color: var(--color);
-    opacity: 0.65;
-    margin-right: 0.5em;
     text-transform: none;
+    font-family: var(--iconFont);
+    line-height: var(--line-height);
+    margin-right: calc(var(--line-height) * 0.25);
   }
-  & .close-button {
+
+  & :--header-button {
+    @apply --button;
+    /* border: none;
     color: var(--color);
+    background: transparent;
+    font-size: calc(var(--font-size) + 50%);
+    line-height: inherit; */
   }
 }

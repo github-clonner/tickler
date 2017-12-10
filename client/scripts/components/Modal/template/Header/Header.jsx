@@ -38,92 +38,62 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 import Style from './Header.css';
-// import PropTypes from 'prop-types';
 import classNames from 'classnames';
-// import { connect } from 'react-redux';
 import React, { Component } from 'react';
-// import { bindActionCreators } from 'redux';
+import { isEmpty } from '../../../../lib/utils';
 import { shell, remote, ipcRenderer } from 'electron';
 import {
-  compose,
-  onlyUpdateForPropTypes,
-  branch,
   pure,
+  branch,
+  compose,
+  mapProps,
+  getContext,
+  setPropTypes,
   renderNothing,
   renderComponent,
-  setPropTypes,
-  getContext
+  onlyUpdateForPropTypes
 } from 'recompose';
-// import { Player, Settings } from '../../../../actions';
-// import { getModalSettings, getHeaderActions } from './selector';
+import HeaderButtons from './HeaderButtons';
 import { ModalType } from '../../ModalType';
+import ModalStyle from '../../../../containers/Modal/ModalStyle.json';
 
+const getHeader = (type, title) => {
+  const { DEFAULT, [type]: styled = { ...DEFAULT, ...type }} = ModalStyle.type;
+  return { ...styled, title };
+};
 
-/*
- * conditional state render
- * inspiration: https://blog.bigbinary.com/2017/09/12/using-recompose-to-build-higher-order-components.html
- */
-const conditionalRender = (states) =>
-  compose(...states.map(state =>
-    branch(state.when, renderComponent(state.then))
-  ));
+const HeaderFactory = ({ behavior: { type }, window: { title }, ...options}) => {
+  const header = getHeader(type, title);
+  return (
+    <h5 className={ classNames(Style.title, Style[header.style])}>
+      <i className={ Style.icon } role="icon">{ header.icon }</i>
+      { header.title }
+    </h5>
+  );
+};
 
-/*
- * subscribe to redux store and merge these props
- * reference: https://github.com/reactjs/react-redux/blob/master/docs/api.md
- */
-function mapStateToProps(state, props) {
-  return {
-    // settings: getModalSettings(state.Settings),
-    // options: state.options
-  };
-}
-
-/*
- * Redux action creators
- * reference: https://github.com/reactjs/react-redux/blob/master/docs/api.md
- */
-function mapDispatchToProps(dispatch) {
-  return {
-    // player: bindActionCreators(Player, dispatch)
-  };
-}
+// const Header = ({ modal: { header, actions: { close }, options }}) =>
+const Header = ({ modal }) =>
+  <div className={ Style.header }>
+    <HeaderFactory { ...modal.options } />
+    <HeaderButtons { ...modal } />
+  </div>;
 
 /*
  * Component wrapper
  */
-const enhance = compose(
+export default compose(
   pure,
-  // connect(mapStateToProps, mapDispatchToProps),
   getContext({
     modal: ModalType
   }),
-  // withHandlers({
-  //   close: props => event => {
-  //     const webContents = remote.getCurrentWindow();
-  //     console.log('modal:close', webContents.id, webContents);
-  //     return webContents.getParentWindow().send('modal:close');
-  //   }
-  // }),
   onlyUpdateForPropTypes,
   setPropTypes({
     modal: ModalType
-  })
-);
-
-export default enhance(({ modal, modal: { header, actions: { close }, options }}) => {
-  return (
-    <div className={ Style.header }>
-      { /*
-      <h5 className={ Style.title }>
-        <span className={ Style.icon } role="icon">announcement</span>
-        { header }
-      </h5>
-      */ }
-      { header }
-      <button type="button" className={ classNames( Style.modalButton, Style.headerButton, Style.closeButton) } onClick={ close }>
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </div>
-  );
-});
+  }),
+  branch(
+    ({ modal: { header }}) => !isEmpty(header),
+    renderComponent(Header),
+    renderNothing,
+  )
+)(Header);

@@ -1,0 +1,23 @@
+@import "styles/variables.css";
+@import "styles/buttons.css";
+
+:root {
+  --close: #000000;
+  --alert: #DC3545;
+  --quest: #17A2B8;
+}
+
+:local(.close-button) {
+  color: var(--close);
+  background: transparent;
+}
+
+:local(.alert-button) {
+  color: var(--alert);
+  background: transparent;
+}
+
+:local(.quest-button) {
+  color: var(--quest);
+  background: transparent;
+}
