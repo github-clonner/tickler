@@ -1,182 +1,143 @@
+@import "styles/variables.css";
+@import "styles/mixins.css";
+
 :root {
   --buttonColor: #666666;
-  --buttonHoverBackground: #2F2F2F;
-  --buttonHoverColor: #C1C1C1;
-  --buttonFont: 'Material Icons';
-  --button {
-    border-radius: 50%;
-    min-width: 2em;
-    min-height: 2em;
-    margin: 10px;
-    padding: 0px;
-    position: relative;
-    border: none;
-    background: transparent;
-    transition: all .15s ease-in-out;
-    cursor: pointer;
-    z-index: 1;
-    font-size: 1em;
-    user-select: none;
-  }
-  --circle {
-    content: "";
-    width: 100%;
-    height: 100%;
-    background-color: transparent;
-    display: block;
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    z-index: -1;
-    border-radius: 50%;
-    box-sizing: border-box;
-  }
-  --button-color: #FFF;
-  --danger: #F00;
-  --button-primary-background: #007BFF;
-  --button-secondary-background: #F8F8F8;
 }
 
-:local(.round-button) {
-  @apply --button;
-  color: var(--buttonColor);
-  font-family: var(--buttonFont);
+@define-mixin base-button {
+  outline: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  white-space: pre;
+  user-select: none;
+  position: relative;
   line-height: normal;
-  &:after {
-    @apply --circle;
-  }
-  &:hover:not(:disabled) {
-    color: var(--buttonHoverColor);
-    &:after {
-      background-color: var(--buttonHoverBackground);
-    }
-  }
+  text-overflow: clip;
+  box-sizing: content-box;
+  font-family: var(--mainFont);
+  transition: all .15s ease-in-out;
   &:disabled {
     cursor: default;
-    -webkit-text-stroke: 1px rgba(0, 0, 0, 0.65);
-    color: #212121;
-    text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.30);
-  }
-  &:focus{
-    outline: none;
+    pointer-events: none;
   }
 }
 
-:local(.checkbox-buttons) {
-  display: flex;
-  justify-content: center;
-  flex-direction: row;
-  align-items: center;
+@define-mixin iconic-button {
+  @mixin flex-inline;
+  @mixin border;
+  @mixin base-button;
+  padding: 0.375rem 0.75rem;
+}
+
+@define-mixin circle {
+  top: 0px;
+  left: 0px;
+  z-index: -1;
+  content: "";
+  width: 100%;
+  height: 100%;
+  display: block;
+  border-radius: 50%;
+  position: absolute;
+  box-sizing: border-box;
+  background-color: transparent;
+}
+
+@define-mixin round-button $color: var(--buttonColor) {
+  @mixin base-button;
+  z-index: 1;
+  margin: 10px;
+  border: none;
+  min-width: 2rem;
+  min-height: 2rem;
+  border-radius: 50%;
+  color: color($color lightness(50%));
+  background-color: color($color a(0%));
+  &:hover:not(:disabled) {
+    color: color($color contrast(50%));
+    background-color: color($color a(20%));
+  }
+  &:active, &:focus {
+    color: color($color contrast(100%));
+    background-color: color($color lightness(-15%));
+  }
+  &:disabled {
+    @mixin disabled-text $color;
+  }
+  &:after {
+    @mixin circle;
+  }
+}
+
+@define-mixin clear-button $color: var(--colorPrimary) {
+  @mixin base-button;
+  border: none;
+  background: transparent;
+  color: color($color a(50%));
+  &:disabled {
+    color: color($color contrast(100%));
+    text-shadow: 0 -1px 0 color($color contrast(50%));
+  }
+  &:hover:not(:disabled) {
+    color: color($color a(80%));
+  }
+  &:active, &:focus {
+    color: $color;
+  }
+}
+
+@define-mixin button $color: var(--colorPrimary) {
+  @mixin iconic-button;
+  background-color: $color;
+  color: color($color contrast(90%));
+  border-color: color($color lightness(-10%));
+  &:hover:not(:disabled) {
+    color: color($color contrast(100%));
+    background-color: color($color blackness(10%));
+    border-color: color($color lightness(-15%));
+  }
+  &:active, &:focus {
+    color: color($color contrast(100%));
+    background-color: color($color lightness(-15%));
+    border-color: color($color lightness(-25%));
+    box-shadow: 0 0 0 1px color($color lightness(-5%));
+  }
+  &:disabled {
+    color: color($color lightness(90%));
+    border-color: color($color lightness(85%));
+    background-color: color($color lightness(90%));
+    text-shadow: -1px -1px color($color lightness(75%)), 1px 1px color($color lightness(95%));
+  }
+  & :--icon {
+    @mixin icon;
+    margin-right: 0.25rem;
+  }
+}
+
+@define-mixin checkbox-button $color: inherit {
+  @mixin flex-inline;
   & input[type="checkbox"] {
     display: none;
   }
   & input[type="checkbox"] + label {
-    @apply --button;
-    color: var(--buttonColor);
-    font-family: var(--buttonFont);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    /* outline: none;
-    border: none;
-    font-family: var(--buttonFont);
-    font-size: 1em;
-    margin: 10px;
-    white-space: nowrap;
-    background-color: transparent;
-    color: var(--buttonColor);
-    text-align: center;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    transition: color .15s ease-in-out;
-    &:hover {
-        color: var(--buttonHoverColor);
-    } */
-    &:after {
-      @apply --circle;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      top: 50%;
-    }
-    &:hover:not(:disabled) {
-      color: var(--buttonHoverColor);
-      &:after {
-        padding: 10px;
-        background-color: var(--buttonHoverBackground);
-      }
-    }
+    @mixin flex-inline;
+    @mixin round-button;
+    font-family: var(--iconFont);
   }
   & input[type="checkbox"]:checked + label {
-    color: #d21d30;
+    @mixin engraved $color;
+    color: color($color contrast(100%));
   }
 }
 
-/**
- * Modal buttons
- */
-:local(.modal-button) {
-  display: flex;
-  font-weight: normal;
-  white-space: nowrap;
-  vertical-align: middle;
-  user-select: none;
-  line-height: 1.5;
-  cursor: pointer;
-  outline: none;
-  font-family: var(--mainFont);
-  border-radius: 2px;
-  border-width: 1px;
-  border-style: solid;
-  padding: .375rem .75rem;
-  position: relative;
-  color: var(--button-color);
-  transition: background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out, opacity .15s ease-in-out;
-  flex-direction: row;
-  align-items: center;
-  & .modal-icon {
-    color: var(--button-color);
-    font-style: initial;
-    background-color: transparent !important;
-  }
+:local(.checkbox-buttons) {
+  @mixin checkbox-button var(--buttonColor);
 }
 
-:local(.button-primary) {
-  color: color(var(--button-primary-background) contrast(90%));
-  background-color: var(--button-primary-background);
-  border-color: color(var(--button-primary-background) lightness(-10%));
-  &:hover:not(:disabled), & .modal-icon {
-    color: color(var(--button-primary-background) contrast(100%));
-    background-color: color(var(--button-primary-background) blackness(10%));
-    /* TODO: REMOVE FOR ICON */
-    border-color: color(var(--button-primary-background) lightness(-15%));
-  }
-  &:active, &:focus, & .modal-icon {
-    color: color(var(--button-primary-background) contrast(100%));
-    background-color: color(var(--button-primary-background) lightness(-15%));
-    border-color: color(var(--button-primary-background) lightness(-25%));
-    /* TODO: REMOVE FOR ICON */
-    box-shadow: 0 0 0 1px color(var(--button-primary-background) lightness(-5%));
-  }
-}
-
-:local(.button-secondary) {
-  color: color(var(--button-secondary-background) contrast(90%));
-  background-color: var(--button-secondary-background);
-  border-color: color(var(--button-secondary-background) lightness(-10%));
-  &:hover:not(:disabled), & .modal-icon {
-    color: color(var(--button-secondary-background) contrast(100%));
-    background-color: color(var(--button-secondary-background) blackness(10%));
-    /* TODO: REMOVE FOR ICON */
-    border-color: color(var(--button-secondary-background) lightness(-15%));
-  }
-  &:active, &:focus, & .modal-icon {
-    color: color(var(--button-secondary-background) contrast(100%));
-    background-color: color(var(--button-secondary-background) lightness(-15%));
-    border-color: color(var(--button-secondary-background) lightness(-25%));
-    /* TODO: REMOVE FOR ICON */
-    box-shadow: 0 0 0 1px color(var(--button-secondary-background) lightness(-5%));
-  }
+:local(.round-button) {
+  @mixin round-button var(--buttonColor);
+  font-family: var(--iconFont);
 }
 

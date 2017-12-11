@@ -1,88 +1,19 @@
 @import "styles/variables.css";
-@import "styles/buttons.css";
+@import "styles/mixins.css";
 
-:root {
-  --header-color: #000;
-  --header-background: #fff;
-  --footer-background: #fff;
-  --content-background: #fff;
-  --body-background: #fff;
-  --header-border: 1px solid #ccc;
-  --footer-border: 1px solid #ccc;
-}
+@custom-selector :--modal .modal, .dialog;
+@custom-selector :--modal-content .content, .modal-content;
 
-:local(.modal-title) {
-  text-transform: capitalize;
-  margin: 0;
-  font-weight: normal;
-  font-size: 1em;
-  line-height: 1em;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-}
-
-:local(.modal-icon) {
-  font-weight: normal;
-  font-family: var(--iconFont);
-  color: var(--header-color);
-  opacity: 0.65;
-  margin-right: 0.5em;
-  text-transform: none;
-  font-style: initial;
-}
-
-.modal {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
+:local(:--modal) {
+  @mixin flex-colums;
   margin: 0;
   padding: 0;
-  font-family: var(--mainFont);
-  & .content {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      background: var(--content-background);
-    & .header {
-      background: var(--header-background);
-      border-bottom: var(--header-border);
-      padding: 15px;
-      min-height: 1px;
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      & .title {
-        text-transform: capitalize;
-        margin: 0;
-        font-weight: normal;
-        font-size: 1em;
-        line-height: 1em;
-      }
-      & .close {
-        float: right;
-      }
+  overflow: hidden;
+  & :--modal-content {
+    @mixin flex-colums;
+    flex: 1;
+    & > :not(:first-child) {
+      border-top: 1px solid var(--colorLight);
     }
-    & .body {
-      flex: 1;
-      font-family: var(--mainFont);
-      background: var(--body-background);
-      box-sizing: border-box;
-      overflow-y: auto;
-      display: flex;
-      justify-content: space-between;
-      flex-direction: column;
-    }/*
-    & .footer {
-      display: flex;
-      flex-direction: row;
-      justify-content: flex-end;
-      background: var(--footer-background);
-      border-top: var(--footer-border);
-      padding: 15px;
-      text-align: right;
-    } */
   }
 }

@@ -1,12 +1,14 @@
+// @flow
+
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : ModalFactory.jsx                                          //
-// @summary      : Modal factory for stock styles                            //
+// @file         : components.js                                             //
+// @summary      : Modal type components                                     //
 // @version      : 1.0.0                                                     //
 // @project      : tickelr                                                   //
 // @description  :                                                           //
 // @author       : Benjamin Maggi                                            //
 // @email        : benjaminmaggi@gmail.com                                   //
-// @date         : 05 Dec 2017                                               //
+// @date         : 10 Dec 2017                                               //
 // @license:     : MIT                                                       //
 // ------------------------------------------------------------------------- //
 //                                                                           //
@@ -35,48 +37,10 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-import Style from './Modal.css';
-import classNames from 'classnames';
-import { Related } from './Related';
-import { MediaInfo } from './MediaInfo';
-import React, { Component } from 'react';
-import ModalStyle from './ModalStyle.json';
-import { ModalType } from '../../components/Modal';
-import { isPlainObject, isString, has } from '../../lib/utils';
+const PropTypes = require('prop-types');
 
-export const ModalFactory = (type, category, options, data) => {
-  console.log('ModalFactory', options);
-  try {
-    const template = {
-      options: { type, category, ...options }
-    };
-    switch (category.join('.')) {
-      case 'metadata': return {
-        modal: {
-          ...template,
-          header: 'header',
-          body: <MediaInfo { ...data } />,
-          footer: 'footer'
-        }
-      };
-      case 'related': return {
-        modal: {
-          ...template,
-          header: 'header',
-          body: <Related { ...data } />,
-          footer: 'footer'
-        }
-      };
-      default: return {
-        modal: {
-          ...template,
-          header: true,
-          body: (<div { ...data } />)
-        }
-      };
-    }
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
+module.exports = {
+  header: PropTypes.node,
+  body: PropTypes.node.isRequired,
+  footer: PropTypes.node
 };

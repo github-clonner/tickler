@@ -1,14 +1,14 @@
 // @flow
 
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : Volume.jsx                                                //
-// @summary      : Volume control component                                  //
-// @version      : 0.0.1                                                     //
+// @file         : Footer.jsx                                                //
+// @summary      : Modal footer component                                    //
+// @version      : 1.0.0                                                     //
 // @project      : tickelr                                                   //
 // @description  :                                                           //
 // @author       : Benjamin Maggi                                            //
 // @email        : benjaminmaggi@gmail.com                                   //
-// @date         : 01 Oct 2017                                               //
+// @date         : 18 Nov 2017                                               //
 // @license:     : MIT                                                       //
 // ------------------------------------------------------------------------- //
 //                                                                           //
@@ -37,91 +37,45 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-import React, { Component } from 'react';
-import PropTypes from 'prop-types'
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
-import {
-  compose,
-  withStateHandlers,
-  pure,
-  mapProps
-} from 'recompose';
-/* owner libs */
-import { Player, Settings } from '../../../actions';
-import { InputRange } from '../../index';
-// Import styles
+import Style from './Footer.css';
 import classNames from 'classnames';
-import Style from '../Player.css';
+import React, { Component } from 'react';
+import {
+  pure,
+  branch,
+  compose,
+  mapProps,
+  getContext,
+  setPropTypes,
+  renderNothing,
+  renderComponent,
+  onlyUpdateForPropTypes
+} from 'recompose';
+import ModalType from '../../types';
+import { isEmpty } from 'lib/utils';
+import FooterButtons from './FooterButtons';
 
-
-/*
- * Subbscribe to redux store and merge these props
- * reference: https://github.com/reactjs/react-redux/blob/master/docs/api.md
- */
-function mapStateToProps(state) {
-  return {
-    audio: state.Audio,
-    options: {
-      player: state.Settings.get('player'),
-      audio: state.Settings.get('audio')
-    }
-  };
-}
-
-/*
- * Redux Action Creators
- * Each key inside this object is assumed to be a Redux action creator
- * reference: https://github.com/reactjs/react-redux/blob/master/docs/api.md
- */
-function mapDispatchToProps(dispatch) {
-  return {
-    player: bindActionCreators(Player, dispatch)
-  };
-}
+const Footer = ({ modal: { actions, options }}) =>
+  <div className={ Style.footer }>
+    <FooterButtons { ...{ actions, options }} />
+  </div>
 
 /*
  * Component wrapper
  */
-const enhance = compose(
+export default compose(
   pure,
-  connect(mapStateToProps, mapDispatchToProps),
-  mapProps(({ player, audio }) => {
-    return {
-      setVolume: player.setVolume,
-      toggleMute: player.toggleMute,
-      isMuted: audio.isMuted,
-      volume: audio.volume
-    }
+  getContext({
+    modal: ModalType
   }),
-  withStateHandlers(
-    ({ initialState = false }) => ({ isChanging: initialState }),
-    {
-      onMouseDown: ({ isChanging }) => (event) => ({
-        isChanging: true,
-      }),
-      onMouseUp: ({ isChanging }) => (event) => ({
-        isChanging: false,
-      })
-    }
+  onlyUpdateForPropTypes,
+  setPropTypes({
+    modal: ModalType
+  }),
+  branch(
+    ({ modal: { footer } }) => !isEmpty(footer),
+    renderComponent(Footer),
+    renderNothing,
   )
-);
+)(Footer);
 
-/*
- * Volume component renderer
- */
-export default enhance(({ isChanging, onMouseDown, onMouseUp, isMuted, volume, setVolume, toggleMute }) => {
-  const style = classNames( Style.volume, Style.checkboxButtons, {
-    [Style.isChanging]: isChanging
-  });
-  return (
-    <div className={ style } >
-      { /* TODO: mute is not working */ }
-      <input id="volume" type="checkbox" checked={ isMuted } onChange={ toggleMute } />
-      <label htmlFor="volume">volume_up</label>
-      <div className={ Style.slider } onMouseDown={ onMouseDown } onMouseUp={ onMouseUp }>
-        <InputRange value={ volume } min={ 0 } max={ 1 } step={ 0.001 } onChange={ setVolume } />
-      </div>
-    </div>
-  );
-});

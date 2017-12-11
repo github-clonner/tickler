@@ -1,6 +1,8 @@
 /* Components */
-export Header from './template/Header/Header';
-export Body from './template/Body/Body';
-export Footer from './template/Footer/Footer';
+export { Header, Body, Footer } from './components';
+
 /* Type Definitions */
-export { ModalType } from './ModalType';
+export ModalType from './types';
+
+/* Standard Styles */
+export ModalStyles from './constants';

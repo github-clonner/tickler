@@ -1,8 +1,29 @@
-/* global  */
+/* Global Variables */
+
+
+/* Global Selectors */
+@custom-selector :--heading h1, h2, h3, h4, h5, h6;
+@custom-selector :--button button, .button;
+@custom-selector :--icon i.icon, span.icon, .icon, [role="icon"];
+@custom-selector :--middle-child :not(:first-child), :not(:last-child);
+
+/*
+ * CSS font shorthand declaration: https://stackoverflow.com/a/4218612/787098
+ * font: [ [ <'font-style'> || <'font-variant'> || <'font-weight'> ]? <'font-size'> [ / <'line-height'> ]? <'font-family'> ] | caption | icon | menu | message-box | small-caption | status-bar | inherit
+ */
 :root {
+  --colorDark: #212121;
+  --colorLight: color(var(--colorDark) lightness(90%));
+  --colorWhite: color(var(--colorDark) lightness(98%));
+  --colorPrimary: #007BFF;
+  --colorSecondary: var(--colorLight);
+  --colorSuccess: #28A745;
+  --colorDanger: #DC3545;
+  --colorWarning: #FFC107;
+  --colorInfo: #17A2B8;
+
   --iconFont: "Material Icons";
   --monoFont: "Roboto Mono", monospace;
-  --mainColor: #fafafa;
   --mainFont: "Roboto", helvetica, sans-serif;
   --controlsBackground: #212121;
 }

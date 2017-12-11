@@ -42,7 +42,6 @@ import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { withRouter } from "react-router-dom";
 import * as Settings from '../../actions/Settings';
-import { shell, remote, ipcRenderer } from 'electron';
 import {
   compose,
   setPropTypes,
@@ -58,7 +57,6 @@ import { ModalFactory } from './ModalFactory';
 function mapStateToProps (state, ownProps) {
   const { location: { state: { data, options, id }}, match: { params: { type, ...category }}} = ownProps;
   const modal = ModalFactory(type, Object.values(category), options, data);
-  console.log('MODAL', modal);
   return modal;
 }
 
@@ -77,14 +75,6 @@ export const ModalWindow = compose(
   }),
   mapProps((props) => {
     return props
-  }),
-  withHandlers({
-    onClick: (props) => (event, data) => {
-      console.log('onClick', props, event, data);
-    },
-    close: (props) => (event, data) => {
-      console.log('ModalWindow close', props, event, data);
-    }
   }),
   branch(
     ({ modal }) => {

@@ -72,13 +72,21 @@ export const Related = (media) => {
     },
     behavior: {
       type: {
-        // buttons: [ 'Backup', 'Restore' ],
         // buttons: [
         //   {
-        //     label: 'YES',
-        //     style: 'buttonSecondary'
+        //     label: 'Close',
+        //     style: 'secondary',
+        //     events: {
+        //       onClick: 'close'
+        //     }
         //   },
-        //   'Restore'
+        //   {
+        //     label: 'Save',
+        //     style: 'primary',
+        //     events: {
+        //       onClick: 'save'
+        //     }
+        //   }
         // ],
         icon: 'backup'
       }

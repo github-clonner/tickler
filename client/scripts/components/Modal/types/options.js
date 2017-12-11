@@ -1,14 +1,14 @@
 // @flow
 
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : ModalType.js                                              //
-// @summary      : Modal Type Definition                                     //
+// @file         : options.js                                                //
+// @summary      : Modal type options                                        //
 // @version      : 1.0.0                                                     //
 // @project      : tickelr                                                   //
 // @description  :                                                           //
 // @author       : Benjamin Maggi                                            //
 // @email        : benjaminmaggi@gmail.com                                   //
-// @date         : 18 Nov 2017                                               //
+// @date         : 10 Dec 2017                                               //
 // @license:     : MIT                                                       //
 // ------------------------------------------------------------------------- //
 //                                                                           //
@@ -37,25 +37,13 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-import PropTypes from 'prop-types';
+const PropTypes = require('prop-types');
+const { ModalStyles: { styles }, ModalTypes: { types }} = require('../constants');
 
-export const ModalType = PropTypes.shape({
-  header: PropTypes.node.isRequired,
-  body: PropTypes.node.isRequired,
-  footer: PropTypes.node,
-  actions: PropTypes.shape({
-    close: PropTypes.func,
-    save: PropTypes.func,
-    ignore: PropTypes.func,
-    retry: PropTypes.func
-  }),
-  options: PropTypes.shape({
-    type: PropTypes.oneOf([ 'media', 'settings' ]),
-    autosave: PropTypes.bool,
-    confirm: PropTypes.bool,
-    style: PropTypes.oneOf([ 'OK_ONLY', 'OK_CANCEL', 'ABORT_RETRY_IGNORE', 'YES_NO_CANCEL', 'YES_NO', 'RETRY_CANCEL', 'CRITICAL', 'QUESTION', 'EXCLAMATION', 'INFORMATION' ]),
-    className: PropTypes.node,
-    fullscreen: PropTypes.bool,
-    close: PropTypes.func
-  })
+module.exports = PropTypes.shape({
+  confirm: PropTypes.bool,
+  autosave: PropTypes.bool,
+  className: PropTypes.node,
+  type: PropTypes.oneOf([ ...types ]),
+  style: PropTypes.oneOf([ ...Object.keys(styles) ])
 });

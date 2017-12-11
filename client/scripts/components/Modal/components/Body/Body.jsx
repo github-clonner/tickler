@@ -1,8 +1,8 @@
 // @flow
 
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : Footer.jsx                                                //
-// @summary      : Modal footer component                                    //
+// @file         : Body.jsx                                                  //
+// @summary      : Modal body component                                      //
 // @version      : 1.0.0                                                     //
 // @project      : tickelr                                                   //
 // @description  :                                                           //
@@ -37,7 +37,7 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-import Style from './Footer.css';
+import Style from './Body.css';
 import classNames from 'classnames';
 import React, { Component } from 'react';
 import {
@@ -51,57 +51,14 @@ import {
   renderComponent,
   onlyUpdateForPropTypes
 } from 'recompose';
-import { ModalType } from '../../ModalType';
-import ModalStyle from '../../../../containers/Modal/ModalStyle.json';
+import { isEmpty } from 'lib/utils';
+import ModalType from '../../types';
+import { ModalStyles } from '../../constants';
 
-
-const Footer = ({ modal: { footer, actions, options }}) => {
-  return (
-    <div className={ Style.footer } >
-      { React.Children.map(footer, buttonClass) }
-    </div>
-  );
-};
-
-const buttonClass = (child) => {
-  console.log('buttonClass', child.props);
-  const className = classNames(child.props.className, Style.footerButton );
-  const props = {
-    className
-  };
-  return React.cloneElement(child, props);
-};
-
-const mapButtonType = (type) => {
-  const { DEFAULT, [type]: styled = { ...DEFAULT, label: label = type, ...(isPlainObject(type) ? type : undefined) }} = ModalStyle.button;
-  return { ...styled };
-};
-
-const mapButtonEvents = (actions) => ({ events, ...button }) => {
-  return {
-    ...button,
-    events: Object
-    .entries(events)
-    .filter(([name, handler]) => (handler in actions))
-    .reduce((events, [ name, handler ]) => ({...events, [name]: actions[handler] }), {})
-  };
-};
-
-const mapButtonElement = ({ icon, label, style, events }, index) =>
-  <button className={ classNames(Style.modalButton, Style[style]) } key={ index } { ...events }>
-    <i className={ Style.modalIcon } role="icon">{ icon }</i>
-    { label }
-  </button>;
-
-const FooterFactory = ({ behavior: { type }, ...options}, actions) => {
-  const { DEFAULT, [type]: styled = { ...DEFAULT, ...type }} = ModalStyle.type;
-  return (
-    styled.buttons
-    .map(mapButtonType)
-    .map(mapButtonEvents(actions))
-    .map(mapButtonElement)
-  );
-};
+const Body = ({ modal: { body, actions, options }}) =>
+  <div className={ Style.body } >
+    { body }
+  </div>;
 
 /*
  * Component wrapper
@@ -111,28 +68,15 @@ export default compose(
   getContext({
     modal: ModalType
   }),
-  mapProps(({ modal: { header, body, footer, actions, options } }) => {
-    console.log('actions', actions);
-    return {
-      modal: {
-        header,
-        body,
-        footer: FooterFactory(options, actions),
-        actions,
-        options
-      }
-    }
-  }),
   onlyUpdateForPropTypes,
   setPropTypes({
     modal: ModalType
   }),
   branch(
-    ({ modal }) => {
-      return React.Children.count(modal.footer) > 1;
-    },
-    renderComponent(Footer),
+    ({ modal: { body }}) => !isEmpty(body),
+    renderComponent(Body),
     renderNothing,
   )
-)(Footer);
+)(Body);
+
 

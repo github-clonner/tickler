@@ -1,14 +1,14 @@
 // @flow
 
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : Body.jsx                                                  //
-// @summary      : Modal body component                                      //
+// @file         : FooterButtons.jsx                                         //
+// @summary      : Footer button component                                   //
 // @version      : 1.0.0                                                     //
 // @project      : tickelr                                                   //
 // @description  :                                                           //
 // @author       : Benjamin Maggi                                            //
 // @email        : benjaminmaggi@gmail.com                                   //
-// @date         : 18 Nov 2017                                               //
+// @date         : 11 Dec 2017                                               //
 // @license:     : MIT                                                       //
 // ------------------------------------------------------------------------- //
 //                                                                           //
@@ -37,6 +37,9 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
+import Style from './Footer.css';
+import classNames from 'classnames';
+import React, { Component } from 'react';
 import {
   pure,
   branch,
@@ -48,35 +51,39 @@ import {
   renderComponent,
   onlyUpdateForPropTypes
 } from 'recompose';
-import Style from './Body.css';
-import classNames from 'classnames';
-import React, { Component } from 'react';
-import { ModalType } from '../../ModalType';
-import { isEmpty } from '../../../../lib/utils';
-import ModalStyle from '../../../../containers/Modal/ModalStyle.json';
+import { isEmpty } from 'lib/utils';
+import { getStyle } from '../../constants';
 
-const Body = ({ modal: { body, actions, options }}) =>
-  <div className={ Style.body } >
-    { body }
-  </div>;
 
-/*
- * Component wrapper
- */
+const buttonEvents = (actions) => ({ events, ...button }) => {
+  return {
+    ...button,
+    events: Object
+    .entries(events)
+    .filter(([name, handler]) => (handler in actions))
+    .reduce((events, [ name, handler ]) => ({ ...events, [name]: actions[handler] }), {})
+  };
+};
+
+const Button = ({ icon, label, style, events }) =>
+  <button className={ Style.footerButton } role={ style } { ...events }>
+    <i className={ Style.icon } role="icon">{ icon }</i>
+    { label }
+  </button>;
+
+const Buttons = ({ actions, buttons }) => buttons.map(buttonEvents(actions)).map((props, index) => <Button key={ index } {...props} />);
+
 export default compose(
   pure,
-  getContext({
-    modal: ModalType
-  }),
-  onlyUpdateForPropTypes,
-  setPropTypes({
-    modal: ModalType
+  mapProps(({ actions, options }) => {
+    const { behavior: { type }} = options;
+    const { buttons } = getStyle(type);
+    console.log('BUTTONS', buttons, isEmpty(buttons))
+    return { actions, options, buttons };
   }),
   branch(
-    ({ modal: { body }}) => !isEmpty(body),
-    renderComponent(Body),
+    ({ buttons }) => !isEmpty(buttons),
+    renderComponent(Buttons),
     renderNothing,
   )
-)(Body);
-
-
+)(renderNothing);

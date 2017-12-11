@@ -283,6 +283,20 @@ export const b64DecodeUnicode = (str) => {
   }).join(''));
 };
 
+/**
+ * Sort text lines
+ * @param {string} Text to be sorted.
+ * @param {string} End of line character.
+ * @param {Func} Sort function.
+ * @returns {string} Sorted string.
+ */
+export const sortLines = (text, eol = '\n', order = (a, b) => (a - b)) => {
+  return text.split(eol)
+    .filter((line) => line.length)
+    .sort((a, b) => order(a.length, b.length))
+    .reduce((lines, line, index, array) => (lines.concat(line + eol)), '');
+};
+
 
 /**
  *  Bare bones template interpolation/compiler

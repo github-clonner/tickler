@@ -215,6 +215,9 @@ const configRenderer = {
                   path: [ path.resolve(__dirname, './client'), path.resolve(__dirname, 'node_modules')],
                 }),
                 require('postcss-url')(),
+                require('postcss-mixins')(),
+                require('postcss-simple-vars')(),
+                require('postcss-nested')(),
                 require('postcss-cssnext')(),
                 require('postcss-reporter')()
               ]

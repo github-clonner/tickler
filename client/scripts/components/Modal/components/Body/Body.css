@@ -1,12 +1,10 @@
 @import "styles/variables.css";
+@import "styles/mixins.css";
 
-:root {
-  --background: #FFF;
-}
+@custom-selector :--body .body, .modal-body;
 
-:local(.body) {
+:local(:--body) {
   flex: 1;
-  background: var(--background);
   box-sizing: border-box;
   overflow-y: auto;
   display: flex;

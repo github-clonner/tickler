@@ -1,25 +1,3 @@
-:root {
-  --mainColor: #fafafa;
-  --mainFont: "Roboto", helvetica, sans-serif;
-}
-
-/* :local(.application) {
-  height: 100%;
-  & .frame {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-  }
-  & .toolbar {
-    flex: 0 0 auto;
-  }
-  & .content {
-    flex: 1 1 auto;
-    overflow-y: auto;
-    height: 100%;
-  }
-} */
-
 .application {
   height: 100%;
 }

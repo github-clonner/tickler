@@ -1,0 +1,29 @@
+@import "styles/variables.css";
+@import "styles/mixins.css";
+
+@custom-selector :--footer .footer, .modal-footer;
+@custom-selector :--footer-icon .icon, .footer-icon;
+@custom-selector :--footer-button .button, .footer-button;
+
+:root {
+  --padding: 0.65rem;
+}
+
+:local(:--footer) {
+  padding: var(--padding);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  & :--footer-button {
+    @mixin button;
+    &[role="primary"] {
+      @mixin button var(--colorPrimary);
+    }
+    &[role="secondary"] {
+      @mixin button var(--colorSecondary);
+    }
+    &:--middle-child {
+      margin-left: 0.25rem;
+    }
+  }
+}

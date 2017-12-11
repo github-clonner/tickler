@@ -1,8 +1,8 @@
 // @flow
 
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : HeaderButtons.jsx                                         //
-// @summary      : Header buttons                                            //
+// @file         : Header.jsx                                                //
+// @summary      : Modal header component                                    //
 // @version      : 1.0.0                                                     //
 // @project      : tickelr                                                   //
 // @description  :                                                           //
@@ -37,54 +37,55 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
+import Style from './Header.css';
 import classNames from 'classnames';
-import Style from './HeaderButtons.css';
+import ModalType from '../../types';
 import React, { Component } from 'react';
+import HeaderButtons from './HeaderButtons';
+import { isEmpty } from 'lib/utils';
 import {
   pure,
   branch,
   compose,
+  getContext,
+  setPropTypes,
   renderNothing,
-  renderComponent
+  renderComponent,
+  onlyUpdateForPropTypes
 } from 'recompose';
+import { getStyle } from '../../constants';
 
-const Button = (props) =>
-  <button type="button" className={ classNames( Style.headerButton, Style[props.style] ) } disabled={ props.disabled }>{ props.children }</button>;
+const HeaderTitle = ({ behavior: { type }, window: { title }, ...options}) => {
+  const header = { ...getStyle(type), title };
+  return (
+    <h1 className={ Style.title }>
+      <i className={ Style.icon } role="icon">{ header.icon }</i>
+      { header.title }
+    </h1>
+  );
+};
 
-const Close = ({ actions: { close }}) =>
-  <Button disabled={ true } onClick={ close }>
-    <span aria-hidden="true">&times;</span>
-  </Button>;
-
-const Alert = () =>
-  <Button type="button">
-    <span aria-hidden="true">&quest;</span>
-  </Button>;
-
-const Quest = ({ actions: { help }}) =>
-  <Button type="button">
-    <span aria-hidden="true">&quest;</span>
-  </Button>;
+const Header = ({ modal }) =>
+  <div className={ Style.header }>
+    <HeaderTitle { ...modal.options } />
+    <HeaderButtons className={ Style.button } { ...modal } />
+  </div>;
 
 /*
- * conditional state render
- * inspiration: https://blog.bigbinary.com/2017/09/12/using-recompose-to-build-higher-order-components.html
+ * Component wrapper
  */
-const isMedia = ({ options: { type }}) => (/media/i.test(type));
-const isAlert = ({ options: { type }}) => (/alert/i.test(type));
-const isQuest = ({ options: { type }}) => (/quest/i.test(type));
-
-const conditionalRender = (states) =>
-  compose(...states.map(state =>
-    branch(state.when, renderComponent(state.then))
-  ));
-
 export default compose(
   pure,
-  conditionalRender([
-    { name: 'media', when: isMedia, then: Close },
-    { name: 'alert', when: isAlert, then: Alert },
-    { name: 'quest', when: isQuest, then: Quest },
-
-  ])
-)(renderNothing);
+  getContext({
+    modal: ModalType
+  }),
+  onlyUpdateForPropTypes,
+  setPropTypes({
+    modal: ModalType
+  }),
+  branch(
+    ({ modal: { header }}) => !isEmpty(header),
+    renderComponent(Header),
+    renderNothing,
+  )
+)(Header);

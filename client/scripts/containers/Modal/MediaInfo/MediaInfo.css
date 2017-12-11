@@ -1,37 +1,32 @@
 @import "styles/variables.css";
 
 :root {
-  --formBackground: #fff;
-  --form-Padding: 0.65em;
-  --input-text-background: #f9f9f9;
-  --input-text-border: 1px solid #e5e5e5;
+  --padding: 0.65rem;
 }
 
 .form {
-  background-color: var(--formBackground);
+  width: 100%;
+  height: 100%;
   font-family: var(--mainFont);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  width: 100%;
-  height: 100%;
-  padding: var(--form-Padding);
+  padding: var(--padding);
   box-sizing: border-box;
   & .form-group {
     display: flex;
     flex-direction: column;
     & label {
-      font-size: 0.85em;
-      font-weight: lighter;
-      margin-bottom: 5px;
+      font-size: small;
+      margin-bottom: 0.25rem;
       text-transform: capitalize;
     }
     & input {
       font-family: var(--mainFont);
-      background: var(--input-text-background);
-      border: var(--input-text-border);
+      background: var(--colorWhite);
+      border: 1px solid var(--colorLight);
       border-radius: 2px;
-      padding: 8px;
+      padding: 0.25rem;
     }
   }
 }

@@ -10,7 +10,7 @@ html {
 body {
   height: 100%;
   font-family: var(--mainFont);
-  background-color: var(--mainColor);
+  background-color: var(--colorWhite);
   margin: 0px;
   padding: 0px;
   overflow: hidden;

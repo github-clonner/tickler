@@ -1,8 +1,8 @@
 // @flow
 
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : Header.jsx                                                //
-// @summary      : Modal header component                                    //
+// @file         : HeaderButtons.jsx                                         //
+// @summary      : Header buttons                                            //
 // @version      : 1.0.0                                                     //
 // @project      : tickelr                                                   //
 // @description  :                                                           //
@@ -37,63 +37,56 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-import Style from './Header.css';
-import classNames from 'classnames';
-import React, { Component } from 'react';
-import { isEmpty } from '../../../../lib/utils';
-import { shell, remote, ipcRenderer } from 'electron';
 import {
+  nest,
   pure,
   branch,
   compose,
-  mapProps,
-  getContext,
-  setPropTypes,
+  withProps,
   renderNothing,
   renderComponent,
-  onlyUpdateForPropTypes
+  onlyUpdateForKeys
 } from 'recompose';
-import HeaderButtons from './HeaderButtons';
-import { ModalType } from '../../ModalType';
-import ModalStyle from '../../../../containers/Modal/ModalStyle.json';
+import Style from './Header.css';
+import classNames from 'classnames';
+import React, { Component } from 'react';
 
-const getHeader = (type, title) => {
-  const { DEFAULT, [type]: styled = { ...DEFAULT, ...type }} = ModalStyle.type;
-  return { ...styled, title };
-};
+const Button = (props) => React.createElement('button', { ...props });
+const Icon = (props) => React.createElement('span', { ...props });
 
-const HeaderFactory = ({ behavior: { type }, window: { title }, ...options}) => {
-  const header = getHeader(type, title);
-  return (
-    <h5 className={ classNames(Style.title, Style[header.style])}>
-      <i className={ Style.icon } role="icon">{ header.icon }</i>
-      { header.title }
-    </h5>
-  );
-};
+const Close = (props) =>
+  <Button className={ props.className } onClick={ props.actions.close }>
+    <Icon>&times;</Icon>
+  </Button>;
 
-// const Header = ({ modal: { header, actions: { close }, options }}) =>
-const Header = ({ modal }) =>
-  <div className={ Style.header }>
-    <HeaderFactory { ...modal.options } />
-    <HeaderButtons { ...modal } />
-  </div>;
+const Alert = (props) =>
+  <Button { ...props }>
+    <Icon>&quest;</Icon>
+  </Button>;
+
+const Quest = (props) =>
+  <Button onClick={ props.actions.help } { ...props }>
+    <Icon>&quest;</Icon>
+  </Button>;
 
 /*
- * Component wrapper
+ * conditional state render
+ * inspiration: https://blog.bigbinary.com/2017/09/12/using-recompose-to-build-higher-order-components.html
  */
+const isMedia = ({ options: { type }}) => (/media/i.test(type));
+const isAlert = ({ options: { type }}) => (/alert/i.test(type));
+const isQuest = ({ options: { type }}) => (/quest/i.test(type));
+
+const conditionalRender = (states) =>
+  compose(...states.map(state =>
+    branch(state.when, renderComponent(state.then))
+  ));
+
 export default compose(
   pure,
-  getContext({
-    modal: ModalType
-  }),
-  onlyUpdateForPropTypes,
-  setPropTypes({
-    modal: ModalType
-  }),
-  branch(
-    ({ modal: { header }}) => !isEmpty(header),
-    renderComponent(Header),
-    renderNothing,
-  )
-)(Header);
+  conditionalRender([
+    { name: 'media', when: isMedia, then: Close },
+    { name: 'alert', when: isAlert, then: Alert },
+    { name: 'quest', when: isQuest, then: Quest }
+  ])
+)(renderNothing);

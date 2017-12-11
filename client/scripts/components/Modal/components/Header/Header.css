@@ -1,0 +1,48 @@
+@import "styles/variables.css";
+@import "styles/buttons.css";
+@import "styles/mixins.css";
+
+@custom-selector :--header .header, .modal-header;
+@custom-selector :--header-icon .icon, .header-icon;
+@custom-selector :--header-button .button, .header-button;
+@custom-selector :--header-title .title, .header-title;
+
+:root {
+  --color: var(--colorDark);
+  --padding: 0.65rem;
+}
+
+:local(:--header) {
+  display: flex;
+  cursor: default;
+  min-height: 1.5rem;
+  user-select: none;
+  font-size: medium;
+  font-weight: normal;
+  align-items: center;
+  padding: var(--padding);
+  background: var(--color);
+  justify-content: space-between;
+  color: color(var(--color) contrast(80%));
+  & :--header-title {
+    @mixin truncate-text;
+    margin: 0;
+    padding: 0;
+    display: inline;
+    font-weight: inherit;
+    font-size: inherit;
+    text-transform: capitalize;
+  }
+  & :--header-icon {
+    @mixin icon;
+    margin-right: 0.25rem;
+  }
+  & :--header-button {
+    @mixin clear-button color(var(--color) contrast(80%));
+    font-size: 200%;
+  }
+}
+
+
+
+

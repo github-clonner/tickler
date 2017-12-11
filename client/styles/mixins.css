@@ -1,0 +1,77 @@
+@import "./variables.css";
+
+@define-mixin icon $color: inherit {
+  color: $color;
+  font-style: inherit;
+  text-transform: none;
+  font-family: var(--iconFont);
+  text-rendering: optimizeLegibility;
+  vertical-align: bottom;
+}
+
+@define-mixin status $status, $color: blue {
+  .icon.status-$(status) {
+    color: $color;
+    @mixin-content;
+  }
+  .icon.status-$(status):hover {
+    color: white;
+    background: $color;
+  }
+  .icon[status*=$(status)] {
+    color: $color;
+    @mixin-content;
+  }
+  .icon[status*=$(status)]:hover {
+    color: white;
+    background: $color;
+  }
+}
+
+@define-mixin absolute-center {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+@define-mixin engraved $color {
+  box-shadow: inset -1px -1px color($color lightness(30%)), inset 1px 1px color($color lightness(-30%));
+}
+
+@define-mixin embossed $color {
+  box-shadow: inset -1px -1px color($color lightness(-30%)), inset 1px 1px color($color lightness(30%));
+}
+
+@define-mixin disabled-text $color {
+  color: color($color lightness(-30%));
+  text-shadow: 1px 1px 0 color($color lightness(30%)) , -1px -1px 0 color($color lightness(-30%));
+}
+
+@define-mixin truncate-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@define-mixin flex-inline {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: center;
+}
+
+@define-mixin flex-colums {
+  display: flex;
+  height: inherit;
+  flex-direction: column;
+  justify-content: center;
+}
+
+@define-mixin border $width: 1px, $style: solid, $color: inherit, $radius: 2px {
+  border-width: $width;
+  border-style: $style;
+  border-color: $color;
+  border-radius: $radius;
+}
+
+
