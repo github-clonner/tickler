@@ -102,7 +102,8 @@ export default class Modal extends Component {
   static defaultProps = {
     modal: {
       header: 'My Header',
-      body: 'My Body'
+      body: 'My Body',
+      footer: 'My Footer'
     }
   };
 
@@ -135,38 +136,24 @@ export default class Modal extends Component {
   };
 
   getChildContext() {
-    const { modal = this.props.modal } = this.state;
+    const { modal: { header, body, footer, options } } = this.props;
+    const { close, save, ignore, retry } = Modal;
     return {
       modal: {
-        header: modal.header,
-        body: modal.body,
-        footer: modal.footer,
-        options: modal.options,
-        actions: {
-          close: Modal.close,
-          save: Modal.save,
-          ignore: Modal.ignore,
-          retry: Modal.retry
-        }
+        header, body, footer, options,
+        actions: { close, save, ignore, retry }
       }
-    }
+    };
   }
-
-  state = {
-    media: {
-      related: [],
-    }
-  };
-
 
   render () {
     const { modal } = this.props;
     return (
       <div className={ Style.modal } role="dialog">
         <div className={ Style.content } role="document">
-          <Header>{ modal.header }</Header>
+          <Header { ...modal.header } />
           <Body>{ modal.body }</Body>
-          <Footer>{ modal.footer }</Footer>
+          <Footer { ...modal.footer } />
         </div>
       </div>
     );

@@ -41,7 +41,8 @@ import { URL, URLSearchParams } from 'url';
 import React, { Component } from 'react';
 import { ipcRenderer, remote } from 'electron';
 import { Router, Route, Redirect, Link, Switch } from 'react-router-dom';
-import { Main, About, NewList, Inspector, Modal, ModalWindow, ShowError } from '../containers';
+import { Main, About, NewList, Inspector, Modal, ShowError } from '../containers';
+import { ModalWindow } from '../components/Modal';
 import { ModalRouter } from './ModalRouter';
 import { AlertRouter } from './AlertRouter';
 

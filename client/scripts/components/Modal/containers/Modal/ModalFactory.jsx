@@ -36,11 +36,41 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 import React, { Component } from 'react';
+import ModalType from '../../types';
+import { getStyle } from '../../constants';
 import { Related } from '../Related';
 import { MediaInfo } from '../MediaInfo';
+import {
+  defaultProps,
+  componentFromProp
+} from 'recompose';
+
+const categoryToComponent = (category) => {
+  const components = {
+    metadata: 'MediaInfo',
+    related: 'Related'
+  };
+  return components[category.join('.')];
+};
+
+const ModalStyle = ({ behavior: { type }}) => getStyle(type);
+const ModalBody = defaultProps({ component: 'div' })(componentFromProp('component'));
+const ModalTitle = ({ title, icon }) => ({ title, icon });
+const ModalFooter = ({ buttons }) => buttons;
+export const ModalProps = ({ type, category, options, data }) => {
+  const style = ModalStyle(options);
+  const component = categoryToComponent(category);
+  const props = {
+    options: { type, category, ...options },
+    header: ModalTitle({ ...style, ...options.window }),
+    footer: 'footer', //ModalFooter(style),
+    body: <MediaInfo { ...data } /> //<ModalBody component={ component } { ...data } />
+  };
+  console.log('ModalProps', style, { modal: { ...props }});
+  return { modal: { ...props }};
+};
 
 export const ModalFactory = (type, category, options, data) => {
-  console.log('ModalFactory', options);
   try {
     const template = {
       options: { type, category, ...options }
@@ -49,7 +79,8 @@ export const ModalFactory = (type, category, options, data) => {
       case 'metadata': return {
         modal: {
           ...template,
-          header: 'header',
+          //header: <div><h1>Hello</h1></div>,
+          header: 'title',
           body: <MediaInfo { ...data } />,
           footer: 'footer'
         }

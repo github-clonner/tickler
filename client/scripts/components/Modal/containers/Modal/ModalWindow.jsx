@@ -52,12 +52,15 @@ import {
 } from 'recompose';
 import ModalType from '../../types';
 import { Modal } from '../../components/Modal';
-import { ModalFactory } from './ModalFactory';
+import { ModalFactory, ModalProps } from './ModalFactory';
 
 function mapStateToProps (state, ownProps) {
   const { location: { state: { data, options, id }}, match: { params: { type, ...category }}} = ownProps;
-  const modal = ModalFactory(type, Object.values(category), options, data);
-  return modal;
+  // const modalProps = ModalProps({ type, options, data, category: Object.values(category) });
+  // const modal = ModalFactory(type, Object.values(category), options, data);
+  // return modal;
+  return ModalProps({ type, options, data, category: Object.values(category) });
+  // return ModalFactory(type, Object.values(category), options, data);
 }
 
 function mapDispatchToProps(dispatch: Dispatch) {
@@ -74,6 +77,7 @@ export const ModalWindow = compose(
     settings: PropTypes.any
   }),
   mapProps((props) => {
+    console.log('ModalWindow', props);
     return props
   }),
   branch(

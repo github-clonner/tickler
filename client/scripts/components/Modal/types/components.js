@@ -40,7 +40,7 @@
 const PropTypes = require('prop-types');
 
 module.exports = {
-  header: PropTypes.node,
+  header: PropTypes.any,
   body: PropTypes.node.isRequired,
   footer: PropTypes.node
 };

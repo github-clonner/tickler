@@ -40,14 +40,16 @@
 import Style from './Header.css';
 import classNames from 'classnames';
 import ModalType from '../../types';
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import HeaderButtons from './HeaderButtons';
 import HeaderTitle from './HeaderTitle';
-import { isEmpty } from 'lib/utils';
+import { isEmpty, isString, isPlainObject } from 'lib/utils';
 import {
   pure,
   branch,
   compose,
+  mapProps,
   getContext,
   setPropTypes,
   renderNothing,
@@ -62,9 +64,76 @@ const Header = ({ modal: { actions, options }}) =>
     <HeaderButtons className={ Style.button } { ...{ actions, options }} />
   </div>;
 
+const CustomHeader = (props) => {
+  return (<div className={ Style.header } { ...props }></div>);
+}
+
+const SimpleHeader = (props) => {
+  console.log('SimpleHeader', props);
+  return (<div className={ Style.header }>
+    <h1 className={ Style.title }>
+      <i className={ Style.icon } role="icon">{ props.icon }</i>
+      { props.title }
+    </h1>
+  </div>);
+}
 /*
  * Component wrapper
  */
+// const simpleComponent = compose(
+//   pure,
+//   getContext({
+//     modal: ModalType
+//   }),
+//   onlyUpdateForPropTypes,
+//   setPropTypes({
+//     modal: ModalType
+//   }),
+//   branch(
+//     ({ modal: { header }}) => !isEmpty(header),
+//     renderComponent(Header),
+//     renderNothing,
+//   )
+// )(renderNothing);
+
+const simpleHeader = compose(
+  pure,
+  mapProps(({ title, icon }) => {
+    return { title, icon };
+  }),
+  setPropTypes({
+    title: PropTypes.string,
+    icon: PropTypes.string
+  }),
+  onlyUpdateForPropTypes,
+  renderComponent(SimpleHeader)
+)(renderNothing);
+
+const simpleComponent = compose(
+  pure,
+)(renderNothing);
+
+const customComponent = compose(
+  pure,
+  mapProps(({ props }) => {
+    if (React.isValidElement(props)) {
+      return React.Children.count(props) ? React.Children.only(props) : props;
+    } else {
+      return props;
+    }
+  }),
+  renderComponent(CustomHeader)
+)(renderNothing);
+
+const isValidHeader = (props) => (React.isValidElement(props));
+const isValidString = (props) => (isString(props) && !isEmpty(props));
+const isValidObject = (props) => (isPlainObject(props) && !isEmpty(props));
+
+const conditionalRender = (states) =>
+  compose(...states.map(state =>
+    branch(state.when, renderComponent(state.then))
+  ));
+
 export default compose(
   pure,
   getContext({
@@ -74,9 +143,9 @@ export default compose(
   setPropTypes({
     modal: ModalType
   }),
-  branch(
-    ({ modal: { header }}) => !isEmpty(header),
-    renderComponent(Header),
-    renderNothing,
-  )
-)(Header);
+  conditionalRender([
+    { when: isValidHeader, then: customComponent },
+    { when: isValidString, then: simpleComponent },
+    { when: isValidObject, then: simpleHeader }
+  ])
+)(renderNothing);
