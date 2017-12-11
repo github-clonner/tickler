@@ -78,7 +78,6 @@ export default compose(
   mapProps(({ actions, options }) => {
     const { behavior: { type }} = options;
     const { buttons } = getStyle(type);
-    console.log('BUTTONS', buttons, isEmpty(buttons))
     return { actions, options, buttons };
   }),
   branch(

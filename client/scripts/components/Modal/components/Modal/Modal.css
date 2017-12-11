@@ -1,0 +1,19 @@
+@import "styles/variables.css";
+@import "styles/mixins.css";
+
+@custom-selector :--modal .modal, .dialog;
+@custom-selector :--modal-content .content, .modal-content;
+
+:local(:--modal) {
+  @mixin flex-colums;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  & :--modal-content {
+    @mixin flex-colums;
+    flex: 1;
+    & > :not(:first-child) {
+      border-top: 1px solid var(--colorLight);
+    }
+  }
+}

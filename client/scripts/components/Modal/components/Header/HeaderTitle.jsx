@@ -40,8 +40,6 @@
 import Style from './Header.css';
 import classNames from 'classnames';
 import React, { Component } from 'react';
-import { isEmpty } from '../../../../lib/utils';
-import { shell, remote, ipcRenderer } from 'electron';
 import {
   pure,
   branch,
@@ -53,92 +51,27 @@ import {
   renderComponent,
   onlyUpdateForPropTypes
 } from 'recompose';
-import { ModalType } from '../../ModalType';
-import ModalStyle from '../../../../containers/Modal/ModalStyle.json';
+import { isEmpty } from 'lib/utils';
+import { getStyle } from '../../constants';
 
-
-const Close = ({ actions: { close }}) =>
-  <button type="button" className={ classNames( Style.modalButton, Style.headerButton, Style.closeButton) } onClick={ close }>
-    <span aria-hidden="true">&times;</span>
-  </button>;
-
-const Alert = ({ actions: { close }}) =>
-  <button type="button" className={ classNames( Style.modalButton, Style.headerButton, Style.closeButton) } onClick={ close }>
-    <span aria-hidden="true">&reg;</span>
-  </button>;
-
-
-class Noop extends Component {
-  render () {
-    <div>{ this.props.children }</div>
-  }
-}
-
-/*
- * conditional state render
- * inspiration: https://blog.bigbinary.com/2017/09/12/using-recompose-to-build-higher-order-components.html
- */
-const isMedia = ({ options: { type }}) => (/media/i.test(type));
-const isAlert = ({ options: { type }}) => (/alert/i.test(type));
-
-const conditionalRender = (states) =>
-  compose(...states.map(state =>
-    branch(state.when, renderComponent(state.then))
-  ));
-
-const Buttons = compose(
-  pure,
-  conditionalRender([
-    { name: 'media', when: isMedia, then: Alert },
-    { name: 'alert', when: isAlert, then: Close }
-  ])
-)(Close);
-
-// const Buttons = enhance(Noop);
-
-const getHeader = (type, title) => {
-  const { DEFAULT, [type]: styled = { ...DEFAULT, ...type }} = ModalStyle.type;
-  return { ...styled, title };
-};
-
-const HeaderFactory = ({ behavior: { type }, window: { title }, ...options}) => {
-  const header = getHeader(type, title);
+const HeaderTitle = ({ title, icon }) => {
   return (
-    <h5 className={ classNames(Style.title, Style[header.style])}>
-      <i className={ Style.icon } role="icon">{ header.icon }</i>
-      { header.title }
-    </h5>
+    <h1 className={ Style.title }>
+      <i className={ Style.icon } role="icon">{ icon }</i>
+      { title }
+    </h1>
   );
 };
 
-// const Header = ({ modal: { header, actions: { close }, options }}) =>
-const Header = ({ modal, modal: { header, actions, options }}) =>
-  <div className={ Style.header }>
-    <HeaderFactory { ...options } />
-    { /*
-    <button type="button" className={ classNames( Style.modalButton, Style.headerButton, Style.closeButton) } onClick={ close }>
-      <span aria-hidden="true">&times;</span>
-    </button>
-    <Close { ...actions } />
-    */ }
-    <Buttons { ...modal } />
-  </div>;
-
-/*
- * Component wrapper
- */
 export default compose(
   pure,
-  getContext({
-    modal: ModalType
-  }),
-  onlyUpdateForPropTypes,
-  setPropTypes({
-    modal: ModalType
+  mapProps(({ actions, options }) => {
+    const { behavior: { type }} = options;
+    return { ...getStyle(type), ...options.window };
   }),
   branch(
-    ({ modal: { header }}) => !isEmpty(header),
-    renderComponent(Header),
+    ({ title }) => !isEmpty(title),
+    renderComponent(HeaderTitle),
     renderNothing,
   )
-)(Header);
+)(renderNothing);

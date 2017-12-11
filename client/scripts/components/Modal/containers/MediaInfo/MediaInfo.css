@@ -1,0 +1,32 @@
+@import "styles/variables.css";
+
+:root {
+  --padding: 0.65rem;
+}
+
+.form {
+  width: 100%;
+  height: 100%;
+  font-family: var(--mainFont);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: var(--padding);
+  box-sizing: border-box;
+  & .form-group {
+    display: flex;
+    flex-direction: column;
+    & label {
+      font-size: small;
+      margin-bottom: 0.25rem;
+      text-transform: capitalize;
+    }
+    & input {
+      font-family: var(--mainFont);
+      background: var(--colorWhite);
+      border: 1px solid var(--colorLight);
+      border-radius: 2px;
+      padding: 0.25rem;
+    }
+  }
+}

@@ -35,14 +35,12 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-// import Modal from './Modal';
-import { Modal } from '../../components/Modal';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { withRouter } from "react-router-dom";
-import * as Settings from '../../actions/Settings';
+import * as Settings from '../../../../actions/Settings';
 import {
   compose,
   setPropTypes,
@@ -52,9 +50,9 @@ import {
   renderComponent,
   renderNothing
 } from 'recompose';
-import { ModalType } from '../../components/Modal';
-// import { ModalFactory } from './ModalFactory';
-import { ModalFactory } from '../../components/Modal/containers/Modal';
+import ModalType from '../../types';
+import { Modal } from '../../components/Modal';
+import { ModalFactory } from './ModalFactory';
 
 function mapStateToProps (state, ownProps) {
   const { location: { state: { data, options, id }}, match: { params: { type, ...category }}} = ownProps;

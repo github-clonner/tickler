@@ -1,12 +1,12 @@
 ///////////////////////////////////////////////////////////////////////////////
-// @file         : ModalWindow.jsx                                           //
-// @summary      : ModalWindow HOC                                           //
+// @file         : ModalFactory.jsx                                          //
+// @summary      : Modal factory for stock styles                            //
 // @version      : 1.0.0                                                     //
 // @project      : tickelr                                                   //
 // @description  :                                                           //
 // @author       : Benjamin Maggi                                            //
 // @email        : benjaminmaggi@gmail.com                                   //
-// @date         : 18 Nov 2017                                               //
+// @date         : 05 Dec 2017                                               //
 // @license:     : MIT                                                       //
 // ------------------------------------------------------------------------- //
 //                                                                           //
@@ -35,60 +35,43 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-// import Modal from './Modal';
-import { Modal } from '../../components/Modal';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import React, { Component } from 'react';
-import { bindActionCreators } from 'redux';
-import { withRouter } from "react-router-dom";
-import * as Settings from '../../actions/Settings';
-import {
-  compose,
-  setPropTypes,
-  mapProps,
-  withHandlers,
-  branch,
-  renderComponent,
-  renderNothing
-} from 'recompose';
-import { ModalType } from '../../components/Modal';
-// import { ModalFactory } from './ModalFactory';
-import { ModalFactory } from '../../components/Modal/containers/Modal';
+import { Related } from '../Related';
+import { MediaInfo } from '../MediaInfo';
 
-function mapStateToProps (state, ownProps) {
-  const { location: { state: { data, options, id }}, match: { params: { type, ...category }}} = ownProps;
-  const modal = ModalFactory(type, Object.values(category), options, data);
-  return modal;
-}
-
-function mapDispatchToProps(dispatch: Dispatch) {
-  return {
-    settings: bindActionCreators(Settings, dispatch)
-  };
-}
-
-export const ModalWindow = compose(
-  connect(mapStateToProps, mapDispatchToProps),
-  withRouter,
-  setPropTypes({
-    modal: ModalType,
-    settings: PropTypes.any
-  }),
-  mapProps((props) => {
-    return props
-  }),
-  branch(
-    ({ modal }) => {
-      try {
-        const { options } = modal;
-        return (modal && modal.options.type);
-      } catch (error) {
-        console.error(error);
-        return false;
-      }
-    },
-    renderComponent(Modal),
-    renderNothing,
-  )
-)(Modal);
+export const ModalFactory = (type, category, options, data) => {
+  console.log('ModalFactory', options);
+  try {
+    const template = {
+      options: { type, category, ...options }
+    };
+    switch (category.join('.')) {
+      case 'metadata': return {
+        modal: {
+          ...template,
+          header: 'header',
+          body: <MediaInfo { ...data } />,
+          footer: 'footer'
+        }
+      };
+      case 'related': return {
+        modal: {
+          ...template,
+          header: 'header',
+          body: <Related { ...data } />,
+          footer: 'footer'
+        }
+      };
+      default: return {
+        modal: {
+          ...template,
+          header: true,
+          body: (<div { ...data } />)
+        }
+      };
+    }
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};

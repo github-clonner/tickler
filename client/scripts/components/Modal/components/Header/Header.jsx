@@ -42,6 +42,7 @@ import classNames from 'classnames';
 import ModalType from '../../types';
 import React, { Component } from 'react';
 import HeaderButtons from './HeaderButtons';
+import HeaderTitle from './HeaderTitle';
 import { isEmpty } from 'lib/utils';
 import {
   pure,
@@ -55,20 +56,10 @@ import {
 } from 'recompose';
 import { getStyle } from '../../constants';
 
-const HeaderTitle = ({ behavior: { type }, window: { title }, ...options}) => {
-  const header = { ...getStyle(type), title };
-  return (
-    <h1 className={ Style.title }>
-      <i className={ Style.icon } role="icon">{ header.icon }</i>
-      { header.title }
-    </h1>
-  );
-};
-
-const Header = ({ modal }) =>
+const Header = ({ modal: { actions, options }}) =>
   <div className={ Style.header }>
-    <HeaderTitle { ...modal.options } />
-    <HeaderButtons className={ Style.button } { ...modal } />
+    <HeaderTitle className={ Style.title } { ...{ actions, options }} />
+    <HeaderButtons className={ Style.button } { ...{ actions, options }} />
   </div>;
 
 /*

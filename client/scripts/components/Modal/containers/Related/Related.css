@@ -1,0 +1,66 @@
+@import "styles/variables.css";
+
+:root {
+  --listBackground: #CCC;
+  --itemBackground: #EAEAEA;
+  --itemBackgroundOdd: #FAFAFA;
+  --itemBackgroundEven: #EAEAEA;
+  --itemBackgroundOnDrag: #EAEAEA;
+  --itemBorder: 1px solid #CACACA;
+}
+
+.related {
+  display: flex;
+  box-sizing: border-box;
+  flex-direction: column;
+  align-items: stretch;
+  overflow: hidden;
+  overflow-y: auto;
+  width: 100%;
+}
+
+:local(.list) {
+  background-color: var(--listBackground);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  height: 100%;
+  & .media-container {
+    margin: 10px;
+    width: auto;
+  }
+  & [data-item-type] {
+    display: flex;
+    flex-direction: row;
+  }
+  & .item {
+    border: var(--itemBorder);
+    border-width: 1px 0px;
+    border-style: solid none;
+    margin-bottom: -1px;
+    margin-top: -1px;
+    &:nth-child(odd) {
+      background-color: var(--itemBackgroundOdd);
+    }
+    &:nth-child(even) {
+      background-color: var(--itemBackgroundEven);
+    }
+  }
+}
+
+:local(.sortable-helper) {
+  composes: list;
+  background-color: var(--itemBackgroundOnDrag);
+  opacity: 0.85;
+  /*
+  & [data-item-type="list"] {
+    background-color: #F00;
+  }
+  & [data-item-type="media"] {
+    background-color: #0F0;
+  }
+  */
+  &:not(.freeze) {
+    background-color: #0F0;
+  }
+}
