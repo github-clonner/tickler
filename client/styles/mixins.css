@@ -28,6 +28,10 @@
   }
 }
 
+@define-mixin button {
+  border: 1px solid black;
+}
+
 @define-mixin absolute-center {
   top: 50%;
   left: 50%;

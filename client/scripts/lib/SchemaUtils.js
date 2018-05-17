@@ -164,6 +164,8 @@ export const keywordValidator = {
       try {
         return fs.statSync(validatedParameterValue)[schemaParameterValue.type]();
       } catch (error) {
+        console.error('file', validatedParameterValue);
+        console.error('type', schemaParameterValue.type);
         console.error(error);
         throw error;
       }
@@ -178,6 +180,7 @@ export const addKeyword = function(validator, keyword, async = true) {
 }
 
 export const Validator = function(options, directives = {}) {
+  console.log('Validator', options, directives)
   const formats = { ...numberFormats, ...pathFormats, ...versionFormats };
   const defaults = {
     async: true,
@@ -186,8 +189,12 @@ export const Validator = function(options, directives = {}) {
     schemaId: '$id'
   };
   const config = { ...defaults, ...options, formats };
-  const ajv = new Ajv(config);
-  return ajv;
+  try {
+    return new Ajv(config);
+  } catch (error) {
+    console.error('ERROR', error);
+    return error;
+  }
 };
 
 export const ValidatorSync = function(options) {

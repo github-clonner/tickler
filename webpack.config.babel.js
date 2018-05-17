@@ -21,7 +21,7 @@ const configMain = {
     filename: '[name].js'
   },
   devtool: 'sourcemap',
-  target: 'electron',
+  target: 'electron-renderer',
   node: {
     __dirname: false,
     __filename: false
@@ -63,11 +63,13 @@ const configRenderer = {
   devtool: 'eval-source-map',
   target: 'electron-renderer',
   plugins: [
+    /*
     new webpack.optimize.CommonsChunkPlugin({
       name: 'vendor',
       minChunks: Infinity,
       filename: 'vendor.bundle.js'
     }),
+    */
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NamedModulesPlugin(),
     new webpack.NoEmitOnErrorsPlugin(),

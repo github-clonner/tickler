@@ -174,6 +174,7 @@ export class PluginManager {
   }
 
   async loadPlugins(dirs: Array<string>) : string | Error {
+    console.log('loadPlugins', dirs);
     const promises = dirs.slice(1, 2).map(dir => {
       const name = path.basename(dir);
       const plugin = new Plugin(dir);

@@ -2,7 +2,7 @@
 .DS_Store
 
 # Dependency directory
-node_modules/
+node_modules*/
 
 # Logs
 *.log
@@ -38,6 +38,9 @@ dist/main.js
 !media/FurElise.ogg
 !media/icon.png
 
+# Temporal assets
+assets/tmp
+
 # Dont track anything else in the media folder
 media/
 
@@ -46,4 +49,10 @@ media/
 coverage/
 .nyc_output/
 dist/vendor.bundle.js
+dist/vendor.js
 dist/window.js
+
+# Misc
+tickler.sublime-workspace
+tickler.sublime-project
+

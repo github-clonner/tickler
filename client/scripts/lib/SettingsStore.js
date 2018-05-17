@@ -61,7 +61,7 @@ export default class SettingsStore {
       }
       return valid;
     } catch (error) {
-      console.error(error);
+      console.error('ERROR', schema, data, error);
       return false;
     }
   };

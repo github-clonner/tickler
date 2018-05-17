@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-06/schema#",
+  "$id": "playlist",
   "type": "object",
   "title": "Playlist",
   "description": "A playlist object",
