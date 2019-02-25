@@ -87,8 +87,8 @@
   },
   "dependencies": {
     "@maggiben/duration-format": "0.0.1",
-    "@maggiben/electron-clipboard-manager": "file:../electron-clipboard-manager",
-    "@maggiben/google-apis": "~/google-apis",
+    "@maggiben/electron-clipboard-manager": "git+https://github.com/maggiben/electron-clipboard-manager.git",
+    "@maggiben/google-apis": "git+https://github.com/maggiben/google-apis.git",
     "ajv": "^6.2.0",
     "axios": "^0.18.0",
     "classnames": "^2.2.5",
